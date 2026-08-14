@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hj_core/hj_core.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -269,6 +270,13 @@ class _ReportRow extends StatelessWidget {
   Future<void> _open(BuildContext context) async {
     final l = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
+    // A detailed kundli reopens in the rich full-analysis viewer (keyed off
+    // the report id = chart_id); every other report type uses the result
+    // sheet as before.
+    if (report.type == 'detailed_kundli') {
+      context.push('/kundli/${report.id}', extra: report.subjectName);
+      return;
+    }
     Map<String, dynamic> res;
     try {
       res = await getIt<InsightsRepository>().reportDetail(report.id);

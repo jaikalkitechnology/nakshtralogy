@@ -27,6 +27,23 @@ DEFAULTS: dict[str, tuple[str, Decimal]] = {
     "daily_prediction": ("Daily Prediction", Decimal("29.00")),
     "love_compatibility": ("Love Compatibility", Decimal("19.00")),
     "birthday_number": ("Birthday Number", Decimal("19.00")),
+    # Phase J — Specialist reports sourced from the Nakshatralogy developer
+    # API (/api/v2/reports/<key>). Each is admin-priced/enable-able from the
+    # same Cosmic Services page; all default to PAID (kundli stays free).
+    "career": ("Career Report", Decimal("49.00")),
+    "business": ("Business Report", Decimal("49.00")),
+    "education": ("Education Report", Decimal("39.00")),
+    "wealth": ("Wealth Report", Decimal("49.00")),
+    "debt_recovery": ("Debt Recovery Report", Decimal("39.00")),
+    "love": ("Love Report", Decimal("39.00")),
+    "marriage": ("Marriage Report", Decimal("59.00")),
+    "health": ("Health Report", Decimal("49.00")),
+    "mental_stress": ("Mental Stress Report", Decimal("39.00")),
+    "property": ("Property Report", Decimal("49.00")),
+    "legal": ("Legal Report", Decimal("59.00")),
+    "life_path": ("Life Path Report", Decimal("39.00")),
+    "character": ("Character Report", Decimal("39.00")),
+    "past_life": ("Past Life Report", Decimal("49.00")),
 }
 
 # Legacy shape kept for the admin console's seeding loop.

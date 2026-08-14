@@ -48,5 +48,14 @@ class AstroSessionCubit extends Cubit<AstroSessionState> {
     emit(const AstroSessionState(status: SessionStatus.unauthenticated));
   }
 
+  /// Delete the account, then drop to the unauthenticated state. Rethrows on
+  /// failure (e.g. a 409 guard) so the caller can show the reason and stay
+  /// signed in.
+  Future<void> deleteAccount() async {
+    await _repo.deleteAccount();
+    await _google.signOut();
+    emit(const AstroSessionState(status: SessionStatus.unauthenticated));
+  }
+
   void sessionExpired() => emit(const AstroSessionState(status: SessionStatus.unauthenticated));
 }

@@ -10,6 +10,7 @@ import '../../l10n/app_localizations.dart';
 import '../../shared/responsive.dart';
 import '../../shared/widgets/astrologer_card.dart';
 import '../discovery/discovery_repository.dart';
+import '../notifications/notification_bell.dart';
 import 'banners_repository.dart';
 import 'promo_video.dart';
 import 'promo_videos_repository.dart';
@@ -85,6 +86,8 @@ class _HomeView extends StatelessWidget {
                       ],
                     ),
                   ),
+                  const NotificationBell(),
+                  const SizedBox(width: 4),
                   _WalletChip(balance: user?.walletBalance ?? '0.00'),
                 ],
               ),

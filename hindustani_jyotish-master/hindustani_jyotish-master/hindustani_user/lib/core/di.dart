@@ -5,12 +5,15 @@ import '../features/discovery/discovery_repository.dart';
 import '../features/wallet/wallet_repository.dart';
 import '../features/wallet/wallet_checkout.dart';
 import '../features/insights/insights_repository.dart';
+import '../features/invoices/invoice_repository.dart';
 import '../features/config/app_config_repository.dart';
 import '../features/consultation/consultation_repository.dart';
 import '../features/home/banners_repository.dart';
 import '../features/home/promo_videos_repository.dart';
 import '../features/live/broadcast_repository.dart';
+import '../features/notifications/notification_repository.dart';
 import '../features/profile/profile_repository.dart';
+import '../features/support/support_repository.dart';
 import '../l10n/locale_cubit.dart';
 import 'maintenance/maintenance_repository.dart';
 import 'push/push_service.dart';
@@ -35,11 +38,14 @@ void configureDependencies() {
     ..registerLazySingleton<WalletRepository>(() => WalletRepository(api))
     ..registerLazySingleton<WalletCheckout>(() => WalletCheckout(getIt<WalletRepository>()))
     ..registerLazySingleton<InsightsRepository>(() => InsightsRepository(api))
+    ..registerLazySingleton<InvoiceRepository>(() => InvoiceRepository(api))
+    ..registerLazySingleton<NotificationRepository>(() => NotificationRepository(api))
     ..registerLazySingleton<ConsultationRepository>(() => ConsultationRepository(api))
     ..registerLazySingleton<BroadcastRepository>(() => BroadcastRepository(api))
     ..registerLazySingleton<PromoVideosRepository>(() => PromoVideosRepository(api))
     ..registerLazySingleton<BannersRepository>(() => BannersRepository(api))
     ..registerLazySingleton<ProfileRepository>(() => ProfileRepository(api))
+    ..registerLazySingleton<SupportRepository>(() => SupportRepository(api, app: 'user'))
     ..registerLazySingleton<MaintenanceRepository>(() => MaintenanceRepository(api))
     ..registerLazySingleton<PushService>(() => PushService(api));
 

@@ -6,6 +6,7 @@ import '../features/auth/ui/profile_completion_screen.dart';
 import '../features/auth/ui/splash_screen.dart';
 import '../features/auth/ui/welcome_screen.dart';
 import '../features/consultation/ui/consultation_history_screen.dart';
+import '../features/invoices/ui/invoices_screen.dart';
 import '../features/consultation/ui/consultation_screen.dart';
 import '../features/discovery/ui/astrologer_profile_screen.dart';
 import '../features/discovery/ui/astrologers_screen.dart';
@@ -14,12 +15,17 @@ import '../features/home/home_shell.dart';
 import '../features/home/promo_video.dart';
 import '../features/home/ui/promo_video_player_screen.dart';
 import '../features/insights/ui/insights_screen.dart';
+import '../features/insights/ui/kundli_analysis_screen.dart';
 import '../features/insights/ui/my_reports_screen.dart';
+import '../features/insights/ui/special_reports_screen.dart';
 import '../features/live/ui/live_list_screen.dart';
 import '../features/live/ui/live_viewer_screen.dart';
+import '../features/notifications/ui/notifications_screen.dart';
 import '../features/profile/ui/birth_details_screen.dart';
 import '../features/profile/ui/edit_profile_screen.dart';
 import '../features/profile/ui/profile_screen.dart';
+import '../features/support/ui/support_screen.dart';
+import '../features/support/ui/ticket_thread_screen.dart';
 import '../features/wallet/ui/wallet_screen.dart';
 
 /// Bridges an [AuthCubit] stream to go_router's [refreshListenable].
@@ -86,6 +92,27 @@ GoRouter buildRouter(AuthCubit auth) {
         builder: (_, _) => const ConsultationHistoryScreen(),
       ),
       GoRoute(
+        path: '/invoices',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const InvoicesScreen(),
+      ),
+      GoRoute(
+        path: '/notifications',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const NotificationsScreen(),
+      ),
+      GoRoute(
+        path: '/support',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const SupportScreen(),
+      ),
+      GoRoute(
+        path: '/support/tickets/:id',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, st) =>
+            TicketThreadScreen(ticketId: st.pathParameters['id']!),
+      ),
+      GoRoute(
         path: '/profile/edit',
         parentNavigatorKey: rootNavigatorKey,
         builder: (_, _) => const EditProfileScreen(),
@@ -99,6 +126,19 @@ GoRouter buildRouter(AuthCubit auth) {
         path: '/insights/reports',
         parentNavigatorKey: rootNavigatorKey,
         builder: (_, _) => const MyReportsScreen(),
+      ),
+      GoRoute(
+        path: '/insights/special-reports',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const SpecialReportsScreen(),
+      ),
+      GoRoute(
+        path: '/kundli/:id',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, st) => KundliAnalysisScreen(
+          chartId: st.pathParameters['id']!,
+          subjectName: st.extra is String ? st.extra as String : null,
+        ),
       ),
       GoRoute(
         path: '/promo-video',

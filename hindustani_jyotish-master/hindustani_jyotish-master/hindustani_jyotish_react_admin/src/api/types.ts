@@ -513,3 +513,165 @@ export interface ChatTranscript {
   consultation: ChatRoomConsultation
   messages: ChatMessage[]
 }
+
+// ── Database schema auto-sync ("auto mode") ──────────────────────────
+export interface SchemaMissingColumn {
+  table: string
+  column: string
+  type: string
+  ddl?: string
+  nullable?: boolean
+}
+
+export interface SchemaExtraColumn {
+  table: string
+  column: string
+}
+
+export interface SchemaDiff {
+  missing_tables: string[]
+  missing_columns: SchemaMissingColumn[]
+  extra_columns: SchemaExtraColumn[]
+  in_sync: boolean
+}
+
+export interface SchemaApplyResult {
+  dry_run: boolean
+  created_tables: string[]
+  added_columns: SchemaMissingColumn[]
+  skipped: { table: string; column: string; reason: string }[]
+  errors: unknown[]
+  extra_columns: SchemaExtraColumn[]
+  notes: string[]
+}
+
+export interface SchemaSyncLogEntry {
+  id: string
+  source: string
+  dry_run: boolean
+  created_tables: string[]
+  added_columns: SchemaMissingColumn[]
+  skipped: unknown[]
+  errors: unknown[]
+  notes: string[]
+  triggered_by: string | null
+  created_at: string | null
+}
+
+export type DeletedAccountType = 'all' | 'user' | 'astrologer'
+
+/** A soft-deleted (anonymised) account row from `/admin/deleted-accounts`. */
+export interface DeletedAccount {
+  type: 'user' | 'astrologer'
+  id: string
+  name: string | null
+  mobile: string | null
+  email: string | null
+  deleted_at: string | null
+  deleted_reason: string | null
+  restore_deadline: string | null
+}
+
+// ── TDS on payouts (Phase I) ──────────────────────────────────────────
+/** TDS deduction config. Rates are fractions (0.10 = 10%). */
+export interface TdsSettings {
+  rate: number
+  pan_required: boolean
+  no_pan_rate: number
+}
+
+export interface TdsReportRow {
+  astrologer_id: string
+  astrologer_name: string | null
+  pan: string | null
+  gross: string
+  tds: string
+  net: string
+  payouts: number
+}
+
+export interface TdsReport {
+  period: string
+  financial_year: string
+  quarter: number | null
+  from: string
+  to: string
+  items: TdsReportRow[]
+  totals: { gross: string; tds: string; net: string; payouts: number; astrologers: number }
+}
+
+// Notification broadcast (Phase K)
+export type BroadcastRole = 'user' | 'astrologer' | 'all'
+
+export interface BroadcastResult {
+  role: BroadcastRole
+  recipients: number
+  sent: number
+  failed: number
+  skipped: boolean
+}
+
+export interface BroadcastRecord {
+  id: string
+  role: BroadcastRole
+  title: string
+  body: string | null
+  recipient_count: number
+  created_at: string | null
+}
+
+// FAQ + support tickets (Phase L)
+export type FaqApp = 'user' | 'astro' | 'both'
+
+export interface Faq {
+  id: string
+  app: FaqApp
+  category: string | null
+  question_en: string
+  answer_en: string
+  question_hi: string | null
+  answer_hi: string | null
+  sort_order: number
+  is_active: boolean
+}
+
+export interface FaqInput {
+  app: FaqApp
+  category?: string | null
+  question_en: string
+  answer_en: string
+  question_hi?: string | null
+  answer_hi?: string | null
+  sort_order?: number
+  is_active?: boolean
+}
+
+export type TicketStatus = 'open' | 'pending' | 'closed'
+export type TicketSender = 'user' | 'astrologer' | 'admin'
+
+export interface TicketMessage {
+  id: string
+  sender: TicketSender
+  body: string
+  created_at: string | null
+}
+
+export interface SupportTicket {
+  id: string
+  subject: string
+  status: TicketStatus
+  requester_role: 'user' | 'astrologer'
+  requester_id: string
+  requester_name: string | null
+  created_at: string | null
+  updated_at: string | null
+  messages?: TicketMessage[]
+}
+
+export interface TicketList {
+  items: SupportTicket[]
+  total: number
+  counts: Record<string, number>
+  page: number
+  size: number
+}

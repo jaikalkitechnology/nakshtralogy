@@ -830,6 +830,54 @@ abstract class AppLocalizations {
   /// **'Payment history'**
   String get profilePaymentHistory;
 
+  /// No description provided for @profileInvoices.
+  ///
+  /// In en, this message translates to:
+  /// **'GST invoices'**
+  String get profileInvoices;
+
+  /// No description provided for @invoicesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'GST Invoices'**
+  String get invoicesTitle;
+
+  /// No description provided for @invoicesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No invoices yet. Paid consultations will appear here.'**
+  String get invoicesEmpty;
+
+  /// No description provided for @invoicesDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get invoicesDownload;
+
+  /// No description provided for @invoicesDownloading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading…'**
+  String get invoicesDownloading;
+
+  /// No description provided for @invoicesDownloadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not download the invoice.'**
+  String get invoicesDownloadFailed;
+
+  /// No description provided for @invoicesTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get invoicesTotal;
+
+  /// No description provided for @invoicesTax.
+  ///
+  /// In en, this message translates to:
+  /// **'GST'**
+  String get invoicesTax;
+
   /// No description provided for @profileBecomeAstrologer.
   ///
   /// In en, this message translates to:
@@ -1117,6 +1165,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Detailed Kundli'**
   String get insightDetailedKundli;
+
+  /// No description provided for @insightFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get insightFree;
 
   /// No description provided for @insightPlanetPosition.
   ///
@@ -1435,6 +1489,564 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reconnecting to video…'**
   String get liveReconnectingVideo;
+
+  /// No description provided for @kunFullAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete birth chart'**
+  String get kunFullAnalysis;
+
+  /// No description provided for @kunOpenFullAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Open full analysis'**
+  String get kunOpenFullAnalysis;
+
+  /// No description provided for @kunRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get kunRetry;
+
+  /// No description provided for @kunNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data available'**
+  String get kunNoData;
+
+  /// No description provided for @kunChecked.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked'**
+  String get kunChecked;
+
+  /// No description provided for @kunFactors.
+  ///
+  /// In en, this message translates to:
+  /// **'Why it forms'**
+  String get kunFactors;
+
+  /// No description provided for @kunCancellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation'**
+  String get kunCancellation;
+
+  /// No description provided for @kunSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get kunSummary;
+
+  /// No description provided for @kunPlanets.
+  ///
+  /// In en, this message translates to:
+  /// **'Planets'**
+  String get kunPlanets;
+
+  /// No description provided for @kunKundli.
+  ///
+  /// In en, this message translates to:
+  /// **'Kundli'**
+  String get kunKundli;
+
+  /// No description provided for @kunDivisions.
+  ///
+  /// In en, this message translates to:
+  /// **'Divisions'**
+  String get kunDivisions;
+
+  /// No description provided for @kunVimshottari.
+  ///
+  /// In en, this message translates to:
+  /// **'Vimshottari'**
+  String get kunVimshottari;
+
+  /// No description provided for @kunGochar.
+  ///
+  /// In en, this message translates to:
+  /// **'Gochar'**
+  String get kunGochar;
+
+  /// No description provided for @kunDosh.
+  ///
+  /// In en, this message translates to:
+  /// **'Dosh'**
+  String get kunDosh;
+
+  /// No description provided for @kunYoga.
+  ///
+  /// In en, this message translates to:
+  /// **'Yoga'**
+  String get kunYoga;
+
+  /// No description provided for @kunShadbala.
+  ///
+  /// In en, this message translates to:
+  /// **'Shadbala'**
+  String get kunShadbala;
+
+  /// No description provided for @kunAshtakavarga.
+  ///
+  /// In en, this message translates to:
+  /// **'Ashtakavarga'**
+  String get kunAshtakavarga;
+
+  /// No description provided for @kunAspects.
+  ///
+  /// In en, this message translates to:
+  /// **'Aspects'**
+  String get kunAspects;
+
+  /// No description provided for @kunBhava.
+  ///
+  /// In en, this message translates to:
+  /// **'Bhava'**
+  String get kunBhava;
+
+  /// No description provided for @dashaRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'RUNNING'**
+  String get dashaRunning;
+
+  /// No description provided for @dashaBirthBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth lord: {lord} · Balance: {years} yrs'**
+  String dashaBirthBalance(Object lord, Object years);
+
+  /// No description provided for @dashaAntardashasOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} MD → Antardashas'**
+  String dashaAntardashasOf(Object planet);
+
+  /// No description provided for @dashaPratyantardashasOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} AD → Pratyantardashas'**
+  String dashaPratyantardashasOf(Object planet);
+
+  /// No description provided for @dashaSookshmaOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} PD → Sookshmadashas'**
+  String dashaSookshmaOf(Object planet);
+
+  /// No description provided for @dashaSubperiodsOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} sub-periods'**
+  String dashaSubperiodsOf(Object planet);
+
+  /// No description provided for @divChartsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap any varga chart to enlarge it.'**
+  String get divChartsSubtitle;
+
+  /// No description provided for @summaryLagna.
+  ///
+  /// In en, this message translates to:
+  /// **'Lagna'**
+  String get summaryLagna;
+
+  /// No description provided for @summaryMoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Moon sign'**
+  String get summaryMoon;
+
+  /// No description provided for @summarySun.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun sign'**
+  String get summarySun;
+
+  /// No description provided for @summaryActiveDoshas.
+  ///
+  /// In en, this message translates to:
+  /// **'Active doshas'**
+  String get summaryActiveDoshas;
+
+  /// No description provided for @summaryActiveYogas.
+  ///
+  /// In en, this message translates to:
+  /// **'Active yogas'**
+  String get summaryActiveYogas;
+
+  /// No description provided for @gocharBest.
+  ///
+  /// In en, this message translates to:
+  /// **'Best rashi'**
+  String get gocharBest;
+
+  /// No description provided for @gocharWorst.
+  ///
+  /// In en, this message translates to:
+  /// **'Weakest rashi'**
+  String get gocharWorst;
+
+  /// No description provided for @doshActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active doshas'**
+  String get doshActive;
+
+  /// No description provided for @yogaActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active yogas'**
+  String get yogaActive;
+
+  /// No description provided for @doshNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No active doshas — a clear chart.'**
+  String get doshNone;
+
+  /// No description provided for @yogaNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No prominent yogas detected.'**
+  String get yogaNone;
+
+  /// No description provided for @colStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Strength'**
+  String get colStrength;
+
+  /// No description provided for @shadbalaRanking.
+  ///
+  /// In en, this message translates to:
+  /// **'Planet strength ranking'**
+  String get shadbalaRanking;
+
+  /// No description provided for @shadbalaRupas.
+  ///
+  /// In en, this message translates to:
+  /// **'rupas'**
+  String get shadbalaRupas;
+
+  /// No description provided for @avSavTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sarvashtakavarga (SAV)'**
+  String get avSavTitle;
+
+  /// No description provided for @avSavTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total: {total}'**
+  String avSavTotal(Object total);
+
+  /// No description provided for @avBavTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bhinnashtakavarga (BAV)'**
+  String get avBavTitle;
+
+  /// No description provided for @aspectsGraha.
+  ///
+  /// In en, this message translates to:
+  /// **'Graha drishti (planetary aspects)'**
+  String get aspectsGraha;
+
+  /// No description provided for @aspectsRashi.
+  ///
+  /// In en, this message translates to:
+  /// **'Rashi drishti (sign aspects)'**
+  String get aspectsRashi;
+
+  /// No description provided for @bhavaHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'House {n}'**
+  String bhavaHouse(Object n);
+
+  /// No description provided for @bhavaLord.
+  ///
+  /// In en, this message translates to:
+  /// **'Lord'**
+  String get bhavaLord;
+
+  /// No description provided for @profileDeleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get profileDeleteAccount;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account?'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This permanently deletes your account. Your profile, birth details and saved data are removed, all your sessions end, and this cannot be undone.'**
+  String get deleteAccountWarning;
+
+  /// No description provided for @deleteAccountTypeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type DELETE to confirm'**
+  String get deleteAccountTypeHint;
+
+  /// No description provided for @deleteAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccountConfirm;
+
+  /// No description provided for @deleteAccountSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been deleted.'**
+  String get deleteAccountSuccess;
+
+  /// No description provided for @specialReportsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Special Reports'**
+  String get specialReportsTitle;
+
+  /// No description provided for @specialReportsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'In-depth specialist analysis for the moments that matter.'**
+  String get specialReportsSubtitle;
+
+  /// No description provided for @specialReportsCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Special Reports'**
+  String get specialReportsCard;
+
+  /// No description provided for @specialReportsCardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Career, marriage, wealth, health & more'**
+  String get specialReportsCardSubtitle;
+
+  /// No description provided for @specialReportsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No special reports are available right now.'**
+  String get specialReportsEmpty;
+
+  /// No description provided for @reportCareer.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Report'**
+  String get reportCareer;
+
+  /// No description provided for @reportBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Report'**
+  String get reportBusiness;
+
+  /// No description provided for @reportEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Education Report'**
+  String get reportEducation;
+
+  /// No description provided for @reportWealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth Report'**
+  String get reportWealth;
+
+  /// No description provided for @reportDebtRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt Recovery Report'**
+  String get reportDebtRecovery;
+
+  /// No description provided for @reportLove.
+  ///
+  /// In en, this message translates to:
+  /// **'Love Report'**
+  String get reportLove;
+
+  /// No description provided for @reportMarriage.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage Report'**
+  String get reportMarriage;
+
+  /// No description provided for @reportHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Report'**
+  String get reportHealth;
+
+  /// No description provided for @reportMentalStress.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental Stress Report'**
+  String get reportMentalStress;
+
+  /// No description provided for @reportProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Report'**
+  String get reportProperty;
+
+  /// No description provided for @reportLegal.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Report'**
+  String get reportLegal;
+
+  /// No description provided for @reportLifePath.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Path Report'**
+  String get reportLifePath;
+
+  /// No description provided for @reportCharacter.
+  ///
+  /// In en, this message translates to:
+  /// **'Character Report'**
+  String get reportCharacter;
+
+  /// No description provided for @reportPastLife.
+  ///
+  /// In en, this message translates to:
+  /// **'Past Life Report'**
+  String get reportPastLife;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no notifications yet.'**
+  String get notificationsEmpty;
+
+  /// No description provided for @notificationsMarkAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all read'**
+  String get notificationsMarkAllRead;
+
+  /// No description provided for @supportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get supportTitle;
+
+  /// No description provided for @supportFaqTab.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ'**
+  String get supportFaqTab;
+
+  /// No description provided for @supportTicketsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'My tickets'**
+  String get supportTicketsTab;
+
+  /// No description provided for @supportFaqEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No help articles are available yet.'**
+  String get supportFaqEmpty;
+
+  /// No description provided for @supportTicketsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no support tickets yet.'**
+  String get supportTicketsEmpty;
+
+  /// No description provided for @supportRaiseTicket.
+  ///
+  /// In en, this message translates to:
+  /// **'Raise a ticket'**
+  String get supportRaiseTicket;
+
+  /// No description provided for @supportSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject'**
+  String get supportSubject;
+
+  /// No description provided for @supportMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your issue'**
+  String get supportMessage;
+
+  /// No description provided for @supportSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get supportSubmit;
+
+  /// No description provided for @supportFillFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please add a subject and a message.'**
+  String get supportFillFields;
+
+  /// No description provided for @supportTicket.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket'**
+  String get supportTicket;
+
+  /// No description provided for @supportReplyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a reply…'**
+  String get supportReplyHint;
+
+  /// No description provided for @supportReopenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply to reopen this ticket…'**
+  String get supportReopenHint;
+
+  /// No description provided for @supportSenderYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get supportSenderYou;
+
+  /// No description provided for @supportSenderSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get supportSenderSupport;
+
+  /// No description provided for @supportStatusOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get supportStatusOpen;
+
+  /// No description provided for @supportStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting you'**
+  String get supportStatusPending;
+
+  /// No description provided for @supportStatusClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get supportStatusClosed;
 }
 
 class _AppLocalizationsDelegate

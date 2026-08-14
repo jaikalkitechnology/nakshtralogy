@@ -71,7 +71,7 @@ async def get_current_astrologer(
         raise _CRED_EXC
 
     astro = await db.get(Astrologer, astro_id)
-    if astro is None:
+    if astro is None or not astro.is_active:
         raise _CRED_EXC
     return astro
 
@@ -101,7 +101,7 @@ async def get_current_principal(
 
     if role == "astrologer":
         astro = await db.get(Astrologer, principal_id)
-        if astro is None:
+        if astro is None or not astro.is_active:
             raise _CRED_EXC
         return Principal("astrologer", principal_id, astrologer=astro)
 

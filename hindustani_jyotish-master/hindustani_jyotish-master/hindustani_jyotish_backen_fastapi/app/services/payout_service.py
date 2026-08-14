@@ -16,6 +16,7 @@ from app.core.config import settings
 from app.models.astrologer import Astrologer, KYCStatus
 from app.models.kyc import AstrologerKYC
 from app.models.payout import AstrologerPayout, PayoutStatus
+from app.services import tds_service
 from app.services.wallet_service import money
 
 
@@ -54,6 +55,16 @@ async def request_payout(
     )
     now = datetime.now(timezone.utc)
 
+    # ── TDS: withhold income tax against the astrologer's PAN. `amount` is the
+    # GROSS withdrawal (already net of platform commission, taken at settlement
+    # — never re-deducted here). No valid PAN → BLOCK with a clear reason (the
+    # admin-overridable default). net_paid is what reaches the bank. ──
+    tds_cfg = await tds_service.resolve_tds_config(db)
+    try:
+        tds = tds_service.compute_tds(amount, kyc.pan_number if kyc else None, tds_cfg)
+    except tds_service.TDSBlocked as exc:
+        raise PayoutError(str(exc)) from exc
+
     payout = AstrologerPayout(
         astrologer_id=astrologer.id,
         amount=amount,
@@ -61,6 +72,10 @@ async def request_payout(
         bank_account_last4=kyc.bank_account_last4 if kyc else None,
         ifsc=kyc.bank_ifsc if kyc else None,
         biometric_verified_at=now,
+        tds_rate=tds.rate,
+        tds_amount=tds.tds_amount,
+        net_paid=tds.net_paid,
+        tds_pan=tds.pan,
     )
     # Reserve the funds immediately so they can't be double-spent.
     astrologer.available_balance = money(

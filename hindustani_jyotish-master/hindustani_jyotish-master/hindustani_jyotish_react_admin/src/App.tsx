@@ -13,6 +13,7 @@ import SimpleCrudPage from './pages/SimpleCrudPage'
 import CosmicServicesPage from './pages/CosmicServicesPage'
 import SettingsPage from './pages/SettingsPage'
 import MaintenancePage from './pages/MaintenancePage'
+import SchemaSyncPage from './pages/SchemaSyncPage'
 import FirebaseConfigPage from './pages/FirebaseConfigPage'
 import AgoraSettingsPage from './pages/AgoraSettingsPage'
 import WalletManagementPage from './pages/WalletManagementPage'
@@ -20,13 +21,19 @@ import AstrologerChargesPage from './pages/AstrologerChargesPage'
 import AstrologerDetailsPage from './pages/AstrologerDetailsPage'
 import CommissionPage from './pages/CommissionPage'
 import CustomersPage from './pages/CustomersPage'
+import DeletedAccountsPage from './pages/DeletedAccountsPage'
 import PayoutsPage from './pages/PayoutsPage'
 import WalletTransactionsPage from './pages/WalletTransactionsPage'
 import WalletLedgerPage from './pages/WalletLedgerPage'
 import ReviewsPage from './pages/ReviewsPage'
 import RazorpaySettingsPage from './pages/RazorpaySettingsPage'
+import InvoicesPage from './pages/InvoicesPage'
+import TdsPage from './pages/TdsPage'
 import GoogleLoginSettingsPage from './pages/GoogleLoginSettingsPage'
+import BroadcastPage from './pages/BroadcastPage'
 import CredentialsOverviewPage from './pages/CredentialsOverviewPage'
+import FaqManager from './pages/FaqManager'
+import SupportTickets from './pages/SupportTickets'
 import { RESOURCES } from './config/resources'
 import { adminApi } from './api/endpoints'
 
@@ -65,6 +72,7 @@ export default function App() {
 
             {/* Users */}
             <Route path="/customers" element={<CustomersPage />} />
+            <Route path="/deleted-accounts" element={<DeletedAccountsPage />} />
 
             {/* Astrologers */}
             <Route path="/astrologers" element={<AstrologerDetailsPage />} />
@@ -80,11 +88,16 @@ export default function App() {
             <Route path="/wallet-ledger" element={<WalletLedgerPage />} />
             <Route path="/payouts" element={<PayoutsPage />} />
             <Route path="/refunds" element={list('refunds')} />
+            <Route path="/invoices" element={<InvoicesPage />} />
+            <Route path="/tds" element={<TdsPage />} />
 
             {/* Sessions */}
             <Route path="/sessions" element={list('consultations')} />
             <Route path="/chat-rooms" element={list('chatRooms')} />
             <Route path="/reviews" element={<ReviewsPage />} />
+
+            {/* Engagement */}
+            <Route path="/broadcast" element={<BroadcastPage />} />
 
             {/* Content */}
             <Route path="/coupons" element={<CouponsPage />} />
@@ -164,6 +177,10 @@ export default function App() {
               }
             />
 
+            {/* Support */}
+            <Route path="/faqs" element={<FaqManager />} />
+            <Route path="/support-tickets" element={<SupportTickets />} />
+
             {/* Settings */}
             <Route path="/credentials" element={<CredentialsOverviewPage />} />
             <Route
@@ -211,7 +228,25 @@ export default function App() {
             <Route path="/agora" element={<AgoraSettingsPage />} />
             <Route path="/razorpay" element={<RazorpaySettingsPage />} />
             <Route path="/commission" element={<CommissionPage />} />
+            <Route
+              path="/gst-settings"
+              element={
+                <SettingsPage
+                  title="GST"
+                  subtitle="Seller identity + tax details printed on every GST invoice. The rate is applied GST-inclusive (place of supply unknown → CGST+SGST split). Leave GSTIN blank until registered."
+                  endpoint="/admin/settings/gst"
+                  fields={[
+                    { key: 'seller_name', label: 'Legal name', placeholder: 'Hindustani Jyotish Pvt Ltd' },
+                    { key: 'seller_gstin', label: 'Seller GSTIN', placeholder: '27ABCDE1234F1Z5' },
+                    { key: 'seller_address', label: 'Registered address', placeholder: 'City, State' },
+                    { key: 'default_rate', label: 'Default GST rate (%)', placeholder: '18' },
+                    { key: 'hsn_sac', label: 'HSN / SAC code', placeholder: '998399' },
+                  ]}
+                />
+              }
+            />
             <Route path="/maintenance" element={<MaintenancePage />} />
+            <Route path="/schema-sync" element={<SchemaSyncPage />} />
             <Route path="/firebase-config" element={<FirebaseConfigPage />} />
             <Route path="/google-login" element={<GoogleLoginSettingsPage />} />
           </Route>

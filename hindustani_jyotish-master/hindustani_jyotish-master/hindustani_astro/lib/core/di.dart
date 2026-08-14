@@ -4,7 +4,9 @@ import 'package:hj_core/hj_core.dart';
 import '../features/auth/astro_auth_repository.dart';
 import '../features/auth/astro_session_cubit.dart';
 import '../features/auth/google_auth.dart';
+import '../features/notifications/notification_repository.dart';
 import '../features/portal/portal_repository.dart';
+import '../features/support/support_repository.dart';
 import '../l10n/locale_cubit.dart';
 import 'app_config_repository.dart';
 import 'push/pending_request_action.dart';
@@ -26,6 +28,8 @@ void configureDependencies() {
     ..registerSingleton<AppConfigRepository>(AppConfigRepository(api))
     ..registerSingleton<AstroGoogleSignIn>(AstroGoogleSignIn())
     ..registerLazySingleton<PortalRepository>(() => PortalRepository(api, config, tokens))
+    ..registerLazySingleton<NotificationRepository>(() => NotificationRepository(api))
+    ..registerLazySingleton<SupportRepository>(() => SupportRepository(api, app: 'astro'))
     ..registerSingleton<PushService>(PushService(api))
     ..registerSingleton<PendingRequestAction>(PendingRequestAction())
     ..registerSingleton<LocaleCubit>(LocaleCubit())

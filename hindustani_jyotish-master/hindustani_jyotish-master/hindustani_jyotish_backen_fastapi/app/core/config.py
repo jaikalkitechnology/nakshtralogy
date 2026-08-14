@@ -147,6 +147,13 @@ class Settings(BaseSettings):
     # In dev, payouts are auto-marked paid; in prod a Celery worker settles them.
     PAYOUT_AUTO_PROCESS: bool = True
 
+    # ── Admin schema auto-sync ("auto mode") ──────────────────────────
+    # Default for the additive schema-sync auto-apply-on-startup toggle. The
+    # live value is read from the `app_settings` row (admin-controlled); this
+    # env flag is only the fallback when no row has been written yet. Additive
+    # only — never drops or alters existing columns.
+    AUTO_SCHEMA_SYNC: bool = True
+
     @property
     def cors_origin_list(self) -> list[str]:
         if self.CORS_ORIGINS.strip() == "*":

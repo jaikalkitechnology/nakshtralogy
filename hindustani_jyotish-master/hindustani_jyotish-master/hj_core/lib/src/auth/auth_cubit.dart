@@ -41,5 +41,13 @@ class AuthCubit extends Cubit<AuthState> {
     emit(const AuthState(status: AuthStatus.unauthenticated));
   }
 
+  /// Delete the account, then drop to the unauthenticated state. Rethrows on
+  /// failure (e.g. a 409 guard) so the caller can show the reason and stay
+  /// signed in.
+  Future<void> deleteAccount() async {
+    await _repo.deleteAccount();
+    emit(const AuthState(status: AuthStatus.unauthenticated));
+  }
+
   void sessionExpired() => emit(const AuthState(status: AuthStatus.unauthenticated));
 }

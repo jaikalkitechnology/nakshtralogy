@@ -7,6 +7,7 @@ import '../features/auth/ui/welcome_screen.dart';
 import '../features/dashboard/ui/dashboard_screen.dart';
 import '../features/dashboard/ui/home_shell.dart';
 import '../features/earnings/ui/earnings_screen.dart';
+import '../features/notifications/ui/notifications_screen.dart';
 import '../features/kyc/ui/complete_profile_screen.dart';
 import '../features/kyc/ui/kyc_form_screen.dart';
 import '../features/kyc/ui/under_review_screen.dart';
@@ -15,8 +16,12 @@ import '../features/portal/ui/consultation_history_screen.dart';
 import '../features/portal/ui/payment_history_screen.dart';
 import '../features/portal/ui/ratings_screen.dart';
 import '../features/profile/ui/astro_profile_screen.dart';
+import '../features/profile/ui/bank_pan_screen.dart';
+import '../features/profile/ui/edit_profile_screen.dart';
 import '../features/requests/ui/requests_screen.dart';
 import '../features/settings/ui/settings_screen.dart';
+import '../features/support/ui/support_screen.dart';
+import '../features/support/ui/ticket_thread_screen.dart';
 
 class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(AstroSessionCubit cubit) {
@@ -91,6 +96,16 @@ GoRouter buildRouter(AstroSessionCubit session) {
         builder: (_, _) => const SettingsScreen(),
       ),
       GoRoute(
+        path: '/profile/edit',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: '/profile/bank-pan',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const BankPanScreen(),
+      ),
+      GoRoute(
         path: '/history/consultations',
         parentNavigatorKey: rootNavigatorKey,
         builder: (_, _) => const ConsultationHistoryScreen(),
@@ -104,6 +119,22 @@ GoRouter buildRouter(AstroSessionCubit session) {
         path: '/history/payments',
         parentNavigatorKey: rootNavigatorKey,
         builder: (_, _) => const PaymentHistoryScreen(),
+      ),
+      GoRoute(
+        path: '/notifications',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const NotificationsScreen(),
+      ),
+      GoRoute(
+        path: '/support',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const SupportScreen(),
+      ),
+      GoRoute(
+        path: '/support/tickets/:id',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, st) =>
+            TicketThreadScreen(ticketId: st.pathParameters['id']!),
       ),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => HomeShell(navigationShell: shell),

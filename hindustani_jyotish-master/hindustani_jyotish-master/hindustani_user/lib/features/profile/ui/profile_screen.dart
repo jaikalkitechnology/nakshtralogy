@@ -138,6 +138,16 @@ class ProfileScreen extends StatelessWidget {
                 // work, e.g. push_handlers.dart's consultation_ended handler).
                 onTap: () => context.go('/wallet'),
               ),
+              _Tile(
+                icon: Icons.description_outlined,
+                label: l.profileInvoices,
+                onTap: () => context.push('/invoices'),
+              ),
+              _Tile(
+                icon: Icons.help_outline,
+                label: l.supportTitle,
+                onTap: () => context.push('/support'),
+              ),
               const _HelplineTile(),
               const _PrivacyPolicyTile(),
               _Tile(
@@ -161,10 +171,124 @@ class ProfileScreen extends StatelessWidget {
                 icon: const Icon(Icons.logout),
                 label: Text(l.profileSignOut),
               ),
+              const SizedBox(height: 12),
+              const _DeleteAccountButton(),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// In-app "Delete account" (Google Play / Apple store compliance). Opens a
+/// typed-confirm dialog spelling out the consequences; on confirm calls
+/// `DELETE /me` via [AuthCubit], then the router's auth guard drops to login.
+/// A server guard (e.g. an in-progress consultation) surfaces as a snackbar
+/// and the user stays signed in.
+class _DeleteAccountButton extends StatelessWidget {
+  const _DeleteAccountButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return TextButton.icon(
+      style: TextButton.styleFrom(
+        foregroundColor: AppColors.danger,
+        minimumSize: const Size.fromHeight(44),
+      ),
+      onPressed: () => _confirmDelete(context),
+      icon: const Icon(Icons.delete_forever_outlined, size: 20),
+      label: Text(l.profileDeleteAccount),
+    );
+  }
+
+  Future<void> _confirmDelete(BuildContext context) async {
+    final l = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final authCubit = context.read<AuthCubit>();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => const _DeleteAccountDialog(),
+    );
+    if (confirmed != true) return;
+    try {
+      googleSignOut();
+      await authCubit.deleteAccount();
+      messenger.showSnackBar(SnackBar(content: Text(l.deleteAccountSuccess)));
+    } on ApiException catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(e.message)));
+    } catch (_) {
+      messenger.showSnackBar(SnackBar(content: Text(l.commonErrorGeneric)));
+    }
+  }
+}
+
+/// Typed-confirm dialog: the delete button stays disabled until the user types
+/// the exact confirmation word (locale-independent "DELETE").
+class _DeleteAccountDialog extends StatefulWidget {
+  const _DeleteAccountDialog();
+
+  @override
+  State<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
+  static const _token = 'DELETE';
+  final _controller = TextEditingController();
+  bool _match = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() {
+      final match = _controller.text.trim().toUpperCase() == _token;
+      if (match != _match) setState(() => _match = match);
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return AlertDialog(
+      backgroundColor: AppColors.indigoDeep,
+      title: Text(l.deleteAccountTitle, style: AppTextStyles.heading(size: 18)),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l.deleteAccountWarning, style: AppTextStyles.body(size: 14)),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _controller,
+            autocorrect: false,
+            enableSuggestions: false,
+            textCapitalization: TextCapitalization.characters,
+            style: AppTextStyles.body(size: 14),
+            decoration: InputDecoration(
+              hintText: _token,
+              labelText: l.deleteAccountTypeHint,
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: Text(l.commonCancel),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+          onPressed: _match ? () => Navigator.pop(context, true) : null,
+          child: Text(l.deleteAccountConfirm),
+        ),
+      ],
     );
   }
 }

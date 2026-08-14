@@ -8,6 +8,7 @@ from app.models.admin_content import (  # noqa: F401
     CosmicService,
     Coupon,
     DiscountType,
+    FAQ,
     PromoVideo,
     RazorpaySetting,
 )
@@ -18,6 +19,7 @@ from app.models.kyc import AstrologerKYC  # noqa: F401
 from app.models.consultation import Consultation, ConsultationStatus, ConsultationType  # noqa: F401,E501
 from app.models.device_token import DeviceToken  # noqa: F401
 from app.models.follow import AstrologerFollow  # noqa: F401
+from app.models.invoice import Invoice  # noqa: F401
 from app.models.kundli import KundliReport  # noqa: F401
 from app.models.live_engagement import (  # noqa: F401
     EngagementKind,
@@ -25,11 +27,20 @@ from app.models.live_engagement import (  # noqa: F401
     LiveGift,
 )
 from app.models.message import ConsultationMessage  # noqa: F401
+from app.models.notification import (  # noqa: F401
+    Notification,
+    NotificationBroadcast,
+)
 from app.models.otp import OtpCode  # noqa: F401
 from app.models.payout import AstrologerPayout, PayoutStatus  # noqa: F401
 from app.models.profile_edit import (  # noqa: F401
     AstrologerProfileEdit,
     ProfileEditStatus,
+)
+from app.models.schema_sync import SchemaSyncLog  # noqa: F401
+from app.models.support import (  # noqa: F401
+    SupportTicket,
+    SupportTicketMessage,
 )
 from app.models.user import User  # noqa: F401
 from app.models.wallet import (  # noqa: F401
@@ -46,6 +57,7 @@ __all__ = [
     "CosmicService",
     "Coupon",
     "DiscountType",
+    "FAQ",
     "PromoVideo",
     "RazorpaySetting",
     "Astrologer",
@@ -58,6 +70,9 @@ __all__ = [
     "DeviceToken",
     "AstrologerFollow",
     "ConsultationMessage",
+    "Notification",
+    "NotificationBroadcast",
+    "Invoice",
     "KundliReport",
     "LiveBroadcast",
     "EngagementKind",
@@ -68,6 +83,9 @@ __all__ = [
     "PayoutStatus",
     "AstrologerProfileEdit",
     "ProfileEditStatus",
+    "SchemaSyncLog",
+    "SupportTicket",
+    "SupportTicketMessage",
     "User",
     "TransactionStatus",
     "TransactionType",

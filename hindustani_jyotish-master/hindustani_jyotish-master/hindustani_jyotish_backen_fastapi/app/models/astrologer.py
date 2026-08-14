@@ -146,6 +146,20 @@ class Astrologer(UUIDPKMixin, TimestampMixin, Base):
         Numeric(12, 2), default=Decimal("0.00"), nullable=False
     )
 
+    # Account-deletion (DPDP right-to-erasure / store-compliance). Mirrors the
+    # User columns: is_active=False + deleted_at set means the account is
+    # soft-deleted (anonymised, revoked, hidden from discovery, cannot log in).
+    # See app/services/account_deletion.py. is_active carries a server_default
+    # so pre-migration astrologer rows read as active.
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, default=True, server_default="1", nullable=False
+    )
+    deleted_at: Mapped["datetime | None"] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    # "self" (in-app delete) | "admin" (force-delete). NULL for live accounts.
+    deleted_reason: Mapped[str | None] = mapped_column(String(255), nullable=True)
+
     @property
     def profile_completed(self) -> bool:
         """True once the basic (non-financial) profile step is done.

@@ -415,6 +415,31 @@ class AppLocalizationsHi extends AppLocalizations {
   String get profilePaymentHistory => 'भुगतान इतिहास';
 
   @override
+  String get profileInvoices => 'जीएसटी चालान';
+
+  @override
+  String get invoicesTitle => 'जीएसटी चालान';
+
+  @override
+  String get invoicesEmpty =>
+      'अभी तक कोई चालान नहीं। भुगतान किए गए परामर्श यहाँ दिखेंगे।';
+
+  @override
+  String get invoicesDownload => 'डाउनलोड';
+
+  @override
+  String get invoicesDownloading => 'डाउनलोड हो रहा है…';
+
+  @override
+  String get invoicesDownloadFailed => 'चालान डाउनलोड नहीं हो सका।';
+
+  @override
+  String get invoicesTotal => 'कुल';
+
+  @override
+  String get invoicesTax => 'जीएसटी';
+
+  @override
   String get profileBecomeAstrologer => 'ज्योतिषी बनें';
 
   @override
@@ -565,6 +590,9 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get insightDetailedKundli => 'विस्तृत कुंडली';
+
+  @override
+  String get insightFree => 'मुफ़्त';
 
   @override
   String get insightPlanetPosition => 'ग्रह स्थिति';
@@ -731,4 +759,301 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get liveReconnectingVideo => 'वीडियो से पुनः कनेक्ट हो रहा है…';
+
+  @override
+  String get kunFullAnalysis => 'संपूर्ण जन्म कुंडली';
+
+  @override
+  String get kunOpenFullAnalysis => 'पूर्ण विश्लेषण खोलें';
+
+  @override
+  String get kunRetry => 'पुनः प्रयास करें';
+
+  @override
+  String get kunNoData => 'कोई डेटा उपलब्ध नहीं';
+
+  @override
+  String get kunChecked => 'जाँचे गए';
+
+  @override
+  String get kunFactors => 'क्यों बनता है';
+
+  @override
+  String get kunCancellation => 'निवारण';
+
+  @override
+  String get kunSummary => 'सारांश';
+
+  @override
+  String get kunPlanets => 'ग्रह';
+
+  @override
+  String get kunKundli => 'कुंडली';
+
+  @override
+  String get kunDivisions => 'वर्ग';
+
+  @override
+  String get kunVimshottari => 'विंशोत्तरी';
+
+  @override
+  String get kunGochar => 'गोचर';
+
+  @override
+  String get kunDosh => 'दोष';
+
+  @override
+  String get kunYoga => 'योग';
+
+  @override
+  String get kunShadbala => 'षड्बल';
+
+  @override
+  String get kunAshtakavarga => 'अष्टकवर्ग';
+
+  @override
+  String get kunAspects => 'दृष्टि';
+
+  @override
+  String get kunBhava => 'भाव';
+
+  @override
+  String get dashaRunning => 'चालू';
+
+  @override
+  String dashaBirthBalance(Object lord, Object years) {
+    return 'जन्म स्वामी: $lord · शेष: $years वर्ष';
+  }
+
+  @override
+  String dashaAntardashasOf(Object planet) {
+    return '$planet महादशा → अंतर्दशाएँ';
+  }
+
+  @override
+  String dashaPratyantardashasOf(Object planet) {
+    return '$planet अंतर्दशा → प्रत्यंतर्दशाएँ';
+  }
+
+  @override
+  String dashaSookshmaOf(Object planet) {
+    return '$planet प्रत्यंतर्दशा → सूक्ष्मदशाएँ';
+  }
+
+  @override
+  String dashaSubperiodsOf(Object planet) {
+    return '$planet उप-अवधियाँ';
+  }
+
+  @override
+  String get divChartsSubtitle =>
+      'किसी भी वर्ग कुंडली को बड़ा करने के लिए टैप करें।';
+
+  @override
+  String get summaryLagna => 'लग्न';
+
+  @override
+  String get summaryMoon => 'चंद्र राशि';
+
+  @override
+  String get summarySun => 'सूर्य राशि';
+
+  @override
+  String get summaryActiveDoshas => 'सक्रिय दोष';
+
+  @override
+  String get summaryActiveYogas => 'सक्रिय योग';
+
+  @override
+  String get gocharBest => 'सर्वोत्तम राशि';
+
+  @override
+  String get gocharWorst => 'सबसे कमज़ोर राशि';
+
+  @override
+  String get doshActive => 'सक्रिय दोष';
+
+  @override
+  String get yogaActive => 'सक्रिय योग';
+
+  @override
+  String get doshNone => 'कोई सक्रिय दोष नहीं — स्पष्ट कुंडली।';
+
+  @override
+  String get yogaNone => 'कोई प्रमुख योग नहीं मिला।';
+
+  @override
+  String get colStrength => 'बल';
+
+  @override
+  String get shadbalaRanking => 'ग्रह बल क्रम';
+
+  @override
+  String get shadbalaRupas => 'रूप';
+
+  @override
+  String get avSavTitle => 'सर्वाष्टकवर्ग (SAV)';
+
+  @override
+  String avSavTotal(Object total) {
+    return 'कुल: $total';
+  }
+
+  @override
+  String get avBavTitle => 'भिन्नाष्टकवर्ग (BAV)';
+
+  @override
+  String get aspectsGraha => 'ग्रह दृष्टि';
+
+  @override
+  String get aspectsRashi => 'राशि दृष्टि';
+
+  @override
+  String bhavaHouse(Object n) {
+    return 'भाव $n';
+  }
+
+  @override
+  String get bhavaLord => 'स्वामी';
+
+  @override
+  String get profileDeleteAccount => 'खाता हटाएँ';
+
+  @override
+  String get deleteAccountTitle => 'खाता हटाएँ?';
+
+  @override
+  String get deleteAccountWarning =>
+      'इससे आपका खाता स्थायी रूप से हट जाएगा। आपकी प्रोफ़ाइल, जन्म विवरण और सहेजा गया डेटा हटा दिया जाएगा, सभी सत्र समाप्त हो जाएँगे, और इसे पूर्ववत नहीं किया जा सकता।';
+
+  @override
+  String get deleteAccountTypeHint => 'पुष्टि के लिए DELETE टाइप करें';
+
+  @override
+  String get deleteAccountConfirm => 'खाता हटाएँ';
+
+  @override
+  String get deleteAccountSuccess => 'आपका खाता हटा दिया गया है।';
+
+  @override
+  String get specialReportsTitle => 'विशेष रिपोर्ट';
+
+  @override
+  String get specialReportsSubtitle =>
+      'महत्वपूर्ण क्षणों के लिए गहन विशेषज्ञ विश्लेषण।';
+
+  @override
+  String get specialReportsCard => 'विशेष रिपोर्ट';
+
+  @override
+  String get specialReportsCardSubtitle =>
+      'करियर, विवाह, धन, स्वास्थ्य और अधिक';
+
+  @override
+  String get specialReportsEmpty => 'अभी कोई विशेष रिपोर्ट उपलब्ध नहीं है।';
+
+  @override
+  String get reportCareer => 'करियर रिपोर्ट';
+
+  @override
+  String get reportBusiness => 'व्यापार रिपोर्ट';
+
+  @override
+  String get reportEducation => 'शिक्षा रिपोर्ट';
+
+  @override
+  String get reportWealth => 'धन रिपोर्ट';
+
+  @override
+  String get reportDebtRecovery => 'ऋण वसूली रिपोर्ट';
+
+  @override
+  String get reportLove => 'प्रेम रिपोर्ट';
+
+  @override
+  String get reportMarriage => 'विवाह रिपोर्ट';
+
+  @override
+  String get reportHealth => 'स्वास्थ्य रिपोर्ट';
+
+  @override
+  String get reportMentalStress => 'मानसिक तनाव रिपोर्ट';
+
+  @override
+  String get reportProperty => 'संपत्ति रिपोर्ट';
+
+  @override
+  String get reportLegal => 'कानूनी रिपोर्ट';
+
+  @override
+  String get reportLifePath => 'जीवन पथ रिपोर्ट';
+
+  @override
+  String get reportCharacter => 'चरित्र रिपोर्ट';
+
+  @override
+  String get reportPastLife => 'पूर्वजन्म रिपोर्ट';
+
+  @override
+  String get notificationsTitle => 'सूचनाएँ';
+
+  @override
+  String get notificationsEmpty => 'आपके पास अभी कोई सूचना नहीं है।';
+
+  @override
+  String get notificationsMarkAllRead => 'सभी को पढ़ा हुआ चिह्नित करें';
+
+  @override
+  String get supportTitle => 'सहायता एवं समर्थन';
+
+  @override
+  String get supportFaqTab => 'सामान्य प्रश्न';
+
+  @override
+  String get supportTicketsTab => 'मेरे टिकट';
+
+  @override
+  String get supportFaqEmpty => 'अभी कोई सहायता लेख उपलब्ध नहीं है।';
+
+  @override
+  String get supportTicketsEmpty => 'आपके पास अभी कोई सहायता टिकट नहीं है।';
+
+  @override
+  String get supportRaiseTicket => 'टिकट बनाएँ';
+
+  @override
+  String get supportSubject => 'विषय';
+
+  @override
+  String get supportMessage => 'अपनी समस्या बताएँ';
+
+  @override
+  String get supportSubmit => 'भेजें';
+
+  @override
+  String get supportFillFields => 'कृपया विषय और संदेश भरें।';
+
+  @override
+  String get supportTicket => 'टिकट';
+
+  @override
+  String get supportReplyHint => 'उत्तर लिखें…';
+
+  @override
+  String get supportReopenHint => 'इस टिकट को फिर से खोलने के लिए उत्तर दें…';
+
+  @override
+  String get supportSenderYou => 'आप';
+
+  @override
+  String get supportSenderSupport => 'सहायता';
+
+  @override
+  String get supportStatusOpen => 'खुला';
+
+  @override
+  String get supportStatusPending => 'आपकी प्रतिक्रिया अपेक्षित';
+
+  @override
+  String get supportStatusClosed => 'बंद';
 }

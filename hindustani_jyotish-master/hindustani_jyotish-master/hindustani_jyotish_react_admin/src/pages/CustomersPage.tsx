@@ -34,6 +34,9 @@ export default function CustomersPage(){
   const [remove,setRemove]=useState<Customer|null>(null)
   const [removing,setRemoving]=useState(false)
   const [removeError,setRemoveError]=useState<string|null>(null)
+  const [softRemove,setSoftRemove]=useState<Customer|null>(null)
+  const [softRemoving,setSoftRemoving]=useState(false)
+  const [softRemoveError,setSoftRemoveError]=useState<string|null>(null)
   const [busyId,setBusyId]=useState<string|null>(null)
   const [actionError,setActionError]=useState<string|null>(null)
 
@@ -49,6 +52,13 @@ export default function CustomersPage(){
     try{ await adminApi.deleteCustomer(remove.id); setRemove(null); paged.reload() }
     catch(e){ setRemoveError((e as Error).message) }
     finally{ setRemoving(false) }
+  }
+  async function confirmSoftDelete(){
+    if(!softRemove) return
+    setSoftRemoving(true); setSoftRemoveError(null)
+    try{ await adminApi.forceDeleteCustomer(softRemove.id); setSoftRemove(null); paged.reload() }
+    catch(e){ setSoftRemoveError((e as Error).message) }
+    finally{ setSoftRemoving(false) }
   }
   async function toggleBlock(c:Customer){
     setBusyId(c.id); setActionError(null)
@@ -107,7 +117,8 @@ export default function CustomersPage(){
                           <button onClick={()=>setCredit(c)} className="grid h-8 w-8 place-items-center rounded-full bg-surface-raised border border-border-soft text-ivory-dim hover:text-amber-500 hover:border-amber-500/20 transition-colors" title="Credit wallet">₹</button>
                           <button onClick={()=>setEdit(c)} className="grid h-8 w-8 place-items-center rounded-full bg-surface-raised border border-border-soft text-ivory-dim hover:text-ivory transition-colors" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
                           <button disabled={busyId===c.id} onClick={()=>toggleBlock(c)} className={`grid h-8 w-8 place-items-center rounded-full border text-ivory-dim transition-colors ${c.is_active ? 'bg-amber-500/10 border-amber-500/20 hover:text-amber-400' : 'bg-emerald-500/10 border-emerald-500/20 hover:text-emerald-400'}`} title={c.is_active?'Block':'Unblock'}>{busyId===c.id?'…':c.is_active?'⊘':'✓'}</button>
-                          <button onClick={()=>setRemove(c)} className="grid h-8 w-8 place-items-center rounded-full bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-colors" title="Delete">✕</button>
+                          <button onClick={()=>setSoftRemove(c)} className="grid h-8 w-8 place-items-center rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 hover:bg-amber-500/20 transition-colors" title="Delete & anonymise (soft — restorable)">⌦</button>
+                          <button onClick={()=>setRemove(c)} className="grid h-8 w-8 place-items-center rounded-full bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-colors" title="Delete permanently (hard)">✕</button>
                         </div>
                       </td>
                     </tr>
@@ -146,6 +157,7 @@ export default function CustomersPage(){
 
       {credit && <CreditModal customer={credit} onClose={()=>setCredit(null)} onDone={()=>{setCredit(null); paged.reload()}} />}
       {edit && <EditModal customer={edit} onClose={()=>setEdit(null)} onDone={()=>{setEdit(null); paged.reload()}} />}
+      {softRemove && <ConfirmDialog title="Delete & anonymise customer" message="Soft-delete: scrubs the customer's personal data, revokes their sessions and signs them out. The financial ledger is kept. Restorable from Deleted Accounts within 30 days. Continue?" confirmLabel="Delete & anonymise" busy={softRemoving} error={softRemoveError} onConfirm={confirmSoftDelete} onClose={()=>{setSoftRemove(null); setSoftRemoveError(null)}} />}
       {remove && <ConfirmDialog title="Delete customer" message="This permanently deletes the customer and all their data. Continue?" confirmLabel="Delete customer" busy={removing} error={removeError} onConfirm={confirmDelete} onClose={()=>{setRemove(null); setRemoveError(null)}} />}
     </div>
   )

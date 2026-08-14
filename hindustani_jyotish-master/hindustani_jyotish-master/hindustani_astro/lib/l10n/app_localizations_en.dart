@@ -157,6 +157,90 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileEditCharges => 'Edit profile & charges';
 
   @override
+  String get profileAccountSection => 'Account';
+
+  @override
+  String get profileEditProfile => 'Edit Profile';
+
+  @override
+  String get profileEditProfileSub =>
+      'Name, bio, skills, languages, rates & photo';
+
+  @override
+  String get profileBankPan => 'Bank & PAN details';
+
+  @override
+  String get profileBankPanSub => 'Payout method, bank account & PAN';
+
+  @override
+  String get editProfileTitle => 'Edit Profile';
+
+  @override
+  String get editProfileSubtitle =>
+      'Update how seekers see you and what you charge.';
+
+  @override
+  String get bankPanTitle => 'Bank & PAN details';
+
+  @override
+  String get bankPanIntro =>
+      'Your payout and identity details, used for withdrawals and verification.';
+
+  @override
+  String get bankPanPayoutSection => 'Payout method';
+
+  @override
+  String get bankPanIdentitySection => 'Identity';
+
+  @override
+  String get bankPanDocsSection => 'Documents';
+
+  @override
+  String get bankPanBankName => 'Bank name';
+
+  @override
+  String get bankPanIfsc => 'IFSC code';
+
+  @override
+  String get bankPanAccountHolder => 'Account holder';
+
+  @override
+  String get bankPanAccountNumber => 'Account number';
+
+  @override
+  String get bankPanUpiId => 'UPI ID';
+
+  @override
+  String get bankPanPan => 'PAN number';
+
+  @override
+  String get bankPanAadhaar => 'Aadhaar number';
+
+  @override
+  String bankPanMasked(String last4) {
+    return '•••• $last4';
+  }
+
+  @override
+  String get bankPanNotSet => 'Not set';
+
+  @override
+  String get bankPanEditCta => 'Edit bank & PAN details';
+
+  @override
+  String get bankPanAddCta => 'Add bank & PAN details';
+
+  @override
+  String get bankPanApprovalNote =>
+      'Changes to bank or PAN details are submitted for admin approval and apply once approved.';
+
+  @override
+  String get bankPanEmpty => 'You haven\'t added your bank & PAN details yet.';
+
+  @override
+  String get bankPanLoadFailed => 'Could not load your bank & PAN details.';
+
+  @override
   String get setTitle => 'Settings';
 
   @override
@@ -592,4 +676,119 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get liveAnsweringNow => 'Answering now — ';
+
+  @override
+  String get commonErrorGeneric => 'Something went wrong. Please try again.';
+
+  @override
+  String get profileDeleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountTitle => 'Delete account?';
+
+  @override
+  String get deleteAccountWarning =>
+      'This permanently deletes your astrologer account. Your profile and KYC are removed, you are taken offline and hidden from discovery, all your sessions end, and this cannot be undone. Withdraw any balance and finish open consultations first.';
+
+  @override
+  String get deleteAccountTypeHint => 'Type DELETE to confirm';
+
+  @override
+  String get deleteAccountConfirm => 'Delete account';
+
+  @override
+  String get deleteAccountSuccess => 'Your account has been deleted.';
+
+  @override
+  String get earningsAddPanTitle => 'Add your PAN to withdraw';
+
+  @override
+  String get earningsAddPanBody =>
+      'TDS is deducted against your PAN on every payout. Add a valid PAN in your bank & PAN details before you can withdraw.';
+
+  @override
+  String get earningsAddPanAction => 'Add PAN';
+
+  @override
+  String earningsTdsNote(String rate) {
+    return '$rate% TDS is deducted against your PAN on each payout.';
+  }
+
+  @override
+  String get earningsRecentPayouts => 'Recent withdrawals';
+
+  @override
+  String get earningsPayoutTds => 'TDS';
+
+  @override
+  String get earningsPayoutNet => 'Net paid';
+
+  @override
+  String get earningsPayoutGross => 'Gross';
+
+  @override
+  String get earningsNoPayouts => 'No withdrawals yet.';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsEmpty => 'You have no notifications yet.';
+
+  @override
+  String get notificationsMarkAllRead => 'Mark all read';
+
+  @override
+  String get supportTitle => 'Help & Support';
+
+  @override
+  String get supportFaqTab => 'FAQ';
+
+  @override
+  String get supportTicketsTab => 'My tickets';
+
+  @override
+  String get supportFaqEmpty => 'No help articles are available yet.';
+
+  @override
+  String get supportTicketsEmpty => 'You have no support tickets yet.';
+
+  @override
+  String get supportRaiseTicket => 'Raise a ticket';
+
+  @override
+  String get supportSubject => 'Subject';
+
+  @override
+  String get supportMessage => 'Describe your issue';
+
+  @override
+  String get supportSubmit => 'Submit';
+
+  @override
+  String get supportFillFields => 'Please add a subject and a message.';
+
+  @override
+  String get supportTicket => 'Ticket';
+
+  @override
+  String get supportReplyHint => 'Type a reply…';
+
+  @override
+  String get supportReopenHint => 'Reply to reopen this ticket…';
+
+  @override
+  String get supportSenderYou => 'You';
+
+  @override
+  String get supportSenderSupport => 'Support';
+
+  @override
+  String get supportStatusOpen => 'Open';
+
+  @override
+  String get supportStatusPending => 'Awaiting you';
+
+  @override
+  String get supportStatusClosed => 'Closed';
 }

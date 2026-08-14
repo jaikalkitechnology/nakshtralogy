@@ -6,11 +6,11 @@ endpoint here is admin-only via the CurrentAdmin dependency.
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Literal
 
-from fastapi import APIRouter, File, Form, HTTPException, Query, UploadFile, status
-from sqlalchemy import func, select
+from fastapi import APIRouter, File, Form, HTTPException, Query, Response, UploadFile, status
+from sqlalchemy import func, or_, select
 
 from app.core.deps import CurrentAdmin, DBSession
 from app.core.media import normalize_media_url
@@ -21,6 +21,7 @@ from app.models.admin_content import (
     Banner,
     CosmicService,
     Coupon,
+    FAQ,
     PromoVideo,
     RazorpaySetting,
 )
@@ -30,6 +31,12 @@ from app.models.kyc import AstrologerKYC
 from app.models.live_engagement import LiveGift
 from app.models.payout import AstrologerPayout, PayoutStatus
 from app.models.profile_edit import AstrologerProfileEdit, ProfileEditStatus
+from app.models.support import (
+    STATUS_CLOSED,
+    STATUS_PENDING,
+    SupportTicket,
+    SupportTicketMessage,
+)
 from app.models.user import User
 from app.models.wallet import TransactionType, WalletTransaction
 from app.schemas.admin_console import (
@@ -49,6 +56,7 @@ from app.schemas.admin_console import (
     LiveGiftIn,
     LiveGiftUpdate,
     NotificationBody,
+    NotificationBroadcastIn,
     NotificationSendIn,
     PayoutReferenceIn,
     PayoutRejectIn,
@@ -56,6 +64,7 @@ from app.schemas.admin_console import (
     RazorpaySettingIn,
     ReviewUpdateIn,
     SettingIn,
+    TDSSettingsIn,
     ToggleIn,
     TransactionRefundIn,
     UploadOut,
@@ -63,7 +72,8 @@ from app.schemas.admin_console import (
     VideoUpdate,
     WalletCreditIn,
 )
-from app.services import consultation_service, live_engagement_service, portal_service, push_service, storage
+from app.schemas.support import FAQIn, FAQReorderIn, FAQUpdate, TicketReply
+from app.services import account_deletion, consultation_service, live_engagement_service, portal_service, push_service, storage
 from app.services.astro import pricing
 from app.schemas.astrologer import AstrologerOut
 from app.models.wallet import TransactionType as _TxnType
@@ -348,6 +358,123 @@ async def delete_customer(user_id: uuid.UUID, admin: CurrentAdmin, db: DBSession
     await db.flush()
 
 
+# ── Account deletion management (soft-delete + restore) ────────────────
+def _deleted_user_row(u: User) -> dict:
+    return {
+        "type": "user", "id": str(u.id), "name": u.name,
+        "mobile": u.mobile, "email": u.email,
+        "deleted_at": u.deleted_at.isoformat() if u.deleted_at else None,
+        "deleted_reason": u.deleted_reason,
+        "restore_deadline": (
+            (u.deleted_at + timedelta(days=account_deletion.RESTORE_WINDOW_DAYS)).isoformat()
+            if u.deleted_at else None
+        ),
+    }
+
+
+def _deleted_astro_row(a: Astrologer) -> dict:
+    return {
+        "type": "astrologer", "id": str(a.id), "name": a.display_name,
+        "mobile": a.mobile, "email": a.email,
+        "deleted_at": a.deleted_at.isoformat() if a.deleted_at else None,
+        "deleted_reason": a.deleted_reason,
+        "restore_deadline": (
+            (a.deleted_at + timedelta(days=account_deletion.RESTORE_WINDOW_DAYS)).isoformat()
+            if a.deleted_at else None
+        ),
+    }
+
+
+@router.get("/deleted-accounts")
+async def deleted_accounts(
+    admin: CurrentAdmin, db: DBSession,
+    type: Literal["all", "user", "astrologer"] = Query(default="all"),
+    page: int = Page, size: int = Size,
+):
+    """Soft-deleted accounts (anonymised shells) with reason + date, plus the
+    restore deadline. Filter by ``type`` (user/astrologer/all)."""
+    out: list[dict] = []
+    if type in ("all", "user"):
+        rows = await db.scalars(
+            _paginate(
+                select(User).where(User.deleted_at.is_not(None))
+                .order_by(User.deleted_at.desc()),
+                page, size,
+            )
+        )
+        out.extend(_deleted_user_row(u) for u in rows)
+    if type in ("all", "astrologer"):
+        rows = await db.scalars(
+            _paginate(
+                select(Astrologer).where(Astrologer.deleted_at.is_not(None))
+                .order_by(Astrologer.deleted_at.desc()),
+                page, size,
+            )
+        )
+        out.extend(_deleted_astro_row(a) for a in rows)
+    out.sort(key=lambda r: r["deleted_at"] or "", reverse=True)
+    return out
+
+
+@router.post("/customers/{user_id}/force-delete")
+async def force_delete_customer(user_id: uuid.UUID, admin: CurrentAdmin, db: DBSession):
+    """Admin soft-delete (anonymise) a customer — bypasses the self-delete guards."""
+    user = await db.get(User, user_id)
+    if user is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Customer not found")
+    await account_deletion.soft_delete_user(db, user, reason="admin")
+    return _deleted_user_row(user)
+
+
+@router.post("/customers/{user_id}/restore")
+async def restore_customer(user_id: uuid.UUID, admin: CurrentAdmin, db: DBSession):
+    """Reactivate a soft-deleted customer shell (within the restore window).
+
+    Anonymised PII is not recovered — the customer re-completes their profile.
+    """
+    user = await db.get(User, user_id)
+    if user is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Customer not found")
+    if user.deleted_at is None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "Account is not deleted")
+    if not await account_deletion.restore_user(db, user):
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            f"Restore window ({account_deletion.RESTORE_WINDOW_DAYS} days) has passed",
+        )
+    return _customer_row(user)
+
+
+@router.post("/astrologers/{astrologer_id}/force-delete")
+async def force_delete_astrologer(astrologer_id: uuid.UUID, admin: CurrentAdmin, db: DBSession):
+    """Admin soft-delete (anonymise + unpublish) an astrologer — bypasses guards."""
+    astro = await db.get(Astrologer, astrologer_id)
+    if astro is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Astrologer not found")
+    await account_deletion.soft_delete_astrologer(db, astro, reason="admin")
+    return _deleted_astro_row(astro)
+
+
+@router.post("/astrologers/{astrologer_id}/restore")
+async def restore_astrologer_account(astrologer_id: uuid.UUID, admin: CurrentAdmin, db: DBSession):
+    """Reactivate a soft-deleted astrologer shell (within the restore window).
+
+    Login is re-enabled but the astrologer stays KYC-rejected/offline until
+    re-verified; anonymised PII is not recovered.
+    """
+    astro = await db.get(Astrologer, astrologer_id)
+    if astro is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Astrologer not found")
+    if astro.deleted_at is None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "Account is not deleted")
+    if not await account_deletion.restore_astrologer(db, astro):
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            f"Restore window ({account_deletion.RESTORE_WINDOW_DAYS} days) has passed",
+        )
+    return _astro_row(astro)
+
+
 # ── Push notifications (admin: broadcast or target one user/astrologer) ─
 @router.post("/notifications/send")
 async def send_notification(body: NotificationSendIn, admin: CurrentAdmin, db: DBSession):
@@ -429,6 +556,103 @@ async def send_notification_to_astrologer(
     return {
         "target": "astrologer", "astrologer_id": str(astrologer_id),
         "sent": result.sent, "failed": result.failed, "skipped": result.skipped,
+    }
+
+
+@router.post("/notifications/broadcast")
+async def broadcast_notification(
+    body: NotificationBroadcastIn, admin: CurrentAdmin, db: DBSession
+):
+    """Fan out an in-app notification to a whole role + push to their devices.
+
+    role: 'user' → all customers, 'astrologer' → all astrologers, 'all' → both.
+    Writes one persisted inbox row per recipient (so it shows in their bell),
+    records the broadcast for the admin's "recently sent" list, then delivers a
+    push via push_service (skipped if Firebase isn't configured — the inbox
+    rows are still written).
+    """
+    from app.models.notification import (
+        ROLE_ASTROLOGER,
+        ROLE_USER,
+        Notification,
+        NotificationBroadcast,
+    )
+
+    role = body.role if body.role in ("user", "astrologer", "all") else "all"
+    data = body.data or None
+
+    recipients: list[tuple[str, uuid.UUID]] = []
+    if role in ("user", "all"):
+        uids = (
+            await db.scalars(select(User.id).where(User.is_active.is_(True)))
+        ).all()
+        recipients += [(ROLE_USER, uid) for uid in uids]
+    if role in ("astrologer", "all"):
+        aids = (
+            await db.scalars(
+                select(Astrologer.id).where(Astrologer.is_active.is_(True))
+            )
+        ).all()
+        recipients += [(ROLE_ASTROLOGER, aid) for aid in aids]
+
+    for rrole, rid in recipients:
+        db.add(
+            Notification(
+                recipient_role=rrole,
+                recipient_id=rid,
+                type="broadcast",
+                title=body.title,
+                body=body.body,
+                data=dict(data) if data else None,
+            )
+        )
+
+    record = NotificationBroadcast(
+        role=role, title=body.title, body=body.body, recipient_count=len(recipients)
+    )
+    db.add(record)
+    await db.commit()
+
+    # Push fan-out (best-effort; inbox rows above are already committed).
+    audience = {"user": "users", "astrologer": "astrologers", "all": "all"}[role]
+    result = await push_service.notify_audience(
+        db, audience, title=body.title, body=body.body, data=data or {}
+    )
+    return {
+        "role": role,
+        "recipients": len(recipients),
+        "sent": result.sent,
+        "failed": result.failed,
+        "skipped": result.skipped,
+    }
+
+
+@router.get("/notifications/broadcasts")
+async def list_broadcasts(
+    admin: CurrentAdmin, db: DBSession, limit: int = Query(20, ge=1, le=100)
+):
+    """Recently sent admin broadcasts (newest first)."""
+    from app.models.notification import NotificationBroadcast
+
+    rows = (
+        await db.scalars(
+            select(NotificationBroadcast)
+            .order_by(NotificationBroadcast.created_at.desc())
+            .limit(limit)
+        )
+    ).all()
+    return {
+        "items": [
+            {
+                "id": str(r.id),
+                "role": r.role,
+                "title": r.title,
+                "body": r.body,
+                "recipient_count": r.recipient_count,
+                "created_at": r.created_at.isoformat() if r.created_at else None,
+            }
+            for r in rows
+        ]
     }
 
 
@@ -1327,6 +1551,11 @@ def _payout_row(p: AstrologerPayout) -> dict:
         "id": str(p.id), "astrologer_id": str(p.astrologer_id), "amount": str(p.amount),
         "status": p.status.value, "bank_account_last4": p.bank_account_last4,
         "ifsc": p.ifsc, "razorpay_payout_id": p.razorpay_payout_id,
+        # TDS (Phase I): amount is GROSS; net_paid is what reaches the bank.
+        "tds_rate": str(p.tds_rate or 0),
+        "tds_amount": str(p.tds_amount or 0),
+        "net_paid": str(p.net_paid) if p.net_paid is not None else str(p.amount),
+        "tds_pan": p.tds_pan,
         "paid_at": p.paid_at.isoformat() if p.paid_at else None,
         "created_at": p.created_at.isoformat(),
     }
@@ -1733,6 +1962,221 @@ def _banner_row(b: Banner) -> dict:
         "id": str(b.id), "title": b.title, "image_url": b.image_url,
         "link_url": b.link_url, "position": b.position, "is_active": b.is_active,
     }
+
+
+# ── FAQ (admin CRUD, per app, en/hi) ─────────────────────────────────
+def _faq_row(f: FAQ) -> dict:
+    return {
+        "id": str(f.id),
+        "app": f.app,
+        "category": f.category,
+        "question_en": f.question_en,
+        "answer_en": f.answer_en,
+        "question_hi": f.question_hi,
+        "answer_hi": f.answer_hi,
+        "sort_order": f.sort_order,
+        "is_active": f.is_active,
+    }
+
+
+@router.get("/faqs")
+async def list_faqs(admin: CurrentAdmin, db: DBSession, app: str | None = None):
+    """All FAQ (any status), optionally filtered by ``app`` (user/astro/both)."""
+    stmt = select(FAQ)
+    if app:
+        stmt = stmt.where(FAQ.app == app)
+    rows = await db.scalars(
+        stmt.order_by(FAQ.app.asc(), FAQ.sort_order.asc(), FAQ.created_at.asc())
+    )
+    return [_faq_row(f) for f in rows]
+
+
+@router.post("/faqs", status_code=201)
+async def create_faq(body: FAQIn, admin: CurrentAdmin, db: DBSession):
+    faq = FAQ(**body.model_dump())
+    db.add(faq)
+    await db.flush()
+    await db.refresh(faq)
+    return _faq_row(faq)
+
+
+@router.patch("/faqs/{faq_id}")
+async def update_faq(faq_id: uuid.UUID, body: FAQUpdate, admin: CurrentAdmin, db: DBSession):
+    faq = await db.get(FAQ, faq_id)
+    if faq is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "FAQ not found")
+    for field, value in body.model_dump(exclude_unset=True).items():
+        setattr(faq, field, value)
+    await db.flush()
+    await db.refresh(faq)
+    return _faq_row(faq)
+
+
+@router.post("/faqs/reorder")
+async def reorder_faqs(body: FAQReorderIn, admin: CurrentAdmin, db: DBSession):
+    """Bulk-set ``sort_order`` for a list of FAQ ids (drag-to-reorder)."""
+    updated = 0
+    for item in body.items:
+        try:
+            fid = uuid.UUID(item.id)
+        except ValueError:
+            continue
+        faq = await db.get(FAQ, fid)
+        if faq is not None:
+            faq.sort_order = item.sort_order
+            updated += 1
+    await db.flush()
+    return {"status": "ok", "updated": updated}
+
+
+@router.delete("/faqs/{faq_id}", status_code=204)
+async def delete_faq(faq_id: uuid.UUID, admin: CurrentAdmin, db: DBSession):
+    faq = await db.get(FAQ, faq_id)
+    if faq is not None:
+        await db.delete(faq)
+
+
+# ── Support tickets (admin helpdesk) ─────────────────────────────────
+def _ticket_msg_row(m: SupportTicketMessage) -> dict:
+    return {
+        "id": str(m.id),
+        "sender": m.sender,
+        "body": m.body,
+        "created_at": m.created_at.isoformat() if m.created_at else None,
+    }
+
+
+def _admin_ticket_row(t: SupportTicket, *, messages=None, requester_name=None) -> dict:
+    d = {
+        "id": str(t.id),
+        "subject": t.subject,
+        "status": t.status,
+        "requester_role": t.requester_role,
+        "requester_id": str(t.requester_id),
+        "requester_name": requester_name,
+        "created_at": t.created_at.isoformat() if t.created_at else None,
+        "updated_at": t.updated_at.isoformat() if t.updated_at else None,
+    }
+    if messages is not None:
+        d["messages"] = [_ticket_msg_row(m) for m in messages]
+    return d
+
+
+async def _requester_name(db: DBSession, t: SupportTicket) -> str | None:
+    if t.requester_role == "astrologer":
+        a = await db.get(Astrologer, t.requester_id)
+        return a.display_name if a else None
+    u = await db.get(User, t.requester_id)
+    return (u.name if u else None) or (u.mobile if u else None)
+
+
+@router.get("/support/tickets")
+async def admin_list_tickets(
+    admin: CurrentAdmin,
+    db: DBSession,
+    status_filter: str | None = Query(default=None, alias="status"),
+    role: str | None = None,
+    page: int = Page,
+    size: int = Size,
+):
+    """All tickets, newest-updated first. Filter by ``status`` and/or ``role``.
+    Also returns per-status counts for the tab badges."""
+    stmt = select(SupportTicket)
+    if status_filter:
+        stmt = stmt.where(SupportTicket.status == status_filter)
+    if role:
+        stmt = stmt.where(SupportTicket.requester_role == role)
+    total = await db.scalar(
+        select(func.count()).select_from(stmt.subquery())
+    )
+    counts = dict(
+        (
+            await db.execute(
+                select(SupportTicket.status, func.count(SupportTicket.id)).group_by(
+                    SupportTicket.status
+                )
+            )
+        ).all()
+    )
+    rows = (
+        await db.scalars(
+            stmt.order_by(SupportTicket.updated_at.desc())
+            .offset((page - 1) * size)
+            .limit(size)
+        )
+    ).all()
+    items = [
+        _admin_ticket_row(t, requester_name=await _requester_name(db, t)) for t in rows
+    ]
+    return {"items": items, "total": int(total or 0), "counts": counts,
+            "page": page, "size": size}
+
+
+@router.get("/support/tickets/{ticket_id}")
+async def admin_ticket_detail(ticket_id: uuid.UUID, admin: CurrentAdmin, db: DBSession):
+    t = await db.get(SupportTicket, ticket_id)
+    if t is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Ticket not found")
+    msgs = (
+        await db.scalars(
+            select(SupportTicketMessage)
+            .where(SupportTicketMessage.ticket_id == t.id)
+            .order_by(SupportTicketMessage.created_at.asc())
+        )
+    ).all()
+    return _admin_ticket_row(
+        t, messages=list(msgs), requester_name=await _requester_name(db, t)
+    )
+
+
+async def _notify_requester(db: DBSession, t: SupportTicket, title: str, body: str) -> None:
+    """Best-effort push to the ticket's requester (user or astrologer)."""
+    try:
+        data = {"type": "support", "ticket_id": str(t.id)}
+        if t.requester_role == "astrologer":
+            await push_service.notify_astrologer(
+                db, t.requester_id, title=title, body=body, data=data
+            )
+        else:
+            await push_service.notify_user(
+                db, t.requester_id, title=title, body=body, data=data
+            )
+    except Exception:  # noqa: BLE001 - notification is a side channel
+        pass
+
+
+@router.post("/support/tickets/{ticket_id}/reply")
+async def admin_reply_ticket(
+    ticket_id: uuid.UUID, body: TicketReply, admin: CurrentAdmin, db: DBSession
+):
+    """Admin replies on a ticket. Moves it to ``pending`` (awaiting requester)
+    and best-effort notifies the requester."""
+    t = await db.get(SupportTicket, ticket_id)
+    if t is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Ticket not found")
+    msg = SupportTicketMessage(ticket_id=t.id, sender="admin", body=body.body.strip())
+    db.add(msg)
+    if t.status != STATUS_CLOSED:
+        t.status = STATUS_PENDING
+    await _notify_requester(
+        db, t, "Support replied to your ticket", body.body.strip()[:140]
+    )
+    await db.commit()
+    await db.refresh(msg)
+    return _ticket_msg_row(msg)
+
+
+@router.post("/support/tickets/{ticket_id}/close")
+async def admin_close_ticket(ticket_id: uuid.UUID, admin: CurrentAdmin, db: DBSession):
+    t = await db.get(SupportTicket, ticket_id)
+    if t is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Ticket not found")
+    t.status = STATUS_CLOSED
+    await _notify_requester(
+        db, t, "Ticket closed", f'Your ticket "{t.subject}" has been closed.'
+    )
+    await db.commit()
+    return {"id": str(t.id), "status": t.status}
 
 
 # ── Promo / astrologer videos (CRUD) ──────────────────────────────────
@@ -2427,3 +2871,210 @@ async def overview(admin: CurrentAdmin, db: DBSession):
         ),
         "refunds_total": await total(WalletTransaction.type == TransactionType.refund),
     }
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  Phase H — GST invoices (list / filter / download / CSV) + GST config
+# ══════════════════════════════════════════════════════════════════════
+from app.models.invoice import Invoice  # noqa: E402
+from app.services import invoice_service  # noqa: E402
+
+
+def _invoice_admin_row(inv: Invoice, buyer: User | None = None) -> dict:
+    return {
+        "id": str(inv.id),
+        "invoice_number": inv.invoice_number,
+        "user_id": str(inv.user_id),
+        "buyer_name": inv.buyer_name or (buyer.name if buyer else None),
+        "source_type": inv.source_type,
+        "source_id": str(inv.source_id) if inv.source_id else None,
+        "seller_gstin": inv.seller_gstin,
+        "taxable_value": str(inv.taxable_value or 0),
+        "tax_rate": str(inv.tax_rate or 0),
+        "cgst_amount": str(inv.cgst_amount or 0),
+        "sgst_amount": str(inv.sgst_amount or 0),
+        "igst_amount": str(inv.igst_amount or 0),
+        "total_amount": str(inv.total_amount or 0),
+        "currency": inv.currency,
+        "created_at": inv.created_at.isoformat() if inv.created_at else None,
+    }
+
+
+def _invoice_filters(q: str | None, source_type: str | None):
+    conds = []
+    if source_type:
+        conds.append(Invoice.source_type == source_type)
+    if q:
+        like = f"%{q.strip()}%"
+        conds.append(
+            or_(
+                Invoice.invoice_number.ilike(like),
+                Invoice.buyer_name.ilike(like),
+                Invoice.seller_gstin.ilike(like),
+            )
+        )
+    return conds
+
+
+@router.get("/invoices")
+async def list_invoices(
+    admin: CurrentAdmin,
+    db: DBSession,
+    page: int = Page,
+    size: int = Size,
+    q: str | None = Query(None, description="Search invoice no / buyer / GSTIN"),
+    source_type: str | None = Query(None),
+):
+    conds = _invoice_filters(q, source_type)
+    base = select(Invoice)
+    if conds:
+        base = base.where(*conds)
+    total = await db.scalar(
+        select(func.count(Invoice.id)).where(*conds) if conds else select(func.count(Invoice.id))
+    )
+    rows = (
+        await db.scalars(
+            _paginate(base.order_by(Invoice.created_at.desc()), page, size)
+        )
+    ).all()
+    return {
+        "items": [_invoice_admin_row(r) for r in rows],
+        "total": int(total or 0),
+        "page": page,
+        "size": size,
+    }
+
+
+@router.get("/invoices.csv")
+async def export_invoices_csv(
+    admin: CurrentAdmin,
+    db: DBSession,
+    q: str | None = Query(None),
+    source_type: str | None = Query(None),
+):
+    import csv
+    import io as _io
+
+    conds = _invoice_filters(q, source_type)
+    stmt = select(Invoice)
+    if conds:
+        stmt = stmt.where(*conds)
+    rows = (await db.scalars(stmt.order_by(Invoice.created_at.asc()))).all()
+
+    buf = _io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow([
+        "invoice_number", "created_at", "buyer_name", "seller_gstin",
+        "source_type", "taxable_value", "tax_rate", "cgst", "sgst", "igst",
+        "total", "currency",
+    ])
+    for inv in rows:
+        writer.writerow([
+            inv.invoice_number,
+            inv.created_at.isoformat() if inv.created_at else "",
+            inv.buyer_name or "",
+            inv.seller_gstin or "",
+            inv.source_type or "",
+            inv.taxable_value or 0, inv.tax_rate or 0,
+            inv.cgst_amount or 0, inv.sgst_amount or 0, inv.igst_amount or 0,
+            inv.total_amount or 0, inv.currency or "INR",
+        ])
+    return Response(
+        content=buf.getvalue(),
+        media_type="text/csv",
+        headers={"Content-Disposition": 'attachment; filename="invoices.csv"'},
+    )
+
+
+@router.get("/invoices/{invoice_id}/download")
+async def admin_download_invoice(invoice_id: uuid.UUID, admin: CurrentAdmin, db: DBSession):
+    inv = await db.get(Invoice, invoice_id)
+    if inv is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Invoice not found")
+    data = storage.read_bytes(inv.pdf_key) if inv.pdf_key else None
+    if data is None:
+        data = invoice_service.render_pdf(inv)
+    fname = inv.invoice_number.replace("/", "-")
+    return Response(
+        content=data,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{fname}.pdf"'},
+    )
+
+
+@router.get("/settings/gst")
+async def get_gst_settings(admin: CurrentAdmin, db: DBSession):
+    return await invoice_service.get_gst_config(db)
+
+
+@router.put("/settings/gst")
+async def set_gst_settings(body: SettingIn, admin: CurrentAdmin, db: DBSession):
+    return await invoice_service.set_gst_config(db, body.value)
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  Phase I — TDS on payouts: settings (rate + PAN-required) + challan report
+# ══════════════════════════════════════════════════════════════════════
+from app.services import tds_service  # noqa: E402
+
+
+@router.get("/settings/tds")
+async def get_tds_settings(admin: CurrentAdmin, db: DBSession):
+    """TDS deduction config: `rate` (fraction, 0.10 = 10%), `pan_required`
+    (block payouts without a valid PAN), `no_pan_rate` (applied instead of a
+    block when pan_required is off)."""
+    return await tds_service.resolve_tds_config(db)
+
+
+@router.put("/settings/tds")
+async def set_tds_settings(body: TDSSettingsIn, admin: CurrentAdmin, db: DBSession):
+    return await tds_service.set_tds_config(db, body.model_dump())
+
+
+@router.get("/tds/report")
+async def tds_challan_report(
+    admin: CurrentAdmin,
+    db: DBSession,
+    period: str | None = Query(
+        None, description="Financial year '2025-26' or a quarter '2025-26-Q3'. Defaults to the current FY."
+    ),
+):
+    """TDS challan summary: per-astrologer (name + PAN + gross/tds/net + count)
+    plus grand totals, for the requested FY or quarter (settled payouts)."""
+    try:
+        return await tds_service.tds_report(db, period)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(exc)) from exc
+
+
+@router.get("/tds/report.csv")
+async def tds_challan_report_csv(
+    admin: CurrentAdmin,
+    db: DBSession,
+    period: str | None = Query(None),
+):
+    import csv
+    import io as _io
+
+    try:
+        report = await tds_service.tds_report(db, period)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(exc)) from exc
+
+    buf = _io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["astrologer_name", "pan", "gross", "tds", "net", "payouts"])
+    for row in report["items"]:
+        writer.writerow([
+            row["astrologer_name"] or "", row["pan"] or "",
+            row["gross"], row["tds"], row["net"], row["payouts"],
+        ])
+    t = report["totals"]
+    writer.writerow([])
+    writer.writerow(["TOTAL", "", t["gross"], t["tds"], t["net"], t["payouts"]])
+    fname = f"tds-{report['period']}.csv"
+    return Response(
+        content=buf.getvalue(),
+        media_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{fname}"'},
+    )

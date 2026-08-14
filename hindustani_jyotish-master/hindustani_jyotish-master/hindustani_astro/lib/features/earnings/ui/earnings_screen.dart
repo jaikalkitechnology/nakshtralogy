@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../shared/responsive.dart';
 import '../../portal/portal_repository.dart';
 
@@ -98,6 +100,12 @@ class _EarningsView extends StatelessWidget {
 
   Widget _content(BuildContext context, Map<String, dynamic> d) {
     final available = '${d['available_balance']}';
+    final l = AppLocalizations.of(context);
+    final panOnFile = d['pan_on_file'] != false; // default true if absent
+    final tdsRate = ((d['tds_rate'] as num?) ?? 0) * 100;
+    final tdsRateLabel = tdsRate % 1 == 0
+        ? tdsRate.toStringAsFixed(0)
+        : tdsRate.toStringAsFixed(1);
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       children: [
@@ -108,6 +116,10 @@ class _EarningsView extends StatelessWidget {
             children: [
         Text('Earnings', style: AppTextStyles.display(size: 24)),
         const SizedBox(height: 16),
+        if (!panOnFile) ...[
+          _panBanner(context, l),
+          const SizedBox(height: 16),
+        ],
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(24),
@@ -168,12 +180,69 @@ class _EarningsView extends StatelessWidget {
           icon: const Icon(Icons.account_balance_wallet_outlined),
           label: const Text('Withdraw'),
         ),
+        if (panOnFile && tdsRate > 0) ...[
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Icon(Icons.info_outline, size: 14, color: AppColors.ivoryFaint),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  l.earningsTdsNote(tdsRateLabel),
+                  style: AppTextStyles.label(size: 11, color: AppColors.ivoryFaint),
+                ),
+              ),
+            ],
+          ),
+        ],
+        const SizedBox(height: 24),
+        _PayoutsSection(l: l),
             ],
           ),
         ),
       ],
     );
   }
+
+  /// PAN-missing prompt — payouts are blocked without a valid PAN. Taps through
+  /// to the bank & PAN details screen (Phase E) where the PAN is entered.
+  Widget _panBanner(BuildContext context, AppLocalizations l) => InkWell(
+        onTap: () => context.push('/profile/bank-pan'),
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.danger.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: AppColors.danger.withValues(alpha: 0.4)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.badge_outlined, size: 20, color: AppColors.danger),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l.earningsAddPanTitle,
+                        style: AppTextStyles.body(size: 14, weight: FontWeight.w700)),
+                    const SizedBox(height: 4),
+                    Text(l.earningsAddPanBody,
+                        style: AppTextStyles.label(size: 12, color: AppColors.ivoryDim)),
+                    const SizedBox(height: 8),
+                    Text(l.earningsAddPanAction,
+                        style: AppTextStyles.body(
+                            size: 13,
+                            weight: FontWeight.w700,
+                            color: AppColors.saffron)),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: AppColors.ivoryFaint),
+            ],
+          ),
+        ),
+      );
 
   Widget _row(String label, String value, {IconData? icon}) => Container(
         margin: const EdgeInsets.only(bottom: 10),
@@ -207,6 +276,108 @@ class _EarningsView extends StatelessWidget {
           ],
         ),
       );
+}
+
+/// Recent withdrawals with the TDS deducted and net paid per payout, so the
+/// astrologer sees exactly what reached their bank. Loads `GET
+/// /astrologer/payouts` once; failures fall back silently (the section hides).
+class _PayoutsSection extends StatefulWidget {
+  const _PayoutsSection({required this.l});
+  final AppLocalizations l;
+
+  @override
+  State<_PayoutsSection> createState() => _PayoutsSectionState();
+}
+
+class _PayoutsSectionState extends State<_PayoutsSection> {
+  final Future<List<Map<String, dynamic>>> _future =
+      getIt<PortalRepository>().payouts();
+
+  String _money(dynamic v) {
+    final n = double.tryParse('${v ?? 0}') ?? 0;
+    return n.toStringAsFixed(2);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = widget.l;
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _future,
+      builder: (context, snap) {
+        if (snap.connectionState != ConnectionState.done) {
+          return const SizedBox.shrink();
+        }
+        final payouts = snap.data ?? const [];
+        if (payouts.isEmpty) return const SizedBox.shrink();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(l.earningsRecentPayouts,
+                style: AppTextStyles.heading(size: 16)),
+            const SizedBox(height: 12),
+            ...payouts.take(10).map((p) => _payoutTile(l, p)),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _payoutTile(AppLocalizations l, Map<String, dynamic> p) {
+    final gross = _money(p['amount']);
+    final tds = _money(p['tds_amount']);
+    final net = _money(p['net_paid'] ?? p['amount']);
+    final status = '${p['status'] ?? ''}';
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.surface1,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.borderSoft),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('${l.earningsPayoutGross}: ₹$gross',
+                  style: AppTextStyles.body(size: 14, weight: FontWeight.w700)),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppColors.copperLight.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(status,
+                    style: AppTextStyles.label(
+                        size: 10, color: AppColors.copperLight)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: Text('${l.earningsPayoutTds}: −₹$tds',
+                    style: AppTextStyles.label(
+                        size: 12, color: AppColors.danger)),
+              ),
+              Expanded(
+                child: Text('${l.earningsPayoutNet}: ₹$net',
+                    textAlign: TextAlign.right,
+                    style: AppTextStyles.body(
+                        size: 13,
+                        weight: FontWeight.w700,
+                        color: AppColors.success)),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 /// Amount entry for a withdrawal, headed by the astrologer's registered payout

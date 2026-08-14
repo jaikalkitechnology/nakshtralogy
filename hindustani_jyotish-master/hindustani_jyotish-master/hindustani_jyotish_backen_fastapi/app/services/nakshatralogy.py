@@ -37,6 +37,29 @@ KUNDLI_PLANETS = "/api/v2/kundli/planets"
 FORECAST = "/api/v2/forecast"
 KUNDLI_MILAN = "/api/v2/reports/kundli_milan"
 
+# Developer-API full-suite + granular section endpoints (Phase B2). The
+# full-suite call returns the entire engine payload in one request; the
+# granular ones back the parametrised section endpoints (levels / query_date).
+KUNDLI_ALL = "/api/v2/kundli/all"
+KUNDLI_DASHA_VIMSHOTTARI = "/api/v2/kundli/dasha/vimshottari"
+KUNDLI_DASHA_ACTIVATION = "/api/v2/kundli/dasha-activation"
+
+# Developer-API "Special Reports" surface (Phase J). Each key is a specialist
+# engine exposed at POST /api/v2/reports/<key> taking a single-chart birth body
+# ({"name","gender","dob","tob","place"}) and returning {"status","data",...}.
+# These are the 14 SINGLE-CHART report keys the gateway exposes (see the donor
+# app/routers/gateway_router.py SINGLE_CHART_REPORT_KEYS). The 5 combined
+# two-chart reports (kundli_milan, relationship, child_probability,
+# love_compatibility, karma_linkage) need a person1/person2 body — Kundli Milan
+# is already consumed by the existing love-compatibility flow (KUNDLI_MILAN
+# above); the remaining combined reports are intentionally NOT wired here as
+# single-chart specialist reports.
+REPORT_KEYS: tuple[str, ...] = (
+    "career", "business", "education", "wealth", "debt_recovery", "love",
+    "marriage", "health", "mental_stress", "property", "legal",
+    "life_path", "character", "past_life",
+)
+
 # Tests inject an httpx.MockTransport here; None → real network transport.
 _transport: httpx.AsyncBaseTransport | None = None
 
@@ -83,3 +106,51 @@ async def call(path: str, payload: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(body, dict) or body.get("status") != "success" or not isinstance(body.get("data"), dict):
         raise NakshatralogyError("astrology service returned an unexpected response")
     return body["data"]
+
+
+# ── Kundli developer-API convenience wrappers (Phase B2) ──────────────
+#
+# Thin helpers over `call()` — they add the Bearer auth + error handling
+# (`NakshatralogyError` on any failure) already provided by `call()`, and
+# just assemble the request body from birth details. Callers still gate on
+# `enabled()` before invoking these (empty key → local engine fallback).
+
+
+async def kundli_all(birth: dict[str, Any], dasha_levels: int = 2) -> dict[str, Any]:
+    """POST /api/v2/kundli/all — the full engine suite in one call.
+
+    `birth` = {"name","gender"(M/F/O),"dob"(DD/MM/YYYY),"tob"(HH:MM),"place"}.
+    Returns the provider's `data` dict (chart, vimshottari, moola_dasha, …).
+    """
+    return await call(KUNDLI_ALL, {**birth, "dasha_levels": dasha_levels})
+
+
+async def kundli_dasha_vimshottari(birth: dict[str, Any], levels: int = 2) -> dict[str, Any]:
+    """POST /api/v2/kundli/dasha/vimshottari — Vimshottari tree at `levels`."""
+    return await call(KUNDLI_DASHA_VIMSHOTTARI, {**birth, "levels": levels})
+
+
+async def kundli_dasha_activation(
+    birth: dict[str, Any], query_date: str | None = None
+) -> dict[str, Any]:
+    """POST /api/v2/kundli/dasha-activation — active yogas/doshas for a date."""
+    payload = dict(birth)
+    if query_date:
+        payload["query_date"] = query_date
+    return await call(KUNDLI_DASHA_ACTIVATION, payload)
+
+
+# ── Special Reports developer-API wrappers (Phase J) ──────────────────
+
+
+def report_path(report_type: str) -> str:
+    """Dev-API path for one single-chart specialist report."""
+    return f"/api/v2/reports/{report_type}"
+
+
+async def report(report_type: str, birth: dict[str, Any]) -> dict[str, Any]:
+    """POST /api/v2/reports/<report_type> — one specialist report for a single
+    birth chart. `birth` = {"name","gender","dob"(DD/MM/YYYY),"tob"(HH:MM),
+    "place"}. Returns the provider's `data` dict. Callers gate on `enabled()`.
+    """
+    return await call(report_path(report_type), birth)

@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
 
 from fastapi import APIRouter, File, HTTPException, UploadFile, status
 
@@ -11,7 +10,7 @@ from app.models.device_token import OWNER_USER
 from app.schemas.auth import SimpleMessage
 from app.schemas.device import DeviceRegister, DeviceRegistered
 from app.schemas.user import UserOut, UserUpdate
-from app.services import auth_service, push_service, storage
+from app.services import account_deletion, auth_service, push_service, storage
 
 router = APIRouter(tags=["users"])
 
@@ -86,11 +85,18 @@ async def unregister_device(body: DeviceRegister, user: CurrentUser, db: DBSessi
 
 @router.delete("/me", response_model=SimpleMessage)
 async def delete_me(user: CurrentUser, db: DBSession):
-    """Soft-delete (anonymise) the account per DPDP right-to-deletion."""
-    user.is_active = False
-    user.deleted_at = datetime.now(timezone.utc)
-    user.name = None
-    user.email = None
-    user.avatar_url = None
-    await db.flush()
-    return SimpleMessage(detail="Account scheduled for deletion.")
+    """Delete the account (DPDP right-to-erasure / store compliance).
+
+    Soft-delete + anonymise: PII is scrubbed, the account is deactivated, all
+    sessions are revoked and device tokens dropped. Refused while a
+    consultation is in progress. Once deleted the account can no longer log in;
+    signing in again with the same Google/mobile creates a fresh account (the
+    old identifiers were freed by anonymisation). The financial ledger is kept
+    (attributed to the anonymised shell) for accounting.
+    """
+    try:
+        await account_deletion.assert_user_deletable(db, user)
+    except account_deletion.DeletionBlocked as exc:
+        raise HTTPException(status.HTTP_409_CONFLICT, exc.reason)
+    await account_deletion.soft_delete_user(db, user, reason="self")
+    return SimpleMessage(detail="Your account has been deleted.")

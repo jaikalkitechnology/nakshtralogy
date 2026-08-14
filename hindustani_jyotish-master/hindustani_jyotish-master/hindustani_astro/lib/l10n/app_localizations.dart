@@ -380,6 +380,162 @@ abstract class AppLocalizations {
   /// **'Edit profile & charges'**
   String get profileEditCharges;
 
+  /// No description provided for @profileAccountSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get profileAccountSection;
+
+  /// No description provided for @profileEditProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get profileEditProfile;
+
+  /// No description provided for @profileEditProfileSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Name, bio, skills, languages, rates & photo'**
+  String get profileEditProfileSub;
+
+  /// No description provided for @profileBankPan.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank & PAN details'**
+  String get profileBankPan;
+
+  /// No description provided for @profileBankPanSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Payout method, bank account & PAN'**
+  String get profileBankPanSub;
+
+  /// No description provided for @editProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfileTitle;
+
+  /// No description provided for @editProfileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update how seekers see you and what you charge.'**
+  String get editProfileSubtitle;
+
+  /// No description provided for @bankPanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank & PAN details'**
+  String get bankPanTitle;
+
+  /// No description provided for @bankPanIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Your payout and identity details, used for withdrawals and verification.'**
+  String get bankPanIntro;
+
+  /// No description provided for @bankPanPayoutSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Payout method'**
+  String get bankPanPayoutSection;
+
+  /// No description provided for @bankPanIdentitySection.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity'**
+  String get bankPanIdentitySection;
+
+  /// No description provided for @bankPanDocsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get bankPanDocsSection;
+
+  /// No description provided for @bankPanBankName.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank name'**
+  String get bankPanBankName;
+
+  /// No description provided for @bankPanIfsc.
+  ///
+  /// In en, this message translates to:
+  /// **'IFSC code'**
+  String get bankPanIfsc;
+
+  /// No description provided for @bankPanAccountHolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Account holder'**
+  String get bankPanAccountHolder;
+
+  /// No description provided for @bankPanAccountNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Account number'**
+  String get bankPanAccountNumber;
+
+  /// No description provided for @bankPanUpiId.
+  ///
+  /// In en, this message translates to:
+  /// **'UPI ID'**
+  String get bankPanUpiId;
+
+  /// No description provided for @bankPanPan.
+  ///
+  /// In en, this message translates to:
+  /// **'PAN number'**
+  String get bankPanPan;
+
+  /// No description provided for @bankPanAadhaar.
+  ///
+  /// In en, this message translates to:
+  /// **'Aadhaar number'**
+  String get bankPanAadhaar;
+
+  /// No description provided for @bankPanMasked.
+  ///
+  /// In en, this message translates to:
+  /// **'•••• {last4}'**
+  String bankPanMasked(String last4);
+
+  /// No description provided for @bankPanNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get bankPanNotSet;
+
+  /// No description provided for @bankPanEditCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit bank & PAN details'**
+  String get bankPanEditCta;
+
+  /// No description provided for @bankPanAddCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Add bank & PAN details'**
+  String get bankPanAddCta;
+
+  /// No description provided for @bankPanApprovalNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes to bank or PAN details are submitted for admin approval and apply once approved.'**
+  String get bankPanApprovalNote;
+
+  /// No description provided for @bankPanEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t added your bank & PAN details yet.'**
+  String get bankPanEmpty;
+
+  /// No description provided for @bankPanLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your bank & PAN details.'**
+  String get bankPanLoadFailed;
+
   /// No description provided for @setTitle.
   ///
   /// In en, this message translates to:
@@ -1177,6 +1333,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Answering now — '**
   String get liveAnsweringNow;
+
+  /// No description provided for @commonErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get commonErrorGeneric;
+
+  /// No description provided for @profileDeleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get profileDeleteAccount;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account?'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This permanently deletes your astrologer account. Your profile and KYC are removed, you are taken offline and hidden from discovery, all your sessions end, and this cannot be undone. Withdraw any balance and finish open consultations first.'**
+  String get deleteAccountWarning;
+
+  /// No description provided for @deleteAccountTypeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type DELETE to confirm'**
+  String get deleteAccountTypeHint;
+
+  /// No description provided for @deleteAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccountConfirm;
+
+  /// No description provided for @deleteAccountSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been deleted.'**
+  String get deleteAccountSuccess;
+
+  /// No description provided for @earningsAddPanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your PAN to withdraw'**
+  String get earningsAddPanTitle;
+
+  /// No description provided for @earningsAddPanBody.
+  ///
+  /// In en, this message translates to:
+  /// **'TDS is deducted against your PAN on every payout. Add a valid PAN in your bank & PAN details before you can withdraw.'**
+  String get earningsAddPanBody;
+
+  /// No description provided for @earningsAddPanAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add PAN'**
+  String get earningsAddPanAction;
+
+  /// No description provided for @earningsTdsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'{rate}% TDS is deducted against your PAN on each payout.'**
+  String earningsTdsNote(String rate);
+
+  /// No description provided for @earningsRecentPayouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent withdrawals'**
+  String get earningsRecentPayouts;
+
+  /// No description provided for @earningsPayoutTds.
+  ///
+  /// In en, this message translates to:
+  /// **'TDS'**
+  String get earningsPayoutTds;
+
+  /// No description provided for @earningsPayoutNet.
+  ///
+  /// In en, this message translates to:
+  /// **'Net paid'**
+  String get earningsPayoutNet;
+
+  /// No description provided for @earningsPayoutGross.
+  ///
+  /// In en, this message translates to:
+  /// **'Gross'**
+  String get earningsPayoutGross;
+
+  /// No description provided for @earningsNoPayouts.
+  ///
+  /// In en, this message translates to:
+  /// **'No withdrawals yet.'**
+  String get earningsNoPayouts;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no notifications yet.'**
+  String get notificationsEmpty;
+
+  /// No description provided for @notificationsMarkAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all read'**
+  String get notificationsMarkAllRead;
+
+  /// No description provided for @supportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get supportTitle;
+
+  /// No description provided for @supportFaqTab.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ'**
+  String get supportFaqTab;
+
+  /// No description provided for @supportTicketsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'My tickets'**
+  String get supportTicketsTab;
+
+  /// No description provided for @supportFaqEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No help articles are available yet.'**
+  String get supportFaqEmpty;
+
+  /// No description provided for @supportTicketsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no support tickets yet.'**
+  String get supportTicketsEmpty;
+
+  /// No description provided for @supportRaiseTicket.
+  ///
+  /// In en, this message translates to:
+  /// **'Raise a ticket'**
+  String get supportRaiseTicket;
+
+  /// No description provided for @supportSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject'**
+  String get supportSubject;
+
+  /// No description provided for @supportMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your issue'**
+  String get supportMessage;
+
+  /// No description provided for @supportSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get supportSubmit;
+
+  /// No description provided for @supportFillFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please add a subject and a message.'**
+  String get supportFillFields;
+
+  /// No description provided for @supportTicket.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket'**
+  String get supportTicket;
+
+  /// No description provided for @supportReplyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a reply…'**
+  String get supportReplyHint;
+
+  /// No description provided for @supportReopenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply to reopen this ticket…'**
+  String get supportReopenHint;
+
+  /// No description provided for @supportSenderYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get supportSenderYou;
+
+  /// No description provided for @supportSenderSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get supportSenderSupport;
+
+  /// No description provided for @supportStatusOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get supportStatusOpen;
+
+  /// No description provided for @supportStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting you'**
+  String get supportStatusPending;
+
+  /// No description provided for @supportStatusClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get supportStatusClosed;
 }
 
 class _AppLocalizationsDelegate

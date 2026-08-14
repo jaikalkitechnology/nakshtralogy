@@ -1,8 +1,11 @@
-import { api, apiDownload, apiUpload } from './client'
+import { api, apiDownload, apiUpload, downloadBlob } from './client'
 import type { KycDocSet } from '../components/KycDocs'
 import type {
   AdminStats,
   AgoraDiagnoseResult,
+  BroadcastRecord,
+  BroadcastResult,
+  BroadcastRole,
   Astrologer,
   AstrologerDetail,
   AstrologerEditInput,
@@ -12,6 +15,8 @@ import type {
   CustomerDetail,
   CustomerEditInput,
   CustomerRow,
+  DeletedAccount,
+  DeletedAccountType,
   FirebaseApp,
   FirebaseClientConfigResult,
   FirebasePlatform,
@@ -27,7 +32,18 @@ import type {
   RazorpayDiagnoseResult,
   RazorpaySettings,
   RazorpaySettingsInput,
+  SchemaApplyResult,
+  SchemaDiff,
+  SchemaSyncLogEntry,
+  TdsReport,
+  TdsSettings,
   UploadResponse,
+  Faq,
+  FaqInput,
+  SupportTicket,
+  TicketList,
+  TicketMessage,
+  TicketStatus,
 } from './types'
 
 /**
@@ -118,6 +134,21 @@ export const adminApi = {
     api<Astrologer>(`/admin/astrologers/${id}`, { method: 'PATCH', body }),
   deleteAstrologer: (id: string) =>
     api<void>(`/admin/astrologers/${id}`, { method: 'DELETE' }),
+
+  // Account-deletion management (soft-delete + anonymise; restore within N
+  // days). Self-service deletes from the apps land here as anonymised shells;
+  // force-delete lets an admin trigger the same soft-delete, bypassing the
+  // self-delete guards.
+  listDeletedAccounts: (type: DeletedAccountType = 'all') =>
+    api<DeletedAccount[]>(`/admin/deleted-accounts?type=${type}`),
+  forceDeleteCustomer: (id: string) =>
+    api<DeletedAccount>(`/admin/customers/${id}/force-delete`, { method: 'POST' }),
+  restoreCustomer: (id: string) =>
+    api<CustomerRow>(`/admin/customers/${id}/restore`, { method: 'POST' }),
+  forceDeleteAstrologer: (id: string) =>
+    api<DeletedAccount>(`/admin/astrologers/${id}/force-delete`, { method: 'POST' }),
+  restoreAstrologer: (id: string) =>
+    api<{ id: string; name: string | null }>(`/admin/astrologers/${id}/restore`, { method: 'POST' }),
   // Replace one KYC document (photo/pan/aadhaar/aadhaar_back/bank_proof/
   // certificate) for an astrologer; returns the full refreshed doc URL set.
   uploadAstrologerKycDoc: (id: string, docType: string, file: File) =>
@@ -151,6 +182,22 @@ export const adminApi = {
   getMaintenance: (app: MaintenanceApp) => api<MaintenanceSetting>(`/admin/settings/maintenance/${app}`),
   setMaintenance: (app: MaintenanceApp, value: MaintenanceSetting) =>
     api<MaintenanceSetting>(`/admin/settings/maintenance/${app}`, { method: 'PUT', body: { value } }),
+
+  // Database schema auto-sync ("auto mode"). Additive-only: create missing
+  // tables + add missing NULL-able columns from the models. Never drops.
+  // Backend: /admin/system/schema/*  (admin-only).
+  schemaDiff: () => api<{ status: string; data: SchemaDiff }>('/admin/system/schema/diff'),
+  schemaSync: (dryRun: boolean) =>
+    api<{ status: string; data: SchemaApplyResult }>(
+      `/admin/system/schema/sync?dry_run=${dryRun}`, { method: 'POST' },
+    ),
+  schemaAutoGet: () => api<{ status: string; data: { enabled: boolean } }>('/admin/system/schema/auto'),
+  schemaAutoSet: (enabled: boolean) =>
+    api<{ status: string; data: { enabled: boolean } }>(
+      '/admin/system/schema/auto', { method: 'POST', body: { enabled } },
+    ),
+  schemaHistory: (limit = 20) =>
+    api<{ status: string; data: SchemaSyncLogEntry[] }>(`/admin/system/schema/history?limit=${limit}`),
 
   // Firebase service-account (push notifications) — status only, never the key.
   firebaseServiceAccountStatus: () => api<FirebaseServiceAccountStatus>('/admin/firebase/service-account/status'),
@@ -221,8 +268,75 @@ export const adminApi = {
   // Lightweight astrologer list for pickers (e.g. the Astrologer Videos form).
   astrologerOptions: () => api<AstrologerOption[]>('/admin/astrologers/list'),
 
+  // GST invoices (Phase H) — one per paid consultation. Download opens the
+  // stored PDF; CSV exports the filtered set. GST seller config lives in
+  // /admin/settings/gst (handled by the generic SettingsPage).
+  downloadInvoice: async (id: string, invoiceNumber: string) => {
+    const { blob } = await apiDownload(`/admin/invoices/${id}/download`)
+    downloadBlob(blob, `${invoiceNumber.replace(/\//g, '-')}.pdf`)
+  },
+  exportInvoicesCsv: async (q?: string) => {
+    const path = `/admin/invoices.csv${q ? `?q=${encodeURIComponent(q)}` : ''}`
+    const { blob } = await apiDownload(path)
+    downloadBlob(blob, 'invoices.csv')
+  },
+
+  // TDS on payouts (Phase I) — deduction settings (rate + PAN-required) and
+  // the challan report (per-astrologer TDS collected per FY/quarter + CSV).
+  getTdsSettings: () => api<TdsSettings>('/admin/settings/tds'),
+  saveTdsSettings: (body: TdsSettings) =>
+    api<TdsSettings>('/admin/settings/tds', { method: 'PUT', body }),
+  tdsReport: (period?: string) =>
+    api<TdsReport>(`/admin/tds/report${period ? `?period=${encodeURIComponent(period)}` : ''}`),
+  exportTdsReportCsv: async (period?: string) => {
+    const path = `/admin/tds/report.csv${period ? `?period=${encodeURIComponent(period)}` : ''}`
+    const { blob } = await apiDownload(path)
+    downloadBlob(blob, `tds-${period || 'current'}.csv`)
+  },
+
+  // Notification broadcast (Phase K) — persist an in-app inbox row for every
+  // recipient of the chosen role AND fan out a push. Plus a log of what was
+  // recently sent.
+  broadcastNotification: (body: { role: BroadcastRole; title: string; body: string }) =>
+    api<BroadcastResult>('/admin/notifications/broadcast', { method: 'POST', body }),
+  listBroadcasts: (limit = 20) =>
+    api<{ items: BroadcastRecord[] }>(`/admin/notifications/broadcasts?limit=${limit}`),
+
   // Content media uploads — used by the Banners / Promo Videos / Astrologer
   // Videos forms to turn a file picked on disk into a hosted URL.
   uploadImage: (file: File) => apiUpload<UploadResponse>('/admin/uploads/image', file),
   uploadVideo: (file: File) => apiUpload<UploadResponse>('/admin/uploads/video', file),
+
+  // FAQ (admin-managed, per app, en/hi) — Phase L.
+  listFaqs: (app?: string) =>
+    api<Faq[]>(`/admin/faqs${app ? `?app=${app}` : ''}`),
+  createFaq: (body: FaqInput) => api<Faq>('/admin/faqs', { method: 'POST', body }),
+  updateFaq: (id: string, body: Partial<FaqInput>) =>
+    api<Faq>(`/admin/faqs/${id}`, { method: 'PATCH', body }),
+  deleteFaq: (id: string) => api<void>(`/admin/faqs/${id}`, { method: 'DELETE' }),
+  reorderFaqs: (items: { id: string; sort_order: number }[]) =>
+    api<{ status: string; updated: number }>('/admin/faqs/reorder', {
+      method: 'POST',
+      body: { items },
+    }),
+
+  // Support tickets / helpdesk — Phase L.
+  listTickets: (status?: TicketStatus, role?: string) => {
+    const q = new URLSearchParams()
+    if (status) q.set('status', status)
+    if (role) q.set('role', role)
+    const qs = q.toString()
+    return api<TicketList>(`/admin/support/tickets${qs ? `?${qs}` : ''}`)
+  },
+  ticketDetail: (id: string) =>
+    api<SupportTicket>(`/admin/support/tickets/${id}`),
+  replyTicket: (id: string, body: string) =>
+    api<TicketMessage>(`/admin/support/tickets/${id}/reply`, {
+      method: 'POST',
+      body: { body },
+    }),
+  closeTicket: (id: string) =>
+    api<{ id: string; status: TicketStatus }>(
+      `/admin/support/tickets/${id}/close`, { method: 'POST' },
+    ),
 }

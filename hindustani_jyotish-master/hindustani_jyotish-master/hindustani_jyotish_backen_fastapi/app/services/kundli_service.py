@@ -46,8 +46,17 @@ from app.services.wallet_service import InsufficientBalance  # noqa: F401  (re-e
 # ── Billing helpers (ledger only — never trust client balances) ──────
 
 
+# Insight types that are FREE to the end user (no wallet charge). The detailed
+# kundli is free in Hindustani Jyotish — the provider cost (Nakshatralogy
+# developer API) is Hindustani's operational expense, never billed to the user.
+FREE_INSIGHT_TYPES = {"detailed_kundli"}
+
+
 async def _charge(db: AsyncSession, user: User, insight_type: str) -> Decimal:
-    """Debit the ADMIN-CONFIGURED price for this insight from the wallet."""
+    """Debit the ADMIN-CONFIGURED price for this insight from the wallet.
+    Free insight types (see FREE_INSIGHT_TYPES) never debit and cost the user 0."""
+    if insight_type in FREE_INSIGHT_TYPES:
+        return Decimal("0")
     amount = await pricing.price_for_db(db, insight_type)
     await wallet_service.debit_user(
         db, user, amount, type=TransactionType.report, reference_id=insight_type
@@ -68,10 +77,15 @@ async def _external(
     try:
         data = await nk.call(path, payload)
     except NakshatralogyError:
-        await wallet_service.credit_user(
-            db, user, amount,
-            type=TransactionType.refund, reference_id=f"{insight_type}:failed",
-        )
+        # Only refund a real debit. Free insight types (see FREE_INSIGHT_TYPES)
+        # charge nothing, and crediting ₹0 raises "Credit amount must be
+        # positive" — which would turn a clean upstream 502 into an
+        # unhandled 500. Skip the no-op refund for a zero charge.
+        if amount > 0:
+            await wallet_service.credit_user(
+                db, user, amount,
+                type=TransactionType.refund, reference_id=f"{insight_type}:failed",
+            )
         raise
     return amount, data
 
@@ -230,11 +244,9 @@ def _curate_kundli(raw: dict) -> dict:
         data["vimshottari"] = _pick(
             vim, ("system", "total_years", "moon_lord", "balance_yrs", "dashas")
         )
-    moola = raw.get("moola_dasha")
-    if isinstance(moola, dict):
-        data["moola_dasha"] = _pick(
-            moola, ("system", "lagna_sign", "balance_yrs", "dashas")
-        )
+    # Moola Dasha is intentionally excluded from Hindustani everywhere — no
+    # /dasha/moola endpoint, no Moola tab, no moola_dasha key in any bundle.
+    # (Dropped here so it never surfaces even on the external-provider path.)
 
     dosh = raw.get("dosh_analysis")
     if isinstance(dosh, dict):
@@ -280,7 +292,7 @@ def _curate_kundli(raw: dict) -> dict:
     if isinstance(activation, dict):
         data["dasha_activation"] = _pick(
             activation,
-            ("query_date", "vimshottari", "moola", "activated_yogas", "gochar_flags"),
+            ("query_date", "vimshottari", "activated_yogas", "gochar_flags"),
         )
 
     chakra = raw.get("chakra_health")

@@ -235,6 +235,7 @@ async def upsert_astrologer_from_google(
         astro.google_id = astro.google_id or profile.google_id
         astro.email = astro.email or profile.email
         astro.display_name = astro.display_name or profile.name
+        astro.photo_url = astro.photo_url or profile.picture
     await db.flush()
     await db.refresh(astro)
     return astro

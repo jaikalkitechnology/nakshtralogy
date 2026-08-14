@@ -129,12 +129,33 @@ async def _seed_firebase_settings() -> None:
         logger.exception("Firebase settings seeding failed (continuing without it)")
 
 
+async def _run_startup_schema_sync() -> None:
+    """Opt-in additive schema safety net on top of Alembic.
+
+    Schema is still owned by Alembic migrations. When auto-mode is ON (the
+    admin toggle in ``app_settings``, defaulting to ``AUTO_SCHEMA_SYNC``), this
+    creates any missing tables and adds any missing NULL-able columns from the
+    models so a not-yet-migrated deployment self-heals additively. Additive
+    only — never drops/alters — and fully guarded so boot never fails.
+    """
+    try:
+        from app.core.database import AsyncSessionLocal, engine
+        from app.services import schema_sync
+
+        await schema_sync.run_startup_sync(engine, AsyncSessionLocal)
+    except Exception:  # noqa: BLE001 — startup must never fail on schema sync
+        logger.exception("startup schema sync failed (continuing without it)")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Tables are managed by Alembic migrations in real environments.
     # See app.core.dev_init for the no-migration local/test bootstrap.
     warn_on_insecure_config(settings)
     await _seed_firebase_settings()
+    # Additive schema auto-sync (opt-in; guarded). Complements Alembic — never
+    # replaces it. See app.services.schema_sync.
+    await _run_startup_schema_sync()
     tasks = [
         asyncio.create_task(_consultation_expiry_loop()),
         asyncio.create_task(_broadcast_expiry_loop()),

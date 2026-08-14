@@ -164,6 +164,16 @@ class NotificationBody(BaseModel):
     data: dict[str, str] | None = None
 
 
+class NotificationBroadcastIn(BaseModel):
+    """Admin broadcast — persist an in-app inbox row for every recipient of the
+    chosen role AND fan out a push. role: 'user' | 'astrologer' | 'all'."""
+
+    role: str = Field(default="all")
+    title: str = Field(..., max_length=120)
+    body: str = Field(..., max_length=500)
+    data: dict[str, str] | None = None
+
+
 class PayoutReferenceIn(BaseModel):
     reference: str | None = Field(default=None, max_length=64)
 
@@ -185,6 +195,14 @@ class AstrologerChargesUpdate(BaseModel):
 
 class CommissionIn(BaseModel):
     rate: float = Field(..., ge=0, le=1)
+
+
+class TDSSettingsIn(BaseModel):
+    """TDS on payouts (Phase I). `rate`/`no_pan_rate` are fractions (0.10 = 10%);
+    `pan_required` blocks a payout when the astrologer has no valid PAN."""
+    rate: float = Field(..., ge=0, le=1)
+    pan_required: bool = True
+    no_pan_rate: float = Field(default=0.20, ge=0, le=1)
 
 
 class AgoraSettingIn(BaseModel):

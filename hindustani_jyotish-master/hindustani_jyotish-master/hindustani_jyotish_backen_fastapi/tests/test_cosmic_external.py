@@ -274,8 +274,10 @@ async def test_detailed_kundli_external(client, external_api):
     )
     assert r.status_code == 200, r.text
     body = r.json()
-    assert body["amount_charged"] == "99.00"
-    assert body["wallet_balance"] == "401.00"
+    # Phase B2: the detailed kundli is FREE — the user is charged nothing and
+    # the wallet is untouched (funded 500 stays 500).
+    assert body["amount_charged"] == "0.00"
+    assert body["wallet_balance"] == "500.00"
     data = body["data"]
     assert data["source"] == "nakshatralogy"
 
@@ -288,7 +290,9 @@ async def test_detailed_kundli_external(client, external_api):
     assert "chart_id" not in chart and "birth_jd" not in chart and "engine" not in chart
 
     assert data["vimshottari"]["dashas"][0]["planet"] == "Rahu"
-    assert data["moola_dasha"]["system"].startswith("Moola Dasha")
+    # Moola Dasha is excluded from Hindustani everywhere — even on the
+    # external-provider path _curate_kundli drops it (Phase B, STEP 3).
+    assert "moola_dasha" not in data
     # Only ACTIVE doshas/yogas are surfaced.
     assert [d["name"] for d in data["dosh_analysis"]["doshas"]] == ["Pitra Dosh"]
     assert [y["name"] for y in data["yoga_analysis"]["yogas"]] == ["Raj Yoga"]
@@ -484,7 +488,8 @@ async def test_empty_key_falls_back_to_stub(client, monkeypatch):
     )
     assert r.status_code == 200, r.text
     body = r.json()
-    assert body["amount_charged"] == "99.00"
+    # Phase B2: kundli is FREE even on the local-engine fallback path.
+    assert body["amount_charged"] == "0.00"
     assert len(body["data"]["chart"]["planets"]) == 9  # stub engine chart
     assert body["report"]["pdf_url"].endswith(".pdf")
 

@@ -60,6 +60,11 @@ class User(UUIDPKMixin, TimestampMixin, Base):
     deleted_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+    # Why the account was deleted — "self" (in-app delete), "admin"
+    # (force-delete from the console). NULL for live accounts. Kept alongside
+    # deleted_at so the admin "Deleted accounts" list can show reason + date;
+    # see app/services/account_deletion.py.
+    deleted_reason: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     def __repr__(self) -> str:  # pragma: no cover
         return f"<User {self.id} {self.mobile or self.email}>"

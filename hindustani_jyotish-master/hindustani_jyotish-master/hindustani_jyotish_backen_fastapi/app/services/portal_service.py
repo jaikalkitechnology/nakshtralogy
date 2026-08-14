@@ -496,9 +496,21 @@ async def earnings(db: AsyncSession, astrologer: Astrologer) -> dict:
             Consultation.ended_at >= _month_start(),
         )
     )
+    # TDS status so the earnings screen can surface the deduction rate and
+    # prompt for a PAN when it's missing (payouts are blocked without one).
+    from app.services import tds_service
+
+    kyc = await db.scalar(
+        select(AstrologerKYC).where(AstrologerKYC.astrologer_id == astrologer.id)
+    )
+    pan_on_file = tds_service.normalise_pan(kyc.pan_number if kyc else None) is not None
+    tds_cfg = await tds_service.resolve_tds_config(db)
+
     return {
         "available_balance": money(astrologer.available_balance),
         "this_month_earnings": money(month or 0),
         "lifetime_earnings": money(lifetime or 0),
         "consultations_this_month": int(month_count or 0),
+        "pan_on_file": pan_on_file,
+        "tds_rate": float(tds_cfg["rate"]),
     }

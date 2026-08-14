@@ -10,7 +10,7 @@ async def _user_with_balance(client, amount="500.00", mobile="+919811111111"):
     return uid, user_headers(uid)
 
 
-async def test_generate_kundli_charges_and_returns_chart(client):
+async def test_generate_kundli_is_free_and_returns_chart(client):
     uid, h = await _user_with_balance(client)
     r = await client.post(
         "/v1/kundli/generate",
@@ -19,8 +19,9 @@ async def test_generate_kundli_charges_and_returns_chart(client):
     )
     assert r.status_code == 200, r.text
     body = r.json()
-    assert body["amount_charged"] == "99.00"
-    assert body["wallet_balance"] == "401.00"  # 500 - 99
+    # Kundli is FREE to the end user — no charge, wallet unchanged.
+    assert body["amount_charged"] == "0.00"
+    assert body["wallet_balance"] == "500.00"
     chart = body["data"]["chart"]
     assert chart["ascendant_sign"]
     assert chart["moon_sign"]
@@ -55,12 +56,27 @@ async def test_kundli_pdf_downloadable(client):
 
 
 async def test_insufficient_balance_blocks_generation(client):
+    # Kundli is free, so the payment gate is exercised on a still-PAID insight
+    # (planet position, ₹79) with an under-funded wallet.
     uid = await register_user(client, mobile="+919822222222")
     await set_wallet(uid, Decimal("10.00"))
     r = await client.post(
-        "/v1/kundli/generate", json={"dob": "1990-05-11"}, headers=user_headers(uid)
+        "/v1/horoscope/planet-position",
+        json={"dob": "1990-05-11"},
+        headers=user_headers(uid),
     )
     assert r.status_code == 402
+
+
+async def test_kundli_is_free_even_with_low_balance(client):
+    """Kundli must generate with no balance since it is free."""
+    uid = await register_user(client, mobile="+919822222299")
+    await set_wallet(uid, Decimal("0.00"))
+    r = await client.post(
+        "/v1/kundli/generate", json={"dob": "1990-05-11"}, headers=user_headers(uid)
+    )
+    assert r.status_code == 200, r.text
+    assert r.json()["amount_charged"] == "0.00"
 
 
 async def test_planet_position(client):

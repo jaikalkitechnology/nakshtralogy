@@ -159,6 +159,91 @@ class AppLocalizationsHi extends AppLocalizations {
   String get profileEditCharges => 'प्रोफ़ाइल और शुल्क संपादित करें';
 
   @override
+  String get profileAccountSection => 'खाता';
+
+  @override
+  String get profileEditProfile => 'प्रोफ़ाइल संपादित करें';
+
+  @override
+  String get profileEditProfileSub =>
+      'नाम, परिचय, विद्याएँ, भाषाएँ, दरें और फ़ोटो';
+
+  @override
+  String get profileBankPan => 'बैंक और पैन विवरण';
+
+  @override
+  String get profileBankPanSub => 'पेआउट विधि, बैंक खाता और पैन';
+
+  @override
+  String get editProfileTitle => 'प्रोफ़ाइल संपादित करें';
+
+  @override
+  String get editProfileSubtitle =>
+      'जिज्ञासु आपको कैसे देखें और आप क्या शुल्क लेते हैं, यह अपडेट करें।';
+
+  @override
+  String get bankPanTitle => 'बैंक और पैन विवरण';
+
+  @override
+  String get bankPanIntro =>
+      'निकासी और सत्यापन के लिए उपयोग किए जाने वाले आपके पेआउट और पहचान विवरण।';
+
+  @override
+  String get bankPanPayoutSection => 'पेआउट विधि';
+
+  @override
+  String get bankPanIdentitySection => 'पहचान';
+
+  @override
+  String get bankPanDocsSection => 'दस्तावेज़';
+
+  @override
+  String get bankPanBankName => 'बैंक का नाम';
+
+  @override
+  String get bankPanIfsc => 'IFSC कोड';
+
+  @override
+  String get bankPanAccountHolder => 'खाताधारक';
+
+  @override
+  String get bankPanAccountNumber => 'खाता संख्या';
+
+  @override
+  String get bankPanUpiId => 'UPI आईडी';
+
+  @override
+  String get bankPanPan => 'पैन नंबर';
+
+  @override
+  String get bankPanAadhaar => 'आधार नंबर';
+
+  @override
+  String bankPanMasked(String last4) {
+    return '•••• $last4';
+  }
+
+  @override
+  String get bankPanNotSet => 'सेट नहीं है';
+
+  @override
+  String get bankPanEditCta => 'बैंक और पैन विवरण संपादित करें';
+
+  @override
+  String get bankPanAddCta => 'बैंक और पैन विवरण जोड़ें';
+
+  @override
+  String get bankPanApprovalNote =>
+      'बैंक या पैन विवरण में परिवर्तन एडमिन अनुमोदन के लिए भेजे जाते हैं और अनुमोदित होने पर लागू होते हैं।';
+
+  @override
+  String get bankPanEmpty =>
+      'आपने अभी तक अपने बैंक और पैन विवरण नहीं जोड़े हैं।';
+
+  @override
+  String get bankPanLoadFailed => 'आपके बैंक और पैन विवरण लोड नहीं हो सके।';
+
+  @override
   String get setTitle => 'सेटिंग्स';
 
   @override
@@ -595,4 +680,120 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get liveAnsweringNow => 'अभी उत्तर दे रहे हैं — ';
+
+  @override
+  String get commonErrorGeneric =>
+      'कुछ गड़बड़ हो गई। कृपया फिर से प्रयास करें।';
+
+  @override
+  String get profileDeleteAccount => 'खाता हटाएँ';
+
+  @override
+  String get deleteAccountTitle => 'खाता हटाएँ?';
+
+  @override
+  String get deleteAccountWarning =>
+      'इससे आपका ज्योतिषी खाता स्थायी रूप से हट जाएगा। आपकी प्रोफ़ाइल और KYC हटा दी जाएगी, आप ऑफ़लाइन हो जाएँगे और खोज से छिप जाएँगे, सभी सत्र समाप्त हो जाएँगे, और इसे पूर्ववत नहीं किया जा सकता। पहले कोई भी शेष राशि निकाल लें और चालू परामर्श पूरे कर लें।';
+
+  @override
+  String get deleteAccountTypeHint => 'पुष्टि के लिए DELETE टाइप करें';
+
+  @override
+  String get deleteAccountConfirm => 'खाता हटाएँ';
+
+  @override
+  String get deleteAccountSuccess => 'आपका खाता हटा दिया गया है।';
+
+  @override
+  String get earningsAddPanTitle => 'निकासी के लिए अपना PAN जोड़ें';
+
+  @override
+  String get earningsAddPanBody =>
+      'हर भुगतान पर आपके PAN के विरुद्ध TDS काटा जाता है। निकासी से पहले अपने बैंक और PAN विवरण में एक वैध PAN जोड़ें।';
+
+  @override
+  String get earningsAddPanAction => 'PAN जोड़ें';
+
+  @override
+  String earningsTdsNote(String rate) {
+    return 'प्रत्येक भुगतान पर आपके PAN के विरुद्ध $rate% TDS काटा जाता है।';
+  }
+
+  @override
+  String get earningsRecentPayouts => 'हाल की निकासियाँ';
+
+  @override
+  String get earningsPayoutTds => 'TDS';
+
+  @override
+  String get earningsPayoutNet => 'शुद्ध भुगतान';
+
+  @override
+  String get earningsPayoutGross => 'सकल';
+
+  @override
+  String get earningsNoPayouts => 'अभी तक कोई निकासी नहीं।';
+
+  @override
+  String get notificationsTitle => 'सूचनाएँ';
+
+  @override
+  String get notificationsEmpty => 'आपके पास अभी कोई सूचना नहीं है।';
+
+  @override
+  String get notificationsMarkAllRead => 'सभी को पढ़ा हुआ चिह्नित करें';
+
+  @override
+  String get supportTitle => 'सहायता एवं समर्थन';
+
+  @override
+  String get supportFaqTab => 'सामान्य प्रश्न';
+
+  @override
+  String get supportTicketsTab => 'मेरे टिकट';
+
+  @override
+  String get supportFaqEmpty => 'अभी कोई सहायता लेख उपलब्ध नहीं है।';
+
+  @override
+  String get supportTicketsEmpty => 'आपके पास अभी कोई सहायता टिकट नहीं है।';
+
+  @override
+  String get supportRaiseTicket => 'टिकट बनाएँ';
+
+  @override
+  String get supportSubject => 'विषय';
+
+  @override
+  String get supportMessage => 'अपनी समस्या बताएँ';
+
+  @override
+  String get supportSubmit => 'भेजें';
+
+  @override
+  String get supportFillFields => 'कृपया विषय और संदेश भरें।';
+
+  @override
+  String get supportTicket => 'टिकट';
+
+  @override
+  String get supportReplyHint => 'उत्तर लिखें…';
+
+  @override
+  String get supportReopenHint => 'इस टिकट को फिर से खोलने के लिए उत्तर दें…';
+
+  @override
+  String get supportSenderYou => 'आप';
+
+  @override
+  String get supportSenderSupport => 'सहायता';
+
+  @override
+  String get supportStatusOpen => 'खुला';
+
+  @override
+  String get supportStatusPending => 'आपकी प्रतिक्रिया अपेक्षित';
+
+  @override
+  String get supportStatusClosed => 'बंद';
 }

@@ -440,6 +440,19 @@ async def finalize(
     consult.status = ConsultationStatus.completed
     await db.flush()
 
+    # GST invoice for the settled paid consultation. Idempotent (one invoice
+    # per consultation) and only when money actually changed hands
+    # (amount_charged > 0 — a free/kundli session yields none). Never allowed
+    # to break the end-of-session flow.
+    try:
+        if money(consult.amount_charged) > 0:
+            from app.services import invoice_service  # local import — avoids cycle
+
+            await invoice_service.create_for_consultation(db, consult)
+            await db.flush()
+    except Exception:  # noqa: BLE001 — invoicing must never break finalize
+        logger.exception("invoice creation failed for consult %s", consult.id)
+
     from app.services import push_service  # local import — avoids any import cycle
 
     mins = max(1, (consult.duration_seconds + 59) // 60)
