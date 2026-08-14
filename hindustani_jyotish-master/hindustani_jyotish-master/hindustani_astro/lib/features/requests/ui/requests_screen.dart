@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
@@ -244,6 +245,11 @@ class _RequestsViewState extends State<_RequestsView> with WidgetsBindingObserve
                       StatusChip('${items.length}', tone: ChipTone.warn),
                     ],
                     const Spacer(),
+                    IconButton(
+                      tooltip: 'Consultation history',
+                      onPressed: () => context.push('/history/consultations'),
+                      icon: Icon(Icons.history, color: AppColors.ivoryDim),
+                    ),
                     IconButton(
                       onPressed: () => context.read<_RequestsCubit>().refresh(),
                       icon: Icon(Icons.refresh, color: AppColors.ivoryDim),
