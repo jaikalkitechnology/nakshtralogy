@@ -4,6 +4,7 @@ import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../invoice_files.dart';
 import '../invoice_repository.dart';
@@ -58,24 +59,53 @@ class _InvoicesView extends StatelessWidget {
   ) {
     if (items == null) {
       final err = state.errorMessage;
-      if (err != null) return _scrollMessage(err, AppColors.danger);
+      if (err != null) {
+        return _scrollMessage(
+          icon: Icons.error_outline,
+          tone: TileTone.saffron,
+          text: err,
+          color: AppColors.danger,
+        );
+      }
       return const Center(
         child: CircularProgressIndicator(color: AppColors.saffron),
       );
     }
     if (items.isEmpty) {
-      return _scrollMessage(l.invoicesEmpty, AppColors.ivoryFaint);
+      return _scrollMessage(
+        icon: Icons.receipt_long_outlined,
+        tone: TileTone.gold,
+        text: l.invoicesEmpty,
+        color: AppColors.ivoryDim,
+      );
     }
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-      itemCount: items.length,
-      itemBuilder: (_, i) => _InvoiceRow(invoice: items[i]),
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+      itemCount: items.length + 1,
+      itemBuilder: (_, i) {
+        if (i == 0) {
+          return SectionLabel(
+            l.invoicesTitle,
+            trailing: StatusChip('${items.length}', tone: ChipTone.warn),
+          );
+        }
+        return _InvoiceRow(invoice: items[i - 1]);
+      },
     );
   }
 
-  Widget _scrollMessage(String text, Color color) => ListView(
+  Widget _scrollMessage({
+    required IconData icon,
+    required TileTone tone,
+    required String text,
+    required Color color,
+  }) =>
+      ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 28),
         children: [
-          const SizedBox(height: 160),
+          const SizedBox(height: 140),
+          Center(child: IconTile(icon, tone: tone, size: 68)),
+          const SizedBox(height: 18),
           Center(
             child: Text(
               text,
@@ -123,61 +153,98 @@ class _InvoiceRowState extends State<_InvoiceRow> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final inv = widget.invoice;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface1,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.borderMid),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.receipt_long, color: AppColors.saffron),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
+    final date = _dateLabel();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: PremiumCard(
+        child: Column(
+          children: [
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  inv.invoiceNumber,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.mono(size: 13, weight: FontWeight.w700),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${l.invoicesTotal}: ₹${inv.totalAmount.toStringAsFixed(2)}'
-                  '  ·  ${l.invoicesTax} ₹${inv.taxAmount.toStringAsFixed(2)}',
-                  style:
-                      AppTextStyles.mono(size: 12, color: AppColors.ivoryDim),
-                ),
-                if (_dateLabel().isNotEmpty) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    _dateLabel(),
-                    style: AppTextStyles.label(
-                        size: 11, color: AppColors.ivoryFaint),
+                const IconTile(Icons.receipt_long, tone: TileTone.gold),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        inv.invoiceNumber,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.mono(
+                            size: 14, weight: FontWeight.w700),
+                      ),
+                      if (date.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          date,
+                          style: AppTextStyles.label(
+                              size: 11.5, color: AppColors.ivoryFaint),
+                        ),
+                      ],
+                    ],
                   ),
-                ],
+                ),
+                const SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '₹${inv.totalAmount.toStringAsFixed(2)}',
+                      style: AppTextStyles.mono(
+                        size: 16,
+                        weight: FontWeight.w800,
+                        color: AppColors.success,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${l.invoicesTax} ₹${inv.taxAmount.toStringAsFixed(2)}',
+                      style: AppTextStyles.mono(
+                          size: 11, color: AppColors.ivoryFaint),
+                    ),
+                  ],
+                ),
               ],
             ),
-          ),
-          const SizedBox(width: 8),
-          _busy
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                      strokeWidth: 2, color: AppColors.saffron),
-                )
-              : OutlinedButton.icon(
-                  onPressed: _download,
-                  icon: const Icon(Icons.download, size: 16),
-                  label: Text(l.invoicesDownload),
+            const SizedBox(height: 14),
+            Container(height: 1, color: AppColors.borderSoft),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Text(
+                  '${l.invoicesTotal} ₹${inv.totalAmount.toStringAsFixed(2)}',
+                  style: AppTextStyles.label(
+                      size: 12, color: AppColors.ivoryDim),
                 ),
-        ],
+                const Spacer(),
+                _busy
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: AppColors.saffron),
+                      )
+                    : OutlinedButton.icon(
+                        onPressed: _download,
+                        icon: const Icon(Icons.download_rounded, size: 16),
+                        label: Text(l.invoicesDownload),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.gold,
+                          side: BorderSide(
+                              color: AppColors.gold.withValues(alpha: 0.4)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 8),
+                        ),
+                      ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

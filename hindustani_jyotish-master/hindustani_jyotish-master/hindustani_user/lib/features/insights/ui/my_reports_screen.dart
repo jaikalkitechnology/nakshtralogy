@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../insight_models.dart';
 import '../insights_repository.dart';
@@ -134,19 +135,39 @@ class _ReportsView extends StatelessWidget {
     final items = state.items;
     if (items == null) {
       final err = state.error;
-      if (err != null) return _scrollMessage(err, AppColors.danger);
+      if (err != null) {
+        return _scrollMessage(
+          icon: Icons.error_outline,
+          tone: TileTone.saffron,
+          text: err,
+          color: AppColors.danger,
+        );
+      }
       return const Center(
         child: CircularProgressIndicator(color: AppColors.saffron),
       );
     }
     if (items.isEmpty) {
-      return _scrollMessage(l.reportsEmpty, AppColors.ivoryFaint);
+      return _scrollMessage(
+        icon: Icons.auto_stories_outlined,
+        tone: TileTone.gold,
+        text: l.reportsEmpty,
+        color: AppColors.ivoryDim,
+      );
     }
+    // index 0 is the section header; the trailing slot is the load-more spinner.
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-      itemCount: items.length + (state.loadingMore ? 1 : 0),
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+      itemCount: items.length + 1 + (state.loadingMore ? 1 : 0),
       itemBuilder: (_, i) {
-        if (i >= items.length) {
+        if (i == 0) {
+          return SectionLabel(
+            l.insightsMyReports,
+            trailing: StatusChip('${items.length}', tone: ChipTone.warn),
+          );
+        }
+        final idx = i - 1;
+        if (idx >= items.length) {
           return const Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
             child: Center(
@@ -154,22 +175,28 @@ class _ReportsView extends StatelessWidget {
             ),
           );
         }
-        return _ReportRow(report: items[i]);
+        return _ReportRow(report: items[idx]);
       },
     );
   }
 
-  Widget _scrollMessage(String text, Color color) => ListView(
+  Widget _scrollMessage({
+    required IconData icon,
+    required TileTone tone,
+    required String text,
+    required Color color,
+  }) =>
+      ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 28),
         children: [
-          const SizedBox(height: 160),
+          const SizedBox(height: 140),
+          Center(child: IconTile(icon, tone: tone, size: 68)),
+          const SizedBox(height: 18),
           Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Text(
-                text,
-                textAlign: TextAlign.center,
-                style: AppTextStyles.body(color: color),
-              ),
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.body(color: color),
             ),
           ),
         ],
