@@ -73,7 +73,7 @@ def enabled() -> bool:
     return bool(settings.NAKSHATRALOGY_API_KEY)
 
 
-async def call(path: str, payload: dict[str, Any]) -> dict[str, Any]:
+async def call(path: str, payload: dict[str, Any], *, lang: str | None = None) -> dict[str, Any]:
     """POST `payload` to the provider; return the response's `data` dict.
 
     Raises NakshatralogyError on any failure. Never logs the API key.
@@ -89,7 +89,12 @@ async def call(path: str, payload: dict[str, Any]) -> dict[str, Any]:
             timeout=timeout,
             transport=_transport,
         ) as client:
-            resp = await client.post(path, json=payload, headers=headers)
+            # Pass the caller's language to the developer API so kundli /
+            # report / forecast text comes back localized. English (or an
+            # unset lang) sends no param, keeping the request byte-identical
+            # to before for the default case.
+            params = {"lang": lang} if lang and lang.strip().lower() != "en" else None
+            resp = await client.post(path, json=payload, headers=headers, params=params)
     except httpx.HTTPError as exc:
         logger.warning("Nakshatralogy unreachable (%s %s): %s", path, type(exc).__name__, exc)
         raise NakshatralogyError("astrology service unreachable") from exc
@@ -116,13 +121,16 @@ async def call(path: str, payload: dict[str, Any]) -> dict[str, Any]:
 # `enabled()` before invoking these (empty key → local engine fallback).
 
 
-async def kundli_all(birth: dict[str, Any], dasha_levels: int = 2) -> dict[str, Any]:
+async def kundli_all(
+    birth: dict[str, Any], dasha_levels: int = 2, *, lang: str | None = None
+) -> dict[str, Any]:
     """POST /api/v2/kundli/all — the full engine suite in one call.
 
     `birth` = {"name","gender"(M/F/O),"dob"(DD/MM/YYYY),"tob"(HH:MM),"place"}.
+    `lang` localizes the provider's text (e.g. "hi"/"ta"); "en"/None = English.
     Returns the provider's `data` dict (chart, vimshottari, moola_dasha, …).
     """
-    return await call(KUNDLI_ALL, {**birth, "dasha_levels": dasha_levels})
+    return await call(KUNDLI_ALL, {**birth, "dasha_levels": dasha_levels}, lang=lang)
 
 
 async def kundli_dasha_vimshottari(birth: dict[str, Any], levels: int = 2) -> dict[str, Any]:

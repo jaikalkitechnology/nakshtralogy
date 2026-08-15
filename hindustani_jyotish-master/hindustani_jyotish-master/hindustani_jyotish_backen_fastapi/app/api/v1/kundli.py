@@ -240,7 +240,8 @@ async def compute_and_save(req: BirthDataRequest, user: CurrentUser, db: DBSessi
     }
     if nk.enabled():
         try:
-            bundle = await nk.kundli_all(_dev_birth(birth), dasha_levels=2)
+            bundle = await nk.kundli_all(
+                _dev_birth(birth), dasha_levels=2, lang=user.language)
         except NakshatralogyError:
             logger.warning("dev-API /kundli/all failed for compute")
             raise HTTPException(status.HTTP_502_BAD_GATEWAY, _UPSTREAM_502)
