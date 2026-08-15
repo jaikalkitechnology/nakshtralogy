@@ -103,6 +103,12 @@ class _ConsultationScreenState extends State<ConsultationScreen>
   /// dialog shows exactly once and every timer is stopped once.
   bool _chatEndedHandled = false;
 
+  /// Role of whoever ended the chat ("astrologer"/"user"), from the server's
+  /// `completed` status frame — drives the "Chat ended by …" attribution so a
+  /// chat the astrologer closed doesn't read as a silent end. Null when the
+  /// end was self/system-initiated (no attribution shown).
+  String? _chatEndedByRole;
+
   // Who the other party is — not included in the request/start/accept
   // responses (only `/me/consultations` carries it), so it's fetched
   // separately and shown best-effort; the screen works fine without it.
@@ -439,6 +445,10 @@ class _ConsultationScreenState extends State<ConsultationScreen>
         final newStatus = '${event['status']}';
         if (newStatus == 'completed') {
           _markConnected();
+          // Capture who ended it (if the server said) so the ended dialog can
+          // attribute it. Only "the astrologer ended it" is surfaced to the
+          // seeker; a seeker-initiated end reads as a plain "Session ended".
+          _chatEndedByRole = event['ended_by'] as String?;
           unawaited(_handleChatEnded());
           return;
         }
@@ -500,12 +510,17 @@ class _ConsultationScreenState extends State<ConsultationScreen>
     if (mounted) setState(() => _status = 'completed');
     if (!mounted) return;
     final l = AppLocalizations.of(context);
+    // Attribute the end when the astrologer closed it, so it never reads as a
+    // silent drop; a seeker-initiated / system end stays the plain title.
+    final endedTitle = _chatEndedByRole == 'astrologer'
+        ? l.consultChatEndedBy(_astrologerName ?? l.consultTheAstrologer)
+        : l.consultSessionEnded;
     await showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialog(
         backgroundColor: AppColors.indigoDeep,
-        title: Text(l.consultSessionEnded, style: AppTextStyles.heading(size: 18)),
+        title: Text(endedTitle, style: AppTextStyles.heading(size: 18)),
         content: Text(l.consultChatEnded, style: AppTextStyles.body()),
         actions: [
           TextButton(

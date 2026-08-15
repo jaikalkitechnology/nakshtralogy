@@ -332,6 +332,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String consultChatEndedBy(String name) {
+    return 'Chat ended by $name';
+  }
+
+  @override
   String get consultTheAstrologer => 'the astrologer';
 
   @override

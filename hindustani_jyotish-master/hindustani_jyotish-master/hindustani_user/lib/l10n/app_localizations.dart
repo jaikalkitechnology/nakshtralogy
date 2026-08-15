@@ -692,6 +692,12 @@ abstract class AppLocalizations {
   /// **'Call ended by {name}'**
   String consultCallEndedBy(String name);
 
+  /// No description provided for @consultChatEndedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat ended by {name}'**
+  String consultChatEndedBy(String name);
+
   /// No description provided for @consultTheAstrologer.
   ///
   /// In en, this message translates to:
