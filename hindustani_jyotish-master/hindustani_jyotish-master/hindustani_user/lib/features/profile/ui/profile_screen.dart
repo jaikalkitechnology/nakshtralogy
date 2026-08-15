@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -569,7 +570,18 @@ class _LanguageTile extends StatelessWidget {
         ),
       ),
     );
-    if (selected != null) await cubit.setLocale(selected.locale);
+    if (selected != null) {
+      await cubit.setLocale(selected.locale);
+      // Persist the choice on the account so server-side content — kundli,
+      // reports and API messages — comes back in this language (the developer
+      // API is called with User.language). Best-effort; the in-app UI language
+      // is already applied locally regardless of this call.
+      final code = selected.locale?.languageCode;
+      if (code != null) {
+        unawaited(getIt<ApiClient>()
+            .patch('/users/me', body: {'language': code}).catchError((_) => null));
+      }
+    }
   }
 
   Widget _option(BuildContext context, String label, Locale? locale, Locale? current) {
