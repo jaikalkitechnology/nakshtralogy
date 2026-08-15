@@ -99,6 +99,24 @@ Pass an `Idempotency-Key` header on any `POST` to safely retry without
 double-billing usage — the same key + endpoint replays the original
 response instead of re-running the engine.
 
+## Response language
+
+Every Kundli, Special Reports, Rashi, and Today Forecast endpoint accepts
+an optional `?lang=` query parameter to localize the response:
+
+```
+POST /api/v2/kundli/all?lang=hi
+```
+
+Supported short codes: `en` (default), `hi`, `mr`, `gu`, `ta`, `te`, `kn`,
+`bn`, `pa`, `ml`. Common full-name aliases (`hindi`, `tamil`, `marathi`,
+...) and `Accept-Language`-style values (e.g. `hi-IN`) are also accepted
+and normalized automatically. An omitted or unrecognized `lang` falls back
+to English with no error. Only human-readable display text (grades,
+dignities, karaka roles, categories, sign/planet names, etc.) is
+translated — numeric scores, dates, chart IDs, and every other field are
+unchanged, and calculation/scoring logic never varies by language.
+
 ## Product categories (Phase 8 — granular)
 
 - **`kundli`** — `POST /kundli/all` (everything) plus one endpoint per

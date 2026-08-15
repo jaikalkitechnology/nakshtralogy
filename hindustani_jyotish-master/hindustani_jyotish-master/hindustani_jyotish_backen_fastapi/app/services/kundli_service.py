@@ -81,7 +81,10 @@ async def _external(
     """
     amount = await _charge(db, user, insight_type)
     try:
-        data = await nk.call(path, payload)
+        # Localize the provider's astrology text to the user's chosen language
+        # (User.language, e.g. "hi"/"ta"/"bn"…). The developer API translates
+        # the response server-side; "en"/unset returns English as before.
+        data = await nk.call(path, payload, lang=user.language)
     except NakshatralogyError:
         # Only refund a real debit. Free insight types (see FREE_INSIGHT_TYPES)
         # charge nothing, and crediting ₹0 raises "Credit amount must be

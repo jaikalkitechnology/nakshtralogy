@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -537,6 +538,14 @@ class _LanguageTile extends StatelessWidget {
   String _currentLabel(AppLocalizations l, Locale? locale) => switch (locale?.languageCode) {
         'en' => l.languageEnglish,
         'hi' => l.languageHindi,
+        'bn' => l.languageBengali,
+        'gu' => l.languageGujarati,
+        'kn' => l.languageKannada,
+        'ml' => l.languageMalayalam,
+        'mr' => l.languageMarathi,
+        'pa' => l.languagePunjabi,
+        'ta' => l.languageTamil,
+        'te' => l.languageTelugu,
         _ => l.languageSystem,
       };
 
@@ -561,15 +570,45 @@ class _LanguageTile extends StatelessWidget {
                 child: Text(l.profileLanguage, style: AppTextStyles.heading(size: 16)),
               ),
             ),
-            _option(context, l.languageEnglish, const Locale('en'), current),
-            _option(context, l.languageHindi, const Locale('hi'), current),
-            _option(context, l.languageSystem, null, current),
-            const SizedBox(height: 8),
+            // 10 languages + "system" can exceed the sheet height on small
+            // phones — keep the list scrollable so no tile is clipped.
+            Flexible(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _option(context, l.languageEnglish, const Locale('en'), current),
+                    _option(context, l.languageHindi, const Locale('hi'), current),
+                    _option(context, l.languageBengali, const Locale('bn'), current),
+                    _option(context, l.languageGujarati, const Locale('gu'), current),
+                    _option(context, l.languageKannada, const Locale('kn'), current),
+                    _option(context, l.languageMalayalam, const Locale('ml'), current),
+                    _option(context, l.languageMarathi, const Locale('mr'), current),
+                    _option(context, l.languagePunjabi, const Locale('pa'), current),
+                    _option(context, l.languageTamil, const Locale('ta'), current),
+                    _option(context, l.languageTelugu, const Locale('te'), current),
+                    _option(context, l.languageSystem, null, current),
+                    const SizedBox(height: 8),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
-    if (selected != null) await cubit.setLocale(selected.locale);
+    if (selected != null) {
+      await cubit.setLocale(selected.locale);
+      // Persist the choice on the account so server-side content — kundli,
+      // reports and API messages — comes back in this language (the developer
+      // API is called with User.language). Best-effort; the in-app UI language
+      // is already applied locally regardless of this call.
+      final code = selected.locale?.languageCode;
+      if (code != null) {
+        unawaited(getIt<ApiClient>()
+            .patch('/users/me', body: {'language': code}).catchError((_) => null));
+      }
+    }
   }
 
   Widget _option(BuildContext context, String label, Locale? locale, Locale? current) {

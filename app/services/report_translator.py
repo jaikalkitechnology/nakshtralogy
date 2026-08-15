@@ -1468,11 +1468,77 @@ _SIGN_VALUE_KEYS = {
 }
 
 
+# ── language code normalization ─────────────────────────────────────
+#
+# This module's TRANSLATIONS dict is keyed by short codes (en, hi, mr, gu,
+# ta, te, kn, bn, pa, ml). Callers (routers, the developer-API gateway)
+# may pass those short codes directly, a common full-name alias
+# ("hindi", "Tamil", ...), or an Accept-Language-style value
+# ("hi-IN", "hi_IN;q=0.9", ...). normalize_lang() is the ONE place that
+# reconciles all of those into a TRANSLATIONS key so every call site
+# behaves identically. Unknown/empty/English -> "en" (passthrough).
+_LANG_ALIASES = {
+    "en": "en", "eng": "en", "english": "en",
+    "hi": "hi", "hin": "hi", "hindi": "hi",
+    "mr": "mr", "mar": "mr", "marathi": "mr",
+    "gu": "gu", "guj": "gu", "gujarati": "gu",
+    "ta": "ta", "tam": "ta", "tamil": "ta",
+    "te": "te", "tel": "te", "telugu": "te",
+    "kn": "kn", "kan": "kn", "kannada": "kn",
+    "bn": "bn", "ben": "bn", "bengali": "bn",
+    "pa": "pa", "pan": "pa", "punjabi": "pa",
+    "ml": "ml", "mal": "ml", "malayalam": "ml",
+}
+
+
+def normalize_lang(raw) -> str:
+    """Normalize any incoming language code/alias/Accept-Language value to
+    one of the short codes this module's TRANSLATIONS dict understands
+    (en, hi, mr, gu, ta, te, kn, bn, pa, ml). Falls back to "en"
+    (passthrough / no translation) for anything empty, unknown, or already
+    English. Never raises."""
+    if not raw:
+        return "en"
+    try:
+        key = str(raw).strip().lower()
+    except Exception:
+        return "en"
+    if not key:
+        return "en"
+    # Accept-Language-style value, e.g. "hi-IN,en;q=0.9" -> take the first tag
+    key = key.split(",")[0].split(";")[0].strip()
+    key = key.replace("-", "_")
+    if key in _LANG_ALIASES:
+        return _LANG_ALIASES[key]
+    primary = key.split("_")[0]
+    return _LANG_ALIASES.get(primary, "en")
+
+
 def translate_report(data: dict, lang: str) -> dict:
-    """Translate a specialist report dict into the target language."""
-    if not lang or lang == "en" or lang not in TRANSLATIONS:
+    """Translate a specialist report dict into the target language.
+
+    `lang` may be a short code (hi, mr, ...), a full-name alias (hindi,
+    marathi, ...), or an Accept-Language-style value — normalize_lang()
+    resolves it. English (or anything unrecognized) is a passthrough."""
+    lang = normalize_lang(lang)
+    if lang == "en" or lang not in TRANSLATIONS:
         return data
     return _translate_value(data, TRANSLATIONS[lang])
+
+
+def translate_report_safe(data: dict, lang: str) -> dict:
+    """Same as translate_report but never raises. On any failure it logs a
+    warning and returns the original, untranslated data — used by the
+    developer-API gateway where a bad/unknown lang code or an unexpected
+    payload shape must never break a response."""
+    try:
+        return translate_report(data, lang)
+    except Exception:
+        import logging
+        logging.getLogger("report_translator").warning(
+            "translate_report failed for lang=%r; returning untranslated data", lang, exc_info=True,
+        )
+        return data
 
 
 def _translate_value(obj, trans: dict):

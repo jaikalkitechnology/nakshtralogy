@@ -488,6 +488,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageHindi => 'हिन्दी';
 
   @override
+  String get languageBengali => 'বাংলা';
+
+  @override
+  String get languageGujarati => 'ગુજરાતી';
+
+  @override
+  String get languageKannada => 'ಕನ್ನಡ';
+
+  @override
+  String get languageMalayalam => 'മലയാളം';
+
+  @override
+  String get languageMarathi => 'मराठी';
+
+  @override
+  String get languagePunjabi => 'ਪੰਜਾਬੀ';
+
+  @override
+  String get languageTamil => 'தமிழ்';
+
+  @override
+  String get languageTelugu => 'తెలుగు';
+
+  @override
   String get languageSystem => 'System default';
 
   @override
