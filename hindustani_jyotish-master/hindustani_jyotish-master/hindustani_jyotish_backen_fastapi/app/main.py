@@ -14,6 +14,27 @@ from fastapi.staticfiles import StaticFiles
 from app import __version__
 from app.api.router import api_router
 from app.core.config import settings, warn_on_insecure_config
+from app.core.i18n import resolve_request_lang, translate_message
+
+
+def _localize_json_payload(obj, lang) -> bool:
+    """In-place translate the user-facing ``detail``/``message`` fields of a
+    decoded JSON response (top level + a nested ``data`` envelope). Returns True
+    if anything changed. Only these two keys are touched — never astrology
+    content or arbitrary strings."""
+    changed = False
+    if isinstance(obj, dict):
+        for key in ("detail", "message"):
+            val = obj.get(key)
+            if isinstance(val, str):
+                new = translate_message(val, lang)
+                if new != val:
+                    obj[key] = new
+                    changed = True
+        data = obj.get("data")
+        if isinstance(data, dict) and _localize_json_payload(data, lang):
+            changed = True
+    return changed
 
 logger = logging.getLogger("app.main")
 
@@ -203,6 +224,54 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    @app.middleware("http")
+    async def localize_response(request, call_next):
+        """Translate the ``detail``/``message`` of JSON responses into the
+        request's language (``?lang=`` → ``Accept-Language`` → English).
+
+        English (or an unknown language) is a byte-identical passthrough. Only
+        JSON responses are buffered; streaming/file/SSE responses (any non-JSON
+        content-type) stream through untouched. Any parse/translate failure
+        falls back to the original bytes, so this can never turn a good response
+        into an error."""
+        import json as _json
+        from starlette.responses import Response as _Response
+
+        response = await call_next(request)
+        lang = resolve_request_lang(
+            request.query_params.get("lang"),
+            request.headers.get("accept-language"),
+        )
+        if lang == "en":
+            return response
+        ctype = response.headers.get("content-type", "")
+        if "application/json" not in ctype or not hasattr(response, "body_iterator"):
+            return response
+
+        body = b""
+        async for chunk in response.body_iterator:
+            body += chunk
+
+        changed = False
+        try:
+            payload = _json.loads(body)
+            changed = _localize_json_payload(payload, lang)
+        except Exception:
+            changed = False
+
+        if not changed:
+            # body_iterator is already consumed — re-emit the original bytes.
+            headers = dict(response.headers)
+            headers.pop("content-length", None)
+            return _Response(content=body, status_code=response.status_code,
+                             headers=headers, media_type=ctype)
+
+        new_body = _json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        headers = dict(response.headers)
+        headers.pop("content-length", None)
+        return _Response(content=new_body, status_code=response.status_code,
+                         headers=headers, media_type=ctype)
 
     app.include_router(api_router, prefix=settings.API_V1_PREFIX)
 

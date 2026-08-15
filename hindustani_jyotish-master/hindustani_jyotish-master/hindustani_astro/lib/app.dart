@@ -48,6 +48,9 @@ class HindustaniAstroApp extends StatelessWidget {
         builder: (context, themeState) {
           return BlocBuilder<LocaleCubit, Locale?>(
             builder: (context, locale) {
+              // Keep the API client's language in sync with the UI locale so the
+              // backend localizes its response messages (Accept-Language).
+              getIt<ApiClient>().languageCode = locale?.languageCode;
               return MaterialApp.router(
                 key: ValueKey(themeState.brightness),
                 onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
