@@ -41,7 +41,7 @@ import time
 from datetime import date
 from typing import Callable, Optional, Tuple
 
-from fastapi import APIRouter, Depends, Header, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
@@ -53,8 +53,10 @@ from app.core.gateway_guards import (
     enforce_monthly_quota, concurrency_guard, hash_body,
     get_idempotent_response, store_idempotent_response,
 )
+from app.core.i18n import normalize_lang as _normalize_full_lang
 from app.kundli import engine as nk_engine
 from app.routers import rashi_router
+from app.services.report_translator import translate_report_safe
 from app.specialists import SPECIALISTS, get_engine
 from app.milan import milan_engine, match_phase2, match_phase3, compute_unified_score
 from app.models.model import ApiUsageLog
@@ -75,6 +77,24 @@ IdempotencyHeader = Header(None, alias="Idempotency-Key", description=(
     "Optional. Replay-safe retries — the same key + endpoint returns the "
     "original cached response instead of re-running the engine."
 ))
+
+# Optional response-language query param, shared by every kundli/reports/
+# rashi/forecast endpoint. Applied via app.services.report_translator
+# (translate_report_safe) AFTER the engine computes the (unchanged, English)
+# result and BEFORE it's wrapped in the envelope — presentation-only, never
+# touches astrology calculation/scoring. Omitted or "en" is a byte-identical
+# passthrough (100% back-compat with existing integrations).
+LangQuery = Query(
+    "en",
+    description=(
+        "Optional response language. Short codes: en (default), hi, mr, gu, "
+        "ta, te, kn, bn, pa, ml. Full-name aliases (hindi, tamil, marathi, "
+        "...) and Accept-Language-style values (e.g. \"hi-IN\") are also "
+        "accepted and normalized. Unrecognized values fall back to English. "
+        "Only display text (labels, grades, dignities, roles, etc.) is "
+        "translated — no calculation, scoring, or numeric data changes."
+    ),
+)
 
 # The 12 zodiac signs in engine order (Aries=0 ... Pisces=11) — matches
 # app.kundli.helper.SIGNS_FULL / app.routers.rashi_router._RASHI_META.
@@ -162,13 +182,21 @@ def _execute_gateway_call(
     request_body: dict,
     idempotency_key: Optional[str],
     compute_fn: Callable[[], Tuple[dict, bool]],
+    lang: str = "en",
 ) -> dict:
     """Shared Phase-4/7 pipeline every gateway endpoint runs through:
     idempotency replay -> monthly quota -> concurrency cap -> 1 TPS rate
     limit -> compute (engine or cache) -> usage log -> idempotency store.
     `compute_fn` returns (result, cache_hit). Every Phase-8 granular
     endpoint runs through this exact same helper so billing/1-TPS/metering
-    apply uniformly across all 4 categories."""
+    apply uniformly across all 4 categories.
+
+    `lang` (optional, default "en") is applied to `result` via
+    translate_report_safe right before the envelope is built — the SAME
+    result-cache entry (English) is reused for every language, so caching
+    and idempotency replay are unaffected by which language was requested.
+    Translation never raises and never touches calculation/scoring; "en"
+    (or an omitted lang) is a no-op, so existing callers are unaffected."""
     if idempotency_key:
         cached = get_idempotent_response(db, ctx.api_key.id, idempotency_key)
         if cached is not None:
@@ -192,6 +220,10 @@ def _execute_gateway_call(
 
     latency_ms = int((time.time() - t0) * 1000)
     _log_usage(db, ctx, product, endpoint, 200, latency_ms, cache_hit)
+
+    if lang and lang != "en":
+        result = translate_report_safe(result, lang)
+
     envelope = _envelope(result, product, endpoint, ctx, latency_ms, cache_hit)
 
     if idempotency_key:
@@ -282,6 +314,7 @@ def _kundli_full_compute(req: KundliGatewayRequest) -> Tuple[dict, bool]:
 )
 def gateway_kundli(
     req: KundliGatewayRequest,
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -289,7 +322,7 @@ def gateway_kundli(
     require_scope(ctx, "kundli")
     return _execute_gateway_call(
         ctx, db, "kundli", "/api/v2/kundli", req.model_dump(), idempotency_key,
-        lambda: _kundli_full_compute(req),
+        lambda: _kundli_full_compute(req), lang=lang,
     )
 
 
@@ -312,6 +345,7 @@ def gateway_kundli(
 )
 def gateway_kundli_all(
     req: KundliGatewayRequest,
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -319,7 +353,7 @@ def gateway_kundli_all(
     require_scope(ctx, "kundli")
     return _execute_gateway_call(
         ctx, db, "kundli", "/api/v2/kundli/all", req.model_dump(), idempotency_key,
-        lambda: _kundli_full_compute(req),
+        lambda: _kundli_full_compute(req), lang=lang,
     )
 
 
@@ -332,6 +366,7 @@ def gateway_kundli_all(
 )
 def gateway_kundli_summary(
     req: GatewayBirthData,
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -356,7 +391,7 @@ def gateway_kundli_summary(
         }
         return jsonable_encoder(data), False
 
-    return _execute_gateway_call(ctx, db, "kundli", "/api/v2/kundli/summary", req.model_dump(), idempotency_key, compute)
+    return _execute_gateway_call(ctx, db, "kundli", "/api/v2/kundli/summary", req.model_dump(), idempotency_key, compute, lang=lang)
 
 
 @router.post(
@@ -368,6 +403,7 @@ def gateway_kundli_summary(
 )
 def gateway_kundli_planets(
     req: GatewayBirthData,
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -378,7 +414,7 @@ def gateway_kundli_planets(
         chart = _compute_chart(req.name, req.gender, req.dob, req.tob, req.place)
         return jsonable_encoder(chart.get("planets", {})), False
 
-    return _execute_gateway_call(ctx, db, "kundli", "/api/v2/kundli/planets", req.model_dump(), idempotency_key, compute)
+    return _execute_gateway_call(ctx, db, "kundli", "/api/v2/kundli/planets", req.model_dump(), idempotency_key, compute, lang=lang)
 
 
 @router.post(
@@ -390,6 +426,7 @@ def gateway_kundli_planets(
 )
 def gateway_kundli_chart(
     req: GatewayBirthData,
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -401,7 +438,7 @@ def gateway_kundli_chart(
         data = {k: v for k, v in chart.items() if k != "_pdata"}
         return jsonable_encoder(data), False
 
-    return _execute_gateway_call(ctx, db, "kundli", "/api/v2/kundli/chart", req.model_dump(), idempotency_key, compute)
+    return _execute_gateway_call(ctx, db, "kundli", "/api/v2/kundli/chart", req.model_dump(), idempotency_key, compute, lang=lang)
 
 
 @router.post(
@@ -413,6 +450,7 @@ def gateway_kundli_chart(
 )
 def gateway_kundli_divisional(
     req: GatewayBirthData,
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -423,7 +461,7 @@ def gateway_kundli_divisional(
         chart = _compute_chart(req.name, req.gender, req.dob, req.tob, req.place)
         return jsonable_encoder(chart.get("divisionals", {})), False
 
-    return _execute_gateway_call(ctx, db, "kundli", "/api/v2/kundli/divisional", req.model_dump(), idempotency_key, compute)
+    return _execute_gateway_call(ctx, db, "kundli", "/api/v2/kundli/divisional", req.model_dump(), idempotency_key, compute, lang=lang)
 
 
 @router.post(
@@ -435,6 +473,7 @@ def gateway_kundli_divisional(
 )
 def gateway_kundli_dasha_vimshottari(
     req: KundliDashaRequest,
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -446,7 +485,7 @@ def gateway_kundli_dasha_vimshottari(
         result = nk_engine.get_vimshottari(chart["_pdata"], chart["birth_jd"], req.levels)
         return jsonable_encoder(result), False
 
-    return _execute_gateway_call(ctx, db, "kundli", "/api/v2/kundli/dasha/vimshottari", req.model_dump(), idempotency_key, compute)
+    return _execute_gateway_call(ctx, db, "kundli", "/api/v2/kundli/dasha/vimshottari", req.model_dump(), idempotency_key, compute, lang=lang)
 
 
 @router.post(
@@ -458,6 +497,7 @@ def gateway_kundli_dasha_vimshottari(
 )
 def gateway_kundli_dasha_moola(
     req: KundliDashaRequest,
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -469,7 +509,7 @@ def gateway_kundli_dasha_moola(
         result = nk_engine.get_moola_dasha(chart["_pdata"], chart["birth_jd"], req.levels)
         return jsonable_encoder(result), False
 
-    return _execute_gateway_call(ctx, db, "kundli", "/api/v2/kundli/dasha/moola", req.model_dump(), idempotency_key, compute)
+    return _execute_gateway_call(ctx, db, "kundli", "/api/v2/kundli/dasha/moola", req.model_dump(), idempotency_key, compute, lang=lang)
 
 
 @router.post(
@@ -481,6 +521,7 @@ def gateway_kundli_dasha_moola(
 )
 def gateway_kundli_gochar(
     req: KundliGocharRequest,
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -497,7 +538,7 @@ def gateway_kundli_gochar(
         result = nk_engine.get_gochar(date_str, moon_sign)
         return jsonable_encoder(result), False
 
-    return _execute_gateway_call(ctx, db, "kundli", "/api/v2/kundli/gochar", req.model_dump(), idempotency_key, compute)
+    return _execute_gateway_call(ctx, db, "kundli", "/api/v2/kundli/gochar", req.model_dump(), idempotency_key, compute, lang=lang)
 
 
 # The remaining single-purpose analysis modules all take the same
@@ -540,6 +581,7 @@ def _make_kundli_analysis_handler(path: str, fn):
 
     def handler(
         req: GatewayBirthData,
+        lang: str = LangQuery,
         ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
         db: Session = Depends(get_db),
         idempotency_key: Optional[str] = IdempotencyHeader,
@@ -551,7 +593,7 @@ def _make_kundli_analysis_handler(path: str, fn):
             result = fn(chart["_pdata"], chart["birth_jd"])
             return jsonable_encoder(result), False
 
-        return _execute_gateway_call(ctx, db, "kundli", endpoint, req.model_dump(), idempotency_key, compute)
+        return _execute_gateway_call(ctx, db, "kundli", endpoint, req.model_dump(), idempotency_key, compute, lang=lang)
 
     handler.__name__ = f"gateway_kundli_{path.replace('-', '_').replace('/', '_')}"
     return handler
@@ -589,6 +631,7 @@ def _make_single_chart_report_handler(key: str):
 
     def handler(
         req: ReportGatewayRequest,
+        lang: str = LangQuery,
         ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
         db: Session = Depends(get_db),
         idempotency_key: Optional[str] = IdempotencyHeader,
@@ -598,7 +641,7 @@ def _make_single_chart_report_handler(key: str):
         def compute() -> Tuple[dict, bool]:
             return _run_single_chart_report(key, req), False
 
-        return _execute_gateway_call(ctx, db, "reports", endpoint, req.model_dump(), idempotency_key, compute)
+        return _execute_gateway_call(ctx, db, "reports", endpoint, req.model_dump(), idempotency_key, compute, lang=lang)
 
     handler.__name__ = f"gateway_report_{key}"
     return handler
@@ -632,6 +675,7 @@ for _key in SINGLE_CHART_REPORT_KEYS:
 )
 def gateway_report_kundli_milan(
     req: TwoChartGatewayRequest,
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -649,7 +693,7 @@ def gateway_report_kundli_milan(
         )
         return jsonable_encoder(result), False
 
-    return _execute_gateway_call(ctx, db, "reports", "/api/v2/reports/kundli_milan", req.model_dump(), idempotency_key, compute)
+    return _execute_gateway_call(ctx, db, "reports", "/api/v2/reports/kundli_milan", req.model_dump(), idempotency_key, compute, lang=lang)
 
 
 @router.post(
@@ -661,6 +705,7 @@ def gateway_report_kundli_milan(
 )
 def gateway_report_relationship(
     req: TwoChartGatewayRequest,
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -679,7 +724,7 @@ def gateway_report_relationship(
         result = engine.analyze(charts_input, relationship_context=req.context or "general")
         return jsonable_encoder(result), False
 
-    return _execute_gateway_call(ctx, db, "reports", "/api/v2/reports/relationship", req.model_dump(), idempotency_key, compute)
+    return _execute_gateway_call(ctx, db, "reports", "/api/v2/reports/relationship", req.model_dump(), idempotency_key, compute, lang=lang)
 
 
 @router.post(
@@ -691,6 +736,7 @@ def gateway_report_relationship(
 )
 def gateway_report_child_probability(
     req: TwoChartGatewayRequest,
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -706,7 +752,7 @@ def gateway_report_child_probability(
         )
         return jsonable_encoder(result), False
 
-    return _execute_gateway_call(ctx, db, "reports", "/api/v2/reports/child_probability", req.model_dump(), idempotency_key, compute)
+    return _execute_gateway_call(ctx, db, "reports", "/api/v2/reports/child_probability", req.model_dump(), idempotency_key, compute, lang=lang)
 
 
 @router.post(
@@ -718,6 +764,7 @@ def gateway_report_child_probability(
 )
 def gateway_report_love_compatibility(
     req: TwoChartGatewayRequest,
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -733,7 +780,7 @@ def gateway_report_love_compatibility(
         )
         return jsonable_encoder(result), False
 
-    return _execute_gateway_call(ctx, db, "reports", "/api/v2/reports/love_compatibility", req.model_dump(), idempotency_key, compute)
+    return _execute_gateway_call(ctx, db, "reports", "/api/v2/reports/love_compatibility", req.model_dump(), idempotency_key, compute, lang=lang)
 
 
 @router.post(
@@ -745,6 +792,7 @@ def gateway_report_love_compatibility(
 )
 def gateway_report_karma_linkage(
     req: TwoChartGatewayRequest,
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -761,7 +809,7 @@ def gateway_report_karma_linkage(
         result = generate_karma_linkage(charts_input, focus_question=req.focus_question or None)
         return jsonable_encoder(result), False
 
-    return _execute_gateway_call(ctx, db, "reports", "/api/v2/reports/karma_linkage", req.model_dump(), idempotency_key, compute)
+    return _execute_gateway_call(ctx, db, "reports", "/api/v2/reports/karma_linkage", req.model_dump(), idempotency_key, compute, lang=lang)
 
 
 @router.post(
@@ -788,6 +836,7 @@ def gateway_report_karma_linkage(
 def gateway_report(
     key: str,
     req: ReportGatewayRequest,
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -806,7 +855,7 @@ def gateway_report(
     def compute() -> Tuple[dict, bool]:
         return _run_single_chart_report(key, req), False
 
-    return _execute_gateway_call(ctx, db, "reports", endpoint, req.model_dump(), idempotency_key, compute)
+    return _execute_gateway_call(ctx, db, "reports", endpoint, req.model_dump(), idempotency_key, compute, lang=lang)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -831,6 +880,7 @@ def gateway_report(
 )
 def gateway_milan(
     req: MilanGatewayRequest,
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -851,7 +901,7 @@ def gateway_milan(
         result = {"phase1": phase1, "phase2": phase2, "phase3": phase3, "unified": unified}
         return jsonable_encoder(result), False
 
-    return _execute_gateway_call(ctx, db, "reports", "/api/v2/milan", req.model_dump(), idempotency_key, compute)
+    return _execute_gateway_call(ctx, db, "reports", "/api/v2/milan", req.model_dump(), idempotency_key, compute, lang=lang)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -872,6 +922,7 @@ def _unwrap(ok_response: dict):
     responses={402: {"description": "No active subscription"}, 429: {"description": "Rate limit / quota / concurrency exceeded"}},
 )
 def gateway_rashi_all(
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -879,16 +930,22 @@ def gateway_rashi_all(
     require_scope(ctx, "rashi")
 
     def compute() -> Tuple[dict, bool]:
-        result = _unwrap(rashi_router.today_all(lang="english"))
+        # rashi_router does its own localization (app.core.i18n / astro-term
+        # localizer) keyed by full-word codes ("english", "hindi", ...), a
+        # separate system from report_translator's TRANSLATIONS — so we
+        # convert the gateway's short-code-friendly `lang` to that form
+        # instead of running it back through translate_report.
+        result = _unwrap(rashi_router.today_all(lang=_normalize_full_lang(lang)))
         return jsonable_encoder(result), False
 
-    return _execute_gateway_call(ctx, db, "rashi", "/api/v2/rashi/all", {}, idempotency_key, compute)
+    return _execute_gateway_call(ctx, db, "rashi", "/api/v2/rashi/all", {"lang": lang}, idempotency_key, compute)
 
 
 def _make_rashi_handler(idx: int, sign: str):
     endpoint = f"/api/v2/rashi/{sign}"
 
     def handler(
+        lang: str = LangQuery,
         ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
         db: Session = Depends(get_db),
         idempotency_key: Optional[str] = IdempotencyHeader,
@@ -896,10 +953,10 @@ def _make_rashi_handler(idx: int, sign: str):
         require_scope(ctx, "rashi")
 
         def compute() -> Tuple[dict, bool]:
-            result = _unwrap(rashi_router.rashi_full(idx, lang="english"))
+            result = _unwrap(rashi_router.rashi_full(idx, lang=_normalize_full_lang(lang)))
             return jsonable_encoder(result), False
 
-        return _execute_gateway_call(ctx, db, "rashi", endpoint, {"sign": sign}, idempotency_key, compute)
+        return _execute_gateway_call(ctx, db, "rashi", endpoint, {"sign": sign, "lang": lang}, idempotency_key, compute)
 
     handler.__name__ = f"gateway_rashi_{sign}"
     return handler
@@ -940,6 +997,7 @@ for _idx, _sign in enumerate(RASHI_SIGNS):
 )
 def gateway_forecast(
     req: ForecastGatewayRequest,
+    lang: str = LangQuery,
     ctx: GatewayAuthContext = Depends(get_developer_from_api_key),
     db: Session = Depends(get_db),
     idempotency_key: Optional[str] = IdempotencyHeader,
@@ -947,6 +1005,9 @@ def gateway_forecast(
     require_scope(ctx, "forecast")
 
     def compute() -> Tuple[dict, bool]:
+        # cache key is language-agnostic — the cache always holds the
+        # English (source) result; translate_report_safe is applied in
+        # _execute_gateway_call after this returns, per requested `lang`.
         cache_key = make_cache_key("forecast", {
             "name": req.name, "gender": req.gender, "dob": req.dob,
             "tob": req.tob, "place": req.place, "date": date.today().isoformat(),
@@ -967,7 +1028,7 @@ def gateway_forecast(
         cache_set(cache_key, encoded, ttl_seconds=FORECAST_CACHE_TTL_SECONDS)
         return encoded, False
 
-    return _execute_gateway_call(ctx, db, "forecast", "/api/v2/forecast", req.model_dump(), idempotency_key, compute)
+    return _execute_gateway_call(ctx, db, "forecast", "/api/v2/forecast", req.model_dump(), idempotency_key, compute, lang=lang)
 
 
 # ═══════════════════════════════════════════════════════════════════
