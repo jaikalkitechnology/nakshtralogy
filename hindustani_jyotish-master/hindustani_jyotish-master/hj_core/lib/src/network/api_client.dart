@@ -24,6 +24,13 @@ class ApiClient {
         if (token != null && options.extra['noAuth'] != true) {
           options.headers['Authorization'] = 'Bearer $token';
         }
+        // Tell the backend which language to localize its response messages
+        // in (error/success `detail`). Server falls back to English when this
+        // is absent or unrecognised, so it's always safe to send.
+        final lang = languageCode;
+        if (lang != null && lang.isNotEmpty) {
+          options.headers['Accept-Language'] = lang;
+        }
         handler.next(options);
       },
       onError: _onError,
@@ -32,6 +39,11 @@ class ApiClient {
 
   final Dio _dio;
   final TokenStore _tokens;
+
+  /// Current UI language code (e.g. 'hi', 'ta'). Sent as `Accept-Language` so
+  /// the backend localizes its response messages. Set from the app whenever the
+  /// selected locale changes; `null` means English/default.
+  String? languageCode;
 
   /// Called when refresh fails — the app should route back to sign-in.
   void Function()? onSessionExpired;
