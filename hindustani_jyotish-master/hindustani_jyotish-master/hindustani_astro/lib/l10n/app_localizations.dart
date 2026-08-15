@@ -7,6 +7,14 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
 import 'app_localizations_hi.dart';
+import 'app_localizations_bn.dart';
+import 'app_localizations_gu.dart';
+import 'app_localizations_kn.dart';
+import 'app_localizations_ml.dart';
+import 'app_localizations_mr.dart';
+import 'app_localizations_pa.dart';
+import 'app_localizations_ta.dart';
+import 'app_localizations_te.dart';
 
 // ignore_for_file: type=lint
 
@@ -96,6 +104,14 @@ abstract class AppLocalizations {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
     Locale('hi'),
+    Locale('bn'),
+    Locale('gu'),
+    Locale('kn'),
+    Locale('ml'),
+    Locale('mr'),
+    Locale('pa'),
+    Locale('ta'),
+    Locale('te'),
   ];
 
   /// Astrologer app name shown as the window/app title
@@ -854,6 +870,54 @@ abstract class AppLocalizations {
   /// **'हिन्दी'**
   String get languageHindi;
 
+  /// No description provided for @languageBengali.
+  ///
+  /// In en, this message translates to:
+  /// **'বাংলা'**
+  String get languageBengali;
+
+  /// No description provided for @languageGujarati.
+  ///
+  /// In en, this message translates to:
+  /// **'ગુજરાતી'**
+  String get languageGujarati;
+
+  /// No description provided for @languageKannada.
+  ///
+  /// In en, this message translates to:
+  /// **'ಕನ್ನಡ'**
+  String get languageKannada;
+
+  /// No description provided for @languageMalayalam.
+  ///
+  /// In en, this message translates to:
+  /// **'മലയാളം'**
+  String get languageMalayalam;
+
+  /// No description provided for @languageMarathi.
+  ///
+  /// In en, this message translates to:
+  /// **'मराठी'**
+  String get languageMarathi;
+
+  /// No description provided for @languagePunjabi.
+  ///
+  /// In en, this message translates to:
+  /// **'ਪੰਜਾਬੀ'**
+  String get languagePunjabi;
+
+  /// No description provided for @languageTamil.
+  ///
+  /// In en, this message translates to:
+  /// **'தமிழ்'**
+  String get languageTamil;
+
+  /// No description provided for @languageTelugu.
+  ///
+  /// In en, this message translates to:
+  /// **'తెలుగు'**
+  String get languageTelugu;
+
   /// No description provided for @languageSystem.
   ///
   /// In en, this message translates to:
@@ -1568,7 +1632,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'hi'].contains(locale.languageCode);
+      <String>['en', 'hi', 'bn', 'gu', 'kn', 'ml', 'mr', 'pa', 'ta', 'te'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1581,6 +1645,22 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEn();
     case 'hi':
       return AppLocalizationsHi();
+    case 'bn':
+      return AppLocalizationsBn();
+    case 'gu':
+      return AppLocalizationsGu();
+    case 'kn':
+      return AppLocalizationsKn();
+    case 'ml':
+      return AppLocalizationsMl();
+    case 'mr':
+      return AppLocalizationsMr();
+    case 'pa':
+      return AppLocalizationsPa();
+    case 'ta':
+      return AppLocalizationsTa();
+    case 'te':
+      return AppLocalizationsTe();
   }
 
   throw FlutterError(

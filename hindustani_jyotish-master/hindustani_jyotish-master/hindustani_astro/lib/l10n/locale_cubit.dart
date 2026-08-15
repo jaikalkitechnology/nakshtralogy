@@ -16,7 +16,7 @@ class LocaleCubit extends Cubit<Locale?> {
   static const _key = 'hj_locale';
 
   /// Languages the apps ship translations for.
-  static const supportedLocales = <Locale>[Locale('en'), Locale('hi')];
+  static const supportedLocales = <Locale>[Locale('en'), Locale('hi'), Locale('bn'), Locale('gu'), Locale('kn'), Locale('ml'), Locale('mr'), Locale('pa'), Locale('ta'), Locale('te')];
 
   /// Restore the persisted choice (call before the first frame).
   Future<void> load() async {
