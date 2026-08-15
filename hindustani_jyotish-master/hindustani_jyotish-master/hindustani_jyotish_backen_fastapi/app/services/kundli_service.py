@@ -58,6 +58,12 @@ async def _charge(db: AsyncSession, user: User, insight_type: str) -> Decimal:
     if insight_type in FREE_INSIGHT_TYPES:
         return Decimal("0")
     amount = await pricing.price_for_db(db, insight_type)
+    # An admin-configured price of ₹0 means the service is FREE — never call
+    # debit_user(0), which raises "Debit amount must be positive" and surfaces
+    # to the app as "value should be positive". This lets any insight (e.g.
+    # kundli) be made free from the admin panel just by setting its price to 0.
+    if amount <= 0:
+        return Decimal("0")
     await wallet_service.debit_user(
         db, user, amount, type=TransactionType.report, reference_id=insight_type
     )

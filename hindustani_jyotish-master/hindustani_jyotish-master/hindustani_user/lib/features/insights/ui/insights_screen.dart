@@ -140,13 +140,6 @@ class InsightsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 _MyReportsCard(
-                  icon: Icons.auto_stories_outlined,
-                  title: l.specialReportsCard,
-                  subtitle: l.specialReportsCardSubtitle,
-                  onTap: () => context.push('/insights/special-reports'),
-                ),
-                const SizedBox(height: 10),
-                _MyReportsCard(
                   icon: Icons.folder_open_outlined,
                   title: l.insightsMyReports,
                   subtitle: l.insightsMyReportsSubtitle,
