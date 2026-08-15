@@ -323,7 +323,14 @@ async def end_consultation(consultation_id: uuid.UUID, principal: CurrentPrincip
     await consultation_service.finalize(db, consult, astrologer, ended_by_role=principal.role)
     user = await db.get(User, consult.user_id)
 
-    await chat_manager.broadcast(str(consult.id), {"kind": "status", "status": "completed"})
+    # `ended_by` lets each client attribute the end from its own side —
+    # the party who tapped End sees "you ended it", the other sees
+    # "ended by <the other party>" instead of a silent close. Value is the
+    # ender's role ("user" or "astrologer").
+    await chat_manager.broadcast(
+        str(consult.id),
+        {"kind": "status", "status": "completed", "ended_by": principal.role},
+    )
 
     return EndSummary(
         consultation_id=consult.id,

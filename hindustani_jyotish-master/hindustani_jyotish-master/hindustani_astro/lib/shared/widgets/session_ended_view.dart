@@ -9,9 +9,13 @@ import 'package:hj_core/hj_core.dart';
 /// instead of leaving a dead screen up, and the caller auto-returns to
 /// Requests shortly after; [onBackNow] lets the astrologer skip the wait.
 class SessionEndedView extends StatelessWidget {
-  const SessionEndedView({super.key, required this.onBackNow});
+  const SessionEndedView({super.key, required this.onBackNow, this.detail});
 
   final VoidCallback onBackNow;
+
+  /// Optional explanation line — e.g. "The seeker ended this session." when
+  /// the other party closed it. Falls back to the generic server-closed note.
+  final String? detail;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +38,7 @@ class SessionEndedView extends StatelessWidget {
             Text('This session has ended', style: AppTextStyles.heading(size: 18)),
             const SizedBox(height: 8),
             Text(
-              'The consultation was already closed on the server.',
+              detail ?? 'The consultation was already closed on the server.',
               textAlign: TextAlign.center,
               style: AppTextStyles.body(size: 13, color: AppColors.ivoryDim),
             ),

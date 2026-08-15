@@ -122,6 +122,8 @@
   "consultSessionEndedTimeUp": "Session ended (time limit reached)",
   "consultCallEndedBy": "Call ended by {name}",
   "@consultCallEndedBy": { "placeholders": { "name": { "type": "String" } } },
+  "consultChatEndedBy": "Chat ended by {name}",
+  "@consultChatEndedBy": { "placeholders": { "name": { "type": "String" } } },
   "consultTheAstrologer": "the astrologer",
   "consultSending": "Sending…",
   "@consultSending": { "description": "Status under an outgoing chat bubble while its REST send is in flight" },

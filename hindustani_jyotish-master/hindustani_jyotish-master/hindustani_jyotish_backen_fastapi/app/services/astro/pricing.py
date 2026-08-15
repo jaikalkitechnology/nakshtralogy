@@ -21,7 +21,7 @@ from app.models.admin_content import CosmicService
 # Insight type → (display name, seed price in ₹). Single source of truth for
 # seeding — the admin console imports DEFAULT_COSMIC from here.
 DEFAULTS: dict[str, tuple[str, Decimal]] = {
-    "detailed_kundli": ("Detailed Kundli", Decimal("99.00")),
+    "detailed_kundli": ("Detailed Kundli", Decimal("0.00")),  # free by default; admin-editable
     "planet_position": ("Planet Position", Decimal("79.00")),
     "daily_horoscope": ("Daily Horoscope", Decimal("29.00")),
     "daily_prediction": ("Daily Prediction", Decimal("29.00")),

@@ -333,6 +333,11 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String consultChatEndedBy(String name) {
+    return '$name ने चैट समाप्त की';
+  }
+
+  @override
   String get consultTheAstrologer => 'ज्योतिषी';
 
   @override

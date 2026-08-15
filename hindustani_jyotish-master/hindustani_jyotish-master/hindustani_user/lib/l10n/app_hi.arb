@@ -118,6 +118,8 @@
   "consultSessionEndedTimeUp": "सत्र समाप्त (समय सीमा पूरी हुई)",
   "consultCallEndedBy": "{name} ने कॉल समाप्त की",
   "@consultCallEndedBy": { "placeholders": { "name": { "type": "String" } } },
+  "consultChatEndedBy": "{name} ने चैट समाप्त की",
+  "@consultChatEndedBy": { "placeholders": { "name": { "type": "String" } } },
   "consultTheAstrologer": "ज्योतिषी",
   "consultSending": "भेजा जा रहा है…",
   "consultNotSentRetry": "नहीं भेजा गया · पुनः प्रयास करें",

@@ -92,6 +92,11 @@ class _AttendChatScreenState extends State<AttendChatScreen> with WidgetsBinding
   /// consultation is no longer active — swaps the whole screen to
   /// [SessionEndedView].
   bool _sessionEnded = false;
+
+  /// Role of whoever ended the chat ("user"/"astrologer"), from the server's
+  /// `completed` status frame — lets [SessionEndedView] show "The seeker
+  /// ended this session." when the seeker closed it. Null = self/system end.
+  String? _endedByRole;
   Timer? _endedPopTimer;
 
   @override
@@ -339,7 +344,15 @@ class _AttendChatScreenState extends State<AttendChatScreen> with WidgetsBinding
     switch (e['kind']) {
       case 'status':
         final wasActive = _active;
-        setState(() => _status = '${e['status']}');
+        final newStatus = '${e['status']}';
+        // Seeker (or the system) ended the chat — capture who, and end right
+        // away with the attribution instead of waiting for the sync poll.
+        if (newStatus == 'completed') {
+          _endedByRole = e['ended_by'] as String?;
+          unawaited(_handleSessionEnded());
+          return;
+        }
+        setState(() => _status = newStatus);
         // Keep the screen awake only while the chat is actually active — not
         // from initial screen entry.
         if (!wasActive && _active) {
@@ -448,7 +461,12 @@ class _AttendChatScreenState extends State<AttendChatScreen> with WidgetsBinding
     if (_sessionEnded) {
       return Scaffold(
         body: CosmicBackground(
-          child: SafeArea(child: SessionEndedView(onBackNow: _backToRequestsNow)),
+          child: SafeArea(
+            child: SessionEndedView(
+              onBackNow: _backToRequestsNow,
+              detail: _endedByRole == 'user' ? 'The seeker ended this session.' : null,
+            ),
+          ),
         ),
       );
     }
