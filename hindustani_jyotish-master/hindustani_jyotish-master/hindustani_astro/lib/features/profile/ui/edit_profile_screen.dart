@@ -51,6 +51,34 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   bool _saving = false;
   bool _uploading = false;
 
+  /// Snapshot of the GATED (admin-reviewed) fields as last saved/loaded. Used
+  /// to tell whether THIS save actually touched a gated field — if only the
+  /// charges changed, the save applies immediately and must NOT claim it's
+  /// waiting for admin approval. Refreshed after every successful save.
+  late String _savedName;
+  late String _savedBio;
+  late String _savedSkills;
+  late String _savedLanguages;
+  late String _savedExperience;
+
+  void _snapshotGated() {
+    _savedName = _name.text;
+    _savedBio = _bio.text;
+    _savedSkills = _skills.text;
+    _savedLanguages = _languages.text;
+    _savedExperience = _experience.text;
+  }
+
+  /// True if any gated field differs from the last saved snapshot. Charges
+  /// (chat/call/video/Super Chat) are deliberately excluded — they never need
+  /// approval.
+  bool get _gatedChanged =>
+      _name.text != _savedName ||
+      _bio.text != _savedBio ||
+      _skills.text != _savedSkills ||
+      _languages.text != _savedLanguages ||
+      _experience.text != _savedExperience;
+
   /// Inline validation error for [_superChat]; cleared as soon as the field
   /// is edited again.
   String? _superChatError;
@@ -73,6 +101,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _superChat.addListener(() {
       if (_superChatError != null) setState(() => _superChatError = null);
     });
+    _snapshotGated();
   }
 
   @override
@@ -108,6 +137,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       setState(() => _superChatError = l.setSuperChatMax);
       return;
     }
+    // Captured BEFORE the await so the message reflects THIS save: charges-only
+    // edits apply immediately and must read "updated", not "pending approval".
+    final gatedChanged = _gatedChanged;
     setState(() => _saving = true);
     try {
       final updated = await _repo.updateProfile({
@@ -124,11 +156,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         'super_chat_presets': [superChat.toStringAsFixed(2)],
       });
       session.update(updated);
-      // KYC-approved astrologers have these edits held for admin approval.
-      final pendingApproval = updated.pendingEdit?['status'] == 'pending';
+      // Only a GATED change that the backend actually staged waits for admin
+      // approval. A charges-only save (chat/call/video/Super Chat) applies
+      // immediately, so it always reads "updated" — even if an unrelated
+      // profile edit is still pending from before.
+      final pendingApproval =
+          gatedChanged && updated.pendingEdit?['status'] == 'pending';
       messenger.showSnackBar(SnackBar(
         content: Text(pendingApproval ? l.setChangesPendingApproval : l.setProfileUpdated),
       ));
+      // Re-baseline so a follow-up charges-only save doesn't re-report the
+      // (now-submitted) gated change as pending again.
+      _snapshotGated();
     } on ApiException catch (e) {
       messenger.showSnackBar(SnackBar(content: Text(e.message)));
     } finally {
