@@ -15,7 +15,7 @@ from app.models.device_token import OWNER_ASTROLOGER
 from app.schemas.device import DeviceRegister, DeviceRegistered
 from app.services import push_service
 from app.models.kyc import AstrologerKYC
-from app.services import storage
+from app.services import durable_storage, storage
 from app.schemas.astrologer_portal import (
     AstrologerMeOut,
     AstrologerProfileUpdate,
@@ -123,8 +123,18 @@ async def update_profile(
         except auth_service.MobileAlreadyRegisteredError as exc:
             raise HTTPException(status.HTTP_409_CONFLICT, str(exc))
     if astrologer.kyc_status == KYCStatus.approved:
-        gated = {f: v for f, v in data.items() if f in portal_service.GATED_PROFILE_FIELDS}
+        # Charges (chat/call/video rates + Super Chat) are NOT gated — they
+        # apply immediately. Public-profile fields (name, bio, skills,
+        # languages, experience, photo, contact) are staged for admin review —
+        # but ONLY when they actually changed, so saving just the charges never
+        # triggers an approval.
         direct = {f: v for f, v in data.items() if f not in portal_service.GATED_PROFILE_FIELDS}
+        gated = {
+            f: v
+            for f, v in data.items()
+            if f in portal_service.GATED_PROFILE_FIELDS
+            and portal_service.gated_value_changed(astrologer, f, v)
+        }
         if direct:
             portal_service.apply_profile_changes(astrologer, direct)
         if gated:
@@ -240,27 +250,38 @@ async def submit_kyc(body: KYCSubmit, astrologer: CurrentAstrologer, db: DBSessi
 @router.post("/kyc/upload")
 async def upload_kyc_document(
     astrologer: CurrentAstrologer,
+    db: DBSession,
     doc_type: str = Form(...),
     file: UploadFile = File(...),
 ):
     """Upload a KYC document (photo/pan/aadhaar/aadhaar_back/bank_proof/
     certificate) → returns its key.
 
+    Accepts PDF and any common scan/photo/document format, capped at 2 MB
+    (image documents are recompressed first, so a large camera photo is shrunk
+    to fit rather than rejected). The file is stored durably in the database
+    (gzip-compressed) as well as the filesystem cache, so it survives restarts.
     Submit the returned key in the matching `*_key` field of `POST /astrologer/kyc`.
     """
     allowed = {"photo", "pan", "aadhaar", "aadhaar_back", "bank_proof", "certificate"}
     if doc_type not in allowed:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, f"doc_type must be one of {allowed}")
     data = await file.read()
+    # Hard guard on the RAW upload so we never buffer an absurd file in memory;
+    # the real 2 MB limit is enforced on the final stored size below.
     if len(data) > storage.MAX_UPLOAD_BYTES:
         raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, "File too large")
-    ext = storage.safe_extension(file.filename)
+    ext = storage.safe_extension(file.filename, storage.KYC_ALLOWED_EXT)
     if ext == ".bin":
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Unsupported file type")
-    # Document PHOTOS get recompressed (they only need to be readable by a
-    # reviewer); PDFs pass through compress_image untouched.
+    # Image documents get recompressed (they only need to be reviewer-legible),
+    # which usually brings big camera shots under the 2 MB cap; PDFs and other
+    # formats pass through untouched.
     data, ext = storage.compress_image(data, ext)
-    key = storage.save_bytes(f"kyc/{astrologer.id}/{doc_type}-{uuid.uuid4().hex[:8]}{ext}", data)
+    if len(data) > storage.KYC_MAX_UPLOAD_BYTES:
+        raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, "File too large")
+    key = f"kyc/{astrologer.id}/{doc_type}-{uuid.uuid4().hex[:8]}{ext}"
+    await durable_storage.save_durable(db, key, data, storage.content_type_for(ext))
     return {"doc_type": doc_type, "key": key, "url": storage.url_for(key)}
 
 

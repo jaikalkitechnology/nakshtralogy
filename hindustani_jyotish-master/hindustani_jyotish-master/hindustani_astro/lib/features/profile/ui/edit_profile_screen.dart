@@ -38,6 +38,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late final TextEditingController _bio;
   late final TextEditingController _skills;
   late final TextEditingController _languages;
+  late final TextEditingController _experience;
   late final TextEditingController _chat;
   late final TextEditingController _call;
   late final TextEditingController _video;
@@ -62,6 +63,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _bio = TextEditingController(text: a?.bio ?? '');
     _skills = TextEditingController(text: a?.skills.join(', ') ?? '');
     _languages = TextEditingController(text: a?.languages.join(', ') ?? '');
+    _experience = TextEditingController(
+        text: (a?.yearsExperience ?? 0) > 0 ? '${a!.yearsExperience}' : '');
     _chat = TextEditingController(text: a?.rateChatPerMsg ?? '0.00');
     _call = TextEditingController(text: a?.rateCallPerMin ?? '0.00');
     _video = TextEditingController(text: a?.rateVideoPerMin ?? '0.00');
@@ -78,6 +81,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _bio.dispose();
     _skills.dispose();
     _languages.dispose();
+    _experience.dispose();
     _chat.dispose();
     _call.dispose();
     _video.dispose();
@@ -113,6 +117,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         'bio': _bio.text.trim(),
         'skills': _splitList(_skills.text),
         'languages': _splitList(_languages.text),
+        'years_experience': int.tryParse(_experience.text.trim()) ?? 0,
         'rate_chat_per_msg': _chat.text.trim(),
         'rate_call_per_min': _call.text.trim(),
         'rate_video_per_min': _video.text.trim(),
@@ -317,6 +322,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             helper: l.setCommaSeparated,
                           ),
                         ),
+                        const SizedBox(height: 20),
+                        TextField(
+                          controller: _experience,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(2),
+                          ],
+                          decoration: _dec(l.profileExperience),
+                        ),
                         const SizedBox(height: 8),
                       ],
                     ),
@@ -410,6 +425,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         'bio' => l.setBio,
         'skills' => l.setSkills,
         'languages' => l.setLanguagesField,
+        'years_experience' => l.profileExperience,
         'rate_chat_per_msg' => l.setChatRate,
         'rate_call_per_min' => l.setCallRate,
         'rate_video_per_min' => l.setVideoRate,

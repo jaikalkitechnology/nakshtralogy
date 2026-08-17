@@ -33,10 +33,34 @@ GATED_PROFILE_FIELDS = frozenset(
         "photo_url",
         "skills",
         "languages",
+        "years_experience",
         "mobile",
         "country_code",
     }
 )
+
+
+def _normalized(value):
+    """Normalize a value for change-detection: blank/whitespace strings and
+    None collapse to None; tuples become lists so a comparison is order-exact
+    but type-agnostic."""
+    if value is None:
+        return None
+    if isinstance(value, str):
+        s = value.strip()
+        return s or None
+    if isinstance(value, tuple):
+        return list(value)
+    return value
+
+
+def gated_value_changed(astrologer: Astrologer, field: str, new_value) -> bool:
+    """True if `new_value` actually differs from the astrologer's live value.
+
+    Used so that saving only the charges (or re-saving unchanged text) never
+    spuriously stages a gated field for admin approval — a gated field is only
+    staged when it genuinely changed."""
+    return _normalized(new_value) != _normalized(getattr(astrologer, field, None))
 
 _RATE_FIELDS = ("rate_chat_per_msg", "rate_call_per_min", "rate_video_per_min")
 

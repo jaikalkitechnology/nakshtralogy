@@ -6,6 +6,7 @@ same `save_bytes` / `url_for` / `read_bytes` interface.
 """
 from __future__ import annotations
 
+import gzip
 import io
 import pathlib
 
@@ -45,6 +46,45 @@ MAX_UPLOAD_BYTES = 8 * 1024 * 1024  # 8 MB
 # extension allow-list.
 ALLOWED_VIDEO_EXT = {".mp4", ".mov", ".webm", ".m4v"}
 MAX_VIDEO_UPLOAD_BYTES = 100 * 1024 * 1024  # 100 MB
+
+# KYC documents accept any common scan/photo/document format the astrologer
+# might capture their ID/PAN/bank proof in — broader than the default image
+# set — plus PDF. The STORED copy is capped at 2 MB (enforced AFTER image
+# recompression, so a large camera photo is shrunk to fit rather than rejected
+# outright); non-image docs over 2 MB are rejected.
+KYC_ALLOWED_EXT = {
+    ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp",
+    ".heic", ".heif", ".tif", ".tiff", ".pdf",
+}
+KYC_MAX_UPLOAD_BYTES = 2 * 1024 * 1024  # 2 MB (final stored size)
+
+# Extension → MIME type, so a DB-served / rehydrated document keeps the right
+# Content-Type. Unknown falls back to a safe binary type.
+_CONTENT_TYPES = {
+    ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",
+    ".webp": "image/webp", ".gif": "image/gif", ".bmp": "image/bmp",
+    ".heic": "image/heic", ".heif": "image/heif", ".tif": "image/tiff",
+    ".tiff": "image/tiff", ".pdf": "application/pdf",
+}
+
+
+def content_type_for(ext: str) -> str:
+    """MIME type for a stored file extension (defaults to octet-stream)."""
+    return _CONTENT_TYPES.get(ext.lower(), "application/octet-stream")
+
+
+def gzip_compress(data: bytes) -> bytes:
+    """gzip a blob for durable DB storage (level 6 — good ratio, cheap)."""
+    return gzip.compress(data, compresslevel=6)
+
+
+def gzip_decompress(data: bytes) -> bytes:
+    """Reverse gzip_compress; returns the input unchanged if it is not gzipped
+    (defensive — a legacy/plain row must never raise on rehydration)."""
+    try:
+        return gzip.decompress(data)
+    except (OSError, EOFError):
+        return data
 
 
 def safe_extension(filename: str | None, allowed: set[str] | None = None) -> str:

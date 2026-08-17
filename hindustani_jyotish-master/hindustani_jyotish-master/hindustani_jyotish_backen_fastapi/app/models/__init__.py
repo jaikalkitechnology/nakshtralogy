@@ -38,6 +38,7 @@ from app.models.profile_edit import (  # noqa: F401
     ProfileEditStatus,
 )
 from app.models.schema_sync import SchemaSyncLog  # noqa: F401
+from app.models.stored_file import StoredFile  # noqa: F401
 from app.models.support import (  # noqa: F401
     SupportTicket,
     SupportTicketMessage,
