@@ -57,6 +57,17 @@ class InsightsScreen extends StatelessWidget {
   static String _rupees(String price) =>
       '₹${price.endsWith('.00') ? price.substring(0, price.length - 3) : price}';
 
+  /// Price chip label: a 0 (admin-set) price reads "Free", any other price as
+  /// "₹N". `raw` is the admin price string (null while the catalog loads → use
+  /// `fallback`, which is already a display string like "₹99").
+  static String _priceLabel(AppLocalizations l, String? raw,
+      {required String fallback}) {
+    if (raw == null) return fallback;
+    final v = double.tryParse(raw);
+    if (v == null) return raw;
+    return v == 0 ? l.insightFree : _rupees(raw);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
@@ -121,13 +132,19 @@ class InsightsScreen extends StatelessWidget {
                                   services.containsKey(_serviceKeys[t.$3]))
                                 _InsightTile(
                                   title: _tileTitle(l, t.$3),
-                                  // Kundli is free to the user (sourced from the
-                                  // Nakshatralogy developer API at no user cost).
-                                  price: t.$3 == 'kundli'
-                                      ? l.insightFree
-                                      : services == null
-                                          ? t.$1
-                                          : _rupees(services[_serviceKeys[t.$3]]!),
+                                  // Any service priced 0 by the admin shows
+                                  // "Free" instead of "₹0" — Detailed Kundli is
+                                  // free by default (sourced from the
+                                  // Nakshatralogy developer API at no user cost),
+                                  // but this now follows the admin price so a
+                                  // non-zero price would display correctly too.
+                                  price: _priceLabel(
+                                    l,
+                                    services == null
+                                        ? (t.$3 == 'kundli' ? '0' : null)
+                                        : services[_serviceKeys[t.$3]],
+                                    fallback: t.$1,
+                                  ),
                                   icon: t.$2,
                                   onTap: () =>
                                       _run(context, t.$3, _tileTitle(l, t.$3)),
