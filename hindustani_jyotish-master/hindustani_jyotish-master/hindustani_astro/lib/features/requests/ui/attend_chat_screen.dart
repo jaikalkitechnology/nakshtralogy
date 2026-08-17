@@ -297,6 +297,16 @@ class _AttendChatScreenState extends State<AttendChatScreen> with WidgetsBinding
 
   @override
   void dispose() {
+    // Astrologer left an ACTIVE chat by leaving the screen (back/pop) — end the
+    // session so the seeker is notified immediately and taken out too, instead
+    // of waiting on a silently-dropped socket. Backgrounding does NOT dispose
+    // this screen, so a minimise never triggers this. Fire-and-forget and
+    // idempotent: /end just 409s if the seeker or a timeout already ended it.
+    if (_active && !_sessionEnded) {
+      unawaited(getIt<PortalRepository>()
+          .endConsultation(widget.consultationId)
+          .catchError((_) {}));
+    }
     WidgetsBinding.instance.removeObserver(this);
     _reconnectTimer?.cancel();
     _syncTimer?.cancel();

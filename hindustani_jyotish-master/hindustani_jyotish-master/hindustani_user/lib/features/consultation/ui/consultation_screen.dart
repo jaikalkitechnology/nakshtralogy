@@ -197,6 +197,15 @@ class _ConsultationScreenState extends State<ConsultationScreen>
 
   @override
   void dispose() {
+    // Seeker left an ACTIVE chat by leaving the screen (back/pop) — end the
+    // session so the astrologer is notified immediately and taken out too,
+    // instead of waiting on a silently-dropped socket. Backgrounding does NOT
+    // dispose this screen (the socket is closed + reconnected in place), so a
+    // minimise never triggers this. Fire-and-forget and idempotent: /end just
+    // 409s if the astrologer or a timeout already ended the session.
+    if (_isChat && _chatActive && !_chatEndedHandled) {
+      unawaited(_repo.end(widget.consultationId).catchError((_) => <String, dynamic>{}));
+    }
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.cancel();
     _rtcGraceTimer?.cancel();
@@ -530,6 +539,9 @@ class _ConsultationScreenState extends State<ConsultationScreen>
         ],
       ),
     );
+    // Leave the dead chat screen once acknowledged — the session is over, so
+    // don't strand the seeker on a screen they can only stare at.
+    if (mounted && Navigator.of(context).canPop()) Navigator.of(context).pop();
   }
 
   /// Surfaces WHY the chat socket dropped so a reconnect is diagnosable from

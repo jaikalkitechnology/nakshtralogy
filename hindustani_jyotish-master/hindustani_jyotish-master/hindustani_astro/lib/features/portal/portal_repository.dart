@@ -147,6 +147,12 @@ class PortalRepository {
 
   Future<void> decline(String id) => _api.post('/consultations/$id/decline');
 
+  /// End (complete) this consultation. Used when the astrologer leaves an
+  /// active chat so the backend finalizes it and notifies the seeker at once
+  /// (broadcasts `completed` with `ended_by`), instead of leaving them waiting
+  /// on a silently-dropped socket.
+  Future<void> endConsultation(String id) => _api.post('/consultations/$id/end');
+
   Future<List<Map<String, dynamic>>> messages(String id) async {
     final res = await _api.get('/consultations/$id/messages');
     return (res as List).cast<Map<String, dynamic>>();
