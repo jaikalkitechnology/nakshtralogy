@@ -131,7 +131,13 @@ class Settings(BaseSettings):
     PUSH_ENABLED: bool = True
 
     # ── Phase 6 · Wallet, Payments & Payouts (Razorpay) ───────────────
-    RAZORPAY_KEY_ID: str = ""
+    # Live publishable Key ID, hardcoded as the default so the apps + admin
+    # panel are wired to this Razorpay account out of the box. The Key ID is a
+    # PUBLIC identifier (it ships in the client checkout), NOT a secret. The Key
+    # Secret is required to create real orders + verify payments and is added
+    # separately in the admin console (Settings → Razorpay); until it is,
+    # recharges return a clear "add the Key Secret" error rather than a charge.
+    RAZORPAY_KEY_ID: str = "rzp_live_OgYPmBDL7Q7dZS"
     RAZORPAY_KEY_SECRET: str = ""
     RAZORPAY_WEBHOOK_SECRET: str = ""
     # When true (no keys), recharge orders/signatures are simulated for local dev.

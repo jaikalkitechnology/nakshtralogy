@@ -90,16 +90,21 @@ async def create_order(
 
     configured = bool(creds.key_id and creds.key_secret)
     if not configured:
-        if settings.PAYMENTS_DEV_MODE:
+        # A real Key ID with NO Key Secret is the "go live, secret pending"
+        # state (the hardcoded live key with the secret not yet added in the
+        # admin console). Never mint a fake dev order here — that would launch
+        # real-key Razorpay checkout against a nonexistent order and fail
+        # cryptically. Only a COMPLETELY unconfigured gateway (no key at all)
+        # falls back to a simulated order for local development.
+        if not creds.key_id and settings.PAYMENTS_DEV_MODE:
             return RazorpayOrder(
                 order_id=f"order_dev_{uuid.uuid4().hex[:16]}",
                 amount_paise=paise,
                 currency="INR",
-                key_id=creds.key_id or "rzp_test_dev",
+                key_id="rzp_test_dev",
             )
-        # Outside dev mode an unconfigured gateway must be a CLEAR error the
-        # apps can show verbatim — not a silently-minted fake dev order that
-        # lets a "payment" appear to succeed with no money ever moving.
+        # A clear error the apps can show verbatim — not a silently-minted fake
+        # dev order that lets a "payment" appear to succeed with no money moving.
         raise RazorpayError(
             "Payments are not configured yet — add the Razorpay Key ID and "
             "Key Secret in the admin console (Settings → Razorpay) and mark "

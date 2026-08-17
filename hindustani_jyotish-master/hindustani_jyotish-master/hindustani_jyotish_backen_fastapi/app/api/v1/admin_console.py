@@ -2706,8 +2706,14 @@ async def put_razorpay_settings(body: RazorpaySettingIn, admin: CurrentAdmin, db
         db.add(row)
     else:
         row.key_id = body.key_id
-        row.key_secret = body.key_secret
-        row.webhook_secret = body.webhook_secret
+        # Blank secret fields mean "keep the existing value" (the admin UI only
+        # sends a secret when Replace was tapped) — otherwise a save that just
+        # toggles Active or updates the Key ID would silently WIPE the stored
+        # Key/Webhook Secret.
+        if body.key_secret:
+            row.key_secret = body.key_secret
+        if body.webhook_secret:
+            row.webhook_secret = body.webhook_secret
         row.is_active = body.is_active
     await db.flush()
     await db.refresh(row)

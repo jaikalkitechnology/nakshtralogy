@@ -111,7 +111,9 @@ export interface AdminStats {
 export interface RazorpaySettings {
   key_id: string | null
   key_secret_masked: string | null
+  key_secret_configured?: boolean
   webhook_secret_masked: string | null
+  webhook_secret_configured?: boolean
   is_active: boolean
   configured: boolean
   /**
