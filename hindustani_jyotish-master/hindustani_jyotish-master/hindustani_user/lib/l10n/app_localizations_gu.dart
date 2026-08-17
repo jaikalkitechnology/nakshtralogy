@@ -502,6 +502,33 @@ class AppLocalizationsGu extends AppLocalizations {
   String get languageTelugu => 'తెలుగు';
 
   @override
+  String get astroAbout => 'પરિચય';
+
+  @override
+  String get astroDetails => 'વિગતો';
+
+  @override
+  String get astroExperience => 'અનુભવ';
+
+  @override
+  String get astroLanguages => 'ભાષાઓ';
+
+  @override
+  String get astroSpecialities => 'વિશેષતાઓ';
+
+  @override
+  String get astroRates => 'દરો';
+
+  @override
+  String get astroSuperChat => 'સુપર ચેટ';
+
+  @override
+  String get astroConsultNow => 'હમણાં સલાહ લો';
+
+  @override
+  String get astroRateThis => 'આ જ્યોતિષીને રેટ કરો';
+
+  @override
   String get languageSystem => 'સિસ્ટમ ડિફોલ્ટ';
 
   @override

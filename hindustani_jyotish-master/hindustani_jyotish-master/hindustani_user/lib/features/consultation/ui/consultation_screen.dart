@@ -197,6 +197,15 @@ class _ConsultationScreenState extends State<ConsultationScreen>
 
   @override
   void dispose() {
+    // Seeker left an ACTIVE chat by leaving the screen (back/pop) — end the
+    // session so the astrologer is notified immediately and taken out too,
+    // instead of waiting on a silently-dropped socket. Backgrounding does NOT
+    // dispose this screen (the socket is closed + reconnected in place), so a
+    // minimise never triggers this. Fire-and-forget and idempotent: /end just
+    // 409s if the astrologer or a timeout already ended the session.
+    if (_isChat && _chatActive && !_chatEndedHandled) {
+      unawaited(_repo.end(widget.consultationId).catchError((_) => <String, dynamic>{}));
+    }
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.cancel();
     _rtcGraceTimer?.cancel();
@@ -530,6 +539,9 @@ class _ConsultationScreenState extends State<ConsultationScreen>
         ],
       ),
     );
+    // Leave the dead chat screen once acknowledged — the session is over, so
+    // don't strand the seeker on a screen they can only stare at.
+    if (mounted && Navigator.of(context).canPop()) Navigator.of(context).pop();
   }
 
   /// Surfaces WHY the chat socket dropped so a reconnect is diagnosable from
@@ -1443,6 +1455,8 @@ class _ChatBillingStrip extends StatelessWidget {
     final l = AppLocalizations.of(context);
     final u = used ?? 0;
     final left = (cap - u).clamp(0, cap);
+    // Total deducted so far = billable (user) messages × the per-message rate.
+    final spent = rate == null ? null : u * rate!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -1461,6 +1475,22 @@ class _ChatBillingStrip extends StatelessWidget {
               style: AppTextStyles.mono(size: 12, color: AppColors.ivoryDim),
             ),
           ),
+          // Amount deducted so far — grows by the rate after each message sent.
+          if (spent != null) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.success.withValues(alpha: 0.16),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.success.withValues(alpha: 0.45)),
+              ),
+              child: Text(
+                l.consultCharged(_fmtInr(spent)),
+                style: AppTextStyles.mono(size: 11, color: AppColors.success),
+              ),
+            ),
+            const SizedBox(width: 6),
+          ],
           if (rate != null)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),

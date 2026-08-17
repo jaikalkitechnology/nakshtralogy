@@ -503,6 +503,33 @@ class AppLocalizationsTe extends AppLocalizations {
   String get languageTelugu => 'తెలుగు';
 
   @override
+  String get astroAbout => 'పరిచయం';
+
+  @override
+  String get astroDetails => 'వివరాలు';
+
+  @override
+  String get astroExperience => 'అనుభవం';
+
+  @override
+  String get astroLanguages => 'భాషలు';
+
+  @override
+  String get astroSpecialities => 'ప్రత్యేకతలు';
+
+  @override
+  String get astroRates => 'ధరలు';
+
+  @override
+  String get astroSuperChat => 'సూపర్ చాట్';
+
+  @override
+  String get astroConsultNow => 'ఇప్పుడు సంప్రదించండి';
+
+  @override
+  String get astroRateThis => 'ఈ జ్యోతిష్కుడిని రేట్ చేయండి';
+
+  @override
   String get languageSystem => 'సిస్టమ్ డిఫాల్ట్';
 
   @override

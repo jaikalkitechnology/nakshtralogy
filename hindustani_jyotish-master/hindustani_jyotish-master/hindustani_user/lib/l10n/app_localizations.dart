@@ -1032,6 +1032,60 @@ abstract class AppLocalizations {
   /// **'తెలుగు'**
   String get languageTelugu;
 
+  /// No description provided for @astroAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get astroAbout;
+
+  /// No description provided for @astroDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get astroDetails;
+
+  /// No description provided for @astroExperience.
+  ///
+  /// In en, this message translates to:
+  /// **'Experience'**
+  String get astroExperience;
+
+  /// No description provided for @astroLanguages.
+  ///
+  /// In en, this message translates to:
+  /// **'Languages'**
+  String get astroLanguages;
+
+  /// No description provided for @astroSpecialities.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialities'**
+  String get astroSpecialities;
+
+  /// No description provided for @astroRates.
+  ///
+  /// In en, this message translates to:
+  /// **'Rates'**
+  String get astroRates;
+
+  /// No description provided for @astroSuperChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Super Chat'**
+  String get astroSuperChat;
+
+  /// No description provided for @astroConsultNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Consult Now'**
+  String get astroConsultNow;
+
+  /// No description provided for @astroRateThis.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate this astrologer'**
+  String get astroRateThis;
+
   /// No description provided for @languageSystem.
   ///
   /// In en, this message translates to:

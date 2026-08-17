@@ -512,6 +512,33 @@ class AppLocalizationsMr extends AppLocalizations {
   String get languageTelugu => 'తెలుగు';
 
   @override
+  String get astroAbout => 'परिचय';
+
+  @override
+  String get astroDetails => 'तपशील';
+
+  @override
+  String get astroExperience => 'अनुभव';
+
+  @override
+  String get astroLanguages => 'भाषा';
+
+  @override
+  String get astroSpecialities => 'वैशिष्ट्ये';
+
+  @override
+  String get astroRates => 'दर';
+
+  @override
+  String get astroSuperChat => 'सुपर चॅट';
+
+  @override
+  String get astroConsultNow => 'आता सल्ला घ्या';
+
+  @override
+  String get astroRateThis => 'या ज्योतिषाला रेट करा';
+
+  @override
   String get languageSystem => 'सिस्टम डीफॉल्ट';
 
   @override

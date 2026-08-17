@@ -517,6 +517,33 @@ class AppLocalizationsKn extends AppLocalizations {
   String get languageTelugu => 'తెలుగు';
 
   @override
+  String get astroAbout => 'ಪರಿಚಯ';
+
+  @override
+  String get astroDetails => 'ವಿವರಗಳು';
+
+  @override
+  String get astroExperience => 'ಅನುಭವ';
+
+  @override
+  String get astroLanguages => 'ಭಾಷೆಗಳು';
+
+  @override
+  String get astroSpecialities => 'ವಿಶೇಷತೆಗಳು';
+
+  @override
+  String get astroRates => 'ದರಗಳು';
+
+  @override
+  String get astroSuperChat => 'ಸೂಪರ್ ಚಾಟ್';
+
+  @override
+  String get astroConsultNow => 'ಈಗ ಸಮಾಲೋಚಿಸಿ';
+
+  @override
+  String get astroRateThis => 'ಈ ಜ್ಯೋತಿಷಿಯನ್ನು ರೇಟ್ ಮಾಡಿ';
+
+  @override
   String get languageSystem => 'ಸಿಸ್ಟಂ ಡೀಫಾಲ್ಟ್';
 
   @override

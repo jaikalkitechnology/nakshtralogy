@@ -512,6 +512,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageTelugu => 'తెలుగు';
 
   @override
+  String get astroAbout => 'About';
+
+  @override
+  String get astroDetails => 'Details';
+
+  @override
+  String get astroExperience => 'Experience';
+
+  @override
+  String get astroLanguages => 'Languages';
+
+  @override
+  String get astroSpecialities => 'Specialities';
+
+  @override
+  String get astroRates => 'Rates';
+
+  @override
+  String get astroSuperChat => 'Super Chat';
+
+  @override
+  String get astroConsultNow => 'Consult Now';
+
+  @override
+  String get astroRateThis => 'Rate this astrologer';
+
+  @override
   String get languageSystem => 'System default';
 
   @override

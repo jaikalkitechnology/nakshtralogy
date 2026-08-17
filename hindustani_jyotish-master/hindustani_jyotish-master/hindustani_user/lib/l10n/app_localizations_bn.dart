@@ -512,6 +512,33 @@ class AppLocalizationsBn extends AppLocalizations {
   String get languageTelugu => 'తెలుగు';
 
   @override
+  String get astroAbout => 'পরিচিতি';
+
+  @override
+  String get astroDetails => 'বিবরণ';
+
+  @override
+  String get astroExperience => 'অভিজ্ঞতা';
+
+  @override
+  String get astroLanguages => 'ভাষা';
+
+  @override
+  String get astroSpecialities => 'বিশেষত্ব';
+
+  @override
+  String get astroRates => 'রেট';
+
+  @override
+  String get astroSuperChat => 'সুপার চ্যাট';
+
+  @override
+  String get astroConsultNow => 'এখন পরামর্শ করুন';
+
+  @override
+  String get astroRateThis => 'এই জ্যোতিষীকে রেট দিন';
+
+  @override
   String get languageSystem => 'সিস্টেম ডিফল্ট';
 
   @override

@@ -542,6 +542,11 @@ async def add_chat_message(
         if charged is None:
             await finalize(db, consult, astrologer, reason="insufficient balance")
             raise ChatError("Insufficient balance; chat ended", ended=True)
+        # Chat is billed per USER message, so the session counter (and the cap)
+        # tracks only the seeker's messages — the astrologer's replies are free
+        # and must not consume the seeker's paid quota or inflate the count
+        # shown in the billing strip.
+        consult.message_count += 1
 
     msg = ConsultationMessage(
         consultation_id=consult.id,
@@ -550,7 +555,6 @@ async def add_chat_message(
         body=body,
     )
     db.add(msg)
-    consult.message_count += 1
     await db.flush()
     await db.refresh(msg)
     return msg, charged
