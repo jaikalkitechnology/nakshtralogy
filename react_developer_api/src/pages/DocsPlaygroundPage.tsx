@@ -7,8 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import {
   BookOpen, Play, Loader2, ChevronRight, AlertCircle, Copy, Check,
-  ShieldCheck, CreditCard, Sparkles, FileText, Moon as MoonIcon, Terminal, Package, FileJson,
+  ShieldCheck, CreditCard, Sparkles, FileText, Moon as MoonIcon, Terminal, Package, FileJson, Languages,
 } from "lucide-react";
 import {
   fetchGatewayCategorySamples, callGatewayEndpoint, GATEWAY_CATEGORIES,
@@ -21,6 +24,23 @@ const CATEGORY_LABELS: Record<string, string> = {
   rashi: "Rashi",
   forecast: "Today Forecast",
 };
+
+// Response languages supported by the gateway `?lang=` param. `en` (default)
+// returns the response unchanged; every other code localizes the display text
+// (labels, grades, dignities, verdicts, rashi metadata) — numbers/scores never
+// change. Kept in sync with the backend app/core/report_translator + gateway.
+const RESPONSE_LANGUAGES: { code: string; label: string }[] = [
+  { code: "en", label: "English (default)" },
+  { code: "hi", label: "हिन्दी — Hindi" },
+  { code: "bn", label: "বাংলা — Bengali" },
+  { code: "gu", label: "ગુજરાતી — Gujarati" },
+  { code: "kn", label: "ಕನ್ನಡ — Kannada" },
+  { code: "ml", label: "മലയാളം — Malayalam" },
+  { code: "mr", label: "मराठी — Marathi" },
+  { code: "pa", label: "ਪੰਜਾਬੀ — Punjabi" },
+  { code: "ta", label: "தமிழ் — Tamil" },
+  { code: "te", label: "తెలుగు — Telugu" },
+];
 
 const CATEGORY_DESCRIPTIONS: Record<string, string> = {
   kundli: "Full birth chart + one endpoint per analysis module, plus /kundli/all for everything in one call.",
@@ -55,6 +75,21 @@ export default function DocsPlaygroundPage() {
   const [response, setResponse] = useState<{ ok: boolean; data: any } | null>(null);
   const [elapsedMs, setElapsedMs] = useState<number | null>(null);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [lang, setLang] = useState<string>("en");
+
+  // `?lang=` is only appended for a non-default language, so the shown path,
+  // samples and live call stay byte-identical to before for English.
+  const langQuery = lang !== "en" ? `?lang=${lang}` : "";
+  // Inject `?lang=` into a code sample's endpoint URL. The samples embed the
+  // full URL as `https://api.nakshatralogy.com<path>"`, so the path is always
+  // immediately followed by a closing quote — splice the query in there.
+  const withLang = useCallback(
+    (code: string) =>
+      !langQuery || !activeEndpoint
+        ? code
+        : code.split(`${activeEndpoint.path}"`).join(`${activeEndpoint.path}${langQuery}"`),
+    [langQuery, activeEndpoint],
+  );
 
   const copyText = (key: string, text: string) => {
     navigator.clipboard?.writeText(text);
@@ -112,7 +147,7 @@ export default function DocsPlaygroundPage() {
       if (activeEndpoint.method === "POST" && bodyText.trim()) {
         try { body = JSON.parse(bodyText); } catch { alert("Request body is not valid JSON."); setRunning(false); return; }
       }
-      const { ok, data, elapsedMs: ms } = await callGatewayEndpoint(activeEndpoint.method, activeEndpoint.path, apiKey.trim(), body);
+      const { ok, data, elapsedMs: ms } = await callGatewayEndpoint(activeEndpoint.method, `${activeEndpoint.path}${langQuery}`, apiKey.trim(), body);
       setResponse({ ok, data });
       setElapsedMs(ms);
     } catch (e: any) {
@@ -218,7 +253,10 @@ export default function DocsPlaygroundPage() {
                   <Card className="rounded-2xl border-border/60 bg-card/60 backdrop-blur">
                     <CardHeader className="space-y-1">
                       <CardTitle className="text-base">{activeEndpoint.summary}</CardTitle>
-                      <p className="font-mono text-xs text-muted-foreground">{activeEndpoint.method} {activeEndpoint.path}</p>
+                      <p className="font-mono text-xs text-muted-foreground">
+                        {activeEndpoint.method} {activeEndpoint.path}
+                        {langQuery && <span className="text-gold">{langQuery}</span>}
+                      </p>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="grid gap-3 md:grid-cols-2">
@@ -226,13 +264,33 @@ export default function DocsPlaygroundPage() {
                           <Label>Your API key (sk_test_... or sk_live_...)</Label>
                           <Input value={apiKey} onChange={(e) => setApiKey(e.target.value)} placeholder="sk_test_..." />
                         </div>
-                        <div className="flex items-end">
-                          <Button onClick={run} disabled={running} className="w-full">
-                            {running ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Play className="mr-1 h-4 w-4" />}
-                            {running ? "Running..." : "Run request"}
-                          </Button>
+                        <div className="space-y-1.5">
+                          <Label className="flex items-center gap-1.5">
+                            <Languages className="h-3.5 w-3.5 text-gold" /> Response language
+                          </Label>
+                          <Select value={lang} onValueChange={setLang}>
+                            <SelectTrigger><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              {RESPONSE_LANGUAGES.map((l) => (
+                                <SelectItem key={l.code} value={l.code}>{l.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
+
+                      <Button onClick={run} disabled={running} className="w-full">
+                        {running ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Play className="mr-1 h-4 w-4" />}
+                        {running ? "Running..." : "Run request"}
+                      </Button>
+
+                      {langQuery && (
+                        <p className="rounded-lg border border-gold/25 bg-gold/5 px-3 py-2 text-xs text-muted-foreground">
+                          <span className="text-foreground">Localized response:</span> the request adds{" "}
+                          <code className="text-gold">{langQuery}</code>. Only display text (labels, grades, dignities,
+                          verdicts, rashi metadata) is translated — all numbers, scores and dates are unchanged.
+                        </p>
+                      )}
 
                       {activeEndpoint.method === "POST" && (
                         <div className="space-y-1.5">
@@ -265,12 +323,12 @@ export default function DocsPlaygroundPage() {
                           <TabsTrigger value="node">Node</TabsTrigger>
                           <TabsTrigger value="php">PHP</TabsTrigger>
                         </TabsList>
-                        {Object.entries(activeEndpoint.samples).map(([lang, code]) => (
-                          <TabsContent key={lang} value={lang} className="relative">
-                            <Button size="sm" variant="ghost" className="absolute right-1 top-1 z-10" onClick={() => copyText(lang, code)}>
-                              {copiedKey === lang ? <Check className="mr-1 h-3.5 w-3.5 text-emerald-400" /> : <Copy className="mr-1 h-3.5 w-3.5" />} Copy
+                        {Object.entries(activeEndpoint.samples).map(([sampleLang, code]) => (
+                          <TabsContent key={sampleLang} value={sampleLang} className="relative">
+                            <Button size="sm" variant="ghost" className="absolute right-1 top-1 z-10" onClick={() => copyText(sampleLang, withLang(code))}>
+                              {copiedKey === sampleLang ? <Check className="mr-1 h-3.5 w-3.5 text-emerald-400" /> : <Copy className="mr-1 h-3.5 w-3.5" />} Copy
                             </Button>
-                            <pre className="max-h-72 overflow-auto rounded-lg bg-muted p-3 text-xs">{code}</pre>
+                            <pre className="max-h-72 overflow-auto rounded-lg bg-muted p-3 text-xs">{withLang(code)}</pre>
                           </TabsContent>
                         ))}
                       </Tabs>
@@ -289,6 +347,7 @@ export default function DocsPlaygroundPage() {
           <p><strong className="text-foreground">Auth:</strong> <code>Authorization: Bearer sk_live_...</code> or <code>sk_test_...</code></p>
           <p><strong className="text-foreground">Rate limit:</strong> 1 request/second per key — 429 + <code>Retry-After</code> when exceeded.</p>
           <p><strong className="text-foreground">Subscription:</strong> every call requires an active All-Access subscription — 402 otherwise.</p>
+          <p><strong className="text-foreground">Response language:</strong> add <code>?lang=</code> to any endpoint to localize the display text — <code>en</code> (default), <code>hi</code>, <code>bn</code>, <code>gu</code>, <code>kn</code>, <code>ml</code>, <code>mr</code>, <code>pa</code>, <code>ta</code>, <code>te</code>. Full-name (<code>hindi</code>) and <code>Accept-Language</code> values (<code>hi-IN</code>) are also accepted; unknown falls back to English. Only labels/grades/verdicts translate — numbers never change.</p>
           <p><strong className="text-foreground">Categories:</strong> <code>kundli</code>, <code>reports</code>, <code>rashi</code>, <code>forecast</code> — back-compat aliases (<code>/kundli</code>, <code>/reports/&#123;key&#125;</code>, <code>/milan</code>, <code>/forecast</code>) still work.</p>
           <p><strong className="text-foreground">Full docs:</strong> Swagger at <code>/api/v2/docs</code>, Redoc at <code>/api/v2/redoc</code>.</p>
         </CardContent>
