@@ -150,6 +150,21 @@ async def _seed_firebase_settings() -> None:
         logger.exception("Firebase settings seeding failed (continuing without it)")
 
 
+async def _rehydrate_durable_files() -> None:
+    """Restore any DB-durable files (e.g. KYC documents) whose ephemeral
+    filesystem copy was wiped by a redeploy/restart. Best-effort and guarded —
+    boot never fails on it."""
+    try:
+        from app.core.database import AsyncSessionLocal
+        from app.services import durable_storage
+
+        async with AsyncSessionLocal() as db:
+            restored = await durable_storage.rehydrate_missing(db)
+        logger.info("Startup file rehydrate: %d file(s) restored.", restored)
+    except Exception:  # noqa: BLE001 — startup must never fail on rehydrate
+        logger.exception("startup file rehydrate failed (continuing without it)")
+
+
 async def _run_startup_schema_sync() -> None:
     """Opt-in additive schema safety net on top of Alembic.
 
@@ -187,6 +202,9 @@ async def lifespan(app: FastAPI):
     # Additive schema auto-sync (opt-in; guarded). Complements Alembic — never
     # replaces it. See app.services.schema_sync.
     await _run_startup_schema_sync()
+    # Restore DB-durable files (KYC docs) to the filesystem cache — must run
+    # AFTER schema sync so the stored_files table exists on a fresh DB.
+    await _rehydrate_durable_files()
     tasks = [
         asyncio.create_task(_consultation_expiry_loop()),
         asyncio.create_task(_broadcast_expiry_loop()),

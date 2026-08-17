@@ -272,6 +272,9 @@ class AstrologerProfileUpdate(BaseModel):
     photo_url: str | None = None
     skills: list[str] | None = None
     languages: list[str] | None = None
+    # Years of professional experience. Gated behind admin review once KYC is
+    # approved (it's on the public profile card) — see GATED_PROFILE_FIELDS.
+    years_experience: int | None = Field(default=None, ge=0, le=80)
     # Contact number, digits only, prefix in country_code — validated
     # together below (see app/core/phone.py). Gated behind admin review once
     # KYC is approved (portal_service.GATED_PROFILE_FIELDS).
