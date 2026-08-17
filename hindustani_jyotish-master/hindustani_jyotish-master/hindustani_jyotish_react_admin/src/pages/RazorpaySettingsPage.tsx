@@ -61,6 +61,14 @@ export default function RazorpaySettingsPage(){
       {diagnoseError && <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-[13px] text-red-300">Diagnose failed: {diagnoseError}</div>}
       {diagnose && <div className={`rounded-xl border px-4 py-3 text-[13px] ${diagnoseOk?'border-emerald-500/20 bg-emerald-500/10 text-emerald-400':'border-red-500/20 bg-red-500/10 text-red-400'}`}><b>{diagnoseOk?'Connection OK':'Connection problem'}</b> — {diagnose.diagnosis}</div>}
 
+      {current?.key_id && !current?.key_secret_configured && (
+        <div className="rounded-xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-[13px] text-amber-300">
+          <b>Almost there.</b> The live Key ID is set and active, but live payments can't be
+          processed until the <b>Key Secret</b> is added — tap <b>Replace</b> under Key Secret,
+          paste the secret from your Razorpay dashboard, and Save.
+        </div>
+      )}
+
       <Card className="p-6 sm:p-7">
         <div className="flex items-center justify-between gap-3">
           <div><div className="text-[12px] font-bold uppercase tracking-widest text-ivory-faint">Status</div><div className="text-[12px] text-ivory-faint mt-1">Live payment processing</div></div>

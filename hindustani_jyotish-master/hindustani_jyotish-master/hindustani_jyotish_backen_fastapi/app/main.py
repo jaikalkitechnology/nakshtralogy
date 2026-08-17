@@ -150,6 +150,42 @@ async def _seed_firebase_settings() -> None:
         logger.exception("Firebase settings seeding failed (continuing without it)")
 
 
+async def _seed_razorpay_settings() -> None:
+    """Seed an ACTIVE Razorpay credential row from the hardcoded live Key ID so
+    the gateway shows configured/active in the admin console out of the box.
+
+    Only the PUBLIC Key ID is seeded (no secret) — the admin adds the Key Secret
+    via Settings → Razorpay to actually process payments. Idempotent: never
+    touches an existing row (so an admin-entered secret is never clobbered).
+    """
+    try:
+        from sqlalchemy import select
+
+        from app.core.database import AsyncSessionLocal
+        from app.core.config import settings
+        from app.models.admin_content import RazorpaySetting
+
+        key_id = (settings.RAZORPAY_KEY_ID or "").strip()
+        if not key_id:
+            return
+        async with AsyncSessionLocal() as db:
+            existing = await db.scalar(select(RazorpaySetting).limit(1))
+            if existing is not None:
+                return  # already configured — leave admin's row untouched
+            db.add(
+                RazorpaySetting(
+                    key_id=key_id,
+                    key_secret="",  # added later in the admin console
+                    webhook_secret=None,
+                    is_active=True,
+                )
+            )
+            await db.commit()
+        logger.info("Razorpay settings seeded (active, Key ID only — add the Key Secret in admin).")
+    except Exception:  # noqa: BLE001 — startup must never fail on seeding
+        logger.exception("Razorpay settings seeding failed (continuing without it)")
+
+
 async def _rehydrate_durable_files() -> None:
     """Restore any DB-durable files (e.g. KYC documents) whose ephemeral
     filesystem copy was wiped by a redeploy/restart. Best-effort and guarded —
@@ -205,6 +241,9 @@ async def lifespan(app: FastAPI):
     # Restore DB-durable files (KYC docs) to the filesystem cache — must run
     # AFTER schema sync so the stored_files table exists on a fresh DB.
     await _rehydrate_durable_files()
+    # Seed the active Razorpay row (live Key ID) — AFTER schema sync so the
+    # razorpay_settings table exists on a fresh DB.
+    await _seed_razorpay_settings()
     tasks = [
         asyncio.create_task(_consultation_expiry_loop()),
         asyncio.create_task(_broadcast_expiry_loop()),
