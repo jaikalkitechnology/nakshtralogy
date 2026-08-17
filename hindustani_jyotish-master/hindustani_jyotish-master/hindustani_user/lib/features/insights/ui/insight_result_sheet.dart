@@ -64,6 +64,9 @@ class _InsightResultBody extends StatelessWidget {
     final pdfUrl = pdfUrlOf(response);
     final charged = response['amount_charged'];
     final balance = response['wallet_balance'];
+    // A zero charge (e.g. the free Detailed Kundli) reads "Free", not
+    // "Charged ₹0".
+    final isFree = (double.tryParse('${charged ?? ''}') ?? -1) == 0;
 
     return ListView(
       controller: controller,
@@ -72,8 +75,9 @@ class _InsightResultBody extends StatelessWidget {
         Text(title, style: AppTextStyles.heading(size: 20)),
         if (charged != null && balance != null) ...[
           const SizedBox(height: 4),
-          Text(l.insightsChargedBalance(charged, balance),
-              style: AppTextStyles.label(size: 12, color: AppColors.gold)),
+          Text(isFree ? l.insightFree : l.insightsChargedBalance(charged, balance),
+              style: AppTextStyles.label(
+                  size: 12, color: isFree ? AppColors.success : AppColors.gold)),
         ],
         const SizedBox(height: 16),
         ..._bodyFor(context, l),

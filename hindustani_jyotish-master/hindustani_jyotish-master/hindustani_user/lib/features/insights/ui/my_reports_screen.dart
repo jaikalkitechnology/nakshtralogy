@@ -378,8 +378,13 @@ class _ReportRow extends StatelessWidget {
                               tone: ChipTone.muted,
                               icon: Icons.schedule_outlined),
                         if (report.amount != null)
-                          StatusChip('₹${report.amount}',
-                              tone: ChipTone.warn),
+                          StatusChip(
+                              (double.tryParse(report.amount!) ?? -1) == 0
+                                  ? l.insightFree
+                                  : '₹${report.amount}',
+                              tone: (double.tryParse(report.amount!) ?? -1) == 0
+                                  ? ChipTone.success
+                                  : ChipTone.warn),
                       ],
                     ),
                   ],
