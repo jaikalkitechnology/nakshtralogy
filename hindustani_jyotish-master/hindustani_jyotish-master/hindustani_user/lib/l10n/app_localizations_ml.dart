@@ -527,6 +527,33 @@ class AppLocalizationsMl extends AppLocalizations {
   String get languageTelugu => 'తెలుగు';
 
   @override
+  String get astroAbout => 'വിവരണം';
+
+  @override
+  String get astroDetails => 'വിശദാംശങ്ങൾ';
+
+  @override
+  String get astroExperience => 'അനുഭവം';
+
+  @override
+  String get astroLanguages => 'ഭാഷകൾ';
+
+  @override
+  String get astroSpecialities => 'സവിശേഷതകൾ';
+
+  @override
+  String get astroRates => 'നിരക്കുകൾ';
+
+  @override
+  String get astroSuperChat => 'സൂപ്പർ ചാറ്റ്';
+
+  @override
+  String get astroConsultNow => 'ഇപ്പോൾ കൺസൾട്ട് ചെയ്യൂ';
+
+  @override
+  String get astroRateThis => 'ഈ ജ്യോതിഷിയെ റേറ്റ് ചെയ്യൂ';
+
+  @override
   String get languageSystem => 'സിസ്റ്റം ഡിഫോൾട്ട്';
 
   @override

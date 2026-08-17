@@ -669,8 +669,8 @@ class _TileAvatar extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          width: 54,
-          height: 54,
+          width: 72,
+          height: 72,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
@@ -689,13 +689,13 @@ class _TileAvatar extends StatelessWidget {
           child: url == null
               ? ColoredBox(
                   color: AppColors.indigoMid,
-                  child: Icon(Icons.person, color: AppColors.copperLight),
+                  child: Icon(Icons.person, size: 34, color: AppColors.copperLight),
                 )
               : CachedNetworkImage(
                   imageUrl: url!,
                   fit: BoxFit.cover,
                   errorWidget: (_, _, _) =>
-                      const Icon(Icons.person, color: AppColors.copperLight),
+                      const Icon(Icons.person, size: 34, color: AppColors.copperLight),
                 ),
         ),
         if (online)

@@ -1443,6 +1443,8 @@ class _ChatBillingStrip extends StatelessWidget {
     final l = AppLocalizations.of(context);
     final u = used ?? 0;
     final left = (cap - u).clamp(0, cap);
+    // Total deducted so far = billable (user) messages × the per-message rate.
+    final spent = rate == null ? null : u * rate!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -1461,6 +1463,22 @@ class _ChatBillingStrip extends StatelessWidget {
               style: AppTextStyles.mono(size: 12, color: AppColors.ivoryDim),
             ),
           ),
+          // Amount deducted so far — grows by the rate after each message sent.
+          if (spent != null) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.success.withValues(alpha: 0.16),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.success.withValues(alpha: 0.45)),
+              ),
+              child: Text(
+                l.consultCharged(_fmtInr(spent)),
+                style: AppTextStyles.mono(size: 11, color: AppColors.success),
+              ),
+            ),
+            const SizedBox(width: 6),
+          ],
           if (rate != null)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../../../shared/widgets/cosmic_background.dart';
@@ -118,6 +119,7 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen> {
               return const Center(child: CircularProgressIndicator(color: AppColors.saffron));
             }
             final a = snap.data!;
+            final l = AppLocalizations.of(context);
             // Presentation-only derivations of the same data keys.
             final avg = double.tryParse('${_avgRatingOverride ?? a.avgRating}') ?? 0;
             final reviews = _reviewCountOverride ?? a.reviewCount;
@@ -179,13 +181,13 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen> {
                       ),
                     ),
                     if (a.bio != null && a.bio!.isNotEmpty) ...[
-                      const SectionLabel('About'),
+                      SectionLabel(l.astroAbout),
                       PremiumCard(
                         child: Text(a.bio!,
                             style: AppTextStyles.body(size: 14, color: AppColors.ivoryDim)),
                       ),
                     ],
-                    const SectionLabel('Details'),
+                    SectionLabel(l.astroDetails),
                     PremiumCard(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -196,7 +198,7 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen> {
                                   tone: TileTone.gold, size: 40),
                               const SizedBox(width: 14),
                               Expanded(
-                                child: Text('Experience',
+                                child: Text(l.astroExperience,
                                     style:
                                         AppTextStyles.body(size: 15, weight: FontWeight.w600)),
                               ),
@@ -209,16 +211,16 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen> {
                           ),
                           if (a.languages.isNotEmpty) ...[
                             const _DetailDivider(),
-                            _ChipBlock(label: 'Languages', items: a.languages),
+                            _ChipBlock(label: l.astroLanguages, items: a.languages),
                           ],
                           if (a.skills.isNotEmpty) ...[
                             const _DetailDivider(),
-                            _ChipBlock(label: 'Specialities', items: a.skills),
+                            _ChipBlock(label: l.astroSpecialities, items: a.skills),
                           ],
                         ],
                       ),
                     ),
-                    const SectionLabel('Rates'),
+                    SectionLabel(l.astroRates),
                     PremiumCard(
                       child: Column(
                         children: [
@@ -243,14 +245,14 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen> {
                       ),
                     ),
                     if (a.superChatPresets.isNotEmpty) ...[
-                      const SectionLabel('Super Chat'),
+                      SectionLabel(l.astroSuperChat),
                       // One Super Chat price per astrologer (like the
                       // chat/call/video rates above). Backend storage is
                       // still a list — the FIRST element is THE price;
                       // legacy rows may carry extra defaults, ignored here.
                       _SuperChatPriceCard(amount: a.superChatPresets.first),
                     ],
-                    const SectionLabel('Consult Now'),
+                    SectionLabel(l.astroConsultNow),
                     PremiumPrimaryButton(
                       label: 'Chat Now',
                       icon: Icons.chat_bubble_rounded,
@@ -285,7 +287,7 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen> {
                         child: Text('This astrologer is currently offline.',
                             style: AppTextStyles.label(size: 12, color: AppColors.ivoryFaint)),
                       ),
-                    const SectionLabel('Rate this astrologer'),
+                    SectionLabel(l.astroRateThis),
                     _RatingCard(
                       canRate: _canRate,
                       submitting: _submittingRating,
