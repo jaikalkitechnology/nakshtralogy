@@ -72,7 +72,8 @@ _DIGNITY = {
     "exalted": "exalted", "uccha": "exalted",
     "debilitated": "debilitated", "neecha": "debilitated", "neech": "debilitated",
     "moolatrikona": "moolatrikona", "mooltrikona": "moolatrikona",
-    "own": "own", "own sign": "own", "swakshetra": "own", "swa": "own",
+    "own": "own", "own sign": "own", "swakshetra": "own", "swa": "own", "swagrihi": "own",
+    "uch": "exalted", "ucch": "exalted",
     "neutral": "neutral", "normal": "neutral", "sama": "neutral",
     "great friend": "great_friend", "best friend": "great_friend",
     "friend": "friend", "friend sign": "friend", "mitra": "friend",
@@ -98,7 +99,7 @@ def _localize_token(tok: str, lang: str):
 
 
 _WORD_RE = re.compile(r"[A-Za-z]+")
-_DECOR_RE = re.compile(r"[\s↑↓🏠★☆]+$")
+_DECOR_RE = re.compile(r"[\s↑↓⬆⬇🏠★☆]+$")
 
 
 def _localize_value(s: str, lang: str, key: str = "") -> str:
@@ -117,8 +118,22 @@ def _localize_value(s: str, lang: str, key: str = "") -> str:
     if "dignity" in key.lower():
         core = _DECOR_RE.sub("", raw)
         dkey = re.sub(r"\s+", " ", core.lower()).strip()
+        if dkey not in _DIGNITY:
+            # tolerate a trailing gloss/parenthesis: "Uch (Exalted)" -> "uch",
+            # "Own sign" already mapped; take the leading word before "(" / space.
+            lead = re.split(r"[\s(]", dkey, 1)[0]
+            if lead in _DIGNITY:
+                dkey = lead
         if dkey in _DIGNITY and _has("dignity", _DIGNITY[dkey]):
             return t(f"dignity.{_DIGNITY[dkey]}", lang) + raw[len(core):]
+
+    # 1b. whole-value nakshatra — handles multi-word proper nouns the token
+    #     pass can't ("Purva Phalguni", "Uttara Ashadha", "Purva Bhadrapada").
+    #     Collision-safe: these normalized forms are unique to nakshatras.
+    if " " in raw:
+        nkw = _nk_norm(raw)
+        if nkw in _NAK and _has("nakshatra", _NAK[nkw]):
+            return t(f"nakshatra.{_NAK[nkw]}", lang)
 
     # 2. whole-value ambiguous rashi (e.g. "Cancer" as a sign field)
     if raw.lower() in _AMBIGUOUS_RASHI and _has("rashi.name", _RASHI[raw.lower()]):
