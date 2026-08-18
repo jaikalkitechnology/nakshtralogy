@@ -6,6 +6,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../l10n/app_localizations.dart';
 import '../insight_models.dart';
 import '../report_files.dart';
+import 'cosmic_labels.dart';
+import 'full_response_view.dart';
 import 'kundli_chart.dart';
 
 /// Scrollable result sheet for a freshly generated insight. Renders the
@@ -81,6 +83,7 @@ class _InsightResultBody extends StatelessWidget {
         ],
         const SizedBox(height: 16),
         ..._bodyFor(context, l),
+        ..._fullReportButton(context),
         const SizedBox(height: 20),
         if (pdfUrl != null) ...[
           SizedBox(
@@ -111,6 +114,38 @@ class _InsightResultBody extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  /// The complete localized Cosmic Services payload, when the backend included
+  /// it (`data.full_response`). Absent on the stub/offline path.
+  Map<String, dynamic>? get _fullResponse {
+    final f = _data['full_response'];
+    return f is Map<String, dynamic> && f.isNotEmpty ? f : null;
+  }
+
+  /// A prominent CTA that opens the full recursive report viewer — so the user
+  /// sees the ENTIRE response, not just the curated sections above.
+  List<Widget> _fullReportButton(BuildContext context) {
+    final full = _fullResponse;
+    if (full == null) return const [];
+    final lang = Localizations.localeOf(context).languageCode;
+    return [
+      const SizedBox(height: 8),
+      SizedBox(
+        width: double.infinity,
+        child: OutlinedButton.icon(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.copperLight,
+            side: const BorderSide(color: AppColors.borderMid),
+            padding: const EdgeInsets.symmetric(vertical: 14),
+          ),
+          onPressed: () => Navigator.of(context)
+              .push(CosmicFullReportPage.route(title, full)),
+          icon: const Icon(Icons.article_outlined),
+          label: Text(cosmicUi('view_full', lang)),
+        ),
+      ),
+    ];
   }
 
   List<Widget> _bodyFor(BuildContext context, AppLocalizations l) {

@@ -126,6 +126,9 @@ async def generate_report(
         )
         data = _curate_report(raw)
         data["source"] = "nakshatralogy"
+        # Complete localized dev-API payload for the app's "Complete Report"
+        # viewer (uniform `full_response` key across every insight type).
+        data["full_response"] = ks._full_payload(raw)
         provider = "nakshatralogy"
     else:
         amount = await ks._charge(db, user, report_type)
