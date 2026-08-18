@@ -58,6 +58,7 @@ from app.kundli import engine as nk_engine
 from app.routers import rashi_router
 from app.services.report_translator import translate_report_safe
 from app.services.freetext_translator import localize_report
+from app.services.astro_terms_localizer import localize_catalog_enums
 from app.specialists import SPECIALISTS, get_engine
 from app.milan import milan_engine, match_phase2, match_phase3, compute_unified_score
 from app.models.model import ApiUsageLog
@@ -239,6 +240,9 @@ def _execute_gateway_call(
         #      dictionary + astro-term passes still apply.
         result = translate_report_safe(result, lang)
         result = localize_report(result, lang)
+        # 3. Catalog grade/band/status enums the app localizes but the two passes
+        #    above skip (e.g. chakra "Balanced", bhava "STRONG", life-area grades).
+        result = localize_catalog_enums(result, lang)
 
     envelope = _envelope(result, product, endpoint, ctx, latency_ms, cache_hit)
 
