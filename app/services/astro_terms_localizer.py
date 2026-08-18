@@ -137,6 +137,61 @@ def _localize_value(s: str, lang: str, key: str = "") -> str:
     return out if changed else s
 
 
+# ── magnitude / verdict enums (grade / band / status) ──────────────────────
+#
+# Values like "Excellent", "STRONG", "Balanced", "Very Bad" appear under
+# grade / band / status keys. They're short enums (not sentences, not proper
+# nouns) so the free-text and astro-term passes both skip them — yet the in-app
+# kundli router localizes them from the curated catalog (`grade.*`, `band.*`).
+# This pass brings the developer API to parity: gated strictly by key AND
+# catalog membership, so only genuine enum values are ever replaced.
+
+_ENUM_KEY_RE = re.compile(
+    r"(^|_)(grade|band|status|rating|verdict|level|strength|severity|band)$"
+)
+
+
+def _is_enum_key(key: str) -> bool:
+    kl = str(key or "").lower()
+    return bool(_ENUM_KEY_RE.search(kl)) or kl in (
+        "grade", "band", "status", "overall_status", "chakra_status",
+        "overall_grade", "overall_band", "rating", "verdict", "level",
+    )
+
+
+def _localize_enum(value: str, lang: str):
+    v = _DECOR_RE.sub("", value.strip())
+    slug = re.sub(r"\s+", "_", v.lower())
+    for ns in ("grade", "band"):
+        if _has(ns, slug):
+            return t(f"{ns}.{slug}", lang) + value[len(v):]  # keep any trailing decor
+    return None
+
+
+def localize_catalog_enums(data: Any, lang: str) -> Any:
+    """Localize grade/band/status enum VALUES from the curated catalog
+    (`grade.*`/`band.*`). Deterministic (no LLM); english/unknown → no-op;
+    never raises. Complements `localize_astro_terms` — used by the developer-API
+    gateway so its responses reach the same coverage as the in-app kundli."""
+    try:
+        lang = normalize_lang(lang)
+        if lang == DEFAULT_LANGUAGE:
+            return data
+
+        def _walk(o, key=""):
+            if isinstance(o, dict):
+                return {k: _walk(v, k) for k, v in o.items()}
+            if isinstance(o, list):
+                return [_walk(it, key) for it in o]
+            if isinstance(o, str) and _is_enum_key(key):
+                return _localize_enum(o, lang) or o
+            return o
+
+        return _walk(data)
+    except Exception:  # pragma: no cover
+        return data
+
+
 def localize_astro_terms(data: Any, lang: str) -> Any:
     """Replace planet/rashi/nakshatra/dignity names in-place with localized
     forms. No-op for english/unknown. Never raises."""
