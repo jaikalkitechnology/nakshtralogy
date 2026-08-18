@@ -493,7 +493,7 @@ async def generate_kundli(
             db, user, "detailed_kundli", nk.KUNDLI, {**payload, "dasha_levels": 2}
         )
         data = _curate_kundli(raw)
-        data["numerology"] = numerology.life_path_number(dob)
+        data["numerology"] = numerology.life_path_number(dob, lang=_effective_lang(user))
         data["source"] = "nakshatralogy"
         inputs = {
             "name": name,
@@ -513,7 +513,7 @@ async def generate_kundli(
         dob=dob, birth_time=birth_time, ayanamsa=ayanamsa,
         latitude=latitude, longitude=longitude, tz_offset_minutes=tz_offset_minutes,
     )
-    numbers = numerology.life_path_number(dob)
+    numbers = numerology.life_path_number(dob, lang=_effective_lang(user))
     pdf_bytes = build_kundli_pdf(
         chart=chart, name=name, dob=dob, birth_time=birth_time,
         birth_place=birth_place, numerology=numbers,
@@ -745,7 +745,7 @@ async def birthday_number(
     name: str | None = None,
     gender: str | None = None,
 ) -> tuple[KundliReport, dict]:
-    numbers = numerology.life_path_number(dob)
+    numbers = numerology.life_path_number(dob, lang=_effective_lang(user))
     if nk.enabled():
         # Enrich the numerology with the chart identity from the detailed
         # kundli (lagna / moon / sun / nakshatra), per the provider notes.
