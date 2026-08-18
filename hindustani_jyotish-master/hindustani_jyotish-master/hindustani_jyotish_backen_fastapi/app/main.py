@@ -294,12 +294,18 @@ def create_app() -> FastAPI:
         into an error."""
         import json as _json
         from starlette.responses import Response as _Response
+        from app.core.i18n import set_request_lang
 
-        response = await call_next(request)
+        # Resolve BEFORE the endpoint runs and stash it, so handlers can localize
+        # outbound calls (e.g. the developer-API kundli/report request) to the
+        # language the app is showing NOW — not just the persisted User.language.
         lang = resolve_request_lang(
             request.query_params.get("lang"),
             request.headers.get("accept-language"),
         )
+        set_request_lang(lang)
+
+        response = await call_next(request)
         if lang == "en":
             return response
         ctype = response.headers.get("content-type", "")

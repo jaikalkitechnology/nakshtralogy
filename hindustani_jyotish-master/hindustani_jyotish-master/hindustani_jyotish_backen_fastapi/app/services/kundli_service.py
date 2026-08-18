@@ -24,10 +24,21 @@ from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core import i18n
 from app.models.kundli import KundliReport
 from app.models.user import User
 from app.models.wallet import TransactionType
 from app.services import nakshatralogy as nk
+
+
+def _effective_lang(user: User) -> str | None:
+    """Language for the developer-API call: the live request language (the app's
+    Accept-Language / ?lang=, set by the middleware) wins, else the persisted
+    User.language. Returns None/"en" for English so no ?lang= param is sent."""
+    req = i18n.get_request_lang()
+    if req and req != "en":
+        return req
+    return getattr(user, "language", None)
 from app.services import storage, wallet_service
 from app.services.astro import compatibility as compat
 from app.services.astro import horoscope, numerology, pricing
@@ -81,10 +92,12 @@ async def _external(
     """
     amount = await _charge(db, user, insight_type)
     try:
-        # Localize the provider's astrology text to the user's chosen language
-        # (User.language, e.g. "hi"/"ta"/"bn"…). The developer API translates
-        # the response server-side; "en"/unset returns English as before.
-        data = await nk.call(path, payload, lang=user.language)
+        # Localize the provider's astrology text to the language the app is
+        # showing RIGHT NOW: the request's Accept-Language (set by the app's UI
+        # locale) wins, falling back to the persisted User.language, then
+        # English. This way content follows the app even if the account language
+        # was never saved. The developer API translates the response server-side.
+        data = await nk.call(path, payload, lang=_effective_lang(user))
     except NakshatralogyError:
         # Only refund a real debit. Free insight types (see FREE_INSIGHT_TYPES)
         # charge nothing, and crediting ₹0 raises "Credit amount must be

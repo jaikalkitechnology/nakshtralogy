@@ -18,10 +18,28 @@ f-string keep their English text (they are mostly technical error detail).
 """
 from __future__ import annotations
 
+import contextvars
 import importlib
 import logging
 
 logger = logging.getLogger(__name__)
+
+# The language resolved for the CURRENT request (from ?lang= / Accept-Language),
+# set by the response-localization middleware BEFORE the endpoint runs so a
+# handler can localize outbound calls (e.g. the Nakshatralogy developer API for
+# kundli/reports) to whatever language the app is showing right now — without
+# depending on the persisted User.language. Default "en" (no header).
+_request_lang: contextvars.ContextVar[str] = contextvars.ContextVar(
+    "hj_request_lang", default="en"
+)
+
+
+def set_request_lang(code: str | None) -> None:
+    _request_lang.set(normalize_lang(code) if code else "en")
+
+
+def get_request_lang() -> str:
+    return _request_lang.get()
 
 # Short/locale-style codes → canonical short code. Mirrors the alias table in
 # app/services/nakshatralogy-side report_translator so the two layers agree.
