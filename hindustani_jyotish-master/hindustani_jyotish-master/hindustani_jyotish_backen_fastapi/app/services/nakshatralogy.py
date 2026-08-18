@@ -133,19 +133,27 @@ async def kundli_all(
     return await call(KUNDLI_ALL, {**birth, "dasha_levels": dasha_levels}, lang=lang)
 
 
-async def kundli_dasha_vimshottari(birth: dict[str, Any], levels: int = 2) -> dict[str, Any]:
-    """POST /api/v2/kundli/dasha/vimshottari — Vimshottari tree at `levels`."""
-    return await call(KUNDLI_DASHA_VIMSHOTTARI, {**birth, "levels": levels})
+async def kundli_dasha_vimshottari(
+    birth: dict[str, Any], levels: int = 2, *, lang: str | None = None
+) -> dict[str, Any]:
+    """POST /api/v2/kundli/dasha/vimshottari — Vimshottari tree at `levels`.
+
+    `lang` localizes the provider's text (planet names, activation labels);
+    "en"/None keeps the request byte-identical (English)."""
+    return await call(KUNDLI_DASHA_VIMSHOTTARI, {**birth, "levels": levels}, lang=lang)
 
 
 async def kundli_dasha_activation(
-    birth: dict[str, Any], query_date: str | None = None
+    birth: dict[str, Any], query_date: str | None = None, *, lang: str | None = None
 ) -> dict[str, Any]:
-    """POST /api/v2/kundli/dasha-activation — active yogas/doshas for a date."""
+    """POST /api/v2/kundli/dasha-activation — active yogas/doshas for a date.
+
+    `lang` localizes the active yoga/dosh names & descriptions; "en"/None =
+    English (unchanged request)."""
     payload = dict(birth)
     if query_date:
         payload["query_date"] = query_date
-    return await call(KUNDLI_DASHA_ACTIVATION, payload)
+    return await call(KUNDLI_DASHA_ACTIVATION, payload, lang=lang)
 
 
 # ── Special Reports developer-API wrappers (Phase J) ──────────────────
@@ -156,9 +164,13 @@ def report_path(report_type: str) -> str:
     return f"/api/v2/reports/{report_type}"
 
 
-async def report(report_type: str, birth: dict[str, Any]) -> dict[str, Any]:
+async def report(
+    report_type: str, birth: dict[str, Any], *, lang: str | None = None
+) -> dict[str, Any]:
     """POST /api/v2/reports/<report_type> — one specialist report for a single
     birth chart. `birth` = {"name","gender","dob"(DD/MM/YYYY),"tob"(HH:MM),
     "place"}. Returns the provider's `data` dict. Callers gate on `enabled()`.
+
+    `lang` localizes the provider's report text; "en"/None = English.
     """
-    return await call(report_path(report_type), birth)
+    return await call(report_path(report_type), birth, lang=lang)

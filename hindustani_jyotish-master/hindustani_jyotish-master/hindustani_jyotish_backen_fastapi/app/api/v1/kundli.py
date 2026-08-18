@@ -193,6 +193,14 @@ def _bundle(report: KundliReport) -> dict:
 # ── developer-API request bodies ──────────────────────────────────────
 
 
+def _effective_lang(user) -> str | None:
+    """Language to forward to the dev-API: prefer the live request language
+    (app's Accept-Language / ?lang=, set by middleware), then the persisted
+    User.language, else None (English). Keeps every dev-API call consistent."""
+    req = i18n.get_request_lang()
+    return req if req and req != "en" else getattr(user, "language", None)
+
+
 def _dev_birth(bi: dict) -> dict:
     """Nakshatralogy developer-API birth body from birth inputs.
 
@@ -243,11 +251,9 @@ async def compute_and_save(req: BirthDataRequest, user: CurrentUser, db: DBSessi
         # Prefer the live request language (app's Accept-Language / ?lang=) so
         # the kundli content matches what the app is showing, falling back to
         # the persisted User.language, then English.
-        _req_lang = i18n.get_request_lang()
-        _lang = _req_lang if _req_lang and _req_lang != "en" else user.language
         try:
             bundle = await nk.kundli_all(
-                _dev_birth(birth), dasha_levels=2, lang=_lang)
+                _dev_birth(birth), dasha_levels=2, lang=_effective_lang(user))
         except NakshatralogyError:
             logger.warning("dev-API /kundli/all failed for compute")
             raise HTTPException(status.HTTP_502_BAD_GATEWAY, _UPSTREAM_502)
@@ -347,7 +353,7 @@ async def vimshottari(
     if nk.enabled():
         try:
             result = await nk.kundli_dasha_vimshottari(
-                _dev_birth(_birth_inputs(report)), levels
+                _dev_birth(_birth_inputs(report)), levels, lang=_effective_lang(user)
             )
         except NakshatralogyError:
             raise HTTPException(status.HTTP_502_BAD_GATEWAY, _UPSTREAM_502)
@@ -491,7 +497,7 @@ async def dasha_activation(
     if nk.enabled():
         try:
             result = await nk.kundli_dasha_activation(
-                _dev_birth(_birth_inputs(report)), query_date
+                _dev_birth(_birth_inputs(report)), query_date, lang=_effective_lang(user)
             )
         except NakshatralogyError:
             raise HTTPException(status.HTTP_502_BAD_GATEWAY, _UPSTREAM_502)
