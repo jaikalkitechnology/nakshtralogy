@@ -41,6 +41,7 @@ from app.core.deps import CurrentUser, DBSession
 from app.kundli import engine as nk_engine
 from app.models.kundli import KundliReport
 from app.models.user import User
+from app.core import i18n
 from app.services import nakshatralogy as nk
 from app.services.nakshatralogy import NakshatralogyError
 from app.services.wallet_service import money
@@ -239,9 +240,14 @@ async def compute_and_save(req: BirthDataRequest, user: CurrentUser, db: DBSessi
         "tob": req.tob, "place": req.place,
     }
     if nk.enabled():
+        # Prefer the live request language (app's Accept-Language / ?lang=) so
+        # the kundli content matches what the app is showing, falling back to
+        # the persisted User.language, then English.
+        _req_lang = i18n.get_request_lang()
+        _lang = _req_lang if _req_lang and _req_lang != "en" else user.language
         try:
             bundle = await nk.kundli_all(
-                _dev_birth(birth), dasha_levels=2, lang=user.language)
+                _dev_birth(birth), dasha_levels=2, lang=_lang)
         except NakshatralogyError:
             logger.warning("dev-API /kundli/all failed for compute")
             raise HTTPException(status.HTTP_502_BAD_GATEWAY, _UPSTREAM_502)
