@@ -41,14 +41,14 @@ def _seed(sign: str, day: date) -> int:
     return int(h[:8], 16)
 
 
-def daily_horoscope(sign: str, day: date | None = None) -> dict:
+def daily_horoscope(sign: str, day: date | None = None, lang: str | None = None) -> dict:
     day = day or date.today()
     sign = sign.title()
     if sign not in ZODIAC_NAMES:
         raise ValueError("Unknown zodiac sign")
 
     s = _seed(sign, day)
-    return {
+    out = {
         "sign": sign,
         "date": day.isoformat(),
         "general": _GENERAL[s % len(_GENERAL)],
@@ -58,13 +58,31 @@ def daily_horoscope(sign: str, day: date | None = None) -> dict:
         "lucky_color": _LUCKY_COLORS[(s // 19) % len(_LUCKY_COLORS)],
         "lucky_number": (s % 9) + 1,
     }
+    # This engine emits English from a fixed phrase bank (dev-API off / the
+    # per-sign daily horoscope, which the developer API doesn't serve). Localize
+    # the phrases deterministically from the finite catalog — no LLM. Guarded so
+    # a missing/broken catalog degrades to English rather than erroring.
+    if lang:
+        try:
+            from app.services.astro import horoscope_i18n as hi18n
+            for f in ("general", "career", "love", "energy", "lucky_color"):
+                out[f] = hi18n.tr(out[f], lang)
+        except Exception:  # noqa: BLE001 — never fail a horoscope on localization
+            pass
+    return out
 
 
-def daily_prediction(sign: str, day: date | None = None) -> dict:
+def daily_prediction(sign: str, day: date | None = None, lang: str | None = None) -> dict:
     """A slightly longer, paragraph-style reading built from the daily seed."""
-    base = daily_horoscope(sign, day)
+    base = daily_horoscope(sign, day, lang)
+    overall = f"Overall your energy is {base['energy']} — favour {base['lucky_color']}."
+    if lang:
+        try:
+            from app.services.astro import horoscope_i18n as hi18n
+            overall = hi18n.overall_line(base["energy"], base["lucky_color"], lang)
+        except Exception:  # noqa: BLE001 — degrade to the English line
+            pass
     base["prediction"] = " ".join(
-        [base["general"], base["career"], base["love"],
-         f"Overall your energy is {base['energy']} — favour {base['lucky_color']}."]
+        [base["general"], base["career"], base["love"], overall]
     )
     return base
