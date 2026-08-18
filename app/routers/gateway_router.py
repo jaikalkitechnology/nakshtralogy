@@ -57,6 +57,7 @@ from app.core.i18n import normalize_lang as _normalize_full_lang
 from app.kundli import engine as nk_engine
 from app.routers import rashi_router
 from app.services.report_translator import translate_report_safe
+from app.services.freetext_translator import localize_report
 from app.specialists import SPECIALISTS, get_engine
 from app.milan import milan_engine, match_phase2, match_phase3, compute_unified_score
 from app.models.model import ApiUsageLog
@@ -91,8 +92,10 @@ LangQuery = Query(
         "ta, te, kn, bn, pa, ml. Full-name aliases (hindi, tamil, marathi, "
         "...) and Accept-Language-style values (e.g. \"hi-IN\") are also "
         "accepted and normalized. Unrecognized values fall back to English. "
-        "Only display text (labels, grades, dignities, roles, etc.) is "
-        "translated — no calculation, scoring, or numeric data changes."
+        "The FULL report is localized: display text (labels, grades, "
+        "dignities, roles) AND the free-text body (summaries, dosh/yoga "
+        "descriptions, remedies, predictions) plus planet/rashi/nakshatra "
+        "names — no calculation, scoring, or numeric data changes."
     ),
 )
 
@@ -191,12 +194,13 @@ def _execute_gateway_call(
     endpoint runs through this exact same helper so billing/1-TPS/metering
     apply uniformly across all 4 categories.
 
-    `lang` (optional, default "en") is applied to `result` via
-    translate_report_safe right before the envelope is built — the SAME
-    result-cache entry (English) is reused for every language, so caching
-    and idempotency replay are unaffected by which language was requested.
-    Translation never raises and never touches calculation/scoring; "en"
-    (or an omitted lang) is a no-op, so existing callers are unaffected."""
+    `lang` (optional, default "en") localizes `result` right before the
+    envelope is built (dictionary enum pass + full free-text/label/astro-term
+    pass — see below) — the SAME result-cache entry (English) is reused for
+    every language, so caching and idempotency replay are unaffected by which
+    language was requested. Localization never raises and never touches
+    calculation/scoring; "en" (or an omitted lang) is a no-op, so existing
+    callers are unaffected."""
     if idempotency_key:
         cached = get_idempotent_response(db, ctx.api_key.id, idempotency_key)
         if cached is not None:
@@ -222,7 +226,19 @@ def _execute_gateway_call(
     _log_usage(db, ctx, product, endpoint, 200, latency_ms, cache_hit)
 
     if lang and lang != "en":
+        # Two-pass localization of the (English) engine result — never touches
+        # calculation/scoring, never raises, and "en" is skipped above:
+        #   1. translate_report_safe — fast dictionary pass for enum-like values
+        #      the UI may branch on (grades, ratings, dignities, roles).
+        #   2. localize_report — the full pass used by the internal report
+        #      routers: LLM free-text body (summaries, dosh/yoga descriptions,
+        #      remedies, predictions, …), display labels, and deterministic
+        #      astro-term proper nouns (planets/rashis/nakshatras). Every
+        #      (text, language) pair is DB-cached, so repeat requests are cheap;
+        #      with no LLM configured it degrades to English free-text while the
+        #      dictionary + astro-term passes still apply.
         result = translate_report_safe(result, lang)
+        result = localize_report(result, lang)
 
     envelope = _envelope(result, product, endpoint, ctx, latency_ms, cache_hit)
 

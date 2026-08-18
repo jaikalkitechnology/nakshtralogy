@@ -112,10 +112,13 @@ Supported short codes: `en` (default), `hi`, `mr`, `gu`, `ta`, `te`, `kn`,
 `bn`, `pa`, `ml`. Common full-name aliases (`hindi`, `tamil`, `marathi`,
 ...) and `Accept-Language`-style values (e.g. `hi-IN`) are also accepted
 and normalized automatically. An omitted or unrecognized `lang` falls back
-to English with no error. Only human-readable display text (grades,
-dignities, karaka roles, categories, sign/planet names, etc.) is
-translated — numeric scores, dates, chart IDs, and every other field are
-unchanged, and calculation/scoring logic never varies by language.
+to English with no error. The FULL report is localized — display text
+(grades, dignities, karaka roles, categories, sign/planet/nakshatra names)
+AND the free-text body (summaries, dosh/yoga descriptions, remedies,
+predictions and other prose) — while numeric scores, dates, chart IDs, and
+every other machine field stay unchanged; calculation/scoring logic never
+varies by language. Free-text is translated once and cached per language,
+so the first request in a new language is slightly slower than repeats.
 
 ## Product categories (Phase 8 — granular)
 
