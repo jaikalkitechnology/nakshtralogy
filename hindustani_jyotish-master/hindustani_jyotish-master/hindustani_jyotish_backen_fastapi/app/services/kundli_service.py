@@ -603,7 +603,9 @@ async def daily(
             amount, raw = await _external(
                 db, user, insight_type, nk.KUNDLI, {**payload, "dasha_levels": 1}
             )
-            data = horoscope.daily_horoscope(sign)
+            # The per-sign daily horoscope text is generated locally (the dev
+            # API doesn't serve it) — localize it to the caller's language.
+            data = horoscope.daily_horoscope(sign, lang=_effective_lang(user))
             gochar = raw.get("gochar_today") or {}
             entry = next(
                 (r for r in gochar.get("rashis", [])
@@ -622,8 +624,10 @@ async def daily(
         )
 
     amount = await _charge(db, user, insight_type)
+    _lang = _effective_lang(user)
     data = (
-        horoscope.daily_prediction(sign) if prediction else horoscope.daily_horoscope(sign)
+        horoscope.daily_prediction(sign, lang=_lang) if prediction
+        else horoscope.daily_horoscope(sign, lang=_lang)
     )
     return await _finish(
         db, user, insight_type, {"name": name, "sign": sign}, amount, data,
