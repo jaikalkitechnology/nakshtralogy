@@ -247,6 +247,33 @@ def _pick(src: Any, keys: tuple[str, ...]) -> dict:
     return {k: src[k] for k in keys if k in src}
 
 
+# Keys never surfaced in the Hindustani "Complete Report" viewer: Moola dasha
+# (excluded product-wide) plus any internal/machine key (leading underscore).
+_FULL_DROP_KEYS = {"moola_dasha"}
+
+
+def _full_payload(raw: Any) -> Any:
+    """A deep-sanitised copy of the COMPLETE dev-API (Cosmic Services) response
+    so the app can show the full report, not just the curated tabs. The dev-API
+    already localises this payload (?lang=), so it is returned as-is except for
+    internal underscore keys and the excluded Moola dasha. Never raises."""
+    try:
+        def _clean(o: Any) -> Any:
+            if isinstance(o, dict):
+                return {
+                    k: _clean(v)
+                    for k, v in o.items()
+                    if not (isinstance(k, str)
+                            and (k.startswith("_") or k in _FULL_DROP_KEYS))
+                }
+            if isinstance(o, list):
+                return [_clean(x) for x in o]
+            return o
+        return _clean(raw) if isinstance(raw, (dict, list)) else raw
+    except Exception:  # pragma: no cover — full view is best-effort
+        return None
+
+
 def _curate_kundli(raw: dict) -> dict:
     """Curate the /api/v2/kundli response for the app.
 
@@ -333,6 +360,11 @@ def _curate_kundli(raw: dict) -> dict:
     gochar = raw.get("gochar_today")
     if isinstance(gochar, dict):
         data["gochar_today"] = _pick(gochar, ("date", "moon_sign", "rashis"))
+
+    # The COMPLETE localized dev-API response, so the app can show every section
+    # (aspect_matrix, full shadbala/ashtakavarga, all doshas/yogas, …) — not just
+    # the curated tabs above.
+    data["full_response"] = _full_payload(raw)
     return data
 
 
@@ -354,6 +386,7 @@ def _curate_forecast(raw: dict) -> dict:
         data["special_flags"] = {
             k: v for k, v in gochar["special_flags"].items() if k != "explanation"
         }
+    data["full_response"] = _full_payload(raw)
     return data
 
 
@@ -401,6 +434,7 @@ def _curate_milan(raw: dict) -> dict:
     # App-friendly aliases matching the legacy sign-based response shape.
     if "unified_compatibility_score" in data:
         data["score"] = data["unified_compatibility_score"]
+    data["full_response"] = _full_payload(raw)
     return data
 
 
@@ -547,6 +581,7 @@ async def planet_position(
             db, user, "planet_position", nk.KUNDLI_PLANETS, payload
         )
         data: dict[str, Any] = {"planets": _curate_planets(raw), "source": "nakshatralogy"}
+        data["full_response"] = _full_payload(raw)
         inputs = {"name": name, "dob": dob.isoformat(), "time": payload["tob"], "provider": "nakshatralogy"}
         return await _finish(
             db, user, "planet_position", inputs, amount, data,

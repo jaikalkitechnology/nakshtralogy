@@ -6,6 +6,8 @@ import '../../../l10n/app_localizations.dart';
 import '../../../shared/responsive.dart';
 import '../insight_models.dart';
 import '../insights_repository.dart';
+import 'cosmic_labels.dart';
+import 'full_response_view.dart';
 import 'kundli_chart.dart';
 import 'kundli_dasha_tree.dart';
 import 'kundli_divisional_charts.dart';
@@ -95,6 +97,18 @@ class _KundliAnalysisScreenState extends State<KundliAnalysisScreen>
     return v is Map ? v.cast<String, dynamic>() : null;
   }
 
+  /// The complete localized analysis for the "Complete Report" viewer — the
+  /// full `/analysis/complete` bundle, with the chart section injected. Null
+  /// until at least the chart has loaded.
+  Map<String, dynamic>? get _completeForViewer {
+    final c = _complete, ch = _chart;
+    if (c == null && ch == null) return null;
+    return {
+      if (ch != null) 'chart': ch,
+      if (c != null) ...c,
+    };
+  }
+
   int? get _moonSign {
     final moon = (_chart?['planets'] as Map?)?['Moon'];
     if (moon is Map) return (moon['sign_idx'] as num?)?.toInt();
@@ -136,6 +150,18 @@ class _KundliAnalysisScreenState extends State<KundliAnalysisScreen>
           ],
         ),
         actions: [
+          if (_completeForViewer != null)
+            IconButton(
+              tooltip: cosmicUi(
+                  'view_full', Localizations.localeOf(context).languageCode),
+              onPressed: () => Navigator.of(context).push(
+                CosmicFullReportPage.route(
+                  widget.subjectName ?? '${_chart?['name'] ?? l.kunFullAnalysis}',
+                  _completeForViewer!,
+                ),
+              ),
+              icon: const Icon(Icons.article_outlined),
+            ),
           IconButton(
               onPressed: _loading ? null : _load, icon: const Icon(Icons.refresh)),
         ],
