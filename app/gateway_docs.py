@@ -290,7 +290,41 @@ def build_gateway_app() -> FastAPI:
 
     @gateway_app.get("/health", tags=["Discovery"], summary="Gateway health check")
     def gateway_health():
-        return {"status": "ok", "gateway": "nakshtralogy-api-v2"}
+        # Also report localization readiness so an integrator can confirm, right
+        # after a deploy, that ?lang= will actually translate — and whether the
+        # free-text (prose) LLM pass is configured (the enum/label/astro-term
+        # passes need no LLM and are always on).
+        providers = []
+        try:
+            from app.services._llm_translate_backend import _providers as _llm_providers
+            providers = [u.split("//", 1)[-1].split("/", 1)[0] for (u, _k, _m) in _llm_providers()]
+        except Exception:
+            providers = []
+        try:
+            from app.core.config import settings as _s
+            if getattr(_s, "OLLAMA_URL", ""):
+                providers.append("ollama")
+        except Exception:
+            pass
+        llm_on = bool(providers)
+        return {
+            "status": "ok",
+            "gateway": "nakshtralogy-api-v2",
+            "localization": {
+                "enabled": True,
+                "languages": ["en", "hi", "mr", "gu", "ta", "te", "kn", "bn", "pa", "ml"],
+                "freetext_llm_configured": llm_on,
+                "llm_providers": providers,
+                "note": (
+                    "Localization active — enum/label/astro-term always, plus "
+                    "free-text prose via the configured LLM."
+                    if llm_on else
+                    "Enum/label/astro-term translation is active. Free-text PROSE "
+                    "stays English until an LLM is configured — set GROQ_API_KEY "
+                    "or OPENROUTER_API_KEY (or OLLAMA_URL) and restart."
+                ),
+            },
+        }
 
     @gateway_app.get(
         "/code-samples/category/{category}",
