@@ -75,7 +75,14 @@ export default function DocsPlaygroundPage() {
   const [response, setResponse] = useState<{ ok: boolean; data: any } | null>(null);
   const [elapsedMs, setElapsedMs] = useState<number | null>(null);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
-  const [lang, setLang] = useState<string>("en");
+  // Persist the chosen response language (like the API key) so it survives a
+  // page reload instead of snapping back to English every time.
+  const [lang, setLang] = useState<string>(
+    () => localStorage.getItem("developer_playground_lang") || "en",
+  );
+  useEffect(() => {
+    localStorage.setItem("developer_playground_lang", lang);
+  }, [lang]);
 
   // `?lang=` is only appended for a non-default language, so the shown path,
   // samples and live call stay byte-identical to before for English.
