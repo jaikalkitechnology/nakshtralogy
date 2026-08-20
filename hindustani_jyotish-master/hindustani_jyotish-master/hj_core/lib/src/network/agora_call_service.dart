@@ -114,6 +114,14 @@ class AgoraCallService {
   final ValueNotifier<bool> muted = ValueNotifier<bool>(false);
   final ValueNotifier<bool> videoEnabled = ValueNotifier<bool>(true);
 
+  /// Diagnostics: the remote video resolution once the first frame decodes
+  /// ("640x480"), and the latest remote video decode-state name ("Decoding",
+  /// "Stopped", "Frozen", "Failed"). Null until a remote video event fires.
+  /// Used by an on-screen debug badge to tell "frames arriving but not
+  /// rendering" (render bug) apart from "no frames at all" (publish bug).
+  final ValueNotifier<String?> remoteVideoInfo = ValueNotifier<String?>(null);
+  final ValueNotifier<String?> remoteVideoState = ValueNotifier<String?>(null);
+
   /// Human-readable description of a fatal media failure reported by the
   /// engine (invalid App ID, rejected/expired token, connection banned…), or
   /// null while everything is healthy. Cleared automatically when a join
@@ -182,6 +190,7 @@ class AgoraCallService {
         debugPrint('[AgoraCallService] first remote video frame uid=$uid '
             '${width}x$height channel=${connection.channelId}');
         if (remoteUid.value == null) remoteUid.value = uid;
+        remoteVideoInfo.value = '${width}x$height';
       },
       onUserOffline: (RtcConnection connection, int uid, UserOfflineReasonType reason) {
         debugPrint('[AgoraCallService] onUserOffline uid=$uid reason=$reason');
@@ -491,6 +500,8 @@ class AgoraCallService {
     muted.dispose();
     videoEnabled.dispose();
     mediaFailure.dispose();
+    remoteVideoInfo.dispose();
+    remoteVideoState.dispose();
     // Explicitly dispose the cached video controllers rather than just
     // dropping the references — AgoraVideoView's own widget lifecycle
     // handles this when a NEW controller replaces an old one in the same

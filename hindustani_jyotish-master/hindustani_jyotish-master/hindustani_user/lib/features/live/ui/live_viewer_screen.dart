@@ -334,6 +334,49 @@ class _LiveViewerViewState extends State<_LiveViewerView> {
                   ],
                 ),
               ),
+              // TEMPORARY on-screen diagnostic badge: tells us, from a single
+              // screenshot, whether the astrologer's VIDEO frames are actually
+              // reaching this viewer. `frame` = the resolution of the first
+              // decoded remote frame (e.g. 640x480) → video IS arriving (any
+              // black screen is then a render issue); `frame=none` with
+              // `vstate=Stopped/Failed` → no video from the host (a publish
+              // issue). Remove once the live-video bug is closed.
+              if (agora != null)
+                Positioned(
+                  top: 78,
+                  left: 12,
+                  right: 12,
+                  child: IgnorePointer(
+                    child: Center(
+                      child: AnimatedBuilder(
+                        animation: Listenable.merge([
+                          agora.joined,
+                          agora.remoteUid,
+                          agora.remoteVideoInfo,
+                          agora.remoteVideoState,
+                        ]),
+                        builder: (context, _) => Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.62),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: AppColors.borderMid),
+                          ),
+                          child: Text(
+                            'DEBUG  joined=${agora.joined.value}  '
+                            'rUid=${agora.remoteUid.value ?? "-"}  '
+                            'frame=${agora.remoteVideoInfo.value ?? "none"}  '
+                            'vstate=${agora.remoteVideoState.value ?? "-"}',
+                            textAlign: TextAlign.center,
+                            style: AppTextStyles.mono(
+                                size: 11, color: AppColors.gold),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
