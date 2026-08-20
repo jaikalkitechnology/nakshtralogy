@@ -144,16 +144,33 @@ class AgoraCallService {
     ));
     engine.registerEventHandler(RtcEngineEventHandler(
       onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+        debugPrint('[AgoraCallService] joined channel=${connection.channelId} '
+            'localUid=${connection.localUid}');
         joined.value = true;
         mediaFailure.value = null;
       },
       onUserJoined: (RtcConnection connection, int uid, int elapsed) {
+        debugPrint('[AgoraCallService] onUserJoined uid=$uid '
+            'channel=${connection.channelId}');
         remoteUid.value = uid;
         // The peer is present again — clear any pending "left" reason so a
         // caller's reconnect grace can see they came back.
         peerLeft.value = null;
       },
+      // Fallback path to surface the remote party: if `onUserJoined` was
+      // somehow missed (a timing edge on the audience side of a live channel),
+      // the first decoded remote video frame still tells us who to render, so
+      // the viewer isn't stranded on "Waiting for the astrologer's video…"
+      // while frames are actually arriving. All-int params (no version-specific
+      // enums) so it stays build-safe across agora_rtc_engine minors.
+      onFirstRemoteVideoFrame:
+          (RtcConnection connection, int uid, int width, int height, int elapsed) {
+        debugPrint('[AgoraCallService] first remote video frame uid=$uid '
+            '${width}x$height channel=${connection.channelId}');
+        if (remoteUid.value == null) remoteUid.value = uid;
+      },
       onUserOffline: (RtcConnection connection, int uid, UserOfflineReasonType reason) {
+        debugPrint('[AgoraCallService] onUserOffline uid=$uid reason=$reason');
         if (remoteUid.value == uid) {
           remoteUid.value = null;
           // Preserve WHY they left so the screen can end immediately on a

@@ -136,12 +136,22 @@ class BroadcastViewerCubit extends Cubit<BroadcastViewerState> {
     }
   }
 
+  // Watchdog for the "channel joined but the host's video never arrives" case
+  // (remoteJoined stays false). Without this the viewer waits on "Waiting for
+  // the astrologer's video…" forever with no signal that something is wrong
+  // (e.g. the astrologer's publish was rejected by a token/credential problem,
+  // so they show a local preview but never actually reach the channel).
+  Timer? _remoteVideoTimer;
+  static const _remoteVideoTimeout = Duration(seconds: 25);
+
   void _onAgoraChange() {
     final agora = _agora;
     if (agora == null) return;
+    final channelJoined = agora.joined.value;
+    final remoteJoined = agora.remoteUid.value != null;
     var next = state.copyWith(
-      channelJoined: agora.joined.value,
-      remoteJoined: agora.remoteUid.value != null,
+      channelJoined: channelJoined,
+      remoteJoined: remoteJoined,
     );
     // A fatal engine failure (rejected token, banned, connection failed) can
     // arrive at any point, including MID-stream — surface it instead of the
@@ -153,6 +163,25 @@ class BroadcastViewerCubit extends Cubit<BroadcastViewerState> {
       );
     }
     _emit(next);
+
+    // Arm/cancel the no-host-video watchdog off the joined/remote transitions.
+    if (remoteJoined) {
+      _remoteVideoTimer?.cancel();
+      _remoteVideoTimer = null;
+    } else if (channelJoined && failure == null && _remoteVideoTimer == null) {
+      _remoteVideoTimer = Timer(_remoteVideoTimeout, () {
+        if (isClosed) return;
+        // Still on the channel with no broadcaster stream — tell the viewer
+        // honestly instead of an endless "Waiting…". Chat keeps working.
+        if (_agora?.remoteUid.value == null && state.mediaError == null) {
+          _emit(state.copyWith(
+            mediaError:
+                "The astrologer's video hasn't come through — they may have a "
+                'connection problem. Chat still works.',
+          ));
+        }
+      });
+    }
   }
 
   /// Resolves once the Agora channel join ACTUALLY completes; on failure or
@@ -385,6 +414,7 @@ class BroadcastViewerCubit extends Cubit<BroadcastViewerState> {
   @override
   Future<void> close() async {
     _reconnectTimer?.cancel();
+    _remoteVideoTimer?.cancel();
     await _chatSub?.cancel();
     _chat?.dispose();
     // Sequential, not fire-and-forget — dispose() tearing down the native
