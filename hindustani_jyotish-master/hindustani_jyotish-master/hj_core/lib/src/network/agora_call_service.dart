@@ -135,12 +135,26 @@ class AgoraCallService {
     return statuses.values.every((s) => s.isGranted);
   }
 
-  Future<void> init(String appId) async {
+  /// Initialise the native engine.
+  ///
+  /// [live] picks the channel profile the engine is created with:
+  /// LiveBroadcasting for a broadcast (host/audience), Communication for a
+  /// 1-to-1 call. This MATTERS: 1-to-1 calls (Communication) work, but live
+  /// broadcasts were switching the profile AFTER init via `setChannelProfile`,
+  /// which the Agora SDK does not apply reliably once the engine is already
+  /// initialised — the audience could join the channel yet never receive the
+  /// host's stream (`onUserJoined` for the broadcaster never fired), i.e. the
+  /// exact "astrologer is live but the viewer sees no video" symptom while
+  /// calls kept working. Creating the engine in the right profile up-front
+  /// fixes that; `joinLive` still sets it again as a belt-and-suspenders.
+  Future<void> init(String appId, {bool live = false}) async {
     if (_engine != null) return;
     final engine = createAgoraRtcEngine();
     await engine.initialize(RtcEngineContext(
       appId: appId,
-      channelProfile: ChannelProfileType.channelProfileCommunication,
+      channelProfile: live
+          ? ChannelProfileType.channelProfileLiveBroadcasting
+          : ChannelProfileType.channelProfileCommunication,
     ));
     engine.registerEventHandler(RtcEngineEventHandler(
       onJoinChannelSuccess: (RtcConnection connection, int elapsed) {

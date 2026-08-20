@@ -82,7 +82,10 @@ class BroadcastViewerCubit extends Cubit<BroadcastViewerState> {
       unawaited(loadSuperChatPresets());
       try {
         final agora = AgoraCallService();
-        await agora.init(join.agora.appId);
+        // Create the engine in LiveBroadcasting profile from the start — a
+        // post-init setChannelProfile switch is unreliable and left the viewer
+        // joined-but-never-receiving the host's stream.
+        await agora.init(join.agora.appId, live: true);
         // _agora must be assigned BEFORE joinLive: _onAgoraChange bails out
         // while _agora is null, and the engine's onUserJoined for a host
         // who's already in the channel can fire in the gap between the
