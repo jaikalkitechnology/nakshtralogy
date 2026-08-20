@@ -119,6 +119,11 @@ class BroadcastCubit extends Cubit<BroadcastState> {
       // astrologer on the live screen with their local-only camera preview
       // while every viewer sits on "Connecting…" forever.
       await agora.awaitJoined();
+      // Re-assert the camera+mic publish now that the channel join is complete.
+      // On some devices the initial joinChannel options publish the mic but NOT
+      // the camera, so viewers hear the astrologer but see a black video —
+      // this reliably starts the camera publish. Guarded; never fails go-live.
+      await agora.ensureHostPublishing();
       agora.mediaFailure.addListener(_onAgoraMediaFailure);
 
       _emit(state.copyWith(

@@ -380,6 +380,34 @@ class AgoraCallService {
     );
   }
 
+  /// Re-assert the host's camera + mic publish once the channel join has
+  /// actually completed (call this AFTER [awaitJoined]).
+  ///
+  /// Symptom this fixes: viewers HEAR the astrologer (mic track published) but
+  /// see a BLACK video (camera track never published). On several devices the
+  /// `publishCameraTrack: true` passed in the initial `joinChannel` options is
+  /// not honoured — the microphone track publishes but the camera track does
+  /// not — so the broadcaster is audio-only from every viewer's perspective
+  /// even though its own local preview looks fine. Re-applying the publish
+  /// options via `updateChannelMediaOptions` after join reliably starts the
+  /// camera publish. Idempotent + guarded so it can never break a live stream.
+  Future<void> ensureHostPublishing() async {
+    final engine = _engine;
+    if (engine == null) return;
+    try {
+      await engine.enableLocalVideo(true);
+      await engine.muteLocalVideoStream(false);
+      await engine.muteLocalAudioStream(false);
+      await engine.updateChannelMediaOptions(const ChannelMediaOptions(
+        publishCameraTrack: true,
+        publishMicrophoneTrack: true,
+      ));
+      debugPrint('[AgoraCallService] host publish re-asserted (camera+mic)');
+    } catch (e) {
+      debugPrint('[AgoraCallService] ensureHostPublishing failed: $e');
+    }
+  }
+
   Future<void> toggleMute() async {
     muted.value = !muted.value;
     await _engine?.muteLocalAudioStream(muted.value);
