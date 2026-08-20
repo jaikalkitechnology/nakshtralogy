@@ -97,7 +97,10 @@ class BroadcastCubit extends Cubit<BroadcastState> {
       _openSocket(broadcastId);
 
       agora = AgoraCallService();
-      await agora.init(grant.appId);
+      // Create the engine in LiveBroadcasting profile from the start (see the
+      // note on AgoraCallService.init): a post-init profile switch is
+      // unreliable and can leave viewers unable to receive the host's stream.
+      await agora.init(grant.appId, live: true);
       agora.joined.addListener(_onAgoraJoinedChanged);
       // The native join call can stall instead of throwing (e.g. a stuck
       // platform channel) — without a timeout that leaves the astrologer
