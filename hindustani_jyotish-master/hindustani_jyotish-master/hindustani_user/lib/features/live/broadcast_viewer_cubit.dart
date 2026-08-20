@@ -93,26 +93,40 @@ class BroadcastViewerCubit extends Cubit<BroadcastViewerState> {
         agora.remoteUid.addListener(_onAgoraChange);
         agora.joined.addListener(_onAgoraChange);
         agora.mediaFailure.addListener(_onAgoraChange);
-        await agora.joinLive(join.agora, asHost: false);
+        // Publish the engine to state BEFORE the (potentially slow) native
+        // join, and start watching for the real channel-join in parallel —
+        // NOT sequenced after `joinLive` returns. `joinLive` awaits the native
+        // setChannelProfile/setClientRole/enable*/joinChannel calls; if any of
+        // those stalls on a device (a stuck platform channel, a flaky
+        // network), an `await` here that gates `_watchMediaJoin` behind it left
+        // the viewer on "Connecting to the live stream…" forever with no
+        // timeout — the astrologer side already guards its own join with a
+        // timeout, but the viewer did not. Now the join watchdog is armed
+        // regardless, and the join request itself is bounded.
         _emit(state.copyWith(agora: agora));
-        // joinLive only awaits the native REQUEST — an invalid token/App ID
-        // does NOT make it throw; the engine reports failure asynchronously.
-        // Watch for the actual join so a credential problem (or a dead
-        // connection) surfaces as a real message instead of the viewer
-        // sitting on "Connecting to the live stream…" forever.
         unawaited(_watchMediaJoin(agora));
+        // joinLive only awaits the native REQUEST — an invalid token/App ID
+        // does NOT make it throw; the engine reports failure asynchronously
+        // (caught by _watchMediaJoin's awaitJoined). Bound the request itself
+        // so a hung native call can't strand the viewer on "Connecting…".
+        await agora.joinLive(join.agora, asHost: false).timeout(
+          const Duration(seconds: 20),
+          onTimeout: () => throw TimeoutException(
+              'Timed out connecting to the live video. Check your connection.'),
+        );
       } catch (e, st) {
         // Media unavailable (misconfigured Agora App ID/Certificate, an
-        // invalid/placeholder token, or a native SDK error) — keep the
-        // chat-only view working, but this must NOT be a silent swallow:
-        // `state.agora` stays null forever after this, and the screen
-        // needs to show something other than the same "Connecting…"
-        // placeholder it shows while genuinely still connecting, or this
-        // looks identical to an infinite loading spinner with zero signal
-        // of what actually went wrong. Log it so a real device's logcat/
-        // console shows the actual exception instead of nothing.
+        // invalid/placeholder token, a native SDK error, or the join request
+        // timing out) — keep the chat-only view working, but this must NOT be
+        // a silent swallow: the screen needs to show something other than the
+        // same "Connecting…" placeholder it shows while genuinely still
+        // connecting, or this looks identical to an infinite loading spinner
+        // with zero signal of what actually went wrong. Log it so a real
+        // device's logcat/console shows the actual exception, and surface the
+        // reason in the on-screen message.
         debugPrint('[live viewer] Agora join failed: $e\n$st');
-        _emit(state.copyWith(mediaError: 'Video unavailable — chat still works.'));
+        _emit(state.copyWith(
+            mediaError: 'Video unavailable — chat still works. ($e)'));
       }
       _emit(state.copyWith(joining: false));
     } on ApiException catch (e) {
