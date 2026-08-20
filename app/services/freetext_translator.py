@@ -365,6 +365,17 @@ def localize_report(data: Any, lang: str) -> Any:
     No-op for english; never raises.
     """
     from app.services.astro_terms_localizer import localize_astro_terms
+    from app.services import _llm_translate_backend as _llmb
+
+    # Arm a per-request wall-clock budget for ALL LLM free-text translation in
+    # this call, so a slow/unreachable LLM can never push the response past
+    # nginx's gateway timeout (the 504 seen on `?lang=` calls). Beyond the
+    # budget, free-text keeps its English original while the deterministic
+    # passes below still localize. English is a no-op above the caller, so this
+    # only runs when a translation is actually requested.
+    if lang != DEFAULT_LANGUAGE:
+        _llmb.set_deadline(_llmb.default_budget_seconds())
+
     out = localize_keys(localize_content(data, lang), REPORT_LABEL_KEYS, lang)
     return localize_astro_terms(out, lang)
 

@@ -6,8 +6,10 @@ Ollama fallback. Returns {source_text: translated}; returns {} for any chunk it
 can't translate so the caller keeps the English original. Never raises.
 """
 
+import contextvars
 import json
 import logging
+import time
 from typing import List, Dict
 
 try:
@@ -20,7 +22,67 @@ from app.core.config import settings
 logger = logging.getLogger("llm_translate")
 
 _CHUNK = 40          # strings per LLM request
-_TIMEOUT = 45        # seconds per request
+_TIMEOUT = 12        # seconds per LLM request — a single hung/slow provider must
+                     # never dominate the per-request budget below (was 45s,
+                     # which alone could blow nginx's gateway timeout → 504).
+
+# ── Per-request wall-clock budget ───────────────────────────────────────────
+# ALL LLM translation for one API request shares this deadline, so a slow or
+# unreachable LLM can NEVER make the request exceed nginx's timeout (the cause
+# of the 504 seen on `?lang=` calls). When the budget is spent we stop calling
+# the LLM and keep the English original for the remaining strings — the
+# deterministic passes (astro-terms / catalog enums / dictionary) still
+# localize, so the response is partial-but-fast instead of a timeout. The
+# deadline is a monotonic timestamp set fresh per request via `set_deadline`;
+# 0.0 (default / unset) means unbounded (used by tests and offline tooling).
+_deadline: contextvars.ContextVar[float] = contextvars.ContextVar(
+    "llm_translate_deadline", default=0.0
+)
+
+
+def default_budget_seconds() -> float:
+    """The per-request LLM budget (seconds), overridable via the
+    LLM_TRANSLATE_BUDGET_SECONDS setting. Kept comfortably under a typical
+    60s nginx/gateway read timeout."""
+    try:
+        return float(getattr(settings, "LLM_TRANSLATE_BUDGET_SECONDS", 15) or 15)
+    except Exception:  # pragma: no cover
+        return 15.0
+
+
+def set_deadline(seconds_from_now: float) -> None:
+    """Arm the per-request LLM budget. Call once at the start of a request's
+    localization (see freetext_translator.localize_report). <=0 disables it."""
+    _deadline.set(time.monotonic() + seconds_from_now if seconds_from_now and seconds_from_now > 0 else 0.0)
+
+
+def _budget_expired() -> bool:
+    d = _deadline.get()
+    return d > 0.0 and time.monotonic() >= d
+
+
+# ── Circuit breaker ─────────────────────────────────────────────────────────
+# If the LLM backend is failing (no key, provider down, network blocked), skip
+# it for a cooldown instead of burning every request's whole budget on the same
+# dead provider. Module-level (shared across requests); float writes are atomic
+# under the GIL.
+_COOLDOWN_SECONDS = 120
+_unhealthy_until = 0.0
+
+
+def _llm_down() -> bool:
+    return time.monotonic() < _unhealthy_until
+
+
+def _mark_down() -> None:
+    global _unhealthy_until
+    _unhealthy_until = time.monotonic() + _COOLDOWN_SECONDS
+    logger.warning("LLM translation marked DOWN for %ss (all providers failed)", _COOLDOWN_SECONDS)
+
+
+def _mark_up() -> None:
+    global _unhealthy_until
+    _unhealthy_until = 0.0
 
 # language code (canonical full word) → prompt-friendly description
 _LANG_DESC = {
@@ -134,13 +196,15 @@ def _chat_ollama(sys_prompt: str, user: str) -> str:
 
 
 def _translate_chunk(chunk: List[str], lang: str) -> Dict[str, str]:
-    if requests is None:
+    if requests is None or _budget_expired():
         return {}
     lang_desc = _LANG_DESC.get(lang, lang.title())
     sys_prompt = _SYSTEM.format(lang=lang_desc)
     user = json.dumps(chunk, ensure_ascii=False)
 
     for url, key, model in _providers():
+        if _budget_expired():
+            return {}
         try:
             content = _chat_openai(url, key, model, sys_prompt, user)
             arr = _extract_json_array(content)
@@ -149,6 +213,8 @@ def _translate_chunk(chunk: List[str], lang: str) -> Dict[str, str]:
         except Exception as e:
             logger.warning("provider %s failed: %s", url, e)
     # local fallback
+    if _budget_expired():
+        return {}
     try:
         content = _chat_ollama(sys_prompt, user)
         arr = _extract_json_array(content)
@@ -161,12 +227,34 @@ def _translate_chunk(chunk: List[str], lang: str) -> Dict[str, str]:
 
 def llm_translate_batch(texts: List[str], lang: str) -> Dict[str, str]:
     """Translate `texts` into `lang`. Returns {src: translated} for whatever
-    succeeded; missing entries mean the caller keeps the English original."""
+    succeeded; missing entries mean the caller keeps the English original.
+
+    Bounded by the per-request budget (`set_deadline`) and short-circuited by
+    the circuit breaker, so a slow/dead LLM never makes the request time out."""
     out: Dict[str, str] = {}
+    # Skip entirely if the LLM is in its failure cooldown or the request budget
+    # is already spent — keeps the request fast and 200 (deterministic-only).
+    if _llm_down() or _budget_expired():
+        return out
+    attempted = False
+    succeeded = False
     for i in range(0, len(texts), _CHUNK):
+        if _budget_expired():
+            break
         chunk = texts[i:i + _CHUNK]
+        attempted = True
         try:
-            out.update(_translate_chunk(chunk, lang))
+            res = _translate_chunk(chunk, lang)
         except Exception as e:  # pragma: no cover
             logger.warning("chunk translate failed: %s", e)
+            res = {}
+        if res:
+            out.update(res)
+            succeeded = True
+    # Update the breaker: if we tried and NOTHING came back, the backend is
+    # unhealthy — cool it down so later requests don't pay the same cost.
+    if succeeded:
+        _mark_up()
+    elif attempted:
+        _mark_down()
     return out
