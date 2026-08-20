@@ -80,7 +80,14 @@ def _build(channel: str, uid: int, publisher: bool, creds: AgoraCreds) -> AgoraG
     role = _ROLE_PUBLISHER if publisher else _ROLE_SUBSCRIBER
 
     if not creds.app_id:
-        # No App ID at all → dev/test placeholder (only for local flows).
+        # No App ID at all → dev/test placeholder (only for local flows). The
+        # client rejects this (isPlaceholder) and shows "video unavailable".
+        logger.warning(
+            "Agora NOT configured (no App ID) — returning a placeholder grant "
+            "for channel=%s uid=%s. Set the Agora App ID (+Certificate) in the "
+            "admin console or AGORA_* env for live video to work.",
+            channel, uid,
+        )
         return AgoraGrant(
             app_id="dev-app-id",
             channel=channel,
@@ -90,9 +97,21 @@ def _build(channel: str, uid: int, publisher: bool, creds: AgoraCreds) -> AgoraG
         )
 
     if not creds.app_certificate:
-        # App-ID-only auth: the Agora project has no certificate enabled, so it
-        # accepts an EMPTY token. Return a real App ID with an empty token — the
-        # client joins in App-ID-only mode.
+        # App-ID-only auth: EMPTY token. This ONLY works if the Agora project's
+        # authentication mode is "App ID" (no certificate/App Certificate
+        # DISABLED). If the project has a Certificate enabled (the default for
+        # new projects), Agora REJECTS an empty token — the host briefly joins
+        # then gets kicked and viewers never see their stream. This is the #1
+        # cause of "astrologer is live but the user sees no video". Log loudly
+        # so it's visible in the server logs.
+        logger.warning(
+            "Agora App-ID-ONLY mode (no App Certificate configured) for "
+            "channel=%s uid=%s publisher=%s — minting an EMPTY token. This "
+            "works ONLY if the Agora project has its App Certificate DISABLED. "
+            "If the project requires a token, enter the App Certificate in the "
+            "admin console (Agora settings) so a signed token is issued.",
+            channel, uid, publisher,
+        )
         return AgoraGrant(
             app_id=creds.app_id, channel=channel, uid=uid, token="", expires_at=expires_at
         )
@@ -104,6 +123,11 @@ def _build(channel: str, uid: int, publisher: bool, creds: AgoraCreds) -> AgoraG
     try:
         token = _build_access_token2(
             creds.app_id, creds.app_certificate, channel, uid, publisher, creds.expire_seconds
+        )
+        logger.info(
+            "Agora token minted (signed) channel=%s uid=%s publisher=%s "
+            "app_id=%s… expires_in=%ss",
+            channel, uid, publisher, creds.app_id[:8], creds.expire_seconds,
         )
         return AgoraGrant(
             app_id=creds.app_id, channel=channel, uid=uid, token=token, expires_at=expires_at
