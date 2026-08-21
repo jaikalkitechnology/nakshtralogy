@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from sqlalchemy import select
 
 from app.core.config import settings
@@ -23,6 +23,47 @@ from app.services.astro import pricing
 router = APIRouter(tags=["public"])
 
 _MAINTENANCE_DEFAULT = {"enabled": False, "message": ""}
+
+
+@router.get("/public/city-search")
+async def public_city_search(q: str = Query(..., min_length=2, max_length=100)):
+    """Birth-place autocomplete: search cities by name via Nominatim (OSM),
+    the same source the Nakshatralogy app uses. Returns up to 8 results, each
+    with `name`, `display_name`, `latitude`, `longitude`, `country`.
+    Best-effort — returns [] on any error/timeout so the picker degrades to a
+    plain text field rather than erroring."""
+    import httpx
+
+    try:
+        async with httpx.AsyncClient(timeout=6.0) as client:
+            resp = await client.get(
+                "https://nominatim.openstreetmap.org/search",
+                params={
+                    "q": q, "format": "json", "limit": 8,
+                    "addressdetails": 1, "accept-language": "en",
+                },
+                headers={"User-Agent": "HindustaniJyotish/1.0"},
+            )
+        if resp.status_code != 200:
+            return []
+        out = []
+        for r in resp.json():
+            addr = r.get("address", {}) or {}
+            city = (addr.get("city") or addr.get("town") or addr.get("village")
+                    or addr.get("county") or "")
+            state = addr.get("state", "")
+            country = addr.get("country", "")
+            parts = [p for p in [city, state, country] if p]
+            out.append({
+                "name": city or r.get("name", q),
+                "display_name": ", ".join(parts) if parts else r.get("display_name", ""),
+                "latitude": float(r.get("lat") or 0),
+                "longitude": float(r.get("lon") or 0),
+                "country": country,
+            })
+        return out
+    except Exception:
+        return []
 
 
 @router.get("/public/maintenance/{app}")

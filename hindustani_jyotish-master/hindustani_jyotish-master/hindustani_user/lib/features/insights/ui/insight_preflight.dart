@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../insights_repository.dart';
 
 /// The birth-identity fields an insight can require.
 enum InsightField { name, gender, dob, time, place }
@@ -171,6 +174,38 @@ class _DetailsFormState extends State<_DetailsForm> {
   bool _saving = false;
   String? _error;
 
+  // Birth-place autocomplete (Nominatim city search, same as the Nakshatralogy
+  // app). Debounced so we don't hit the API on every keystroke.
+  Timer? _placeDebounce;
+  List<Map<String, dynamic>> _placeSuggestions = const [];
+  bool _placeSearching = false;
+
+  void _onPlaceChanged(String q) {
+    setState(() {}); // keep the Generate button's enable-state in sync
+    _placeDebounce?.cancel();
+    final query = q.trim();
+    if (query.length < 3) {
+      setState(() => _placeSuggestions = const []);
+      return;
+    }
+    _placeDebounce = Timer(const Duration(milliseconds: 400), () async {
+      setState(() => _placeSearching = true);
+      final results = await getIt<InsightsRepository>().citySearch(query);
+      if (!mounted) return;
+      setState(() {
+        _placeSuggestions = results;
+        _placeSearching = false;
+      });
+    });
+  }
+
+  void _pickPlace(Map<String, dynamic> city) {
+    final label = (city['display_name'] ?? city['name'] ?? '').toString();
+    _place.text = label;
+    FocusScope.of(context).unfocus();
+    setState(() => _placeSuggestions = const []);
+  }
+
   bool _has(InsightField f) => widget.fields.contains(f);
 
   /// The language selector is offered on the generate sheet (the report the
@@ -203,6 +238,7 @@ class _DetailsFormState extends State<_DetailsForm> {
 
   @override
   void dispose() {
+    _placeDebounce?.cancel();
     _name.dispose();
     _place.dispose();
     super.dispose();
@@ -363,9 +399,54 @@ class _DetailsFormState extends State<_DetailsForm> {
               TextField(
                 controller: _place,
                 textCapitalization: TextCapitalization.words,
-                decoration: InputDecoration(labelText: l.insightFieldBirthPlace),
-                onChanged: (_) => setState(() {}),
+                decoration: InputDecoration(
+                  labelText: l.insightFieldBirthPlace,
+                  prefixIcon: const Icon(Icons.location_on_outlined, size: 20),
+                  suffixIcon: _placeSearching
+                      ? const Padding(
+                          padding: EdgeInsets.all(12),
+                          child: SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2)),
+                        )
+                      : null,
+                ),
+                onChanged: _onPlaceChanged,
               ),
+              if (_placeSuggestions.isNotEmpty) ...[
+                const SizedBox(height: 6),
+                Container(
+                  constraints: const BoxConstraints(maxHeight: 220),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface1,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.borderSoft),
+                  ),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    itemCount: _placeSuggestions.length,
+                    separatorBuilder: (_, __) =>
+                        Divider(height: 1, color: AppColors.borderSoft),
+                    itemBuilder: (context, i) {
+                      final c = _placeSuggestions[i];
+                      final label =
+                          (c['display_name'] ?? c['name'] ?? '').toString();
+                      return ListTile(
+                        dense: true,
+                        leading: const Icon(Icons.place_outlined,
+                            size: 18, color: AppColors.copperLight),
+                        title: Text(label,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTextStyles.body(size: 13)),
+                        onTap: () => _pickPlace(c),
+                      );
+                    },
+                  ),
+                ),
+              ],
               const SizedBox(height: 14),
             ],
             if (_showLanguage) ...[
