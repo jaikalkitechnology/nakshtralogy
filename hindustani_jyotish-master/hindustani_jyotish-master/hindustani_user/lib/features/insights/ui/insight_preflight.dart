@@ -392,7 +392,7 @@ class _DetailsFormState extends State<_DetailsForm> {
                     isExpanded: true,
                     value: _language ?? Localizations.localeOf(context).languageCode,
                     dropdownColor: AppColors.indigoDeep,
-                    icon: const Icon(Icons.expand_more, color: AppColors.ivoryDim),
+                    icon: Icon(Icons.expand_more, color: AppColors.ivoryDim),
                     style: AppTextStyles.body(size: 14, color: AppColors.ivory),
                     items: [
                       for (final code in _kReportLangCodes)
