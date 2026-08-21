@@ -32,9 +32,14 @@ from app.services import nakshatralogy as nk
 
 
 def _effective_lang(user: User) -> str | None:
-    """Language for the developer-API call: the live request language (the app's
-    Accept-Language / ?lang=, set by the middleware) wins, else the persisted
-    User.language. Returns None/"en" for English so no ?lang= param is sent."""
+    """Language for the developer-API call. Priority:
+      1. An EXPLICIT per-request language (the in-app language picker → ?lang= /
+         Accept-Language) — honoured exactly, INCLUDING English, so "respond in
+         the selected language only" holds.
+      2. Otherwise the persisted User.language.
+    Returns None/"en" for English so no ?lang= param is sent (English default)."""
+    if i18n.get_request_lang_explicit():
+        return i18n.get_request_lang()   # the user's explicit choice wins (incl. "en")
     req = i18n.get_request_lang()
     if req and req != "en":
         return req

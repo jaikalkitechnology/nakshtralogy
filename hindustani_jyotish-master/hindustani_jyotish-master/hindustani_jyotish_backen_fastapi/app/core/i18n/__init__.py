@@ -32,14 +32,27 @@ logger = logging.getLogger(__name__)
 _request_lang: contextvars.ContextVar[str] = contextvars.ContextVar(
     "hj_request_lang", default="en"
 )
+# Whether the client EXPLICITLY chose a language this request (a ?lang= or an
+# Accept-Language header — e.g. the in-app language picker), vs the default.
+# Lets `_effective_lang` honour an explicit choice (including "en") over the
+# persisted User.language, so "the selected language ONLY" is respected.
+_request_lang_explicit: contextvars.ContextVar[bool] = contextvars.ContextVar(
+    "hj_request_lang_explicit", default=False
+)
 
 
-def set_request_lang(code: str | None) -> None:
+def set_request_lang(code: str | None, explicit: bool = False) -> None:
     _request_lang.set(normalize_lang(code) if code else "en")
+    _request_lang_explicit.set(bool(explicit))
 
 
 def get_request_lang() -> str:
     return _request_lang.get()
+
+
+def get_request_lang_explicit() -> bool:
+    """True when the client explicitly picked a language this request."""
+    return _request_lang_explicit.get()
 
 # Short/locale-style codes → canonical short code. Mirrors the alias table in
 # app/services/nakshatralogy-side report_translator so the two layers agree.
