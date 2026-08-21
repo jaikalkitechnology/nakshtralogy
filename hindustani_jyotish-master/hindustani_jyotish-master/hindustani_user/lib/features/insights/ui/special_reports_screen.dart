@@ -201,6 +201,7 @@ class SpecialReportsScreen extends StatelessWidget {
         place: subject.place,
         name: subject.name,
         gender: subject.gender,
+        lang: subject.language,
       );
     } on ApiException catch (e) {
       if (context.mounted) popLoading();

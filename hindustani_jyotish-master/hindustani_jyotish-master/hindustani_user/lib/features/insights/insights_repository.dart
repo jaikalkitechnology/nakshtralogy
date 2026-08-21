@@ -48,8 +48,9 @@ class InsightsRepository {
     String? name,
     String? gender,
     String? ayanamsa,
+    String? lang,
   }) async {
-    final res = await _api.post('/kundli/generate', body: {
+    final res = await _api.post('/kundli/generate', lang: lang, body: {
       ..._birthBody(dob: dob, time: time, place: place, name: name, gender: gender),
       'ayanamsa': ?ayanamsa,
     });
@@ -65,11 +66,12 @@ class InsightsRepository {
     String? name,
     String? gender,
     bool prediction = false,
+    String? lang,
   }) async {
     // The endpoint still requires a zodiac_sign alongside the birth details
     // (the internal engine answers from it when the provider is unavailable).
     final parsedDob = DateTime.tryParse(dob);
-    final res = await _api.post('/horoscope/daily', body: {
+    final res = await _api.post('/horoscope/daily', lang: lang, body: {
       ..._birthBody(dob: dob, time: time, place: place, name: name, gender: gender),
       'zodiac_sign': parsedDob == null ? 'Aries' : zodiacSignFor(parsedDob),
       'prediction': prediction,
@@ -82,9 +84,10 @@ class InsightsRepository {
   Future<Map<String, dynamic>> compatibility({
     required Map<String, dynamic> person1,
     required Map<String, dynamic> person2,
+    String? lang,
   }) async {
     final res = await _api.post('/horoscope/compatibility',
-        body: {'person1': person1, 'person2': person2});
+        lang: lang, body: {'person1': person1, 'person2': person2});
     return _asMap(res, 'horoscope/compatibility');
   }
 
@@ -94,8 +97,10 @@ class InsightsRepository {
     String? place,
     String? name,
     String? gender,
+    String? lang,
   }) async {
     final res = await _api.post('/horoscope/planet-position',
+        lang: lang,
         body: _birthBody(dob: dob, time: time, place: place, name: name, gender: gender));
     return _asMap(res, 'horoscope/planet-position');
   }
@@ -104,8 +109,9 @@ class InsightsRepository {
     required String dob,
     String? name,
     String? gender,
+    String? lang,
   }) async {
-    final res = await _api.post('/horoscope/birthday-number', body: {
+    final res = await _api.post('/horoscope/birthday-number', lang: lang, body: {
       'dob': dob,
       'name': ?name,
       'gender': ?gender,
@@ -135,9 +141,11 @@ class InsightsRepository {
     String? place,
     String? name,
     String? gender,
+    String? lang,
   }) async {
     final res = await _api.post(
       '/insights/reports/$type/generate',
+      lang: lang,
       body: _birthBody(dob: dob, time: time, place: place, name: name, gender: gender),
     );
     return _asMap(res, 'insights/reports/$type/generate');
