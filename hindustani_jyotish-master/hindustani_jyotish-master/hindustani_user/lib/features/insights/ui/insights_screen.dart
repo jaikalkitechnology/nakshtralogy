@@ -199,6 +199,9 @@ class InsightsScreen extends StatelessWidget {
 
     final dob = subject.dob;
     final time = subject.time;
+    // The report language the user picked on the details sheet — forwarded so
+    // Cosmic Services returns the report in that language.
+    final lang = subject.language;
 
     // Love match additionally needs the partner's details (not persisted).
     PartnerDetails? partner;
@@ -237,7 +240,8 @@ class InsightsScreen extends StatelessWidget {
               time: time,
               place: subject.place,
               name: subject.name,
-              gender: subject.gender);
+              gender: subject.gender,
+              lang: lang);
         case 'prediction':
           res = await repo.dailyHoroscope(
               dob: dob,
@@ -245,29 +249,33 @@ class InsightsScreen extends StatelessWidget {
               place: subject.place,
               name: subject.name,
               gender: subject.gender,
-              prediction: true);
+              prediction: true,
+              lang: lang);
         case 'love':
           res = await repo.compatibility(
             person1: subject.toJson(),
             person2: partner!.toJson(),
+            lang: lang,
           );
         case 'number':
           res = await repo.birthdayNumber(
-              dob: dob, name: subject.name, gender: subject.gender);
+              dob: dob, name: subject.name, gender: subject.gender, lang: lang);
         case 'planet':
           res = await repo.planetPosition(
               dob: dob,
               time: time,
               place: subject.place,
               name: subject.name,
-              gender: subject.gender);
+              gender: subject.gender,
+              lang: lang);
         default:
           res = await repo.generateKundli(
               dob: dob,
               time: time,
               place: subject.place,
               name: subject.name,
-              gender: subject.gender);
+              gender: subject.gender,
+              lang: lang);
       }
     } on ApiException catch (e) {
       if (context.mounted) popLoadingDialog();

@@ -26,9 +26,14 @@ class ApiClient {
         }
         // Tell the backend which language to localize its response messages
         // in (error/success `detail`). Server falls back to English when this
-        // is absent or unrecognised, so it's always safe to send.
+        // is absent or unrecognised, so it's always safe to send. A per-request
+        // Accept-Language (e.g. a report generated in a language the user
+        // picked on the form, different from the app UI) is already set on the
+        // options — don't clobber it with the global UI languageCode.
         final lang = languageCode;
-        if (lang != null && lang.isNotEmpty) {
+        if (lang != null &&
+            lang.isNotEmpty &&
+            !options.headers.containsKey('Accept-Language')) {
           options.headers['Accept-Language'] = lang;
         }
         handler.next(options);
@@ -129,8 +134,16 @@ class ApiClient {
   Future<dynamic> get(String path, {Map<String, dynamic>? query}) =>
       _wrap(() => _dio.get(path, queryParameters: query));
 
-  Future<dynamic> post(String path, {Object? body, bool noAuth = false}) =>
-      _wrap(() => _dio.post(path, data: body, options: Options(extra: {'noAuth': noAuth})));
+  /// [lang] sets a per-request `Accept-Language` (overriding the global UI
+  /// [languageCode] for this call only) — used to generate a report in a
+  /// language the user picks on the form, independent of the app's language.
+  Future<dynamic> post(String path, {Object? body, bool noAuth = false, String? lang}) =>
+      _wrap(() => _dio.post(path, data: body, options: Options(
+            extra: {'noAuth': noAuth},
+            headers: (lang != null && lang.isNotEmpty)
+                ? {'Accept-Language': lang}
+                : null,
+          )));
 
   Future<dynamic> patch(String path, {Object? body}) =>
       _wrap(() => _dio.patch(path, data: body));

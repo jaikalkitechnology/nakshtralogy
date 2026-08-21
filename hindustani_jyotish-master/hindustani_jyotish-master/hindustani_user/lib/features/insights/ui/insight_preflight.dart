@@ -15,6 +15,7 @@ class PartnerDetails {
     required this.dob,
     this.time,
     this.place,
+    this.language,
   });
 
   final String name;
@@ -22,6 +23,12 @@ class PartnerDetails {
   final String dob; // YYYY-MM-DD
   final String? time; // HH:MM
   final String? place;
+
+  /// The language the seeker wants THIS report generated in (e.g. "hi", "ta").
+  /// Sent to the backend as a per-request Accept-Language so the Cosmic
+  /// Services response comes back in that language, independent of the app's
+  /// UI language. Null → use the app's current language.
+  final String? language;
 
   Map<String, dynamic> toJson() => {
         'name': name,
@@ -134,16 +141,43 @@ class _DetailsForm extends StatefulWidget {
   State<_DetailsForm> createState() => _DetailsFormState();
 }
 
+// Report languages the user can generate in — code → localized native label.
+// The label is resolved from the existing AppLocalizations `language*` keys so
+// it stays translated without new ARB entries.
+const List<String> _kReportLangCodes = [
+  'en', 'hi', 'bn', 'gu', 'kn', 'ml', 'mr', 'pa', 'ta', 'te',
+];
+
+String _reportLangLabel(AppLocalizations l, String code) => switch (code) {
+      'hi' => l.languageHindi,
+      'bn' => l.languageBengali,
+      'gu' => l.languageGujarati,
+      'kn' => l.languageKannada,
+      'ml' => l.languageMalayalam,
+      'mr' => l.languageMarathi,
+      'pa' => l.languagePunjabi,
+      'ta' => l.languageTamil,
+      'te' => l.languageTelugu,
+      _ => l.languageEnglish,
+    };
+
 class _DetailsFormState extends State<_DetailsForm> {
   final _name = TextEditingController();
   final _place = TextEditingController();
   String? _gender;
   DateTime? _dob;
   TimeOfDay? _time;
+  String? _language; // report language; defaults to the app locale in build
   bool _saving = false;
   String? _error;
 
   bool _has(InsightField f) => widget.fields.contains(f);
+
+  /// The language selector is offered on the generate sheet (the report the
+  /// user is about to read). Not on the save-profile sheet (just editing
+  /// fields), nor the partner sheet (the language was already chosen on the
+  /// seeker's generate sheet for the love-match report).
+  bool get _showLanguage => widget.mode == _FormMode.generate;
 
   @override
   void initState() {
@@ -218,6 +252,7 @@ class _DetailsFormState extends State<_DetailsForm> {
         dob: _dobStr,
         time: _time == null ? null : _timeStr,
         place: _place.text.trim().isEmpty ? null : _place.text.trim(),
+        language: _language ?? Localizations.localeOf(context).languageCode,
       ));
       return;
     }
@@ -330,6 +365,45 @@ class _DetailsFormState extends State<_DetailsForm> {
                 textCapitalization: TextCapitalization.words,
                 decoration: InputDecoration(labelText: l.insightFieldBirthPlace),
                 onChanged: (_) => setState(() {}),
+              ),
+              const SizedBox(height: 14),
+            ],
+            if (_showLanguage) ...[
+              Row(
+                children: [
+                  const Icon(Icons.translate,
+                      size: 16, color: AppColors.copperLight),
+                  const SizedBox(width: 6),
+                  Text(l.profileLanguage,
+                      style: AppTextStyles.label(
+                          size: 12, color: AppColors.ivoryDim)),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                decoration: BoxDecoration(
+                  color: AppColors.surface1,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppColors.borderSoft),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: _language ?? Localizations.localeOf(context).languageCode,
+                    dropdownColor: AppColors.indigoDeep,
+                    icon: const Icon(Icons.expand_more, color: AppColors.ivoryDim),
+                    style: AppTextStyles.body(size: 14, color: AppColors.ivory),
+                    items: [
+                      for (final code in _kReportLangCodes)
+                        DropdownMenuItem(
+                          value: code,
+                          child: Text(_reportLangLabel(l, code)),
+                        ),
+                    ],
+                    onChanged: (v) => setState(() => _language = v),
+                  ),
+                ),
               ),
               const SizedBox(height: 14),
             ],
