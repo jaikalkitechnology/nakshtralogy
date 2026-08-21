@@ -276,10 +276,10 @@ async def upload_kyc_document(
     ext = storage.safe_extension(file.filename, storage.KYC_ALLOWED_EXT)
     if ext == ".bin":
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Unsupported file type")
-    # Image documents get recompressed (they only need to be reviewer-legible),
-    # which usually brings big camera shots under the 2 MB cap; PDFs and other
-    # formats pass through untouched.
-    data, ext = storage.compress_image(data, ext)
+    # Image documents get recompressed to ~200 KB (kept legible for the
+    # reviewer), which brings big camera shots well under the 2 MB cap; PDFs and
+    # other formats pass through untouched.
+    data, ext = storage.compress_image(data, ext, target_bytes=200 * 1024)
     if len(data) > storage.KYC_MAX_UPLOAD_BYTES:
         raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, "File too large")
     key = f"kyc/{astrologer.id}/{doc_type}-{uuid.uuid4().hex[:8]}{ext}"

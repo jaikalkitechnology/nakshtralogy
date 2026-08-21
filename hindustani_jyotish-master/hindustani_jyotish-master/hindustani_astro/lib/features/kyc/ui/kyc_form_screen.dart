@@ -5,6 +5,7 @@ import 'package:hj_core/hj_core.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/di.dart';
+import '../../../shared/avatar_compress.dart';
 import '../../../shared/responsive.dart';
 import '../../../shared/widgets/cosmic_background.dart';
 import '../../auth/astro_session_cubit.dart';
@@ -310,8 +311,12 @@ class _KycFormScreenState extends State<KycFormScreen> {
       );
       if (picked == null) return;
       setState(() => setUploading(true));
-      final bytes = await picked.readAsBytes();
-      final key = await _repo.uploadKycDocument(bytes, picked.name, docType);
+      final raw = await picked.readAsBytes();
+      // Shrink large ID/document photos to ~200 KB (kept at 1600px so text stays
+      // legible) before upload, so a big camera shot can't fail the size limit.
+      final c = await compressKycImage(raw);
+      final key = await _repo.uploadKycDocument(
+          c?.bytes ?? raw, c?.filename ?? picked.name, docType);
       setState(() => onUploaded(key, picked.name));
     } on ApiException catch (e) {
       setState(() => _error = e.message);
