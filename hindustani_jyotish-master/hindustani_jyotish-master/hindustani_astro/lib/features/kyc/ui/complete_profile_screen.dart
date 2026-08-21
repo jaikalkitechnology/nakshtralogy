@@ -5,6 +5,7 @@ import 'package:hj_core/hj_core.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/di.dart';
+import '../../../shared/avatar_compress.dart';
 import '../../../shared/responsive.dart';
 import '../../../shared/widgets/cosmic_background.dart';
 import '../../auth/astro_session_cubit.dart';
@@ -94,13 +95,16 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     try {
       final picked = await ImagePicker().pickImage(
         source: ImageSource.gallery,
-        maxWidth: 1024,
-        imageQuality: 85,
+        maxWidth: 1600,
+        imageQuality: 90, // re-encodes HEIC/PNG to JPEG on-device first
       );
       if (picked == null) return;
       setState(() => _photoUploading = true);
-      final bytes = await picked.readAsBytes();
-      final astro = await _repo.uploadAvatar(bytes, picked.name);
+      final raw = await picked.readAsBytes();
+      // Accept any photo of any size — shrink it to a ≤200 KB JPEG on-device so
+      // the upload never fails on size/format, then save.
+      final c = await compressAvatar(raw, sourceName: picked.name);
+      final astro = await _repo.uploadAvatar(c?.bytes ?? raw, c?.filename ?? picked.name);
       if (mounted) context.read<AstroSessionCubit>().update(astro);
       setState(() => _photoUrl = astro.photoUrl);
     } on ApiException catch (e) {

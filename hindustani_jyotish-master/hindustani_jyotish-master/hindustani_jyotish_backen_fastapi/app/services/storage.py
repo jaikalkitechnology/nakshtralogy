@@ -102,7 +102,8 @@ _COMPRESSIBLE_EXT = {".jpg", ".jpeg", ".png", ".webp"}
 
 
 def compress_image(
-    data: bytes, ext: str, *, max_dim: int = 1600, quality: int = 82
+    data: bytes, ext: str, *, max_dim: int = 1600, quality: int = 82,
+    target_bytes: int | None = None,
 ) -> tuple[bytes, str]:
     """Best-effort server-side image compression for uploads.
 
@@ -140,6 +141,24 @@ def compress_image(
         buf = io.BytesIO()
         img.save(buf, format="JPEG", quality=quality, optimize=True)
         compressed = buf.getvalue()
+
+        # Optional hard size target (e.g. 200 KB avatars): step the JPEG quality
+        # — then, if still over, the dimensions — down until it fits.
+        if target_bytes and len(compressed) > target_bytes:
+            for q in (70, 58, 46, 36, 28):
+                buf = io.BytesIO()
+                img.save(buf, format="JPEG", quality=q, optimize=True)
+                compressed = buf.getvalue()
+                if len(compressed) <= target_bytes:
+                    break
+            dim = max(img.size)
+            while len(compressed) > target_bytes and dim > 320:
+                dim = int(dim * 0.8)
+                shrunk = img.copy()
+                shrunk.thumbnail((dim, dim))
+                buf = io.BytesIO()
+                shrunk.save(buf, format="JPEG", quality=40, optimize=True)
+                compressed = buf.getvalue()
     except Exception:
         return data, ext
     if len(compressed) < len(data):
