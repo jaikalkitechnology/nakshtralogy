@@ -299,11 +299,14 @@ def create_app() -> FastAPI:
         # Resolve BEFORE the endpoint runs and stash it, so handlers can localize
         # outbound calls (e.g. the developer-API kundli/report request) to the
         # language the app is showing NOW — not just the persisted User.language.
-        lang = resolve_request_lang(
-            request.query_params.get("lang"),
-            request.headers.get("accept-language"),
-        )
-        set_request_lang(lang)
+        _q_lang = request.query_params.get("lang")
+        _hdr_lang = request.headers.get("accept-language")
+        lang = resolve_request_lang(_q_lang, _hdr_lang)
+        # Did the client explicitly pick a language (in-app language selector →
+        # ?lang= / Accept-Language)? If so it must win over User.language, even
+        # when the pick is English.
+        _explicit = bool((_q_lang and _q_lang.strip()) or (_hdr_lang and _hdr_lang.strip()))
+        set_request_lang(lang, explicit=_explicit)
 
         response = await call_next(request)
         if lang == "en":
