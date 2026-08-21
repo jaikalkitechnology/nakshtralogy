@@ -50,6 +50,9 @@ dependencies:
   intl: ^0.20.2
   web_socket_channel: ^3.0.1
   image_picker: ^1.1.2
+  # Pure-Dart image codec — used to compress any picked photo down to ≤200 KB
+  # JPEG on-device before upload (so large/HEIC camera shots always upload).
+  image: ^4.3.0
   firebase_core: ^3.8.0
   firebase_messaging: ^15.1.5
   google_sign_in: ^6.2.1

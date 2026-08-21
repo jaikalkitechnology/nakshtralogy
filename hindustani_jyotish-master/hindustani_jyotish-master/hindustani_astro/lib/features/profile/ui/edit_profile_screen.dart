@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/avatar_compress.dart';
 import '../../../shared/premium_ui.dart';
 import '../../../shared/widgets/cosmic_background.dart';
 import '../../../shared/widgets/full_screen_image_viewer.dart';
@@ -182,13 +183,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     try {
       final picked = await ImagePicker().pickImage(
         source: ImageSource.gallery,
-        maxWidth: 1024,
-        imageQuality: 85,
+        maxWidth: 1600,
+        imageQuality: 90,
       );
       if (picked == null) return;
       setState(() => _uploading = true);
-      final bytes = await picked.readAsBytes();
-      final updated = await _repo.uploadAvatar(bytes, picked.name);
+      final raw = await picked.readAsBytes();
+      final c = await compressAvatar(raw, sourceName: picked.name);
+      final updated =
+          await _repo.uploadAvatar(c?.bytes ?? raw, c?.filename ?? picked.name);
       session.update(updated);
       final pendingApproval = updated.pendingEdit?['status'] == 'pending';
       messenger.showSnackBar(SnackBar(

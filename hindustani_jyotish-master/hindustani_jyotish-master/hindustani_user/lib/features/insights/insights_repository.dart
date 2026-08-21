@@ -282,6 +282,21 @@ class InsightsRepository {
   /// public). Returns service key → price string (e.g.
   /// `{"detailed_kundli": "99.00"}`); admin-disabled services are omitted by
   /// the backend, so absence here means "hide the tile".
+  /// Birth-place autocomplete (`GET /public/city-search?q=`) — the same
+  /// Nominatim/OSM city search the Nakshatralogy app uses. Returns up to 8
+  /// `{name, display_name, latitude, longitude, country}` rows; [] on error.
+  Future<List<Map<String, dynamic>>> citySearch(String q) async {
+    try {
+      final res = await _api.get('/public/city-search', query: {'q': q});
+      return [
+        for (final r in _asList(res, 'public/city-search'))
+          if (r is Map<String, dynamic>) r,
+      ];
+    } catch (_) {
+      return const [];
+    }
+  }
+
   Future<Map<String, String>> cosmicServices() async {
     final res = await _api.get('/cosmic-services');
     return {

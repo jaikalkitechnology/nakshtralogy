@@ -160,8 +160,10 @@ async def upload_avatar(
     if ext == ".bin":
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Unsupported file type")
     # Profile photos are rendered small — recompress oversized camera shots
-    # server-side (no-op for anything already small/undecodable).
-    data, ext = storage.compress_image(data, ext, max_dim=1024)
+    # server-side down to ≤200 KB (no-op for anything already small/undecodable).
+    data, ext = storage.compress_image(
+        data, ext, max_dim=1024, target_bytes=200 * 1024
+    )
     key = storage.save_bytes(f"avatars/{uuid.uuid4()}{ext}", data)
     url = storage.url_for(key)
     if astrologer.kyc_status == KYCStatus.approved:
