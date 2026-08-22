@@ -29,6 +29,7 @@ from app.core import i18n
 from app.models.kundli import KundliReport
 from app.models.user import User
 from app.models.wallet import TransactionType
+from app.kundli import engine as _full_engine
 from app.services import nakshatralogy as nk
 from app.services.devapi_localize import localize_devapi_response
 
@@ -571,12 +572,8 @@ async def generate_kundli(
             title="Detailed Kundli Report", details=_details_rows(payload),
         )
 
-    # Internal stub engine (empty API key).
+    # Internal offline engine (empty API key).
     amount = await _charge(db, user, "detailed_kundli")
-    chart = compute_chart(
-        dob=dob, birth_time=birth_time, ayanamsa=ayanamsa,
-        latitude=latitude, longitude=longitude, tz_offset_minutes=tz_offset_minutes,
-    )
     lang = _effective_lang(user)
     numbers = numerology.life_path_number(dob, lang=lang)
     inputs = {
@@ -584,30 +581,65 @@ async def generate_kundli(
         "dob": dob.isoformat(),
         "time": birth_time.strftime("%H:%M") if birth_time else None,
         "place": birth_place,
-        "ayanamsa": (ayanamsa or chart.ayanamsa),
+        "ayanamsa": ayanamsa,
     }
-    # Localize the stub chart's sign/nakshatra/dignity terms offline (numerology
-    # is already localized above). No-op for english; fixes stub mode (empty API
-    # key) previously always returning English chart terms for non-English users.
-    data = {
-        "chart": localize_devapi_response(_chart_to_dict(chart), lang),
-        "numerology": numbers,
-    }
-    # Build the downloadable PDF from the LOCALIZED response so a Gujarati
-    # kundli produces a Gujarati PDF (Noto fonts render the Indic script). If
-    # PDF generation fails for any reason, fall back to the classic English
-    # builder rather than failing the whole (free) kundli generation.
+
+    # Compute the COMPLETE analysis offline (same ported engine the full-analysis
+    # viewer uses) so the stored bundle carries every section — chart, dashas,
+    # doshas, yogas, shadbala, ashtakavarga, aspects, bhava, life-areas, chakra.
+    # This is what makes the "Open full analysis" tabs complete (served straight
+    # from the saved data_json) AND gives the PDF real, multi-page content.
+    # Localised as one pass so every section matches the selected language.
+    bundle: dict[str, Any]
     try:
-        pdf_bytes = build_localized_kundli_pdf(
+        raw_bundle = _full_engine.get_full_analysis(
+            name or "User", (gender or "M").upper(),
+            dob.strftime("%d/%m/%Y"),
+            birth_time.strftime("%H:%M") if birth_time else "12:00",
+            birth_place or "India", dasha_levels=2,
+        )
+        raw_bundle.pop("moola_dasha", None)  # Moola excluded everywhere
+        bundle = localize_devapi_response(raw_bundle, lang)
+    except Exception:  # noqa: BLE001 — fall back to the minimal chart on any engine error
+        logger.exception("offline full-analysis compute failed; storing minimal chart")
+        chart = compute_chart(
+            dob=dob, birth_time=birth_time, ayanamsa=ayanamsa,
+            latitude=latitude, longitude=longitude, tz_offset_minutes=tz_offset_minutes,
+        )
+        inputs["ayanamsa"] = ayanamsa or chart.ayanamsa
+        bundle = {"chart": localize_devapi_response(_chart_to_dict(chart), lang)}
+
+    data: dict[str, Any] = {**bundle, "numerology": numbers, "source": "engine"}
+
+    # Downloadable PDF from the LOCALIZED bundle. WeasyPrint (Pango/HarfBuzz)
+    # renders Indic scripts correctly; if it (or its system libs) is
+    # unavailable, fall back to the reportlab localized builder, then to the
+    # classic English one — a free kundli is never blocked by a PDF hiccup.
+    pdf_bytes: bytes | None = None
+    try:
+        from app.services.astro.pdf_report import build_kundli_report_pdf
+        pdf_bytes = build_kundli_report_pdf(
             data, name=name, dob=dob, birth_time=birth_time,
             birth_place=birth_place, lang=lang,
         )
-    except Exception:  # noqa: BLE001 — never fail generation on a PDF hiccup
-        logger.exception("localized kundli PDF failed; using English fallback")
-        pdf_bytes = build_kundli_pdf(
-            chart=chart, name=name, dob=dob, birth_time=birth_time,
-            birth_place=birth_place, numerology=numbers,
-        )
+    except Exception:  # noqa: BLE001
+        logger.exception("WeasyPrint kundli PDF failed; trying reportlab localized")
+    if not pdf_bytes:
+        try:
+            pdf_bytes = build_localized_kundli_pdf(
+                data, name=name, dob=dob, birth_time=birth_time,
+                birth_place=birth_place, lang=lang,
+            )
+        except Exception:  # noqa: BLE001
+            logger.exception("reportlab localized PDF failed; using English fallback")
+            _c = compute_chart(
+                dob=dob, birth_time=birth_time, ayanamsa=ayanamsa,
+                latitude=latitude, longitude=longitude, tz_offset_minutes=tz_offset_minutes,
+            )
+            pdf_bytes = build_kundli_pdf(
+                chart=_c, name=name, dob=dob, birth_time=birth_time,
+                birth_place=birth_place, numerology=numbers,
+            )
     key = storage.save_bytes(f"reports/{uuid.uuid4()}.pdf", pdf_bytes)
     return await _finish(
         db, user, "detailed_kundli", inputs, amount, data,
