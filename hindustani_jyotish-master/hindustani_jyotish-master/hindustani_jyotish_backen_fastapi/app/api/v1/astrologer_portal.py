@@ -154,8 +154,15 @@ async def upload_avatar(
 ):
     """Upload a profile photo (multipart) → object storage; returns the astrologer."""
     data = await file.read()
-    if len(data) > storage.MAX_UPLOAD_BYTES:
-        raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, "File too large")
+    if not data:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "The uploaded file is empty.")
+    # Accept large camera photos of any reasonable size (raw guard only stops an
+    # absurd upload) — they're recompressed to ≤200 KB below rather than rejected.
+    if len(data) > storage.KYC_MAX_DOC_UPLOAD_BYTES:
+        raise HTTPException(
+            status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            "File is larger than 10 MB — please upload a smaller photo.",
+        )
     ext = storage.safe_extension(file.filename)
     if ext == ".bin":
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Unsupported file type")
@@ -268,22 +275,45 @@ async def upload_kyc_document(
     allowed = {"photo", "pan", "aadhaar", "aadhaar_back", "bank_proof", "certificate"}
     if doc_type not in allowed:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, f"doc_type must be one of {allowed}")
+    if file is None or not file.filename:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "No file was uploaded.")
     data = await file.read()
-    # Hard guard on the RAW upload so we never buffer an absurd file in memory;
-    # the real 2 MB limit is enforced on the final stored size below.
-    if len(data) > storage.MAX_UPLOAD_BYTES:
-        raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, "File too large")
+    if not data:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "The uploaded file is empty.")
+    # Raw guard so we never buffer an absurd file in memory. Accepts documents of
+    # any reasonable size (up to 10 MB); images are shrunk to ~200 KB below,
+    # PDFs/DOCs are stored gzip-compressed in the DB.
+    if len(data) > storage.KYC_MAX_DOC_UPLOAD_BYTES:
+        raise HTTPException(
+            status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            "File is larger than 10 MB — please upload a smaller document.",
+        )
     ext = storage.safe_extension(file.filename, storage.KYC_ALLOWED_EXT)
     if ext == ".bin":
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Unsupported file type")
-    # Image documents get recompressed to ~200 KB (kept legible for the
-    # reviewer), which brings big camera shots well under the 2 MB cap; PDFs and
-    # other formats pass through untouched.
-    data, ext = storage.compress_image(data, ext, target_bytes=200 * 1024)
-    if len(data) > storage.KYC_MAX_UPLOAD_BYTES:
-        raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, "File too large")
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            "Unsupported file type — upload an image (JPG/PNG/HEIC), a PDF, or a DOC/DOCX.",
+        )
+    # Images (any size, incl. big camera shots) → recompressed to ~200 KB, kept
+    # legible for the reviewer. PDFs / DOC / DOCX and any undecodable image pass
+    # through untouched (they're gzip-compressed at rest in the DB).
+    if ext in storage.KYC_IMAGE_EXT:
+        data, ext = storage.compress_image(data, ext, target_bytes=200 * 1024)
+    # Final safety cap: images are ~200 KB by now; a document that somehow is
+    # still over 10 MB is rejected with a clear message.
+    if len(data) > storage.KYC_MAX_DOC_UPLOAD_BYTES:
+        raise HTTPException(
+            status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            "Document is too large to store — please upload a smaller file.",
+        )
     key = f"kyc/{astrologer.id}/{doc_type}-{uuid.uuid4().hex[:8]}{ext}"
-    await durable_storage.save_durable(db, key, data, storage.content_type_for(ext))
+    try:
+        await durable_storage.save_durable(db, key, data, storage.content_type_for(ext))
+    except Exception as e:  # noqa: BLE001 — surface a clean error, never a 500 blob
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            f"Could not save the document, please try again. ({type(e).__name__})",
+        )
     return {"doc_type": doc_type, "key": key, "url": storage.url_for(key)}
 
 

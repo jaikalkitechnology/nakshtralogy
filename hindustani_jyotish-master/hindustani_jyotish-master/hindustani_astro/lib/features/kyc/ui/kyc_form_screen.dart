@@ -304,13 +304,14 @@ class _KycFormScreenState extends State<KycFormScreen> {
   }) async {
     setState(() => _error = null);
     try {
-      // Accept a PHOTO or a PDF/doc of any size — image_picker is image-only,
-      // so use file_picker with an allow-list matching the backend's KYC set.
+      // Accept a PHOTO, a PDF, or a DOC/DOCX of any size — image_picker is
+      // image-only, so use file_picker with an allow-list matching the
+      // backend's KYC set.
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: const [
           'jpg', 'jpeg', 'png', 'webp', 'heic', 'heif',
-          'bmp', 'gif', 'tif', 'tiff', 'pdf',
+          'bmp', 'gif', 'tif', 'tiff', 'pdf', 'doc', 'docx',
         ],
         withData: true, // load bytes (works on web + mobile)
       );
@@ -323,12 +324,22 @@ class _KycFormScreenState extends State<KycFormScreen> {
       }
       setState(() => setUploading(true));
       final name = f.name;
-      final isPdf = name.toLowerCase().endsWith('.pdf');
-      // Images → shrink to ~200 KB (kept at 1600px so ID text stays legible);
-      // a PDF/doc is uploaded as-is (backend accepts it, capped at 2 MB).
+      // Only real images can be re-encoded/shrunk — a PDF or DOC/DOCX is
+      // uploaded as-is (the backend accepts these up to 10 MB and stores them
+      // gzip-compressed). Gate on the extension so anything that isn't an
+      // image passes through untouched rather than being handed to the JPEG
+      // compressor.
+      const imageExts = {
+        'jpg', 'jpeg', 'png', 'webp', 'heic', 'heif',
+        'bmp', 'gif', 'tif', 'tiff',
+      };
+      final dot = name.lastIndexOf('.');
+      final ext = dot >= 0 ? name.substring(dot + 1).toLowerCase() : '';
+      final isImage = imageExts.contains(ext);
+      // Images → shrink to ~200 KB (kept at 1600px so ID text stays legible).
       var bytes = raw;
       var filename = name;
-      if (!isPdf) {
+      if (isImage) {
         final c = await compressKycImage(raw);
         if (c != null) {
           bytes = c.bytes;

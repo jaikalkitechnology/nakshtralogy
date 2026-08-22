@@ -54,9 +54,18 @@ MAX_VIDEO_UPLOAD_BYTES = 100 * 1024 * 1024  # 100 MB
 # outright); non-image docs over 2 MB are rejected.
 KYC_ALLOWED_EXT = {
     ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp",
-    ".heic", ".heif", ".tif", ".tiff", ".pdf",
+    ".heic", ".heif", ".tif", ".tiff", ".pdf", ".doc", ".docx",
 }
-KYC_MAX_UPLOAD_BYTES = 2 * 1024 * 1024  # 2 MB (final stored size)
+# Image members of the KYC allow-list — these are recompressed to ~200 KB.
+# Non-image docs (pdf/doc/docx) can't be image-compressed, so they're accepted
+# up to the larger raw cap and stored gzip-compressed instead.
+KYC_IMAGE_EXT = {
+    ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp",
+    ".heic", ".heif", ".tif", ".tiff",
+}
+KYC_MAX_UPLOAD_BYTES = 2 * 1024 * 1024  # 2 MB — final size cap for IMAGE docs
+                                        # (they're compressed to ~200 KB first)
+KYC_MAX_DOC_UPLOAD_BYTES = 10 * 1024 * 1024  # 10 MB — cap for PDF/DOC/DOCX
 
 # Extension → MIME type, so a DB-served / rehydrated document keeps the right
 # Content-Type. Unknown falls back to a safe binary type.
@@ -65,6 +74,8 @@ _CONTENT_TYPES = {
     ".webp": "image/webp", ".gif": "image/gif", ".bmp": "image/bmp",
     ".heic": "image/heic", ".heif": "image/heif", ".tif": "image/tiff",
     ".tiff": "image/tiff", ".pdf": "application/pdf",
+    ".doc": "application/msword",
+    ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 }
 
 
