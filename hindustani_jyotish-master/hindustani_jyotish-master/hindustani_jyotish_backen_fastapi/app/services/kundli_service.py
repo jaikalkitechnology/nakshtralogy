@@ -163,10 +163,24 @@ async def _record(
     return report
 
 
-def _save_pdf(*, title: str, details: list[tuple[str, str]], data: dict) -> str:
-    """Render the curated data as a PDF and store it under reports/."""
-    sections = [(k, v) for k, v in data.items() if k not in ("pdf_url", "source")]
-    pdf_bytes = build_insight_pdf(title=title, details=details, sections=sections)
+def _save_pdf(
+    *, title: str, details: list[tuple[str, str]], data: dict, lang: str | None = None,
+) -> str:
+    """Render the curated data as a PDF and store it under reports/.
+
+    Prefers the WeasyPrint localized builder (Pango/HarfBuzz — renders Indic
+    scripts correctly for the selected language); if WeasyPrint or its system
+    libs are unavailable, falls back to the classic reportlab English builder so
+    a report is always produced."""
+    try:
+        from app.services.astro.pdf_report import build_insight_report_pdf
+        pdf_bytes = build_insight_report_pdf(
+            title=title, details=details, data=data, lang=lang,
+        )
+    except Exception:  # noqa: BLE001 — WeasyPrint missing/broken → English fallback
+        logger.exception("localized insight PDF failed; using English fallback")
+        sections = [(k, v) for k, v in data.items() if k not in ("pdf_url", "source")]
+        pdf_bytes = build_insight_pdf(title=title, details=details, sections=sections)
     return storage.save_bytes(f"reports/{uuid.uuid4()}.pdf", pdf_bytes)
 
 
@@ -182,7 +196,9 @@ async def _finish(
     details: list[tuple[str, str]],
     pdf_key: str | None = None,
 ) -> tuple[KundliReport, dict]:
-    key = pdf_key or _save_pdf(title=title, details=details, data=data)
+    key = pdf_key or _save_pdf(
+        title=title, details=details, data=data, lang=_effective_lang(user),
+    )
     # pdf_url goes into the stored payload too, so a DB-backed reopen
     # carries its download link without recomputation.
     data["pdf_url"] = storage.url_for(key)

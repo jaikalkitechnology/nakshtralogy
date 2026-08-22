@@ -415,3 +415,121 @@ table.kv th {{ background:none; color:{_COPPER}; width:40%; }}
 def _moon_sign(chart: dict) -> str:
     p = (chart.get("planets") or {}).get("Moon")
     return (p or {}).get("sign_full", "") if isinstance(p, dict) else ""
+
+
+# ── Generic localized insight PDF (planet position, love compatibility, reports) ──
+
+_HUMAN = {
+    "planets": "Planetary Positions", "band": "Result", "summary": "Summary",
+    "score": "Score", "sign1": "Sign 1", "sign2": "Sign 2",
+    "unified_compatibility_score": "Compatibility Score",
+    "ashtakoot_total_score": "Ashtakoot Score", "verdict_explanation": "Verdict",
+    "plain_statement": "Summary", "life_path_number": "Life Path Number",
+    "birth_day_number": "Birth Day Number", "meaning": "Meaning",
+}
+# Keys never rendered (internal / machinery / the big raw mirror).
+_SKIP = {"pdf_url", "source", "full_response", "chart_id", "engine", "version",
+         "domain", "birth_jd", "schema_valid", "confidence_breakdown",
+         "partner1_name", "partner2_name", "unified_grade",
+         "ashtakoot_classical_grade", "compatibility_verdict"}
+
+
+def _humanize(key: str) -> str:
+    return _HUMAN.get(key, key.replace("_", " ").strip().title())
+
+
+def _render_value(v: Any) -> str:
+    """Readable HTML for a scalar / list / dict curated value."""
+    if isinstance(v, bool):
+        return "✓" if v else "—"
+    if isinstance(v, (int, float)):
+        return _num(v, 2 if isinstance(v, float) else 0)
+    if isinstance(v, str):
+        return _t(v)
+    if isinstance(v, list):
+        items = [x for x in v if x not in (None, "")]
+        if not items:
+            return ""
+        return "<ul>" + "".join(f"<li>{_render_value(x)}</li>" for x in items) + "</ul>"
+    if isinstance(v, dict):
+        rows = "".join(
+            f'<tr><th>{_t(_humanize(str(k)))}</th><td>{_render_value(val)}</td></tr>'
+            for k, val in v.items() if str(k) not in _SKIP and val not in (None, "", [], {})
+        )
+        return f'<table class="kv">{rows}</table>' if rows else ""
+    return _t(str(v))
+
+
+def _positions_table(planets: dict, full: str, L: dict) -> str:
+    ordered = [n for n in _PLANET_ORDER if n in planets] + \
+              [n for n in planets if n not in _PLANET_ORDER]
+    rows = []
+    for n in ordered:
+        p = planets.get(n)
+        if not isinstance(p, dict):
+            continue
+        deg = p.get("degree")
+        rows.append(
+            "<tr>"
+            f"<td>{_t(_planet_name(n, full))}</td>"
+            f"<td>{_t(p.get('sign_full') or p.get('sign'))}</td>"
+            f"<td>{(_num(deg, 2) + '°') if isinstance(deg,(int,float)) else _t(deg)}</td>"
+            f"<td>{_t(p.get('nakshatra'))}</td>"
+            f"<td>{_num(p.get('pada'))}</td>"
+            "</tr>"
+        )
+    if not rows:
+        return ""
+    head = "".join(f"<th>{_t(h)}</th>" for h in
+                   [L["planet"], L["sign"], L["degree"], L["nakshatra"], L["pada"]])
+    return f'<table><thead><tr>{head}</tr></thead><tbody>{"".join(rows)}</tbody></table>'
+
+
+def build_insight_report_pdf(
+    *, title: str, details: list[tuple[str, str]], data: dict, lang: str | None,
+) -> bytes:
+    """Generic localized PDF for any curated cosmic-insight ``data`` (planet
+    position, love compatibility, specialist reports, …). Renders the
+    already-localized values via WeasyPrint so Indic scripts shape correctly.
+    Raises if WeasyPrint is unavailable (caller falls back to reportlab)."""
+    from weasyprint import HTML
+
+    full = normalize_lang(lang) if lang else "english"
+    L = {**_L["english"], **_L.get(full, {})}
+
+    det = "".join(
+        f'<tr><th>{_t(k)}</th><td>{_t(v)}</td></tr>' for k, v in (details or []) if v
+    )
+    det_html = f'<table class="kv">{det}</table>' if det else ""
+
+    blocks: list[str] = []
+    for key, val in (data.items() if isinstance(data, dict) else []):
+        if str(key) in _SKIP or val in (None, "", [], {}):
+            continue
+        if key == "planets" and isinstance(val, dict):
+            inner = _positions_table(val, full, L)
+        else:
+            inner = _render_value(val)
+        if inner:
+            blocks.append(f'<div class="section"><h2>{_t(_humanize(str(key)))}</h2>{inner}</div>')
+
+    body = det_html + "".join(blocks)
+    html = f"""<!doctype html><html><head><meta charset="utf-8"><style>
+@page {{ size: A4; margin: 16mm 14mm; }}
+* {{ font-family: {_FONT_STACK}; }}
+body {{ color:#222; font-size:10.5pt; }}
+h1 {{ color:{_INDIGO}; font-size:20pt; text-align:center; margin:0 0 6mm; }}
+h2 {{ color:{_SAFFRON}; font-size:13pt; border-bottom:2px solid {_SAFFRON};
+      padding-bottom:2mm; margin:0 0 3mm; }}
+.section {{ page-break-inside:avoid; margin-bottom:6mm; }}
+table {{ width:100%; border-collapse:collapse; font-size:9.5pt; margin-bottom:3mm; }}
+th {{ background:{_INDIGO}; color:#fff; padding:4px 6px; text-align:left; }}
+td {{ padding:4px 6px; border-bottom:0.25pt solid #ddd; vertical-align:top; }}
+tbody tr:nth-child(even) td {{ background:#FBF6EE; }}
+table.kv th {{ background:none; color:{_COPPER}; width:38%; }}
+ul {{ margin:2px 0 2px 16px; padding:0; }}
+</style></head><body>
+<h1>{_t(title)}</h1>
+{body}
+</body></html>"""
+    return HTML(string=html).write_pdf()

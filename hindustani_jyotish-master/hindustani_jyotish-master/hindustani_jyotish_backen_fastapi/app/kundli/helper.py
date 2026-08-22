@@ -55,6 +55,26 @@ def _parse_dob(dob: str):
     return int(parts[2]), int(parts[1]), int(parts[0])   # DD/MM/YYYY
 
 
+def _to_ddmmyyyy(dob: str) -> str:
+    """Normalise any accepted date shape to ``DD/MM/YYYY`` — the ONLY format
+    the underlying ``calculate_chart`` parses (it does a bare ``dob.split('/')``
+    then ``int()``). Callers pass either ``DD/MM/YYYY`` or an ISO
+    ``YYYY-MM-DD`` (the Cosmic ``/kundli/generate`` shape); an unrecognised
+    value is returned unchanged so behaviour never regresses."""
+    s = (dob or "").strip()
+    parts = s.replace("-", "/").split("/")
+    if len(parts) != 3:
+        return s
+    try:
+        if len(parts[0]) == 4:          # YYYY/MM/DD
+            y, m, d = int(parts[0]), int(parts[1]), int(parts[2])
+        else:                           # DD/MM/YYYY
+            d, m, y = int(parts[0]), int(parts[1]), int(parts[2])
+    except ValueError:
+        return s
+    return f"{d:02d}/{m:02d}/{y:04d}"
+
+
 def _tob_to_decimal(tob: str) -> float:
     """HH:MM → decimal hours (IST local)."""
     h, m = map(int, tob.split(":"))
@@ -119,6 +139,10 @@ class NakshtraEngine:
           _pdata   : dict   ← keep for downstream calls
         }
         """
+        # calculate_chart parses ONLY DD/MM/YYYY; normalise ISO/other shapes so
+        # a chart saved with an ISO dob (Cosmic /kundli/generate) never crashes
+        # the full-analysis recompute ("invalid literal for int()").
+        dob = _to_ddmmyyyy(dob)
         logger.info("get_chart | name=%s dob=%s place=%s", name, dob, place)
         pdata, divs = _silent(_nk.calculate_chart, name, gender, dob, tob, place)
         if pdata is None:
