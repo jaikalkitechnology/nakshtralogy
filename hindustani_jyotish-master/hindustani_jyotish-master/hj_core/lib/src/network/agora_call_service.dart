@@ -97,6 +97,21 @@ class AgoraCallService {
   /// around another one of its symptoms.
   static const bool _useFlutterTexture = true;
 
+  /// Render mode for the REMOTE party's video specifically.
+  ///
+  /// The local camera preview stays on `Texture` (above) — that's the surface
+  /// that shares the app's single Android window with the compose fields, so it
+  /// needs to stay off the platform-view/window-resize path. The REMOTE view,
+  /// however, has a different failure mode: with `useFlutterTexture: true` the
+  /// Agora SDK on Android frequently renders a decoded remote stream as a BLACK
+  /// frame while audio plays fine — the exact "astrologer is live, viewer hears
+  /// but can't see them" symptom. The Hybrid-Composition `PlatformView`
+  /// (`useFlutterTexture: false`) renders the incoming remote stream reliably.
+  /// The remote view is already wrapped in `IgnorePointer`/`RepaintBoundary` by
+  /// its callers and only rebuilds when the remote uid changes, so it doesn't
+  /// hit the churn that made the local preview need a texture.
+  static const bool _useFlutterTextureRemote = false;
+
   /// The remote party's uid once they join (null before/after).
   final ValueNotifier<int?> remoteUid = ValueNotifier<int?>(null);
 
@@ -191,6 +206,25 @@ class AgoraCallService {
             '${width}x$height channel=${connection.channelId}');
         if (remoteUid.value == null) remoteUid.value = uid;
         remoteVideoInfo.value = '${width}x$height';
+      },
+      // Populates the on-screen diagnostic (state name) AND acts as one more
+      // fallback to bind the remote view: if `onUserJoined` was missed, the
+      // first remote video state change still tells us who to render. Enum→name
+      // via toString so it stays build-safe across agora_rtc_engine minors.
+      onRemoteVideoStateChanged: (
+        RtcConnection connection,
+        int uid,
+        RemoteVideoStateType state,
+        RemoteVideoStateReasonType reason,
+        int elapsed,
+      ) {
+        debugPrint('[AgoraCallService] remote video state uid=$uid '
+            'state=$state reason=$reason');
+        if (remoteUid.value == null &&
+            state != RemoteVideoStateType.remoteVideoStateStopped) {
+          remoteUid.value = uid;
+        }
+        remoteVideoState.value = state.toString().split('.').last;
       },
       onUserOffline: (RtcConnection connection, int uid, UserOfflineReasonType reason) {
         debugPrint('[AgoraCallService] onUserOffline uid=$uid reason=$reason');
@@ -478,9 +512,16 @@ class AgoraCallService {
         rtcEngine: engine,
         canvas: VideoCanvas(uid: uid),
         connection: RtcConnection(channelId: _channel),
-        useFlutterTexture: _useFlutterTexture,
+        // PlatformView, not Texture — see [_useFlutterTextureRemote]: texture
+        // mode renders remote streams black-with-audio on many Android devices.
+        useFlutterTexture: _useFlutterTextureRemote,
       );
-      _remoteViewWidget = AgoraVideoView(controller: _remoteController!);
+      // RepaintBoundary isolates the platform view's compositing from unrelated
+      // repaints (chat ticks, viewer-count updates) so it isn't re-laid-out on
+      // every overlay change.
+      _remoteViewWidget = RepaintBoundary(
+        child: AgoraVideoView(controller: _remoteController!),
+      );
       _remoteViewUid = uid;
     }
     return _remoteViewWidget!;

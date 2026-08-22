@@ -214,6 +214,23 @@ async def _ensure_durable_blob_capacity() -> None:
         logger.exception("ensure durable blob capacity failed (continuing)")
 
 
+def _log_pdf_engine() -> None:
+    """Log whether the WeasyPrint PDF engine (needed for correctly-shaped
+    localized/Indic PDFs) is importable. If this logs a WARNING, the deploy is
+    missing WeasyPrint or its Pango/Cairo system libs and localized PDFs will
+    fall back to the (box-prone / less accurate) reportlab builder — rebuild the
+    image so requirements + the Dockerfile's libpango/libcairo packages install."""
+    try:
+        import weasyprint  # noqa: F401
+        logger.info("PDF engine: WeasyPrint available — localized PDFs will shape correctly.")
+    except Exception as e:  # noqa: BLE001
+        logger.warning(
+            "PDF engine: WeasyPrint NOT available (%s) — localized PDFs will fall "
+            "back to reportlab. Rebuild the Docker image so weasyprint + its "
+            "Pango/Cairo libs install.", e.__class__.__name__,
+        )
+
+
 async def _run_startup_schema_sync() -> None:
     """Opt-in additive schema safety net on top of Alembic.
 
@@ -254,6 +271,8 @@ async def lifespan(app: FastAPI):
     # Guarantee stored_files.data is LONGBLOB (holds real KYC docs, not just a
     # 64 KB BLOB) even if the deploy fell back to create_all instead of Alembic.
     await _ensure_durable_blob_capacity()
+    # Report whether correctly-shaped localized PDFs are available on this deploy.
+    _log_pdf_engine()
     # Restore DB-durable files (KYC docs) to the filesystem cache — must run
     # AFTER schema sync so the stored_files table exists on a fresh DB.
     await _rehydrate_durable_files()
