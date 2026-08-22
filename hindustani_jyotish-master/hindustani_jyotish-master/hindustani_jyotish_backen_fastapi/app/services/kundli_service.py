@@ -578,7 +578,13 @@ async def generate_kundli(
         "place": birth_place,
         "ayanamsa": (ayanamsa or chart.ayanamsa),
     }
-    data = {"chart": _chart_to_dict(chart), "numerology": numbers}
+    # Localize the stub chart's sign/nakshatra/dignity terms offline (numerology
+    # is already localized above). No-op for english; fixes stub mode (empty API
+    # key) previously always returning English chart terms for non-English users.
+    data = {
+        "chart": localize_devapi_response(_chart_to_dict(chart), _effective_lang(user)),
+        "numerology": numbers,
+    }
     return await _finish(
         db, user, "detailed_kundli", inputs, amount, data,
         title="Detailed Kundli Report", details=[], pdf_key=key,
@@ -615,7 +621,11 @@ async def planet_position(
         latitude=latitude, longitude=longitude, tz_offset_minutes=tz_offset_minutes,
     )
     inputs = {"name": name, "dob": dob.isoformat(), "time": birth_time.strftime("%H:%M") if birth_time else None}
-    data = _chart_to_dict(chart)
+    # Localize the internal stub chart the same offline, deterministic way the
+    # dev-API path does — sign / nakshatra / dignity terms into the caller's
+    # language (no-op for english). Without this, stub mode (empty API key)
+    # always returned English rashi/nakshatra names even for a non-English user.
+    data = localize_devapi_response(_chart_to_dict(chart), _effective_lang(user))
     return await _finish(
         db, user, "planet_position", inputs, amount, data,
         title="Planet Positions",
@@ -745,7 +755,11 @@ async def love_compatibility(
         chart1 = compute_chart(dob=person1.dob, birth_time=person1.time)
         chart2 = compute_chart(dob=person2.dob, birth_time=person2.time)
         p1, p2 = _person_payload(person1), _person_payload(person2)
-        data = compat.compatibility(chart1.moon_sign, chart2.moon_sign)
+        # Build the verdict directly in the caller's language (the summary prose
+        # is generated locally, so it's produced localized rather than
+        # post-translated). No-op for english.
+        _lang = _effective_lang(user)
+        data = compat.compatibility(chart1.moon_sign, chart2.moon_sign, lang=_lang)
         # Also expose the richer key set the app's LoveMatchResult parser
         # looks for (unified_compatibility_score, ashtakoot_total_score, …) so
         # stub mode renders the same score-ring UI as the real provider,
@@ -762,6 +776,11 @@ async def love_compatibility(
         data["ashtakoot_classical_grade"] = data["band"]
         data["partner1_name"] = p1["name"]
         data["partner2_name"] = p2["name"]
+        # Localize the enum/term fields (band, grade, verdict, sign names) the
+        # same offline, deterministic way the dev-API path does. The prose
+        # summary is already localized by compat.compatibility above; this
+        # upgrades the remaining catalog-term/enum values. No-op for english.
+        data = localize_devapi_response(data, _lang)
         amount = await _charge(db, user, "love_compatibility")
         inputs = {
             "person1": {"dob": person1.dob.isoformat(), "name": p1["name"]},
@@ -781,7 +800,10 @@ async def love_compatibility(
             "Provide sign1 and sign2, or both partners' birth details "
             "(person1/person2)."
         )
-    data = compat.compatibility(sign1, sign2)  # validates signs (ValueError)
+    _lang = _effective_lang(user)
+    # validates signs (ValueError); summary/band rendered in the caller's language
+    data = compat.compatibility(sign1, sign2, lang=_lang)
+    data = localize_devapi_response(data, _lang)  # localize sign/enum term fields
     amount = await _charge(db, user, "love_compatibility")
     return await _finish(
         db, user, "love_compatibility",

@@ -14,9 +14,16 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from sqlalchemy import DateTime, Integer, LargeBinary, String
+from sqlalchemy.dialects.mysql import LONGBLOB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
+
+# On MySQL a bare ``LargeBinary`` compiles to ``BLOB``, which caps at 65,535
+# bytes (64 KB) — far too small for a stored document (a ~200 KB image, or a
+# multi-MB PDF/DOC). Use ``LONGBLOB`` (up to 4 GB) on MySQL while keeping the
+# portable ``LargeBinary`` on every other backend (SQLite in tests, etc.).
+_FILE_BLOB = LargeBinary().with_variant(LONGBLOB(), "mysql")
 
 
 class StoredFile(Base):
@@ -28,8 +35,10 @@ class StoredFile(Base):
     content_type: Mapped[str] = mapped_column(
         String(128), default="application/octet-stream", nullable=False
     )
-    # gzip-compressed file bytes (see durable_storage.save_durable).
-    data: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
+    # gzip-compressed file bytes (see durable_storage.save_durable). LONGBLOB
+    # on MySQL so documents larger than 64 KB (every real KYC file) are stored
+    # rather than rejected with "Data too long for column 'data'".
+    data: Mapped[bytes] = mapped_column(_FILE_BLOB, nullable=False)
     # Original (uncompressed) size in bytes, for bookkeeping.
     size: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     created_at: Mapped[datetime] = mapped_column(

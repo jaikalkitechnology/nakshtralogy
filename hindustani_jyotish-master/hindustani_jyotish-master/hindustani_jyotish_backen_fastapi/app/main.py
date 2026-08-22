@@ -201,6 +201,19 @@ async def _rehydrate_durable_files() -> None:
         logger.exception("startup file rehydrate failed (continuing without it)")
 
 
+async def _ensure_durable_blob_capacity() -> None:
+    """Widen ``stored_files.data`` to LONGBLOB on MySQL so KYC documents (which
+    exceed a 64 KB BLOB) save successfully. Complements the Alembic migration —
+    covers deployments that self-heal schema via create_all. Fully guarded."""
+    try:
+        from app.core.database import engine
+        from app.services import durable_storage
+
+        await durable_storage.ensure_blob_capacity(engine)
+    except Exception:  # noqa: BLE001 — startup must never fail on this
+        logger.exception("ensure durable blob capacity failed (continuing)")
+
+
 async def _run_startup_schema_sync() -> None:
     """Opt-in additive schema safety net on top of Alembic.
 
@@ -238,6 +251,9 @@ async def lifespan(app: FastAPI):
     # Additive schema auto-sync (opt-in; guarded). Complements Alembic — never
     # replaces it. See app.services.schema_sync.
     await _run_startup_schema_sync()
+    # Guarantee stored_files.data is LONGBLOB (holds real KYC docs, not just a
+    # 64 KB BLOB) even if the deploy fell back to create_all instead of Alembic.
+    await _ensure_durable_blob_capacity()
     # Restore DB-durable files (KYC docs) to the filesystem cache — must run
     # AFTER schema sync so the stored_files table exists on a fresh DB.
     await _rehydrate_durable_files()
