@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hj_core/hj_core.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 
 import '../../../core/di.dart';
 import '../../../shared/avatar_compress.dart';
@@ -304,20 +304,39 @@ class _KycFormScreenState extends State<KycFormScreen> {
   }) async {
     setState(() => _error = null);
     try {
-      final picked = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 2048,
-        imageQuality: 90,
+      // Accept a PHOTO or a PDF/doc of any size — image_picker is image-only,
+      // so use file_picker with an allow-list matching the backend's KYC set.
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: const [
+          'jpg', 'jpeg', 'png', 'webp', 'heic', 'heif',
+          'bmp', 'gif', 'tif', 'tiff', 'pdf',
+        ],
+        withData: true, // load bytes (works on web + mobile)
       );
-      if (picked == null) return;
+      if (result == null || result.files.isEmpty) return;
+      final f = result.files.first;
+      final raw = f.bytes;
+      if (raw == null) {
+        setState(() => _error = 'Could not read the selected file.');
+        return;
+      }
       setState(() => setUploading(true));
-      final raw = await picked.readAsBytes();
-      // Shrink large ID/document photos to ~200 KB (kept at 1600px so text stays
-      // legible) before upload, so a big camera shot can't fail the size limit.
-      final c = await compressKycImage(raw);
-      final key = await _repo.uploadKycDocument(
-          c?.bytes ?? raw, c?.filename ?? picked.name, docType);
-      setState(() => onUploaded(key, picked.name));
+      final name = f.name;
+      final isPdf = name.toLowerCase().endsWith('.pdf');
+      // Images → shrink to ~200 KB (kept at 1600px so ID text stays legible);
+      // a PDF/doc is uploaded as-is (backend accepts it, capped at 2 MB).
+      var bytes = raw;
+      var filename = name;
+      if (!isPdf) {
+        final c = await compressKycImage(raw);
+        if (c != null) {
+          bytes = c.bytes;
+          filename = c.filename;
+        }
+      }
+      final key = await _repo.uploadKycDocument(bytes, filename, docType);
+      setState(() => onUploaded(key, name));
     } on ApiException catch (e) {
       setState(() => _error = e.message);
     } catch (e) {
