@@ -169,12 +169,16 @@ class InsightPlanet {
   if (parsed.lagna == null && chart['ascendant_sign'] is String) {
     final sign = chart['ascendant_sign'] as String;
     final asc = _num(chart['ascendant']);
+    // Prefer the numeric `ascendant_sign_idx` — the sign NAME may be localized
+    // (e.g. "મકર"/"मकर"), which `signIdxOf` can't resolve, and losing the index
+    // hides the whole North-Indian chart. Fall back to name-derivation for
+    // older payloads that don't carry the numeric field.
     parsed = (
       lagna: InsightPlanet(
         name: 'Lagna',
         sign: sign,
         signFull: sign,
-        signIdx: signIdxOf(sign),
+        signIdx: _int(chart['ascendant_sign_idx']) ?? signIdxOf(sign),
         degree: asc == null ? null : asc % 30,
       ),
       planets: parsed.planets,
