@@ -73,6 +73,45 @@ _NAK.update({  # spelling variants seen in engine output
     "aardra": "ardra", "abhijit": "shravana",
 })
 
+# dosh/yoga NAME (normalized: lowercase, collapsed whitespace) → catalog slug.
+# Built from the engine's exact english dosh/yoga names (`app/kundli/engine.py`)
+# so a "name" field value can be whole-value matched, case-insensitively,
+# against `dosh.name.*` / `yoga.name.*` in the catalog — mirrors how
+# nakshatra whole-value replacement works below.
+_DOSH_NAMES = [
+    "Angarak Dosh", "Balarishta Dosh", "Bhakoot Dosh", "Budh Dosh",
+    "Chandal Yoga", "Chandra Dosh", "Dainya Dosh", "Daridra Dosh",
+    "Gana Dosh", "Gandmool Dosh", "Grahan Dosh", "Guru Chandal Dosh",
+    "Guru Dosh", "Kaal Sarp Dosh", "Kemadruma Dosh", "Kendraadhipati Dosh",
+    "Khala Dosh", "Mangal Dosh", "Maraka Dosh", "Mrityu Bhaga Dosh",
+    "Nadi Dosh", "Pap Kartari Dosh", "Pitra Dosh", "Shakat Dosh",
+    "Shani Dosh", "Shrapit Dosh", "Shukra Dosh", "Surya Dosh",
+    "Trik Bhava Dosh", "Varna Dosh", "Vipreet Raj Yoga", "Vish Dosh",
+    "Yoni Dosh",
+]
+_YOGA_NAMES = [
+    "Adhi Yoga", "Amala Yoga", "Anapha Yoga", "Bhadra Yoga", "Brahma Yoga",
+    "Budhaditya Yoga", "Chandra Adhi Yoga", "Chandra Mangal Yoga",
+    "Chatussagara Yoga", "Daridra Yoga", "Dhan Yoga", "Dhana Kuber Yoga",
+    "Dharma Karma Adhipati Yoga", "Durudhara Yoga", "Gaj Kesari Yoga",
+    "Grahan Yoga", "Guru Chandal Yoga", "Hamsa Yoga", "Harsha Yoga",
+    "Indra Yoga", "Kahala Yoga", "Kalatra Yoga", "Kalpadruma Yoga",
+    "Kuja Dosha Impact Yoga", "Lakshmi Yoga", "Maha Dhan Yoga",
+    "Maha Raj Yoga", "Malavya Yoga", "Medha Yoga", "Moksha Yoga",
+    "Neech Bhang Raj Yoga", "Parijata Yoga", "Parivartan Raj Yoga",
+    "Parivraja Yoga", "Raj Yoga", "Raja Sambandha Yoga", "Ruchaka Yoga",
+    "Sanyasa Yoga", "Sarala Yoga", "Saraswati Yoga", "Shakat Yoga",
+    "Shasha Yoga", "Shiva Yoga", "Sunapha Yoga", "Ubhayachari Yoga",
+    "Vasi Yoga", "Vasumati Yoga", "Vesi Yoga", "Vimala Yoga",
+    "Vishnu Yoga", "Vivaha Yoga",
+]
+
+def _name_norm(s: str) -> str:
+    return re.sub(r"\s+", " ", s.strip().lower())
+
+_DOSH = {_name_norm(n): re.sub(r"\s+", "_", n.lower()) for n in _DOSH_NAMES}
+_YOGA = {_name_norm(n): re.sub(r"\s+", "_", n.lower()) for n in _YOGA_NAMES}
+
 # dignity phrase (cleaned) → slug
 _DIGNITY = {
     "exalted": "exalted", "uccha": "exalted",
@@ -141,6 +180,15 @@ def _localize_value(s: str, lang: str, key: str = "") -> str:
         if nkw in _NAK and _has("nakshatra", _NAK[nkw]):
             return t(f"nakshatra.{_NAK[nkw]}", lang)
 
+    # 1c. whole-value dosh/yoga NAME (e.g. "Mangal Dosh", "Gaj Kesari Yoga") —
+    #     these are engine-emitted proper nouns, not sentences, and every one
+    #     is ≤ 4 words so they pass the sentence-length guard above.
+    namekey = _name_norm(raw)
+    if namekey in _DOSH and _has("dosh.name", _DOSH[namekey]):
+        return t(f"dosh.name.{_DOSH[namekey]}", lang)
+    if namekey in _YOGA and _has("yoga.name", _YOGA[namekey]):
+        return t(f"yoga.name.{_YOGA[namekey]}", lang)
+
     # 2. whole-value ambiguous rashi (e.g. "Cancer" as a sign field)
     if raw.lower() in _AMBIGUOUS_RASHI and _has("rashi.name", _RASHI[raw.lower()]):
         return t(f"rashi.name.{_RASHI[raw.lower()]}", lang)
@@ -168,7 +216,7 @@ def _localize_value(s: str, lang: str, key: str = "") -> str:
 # catalog membership, so only genuine enum values are ever replaced.
 
 _ENUM_KEY_RE = re.compile(
-    r"(^|_)(grade|band|status|rating|verdict|level|strength|severity|band)$"
+    r"(^|_)(grade|band|status|rating|verdict|level|strength|severity|category)$"
 )
 
 
@@ -177,13 +225,17 @@ def _is_enum_key(key: str) -> bool:
     return bool(_ENUM_KEY_RE.search(kl)) or kl in (
         "grade", "band", "status", "overall_status", "chakra_status",
         "overall_grade", "overall_band", "rating", "verdict", "level",
+        "strength", "severity", "category",
     )
 
 
 def _localize_enum(value: str, lang: str):
     v = _DECOR_RE.sub("", value.strip())
+    # dosh/yoga `severity`/`strength`/`category` enum values may contain "/"
+    # or "-" joined sub-values (e.g. "House/Yoga", "Planet-Based") — the
+    # catalog slug keeps those separators, only whitespace is folded.
     slug = re.sub(r"\s+", "_", v.lower())
-    for ns in ("grade", "band"):
+    for ns in ("grade", "band", "severity", "strength", "category"):
         if _has(ns, slug):
             return t(f"{ns}.{slug}", lang) + value[len(v):]  # keep any trailing decor
     return None
