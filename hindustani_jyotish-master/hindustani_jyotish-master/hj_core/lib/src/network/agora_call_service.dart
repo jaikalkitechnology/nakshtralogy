@@ -211,20 +211,18 @@ class AgoraCallService {
       // fallback to bind the remote view: if `onUserJoined` was missed, the
       // first remote video state change still tells us who to render. Enum→name
       // via toString so it stays build-safe across agora_rtc_engine minors.
-      onRemoteVideoStateChanged: (
-        RtcConnection connection,
-        int uid,
-        RemoteVideoStateType state,
-        RemoteVideoStateReasonType reason,
-        int elapsed,
-      ) {
+      // Parameter types are intentionally left to inference (the handler field's
+      // own function type supplies them) so this stays build-safe regardless of
+      // how the enum types are named across agora_rtc_engine minors; the state
+      // is compared by its name string for the same reason.
+      onRemoteVideoStateChanged: (connection, uid, state, reason, elapsed) {
+        final stateName = state.toString().split('.').last;
         debugPrint('[AgoraCallService] remote video state uid=$uid '
-            'state=$state reason=$reason');
-        if (remoteUid.value == null &&
-            state != RemoteVideoStateType.remoteVideoStateStopped) {
+            'state=$stateName reason=$reason');
+        if (remoteUid.value == null && stateName != 'remoteVideoStateStopped') {
           remoteUid.value = uid;
         }
-        remoteVideoState.value = state.toString().split('.').last;
+        remoteVideoState.value = stateName;
       },
       onUserOffline: (RtcConnection connection, int uid, UserOfflineReasonType reason) {
         debugPrint('[AgoraCallService] onUserOffline uid=$uid reason=$reason');
