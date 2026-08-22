@@ -222,6 +222,17 @@ class AgoraCallService {
           _subscribeRemote(uid);
         }
       },
+      // HOST diagnostic: whether this device is actually capturing AND
+      // encoding/publishing its own camera. If this never reaches an
+      // "encoding" state, the host is NOT publishing video (viewers can't
+      // possibly see it) — distinguishing a host publish problem from a viewer
+      // subscribe/render problem. Param types inferred (build-safe across SDK
+      // minors); state compared by name.
+      onLocalVideoStateChanged: (source, state, reason) {
+        debugPrint('[AgoraCallService] LOCAL video state='
+            '${state.toString().split('.').last} reason='
+            '${reason.toString().split('.').last} source=$source');
+      },
       // Fallback path to surface the remote party: if `onUserJoined` was
       // somehow missed (a timing edge on the audience side of a live channel),
       // the first decoded remote video frame still tells us who to render, so
@@ -433,6 +444,18 @@ class AgoraCallService {
     await engine.enableAudio();
     await engine.enableVideo();
     if (asHost) {
+      // Define the published video stream explicitly. Without an encoder
+      // configuration some devices bring up the local capture (so the host
+      // sees their own preview) but never actually encode/publish a stream to
+      // the channel — viewers then get audio only / a black video. Setting a
+      // concrete config makes the camera track publish reliably.
+      await engine.setVideoEncoderConfiguration(const VideoEncoderConfiguration(
+        dimensions: VideoDimensions(width: 640, height: 360),
+        frameRate: 15,
+        bitrate: 0, // 0 = SDK standard bitrate for the dimensions
+        orientationMode: OrientationMode.orientationModeAdaptive,
+      ));
+      await engine.enableLocalVideo(true);
       await engine.startPreview();
     }
 
