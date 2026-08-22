@@ -19,10 +19,33 @@ const kSignOrder = [
   'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces',
 ];
 
+/// Localized rashi name → zodiac index (0 = Aries … 11 = Pisces), across every
+/// language the backend astro catalog carries. Lets [signIdxOf] resolve a
+/// localized ascendant/sign name (e.g. "મકર"/"मकर"/"মকর") back to its index so
+/// the North-Indian chart still renders when the response is localized and no
+/// numeric `*_sign_idx` is present. Kept in sync with the backend catalog
+/// (app/services/devapi_localize/catalog_data.json → rashi.name.*).
+const Map<String, int> kLocalizedSignIdx = {
+  'মেষ': 0, 'મેષ': 0, 'मेष': 0, 'ಮೇಷ': 0, 'മേടം': 0, 'ମେଷ': 0, 'ਮੇਖ': 0, 'மேஷம்': 0, 'మేషం': 0,
+  'বৃষ': 1, 'વૃષભ': 1, 'वृषभ': 1, 'ವೃಷಭ': 1, 'ഇടവം': 1, 'ବୃଷ': 1, 'ਬ੍ਰਿਖ': 1, 'ரிஷபம்': 1, 'వృషభం': 1,
+  'মিথুন': 2, 'મિથુન': 2, 'मिथुन': 2, 'ಮಿಥುನ': 2, 'മിഥുനം': 2, 'ମିଥୁନ': 2, 'ਮਿਥੁਨ': 2, 'மிதுனம்': 2, 'మిథునం': 2,
+  'কর্কট': 3, 'કર્ક': 3, 'कर्क': 3, 'ಕರ್ಕಾಟಕ': 3, 'കർക്കടകം': 3, 'କର୍କଟ': 3, 'ਕਰਕ': 3, 'கடகம்': 3, 'కర్కాటకం': 3,
+  'সিংহ': 4, 'સિંહ': 4, 'सिंह': 4, 'ಸಿಂಹ': 4, 'ചിങ്ങം': 4, 'ସିଂହ': 4, 'ਸਿੰਘ': 4, 'சிம்மம்': 4, 'సింహం': 4,
+  'কন্যা': 5, 'કન્યા': 5, 'कन्या': 5, 'ಕನ್ಯಾ': 5, 'കന്നി': 5, 'କନ୍ୟା': 5, 'ਕੰਨਿਆ': 5, 'கன்னி': 5, 'కన్య': 5,
+  'তুলা': 6, 'તુલા': 6, 'तुला': 6, 'ತುಲಾ': 6, 'തുലാം': 6, 'तूळ': 6, 'ତୁଳା': 6, 'ਤੁਲਾ': 6, 'துலாம்': 6, 'తుల': 6,
+  'বৃশ্চিক': 7, 'વૃશ્ચિક': 7, 'वृश्चिक': 7, 'ವೃಶ್ಚಿಕ': 7, 'വൃശ്ചികം': 7, 'ବିଛା': 7, 'ਬ੍ਰਿਸ਼ਚਿਕ': 7, 'விருச்சிகம்': 7, 'వృశ్చికం': 7,
+  'ধনু': 8, 'ધનુ': 8, 'धनु': 8, 'ಧನು': 8, 'ധനു': 8, 'ଧନୁ': 8, 'ਧਨੁ': 8, 'தனுசு': 8, 'ధనుస్సు': 8,
+  'মকর': 9, 'મકર': 9, 'मकर': 9, 'ಮಕರ': 9, 'മകരം': 9, 'ମକର': 9, 'ਮਕਰ': 9, 'மகரம்': 9, 'మకరం': 9,
+  'কুম্ভ': 10, 'કુંભ': 10, 'कुम्भ': 10, 'ಕುಂಭ': 10, 'കുംഭം': 10, 'कुंभ': 10, 'କୁମ୍ଭ': 10, 'ਕੁੰਭ': 10, 'கும்பம்': 10, 'కుంభం': 10,
+  'মীন': 11, 'મીન': 11, 'मीन': 11, 'ಮೀನ': 11, 'മീനം': 11, 'ମୀନ': 11, 'ਮੀਨ': 11, 'மீனம்': 11, 'మీనం': 11,
+};
+
 int? signIdxOf(String? sign) {
   if (sign == null) return null;
   final i = kSignOrder.indexWhere((s) => s.toLowerCase() == sign.toLowerCase());
-  return i == -1 ? null : i;
+  if (i != -1) return i;
+  // Fall back to the localized-name lookup so a translated sign name still maps.
+  return kLocalizedSignIdx[sign.trim().toLowerCase()] ?? kLocalizedSignIdx[sign.trim()];
 }
 
 /// Two-letter abbreviations placed inside the kundli chart houses.
