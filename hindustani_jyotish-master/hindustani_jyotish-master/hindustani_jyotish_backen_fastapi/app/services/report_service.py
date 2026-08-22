@@ -27,6 +27,7 @@ from app.models.kundli import KundliReport
 from app.models.user import User
 from app.services import kundli_service as ks
 from app.services import nakshatralogy as nk
+from app.services.devapi_localize import localize_devapi_response
 
 # Report type → human PDF/report title. The user-facing display NAME + price
 # come from the admin-configured cosmic_services row (seeded from
@@ -67,14 +68,21 @@ def report_title(report_type: str) -> str:
     return REPORT_TITLES.get(report_type, report_type.replace("_", " ").title() + " Report")
 
 
-def _curate_report(raw: Any) -> dict:
-    """Keep the user-facing fields; drop internal/debug machinery."""
+def _curate_report(raw: Any, lang: str | None = None) -> dict:
+    """Keep the user-facing fields; drop internal/debug machinery.
+
+    `lang` (the caller's effective language — see
+    ``kundli_service._effective_lang``) localizes the curated fields
+    deterministically and offline via ``app.services.devapi_localize``,
+    independent of whether the dev-API itself honoured ``?lang=``. No-op for
+    english/None."""
     if not isinstance(raw, dict):
         return {}
-    return {
+    data = {
         k: v for k, v in raw.items()
         if not k.startswith("_") and k not in _DROP_KEYS
     }
+    return localize_devapi_response(data, lang)
 
 
 def _stub_report(report_type: str, payload: dict) -> dict:
@@ -124,11 +132,13 @@ async def generate_report(
         amount, raw = await ks._external(
             db, user, report_type, nk.report_path(report_type), payload
         )
-        data = _curate_report(raw)
+        lang = ks._effective_lang(user)
+        data = _curate_report(raw, lang=lang)
         data["source"] = "nakshatralogy"
-        # Complete localized dev-API payload for the app's "Complete Report"
-        # viewer (uniform `full_response` key across every insight type).
-        data["full_response"] = ks._full_payload(raw)
+        # Complete dev-API payload for the app's "Complete Report" viewer
+        # (uniform `full_response` key across every insight type) — localized
+        # the same deterministic, offline way as the curated fields above.
+        data["full_response"] = localize_devapi_response(ks._full_payload(raw), lang)
         provider = "nakshatralogy"
     else:
         amount = await ks._charge(db, user, report_type)

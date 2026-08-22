@@ -29,6 +29,7 @@ from app.models.kundli import KundliReport
 from app.models.user import User
 from app.models.wallet import TransactionType
 from app.services import nakshatralogy as nk
+from app.services.devapi_localize import localize_devapi_response
 
 
 def _effective_lang(user: User) -> str | None:
@@ -237,13 +238,17 @@ _PLANET_FIELDS = (
 )
 
 
-def _curate_planets(planets: Any) -> dict:
+def _curate_planets(planets: Any, lang: str | None = None) -> dict:
     out: dict[str, dict] = {}
     if isinstance(planets, dict):
         for name, p in planets.items():
             if isinstance(p, dict):
                 out[name] = {k: p[k] for k in _PLANET_FIELDS if k in p}
-    return out
+    # Deterministic, offline localization of sign/nakshatra/dignity terms —
+    # the dev-API's own `?lang=` isn't reliable in production, so this
+    # backend localizes the curated fields itself (see devapi_localize).
+    # No-op for english/None/unknown lang; never raises.
+    return localize_devapi_response(out, lang)
 
 
 def _pick(src: Any, keys: tuple[str, ...]) -> dict:
@@ -279,11 +284,15 @@ def _full_payload(raw: Any) -> Any:
         return None
 
 
-def _curate_kundli(raw: dict) -> dict:
+def _curate_kundli(raw: dict, lang: str | None = None) -> dict:
     """Curate the /api/v2/kundli response for the app.
 
     Always includes the chart planets/lagna with `sign_idx` per planet so the
-    client can draw the chart diagram.
+    client can draw the chart diagram. `lang` (the caller's effective
+    language, see `_effective_lang`) localizes the curated fields — sign /
+    nakshatra / dignity names, grades, bands — deterministically and offline
+    (see `app.services.devapi_localize`), independent of whether the dev-API
+    itself honoured `?lang=`. No-op for english/None.
     """
     chart_raw = raw.get("chart") or {}
     chart = _pick(chart_raw, ("name", "dob", "tob", "place"))
@@ -366,11 +375,15 @@ def _curate_kundli(raw: dict) -> dict:
     if isinstance(gochar, dict):
         data["gochar_today"] = _pick(gochar, ("date", "moon_sign", "rashis"))
 
-    # The COMPLETE localized dev-API response, so the app can show every section
-    # (aspect_matrix, full shadbala/ashtakavarga, all doshas/yogas, …) — not just
-    # the curated tabs above.
+    # The COMPLETE dev-API response, so the app can show every section
+    # (aspect_matrix, full shadbala/ashtakavarga, all doshas/yogas, …) — not
+    # just the curated tabs above. `localize_devapi_response` below walks the
+    # whole `data` dict, so this nested payload is localized too.
     data["full_response"] = _full_payload(raw)
-    return data
+    # Single localization pass over everything curated above (chart, dashas,
+    # dosh/yoga, shadbala, ashtakavarga, life areas, bhava, dasha activation,
+    # chakra health, gochar, and full_response). No-op for english/None.
+    return localize_devapi_response(data, lang)
 
 
 _FORECAST_KEYS = (
@@ -383,7 +396,7 @@ _FORECAST_KEYS = (
 )
 
 
-def _curate_forecast(raw: dict) -> dict:
+def _curate_forecast(raw: dict, lang: str | None = None) -> dict:
     data = _pick(raw, _FORECAST_KEYS)
     gochar = raw.get("gochar_today")
     if isinstance(gochar, dict) and isinstance(gochar.get("special_flags"), dict):
@@ -392,7 +405,7 @@ def _curate_forecast(raw: dict) -> dict:
             k: v for k, v in gochar["special_flags"].items() if k != "explanation"
         }
     data["full_response"] = _full_payload(raw)
-    return data
+    return localize_devapi_response(data, lang)
 
 
 _MILAN_KEYS = (
@@ -429,7 +442,7 @@ _ASHTAKOOT_ENTRY_KEYS = (
 )
 
 
-def _curate_milan(raw: dict) -> dict:
+def _curate_milan(raw: dict, lang: str | None = None) -> dict:
     data = _pick(raw, _MILAN_KEYS)
     data["ashtakoot_breakdown"] = [
         _pick(g, _ASHTAKOOT_ENTRY_KEYS)
@@ -440,7 +453,7 @@ def _curate_milan(raw: dict) -> dict:
     if "unified_compatibility_score" in data:
         data["score"] = data["unified_compatibility_score"]
     data["full_response"] = _full_payload(raw)
-    return data
+    return localize_devapi_response(data, lang)
 
 
 # ── Internal (stub) chart serialisation ───────────────────────────────
@@ -531,7 +544,7 @@ async def generate_kundli(
         amount, raw = await _external(
             db, user, "detailed_kundli", nk.KUNDLI, {**payload, "dasha_levels": 2}
         )
-        data = _curate_kundli(raw)
+        data = _curate_kundli(raw, lang=_effective_lang(user))
         data["numerology"] = numerology.life_path_number(dob, lang=_effective_lang(user))
         data["source"] = "nakshatralogy"
         inputs = {
@@ -585,8 +598,11 @@ async def planet_position(
         amount, raw = await _external(
             db, user, "planet_position", nk.KUNDLI_PLANETS, payload
         )
-        data: dict[str, Any] = {"planets": _curate_planets(raw), "source": "nakshatralogy"}
-        data["full_response"] = _full_payload(raw)
+        lang = _effective_lang(user)
+        data: dict[str, Any] = {"planets": _curate_planets(raw, lang=lang), "source": "nakshatralogy"}
+        # Localize the complete dev-API payload too (same deterministic,
+        # offline pass) so the "Complete Report" view isn't left in English.
+        data["full_response"] = localize_devapi_response(_full_payload(raw), lang)
         inputs = {"name": name, "dob": dob.isoformat(), "time": payload["tob"], "provider": "nakshatralogy"}
         return await _finish(
             db, user, "planet_position", inputs, amount, data,
@@ -635,7 +651,7 @@ async def daily(
         if prediction:
             # Personal daily probability forecast.
             amount, raw = await _external(db, user, insight_type, nk.FORECAST, payload)
-            data = _curate_forecast(raw)
+            data = _curate_forecast(raw, lang=_effective_lang(user))
             data["sign"] = sign
         else:
             # Daily horoscope derived from the detailed kundli's daily-transit
@@ -700,7 +716,7 @@ async def love_compatibility(
             db, user, "love_compatibility", nk.KUNDLI_MILAN,
             {"person1": p1, "person2": p2},
         )
-        data = _curate_milan(raw)
+        data = _curate_milan(raw, lang=_effective_lang(user))
         data["source"] = "nakshatralogy"
         inputs = {
             "person1": {"dob": person1.dob.isoformat(), "name": p1["name"]},
