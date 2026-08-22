@@ -34,7 +34,7 @@ from typing import Optional
 
 INDIAN_LANGUAGES = [
     "hindi", "marathi", "gujarati", "tamil", "telugu",
-    "kannada", "bengali", "punjabi", "malayalam",
+    "kannada", "bengali", "punjabi", "malayalam", "odia",
 ]
 SUPPORTED_LANGUAGES = ["english"] + INDIAN_LANGUAGES
 DEFAULT_LANGUAGE = "english"
@@ -51,6 +51,12 @@ _ALIASES = {
     "bn": "bengali", "ben": "bengali", "bn_in": "bengali",
     "pa": "punjabi", "pan": "punjabi", "pa_in": "punjabi",
     "ml": "malayalam", "mal": "malayalam",
+    "or": "odia", "ori": "odia", "od": "odia", "or_in": "odia",
+    # "hinglish" and "hi_latn" are intentionally NOT aliased to a script
+    # language here — this catalog has no dedicated hinglish column for the
+    # pre-existing rashi/nakshatra/planet/dignity/grade/band namespaces, so
+    # they correctly fall through to DEFAULT_LANGUAGE ("english"), which is
+    # the desired no-op behaviour for hinglish per the localization spec.
 }
 
 

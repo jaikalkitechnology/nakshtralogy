@@ -168,18 +168,18 @@
     "telugu": "బుద్ధి యోగ"
   },
   "category.career_yoga": {
-    "bengali": "করিযর যোগ",
+    "bengali": "ক্যারিয়ার যোগ",
     "english": "Career Yoga",
-    "gujarati": "કરિયર યોગ",
+    "gujarati": "કારકિર્દી યોગ",
     "hindi": "करियर योग",
     "hinglish": "Career Yoga",
-    "kannada": "ಕರಿಯರ ಯೋಗ",
-    "malayalam": "കരിയര യോഗ",
-    "marathi": "करियर योग",
-    "odia": "କରିଯର ଯୋଗ",
-    "punjabi": "ਕਰਿਯਰ ਯੋਗ",
-    "tamil": "கரியர யோக",
-    "telugu": "కరియర యోగ"
+    "kannada": "ವೃತ್ತಿ ಯೋಗ",
+    "malayalam": "തൊഴിൽ യോഗ",
+    "marathi": "करिअर योग",
+    "odia": "ବୃତ୍ତି ଯୋଗ",
+    "punjabi": "ਕਿੱਤਾ ਯੋਗ",
+    "tamil": "தொழில் யோக",
+    "telugu": "వృత్తి యోగ"
   },
   "category.dhan_yoga": {
     "bengali": "ধন যোগ",
@@ -495,13 +495,13 @@
     "gujarati": "અંગારક દોષ",
     "hindi": "अंगारक दोष",
     "hinglish": "Angarak Dosh",
-    "kannada": "ಅಙ್ಗಾರಕ ದೋಷ",
-    "malayalam": "അങ്ഗാരക ദോഷ",
+    "kannada": "ಅಂಗಾರಕ ದೋಷ",
+    "malayalam": "അംഗാരക ദോഷ",
     "marathi": "अंगारक दोष",
     "odia": "ଅଙ୍ଗାରକ ଦୋଷ",
     "punjabi": "ਅਂਗਾਰਕ ਦੋਸ਼",
     "tamil": "அங்காரக தோஷ",
-    "telugu": "అఙ్గారక దోష"
+    "telugu": "అంగారక దోష"
   },
   "dosh.name.balarishta_dosh": {
     "bengali": "বালারিষ্ট দোষ",
@@ -551,13 +551,13 @@
     "gujarati": "ચાંડાલ યોગ",
     "hindi": "चांडाल योग",
     "hinglish": "Chandal Yoga",
-    "kannada": "ಚಾಣ್ಡಾಲ ಯೋಗ",
-    "malayalam": "ചാണ്ഡാല യോഗ",
+    "kannada": "ಚಾಂಡಾಲ ಯೋಗ",
+    "malayalam": "ചാംഡാല യോഗ",
     "marathi": "चांडाल योग",
     "odia": "ଚାଣ୍ଡାଲ ଯୋଗ",
     "punjabi": "ਚਾਂਡਾਲ ਯੋਗ",
     "tamil": "சாண்டால யோக",
-    "telugu": "చాణ్డాల యోగ"
+    "telugu": "చాండాల యోగ"
   },
   "dosh.name.chandra_dosh": {
     "bengali": "চন্দ্র দোষ",
@@ -621,13 +621,13 @@
     "gujarati": "ગંડમૂલ દોષ",
     "hindi": "गंडमूल दोष",
     "hinglish": "Gandmool Dosh",
-    "kannada": "ಗಣ್ಡಮೂಲ ದೋಷ",
-    "malayalam": "ഗണ്ഡമൂല ദോഷ",
+    "kannada": "ಗಂಡಮೂಲ ದೋಷ",
+    "malayalam": "ഗംഡമൂല ദോഷ",
     "marathi": "गंडमूल दोष",
     "odia": "ଗଣ୍ଡମୂଲ ଦୋଷ",
     "punjabi": "ਗਂਡਮੂਲ ਦੋਸ਼",
     "tamil": "கண்டமூல தோஷ",
-    "telugu": "గణ్డమూల దోష"
+    "telugu": "గండమూల దోష"
   },
   "dosh.name.grahan_dosh": {
     "bengali": "গ্রহণ দোষ",
@@ -649,13 +649,13 @@
     "gujarati": "ગુરુ ચાંડાલ દોષ",
     "hindi": "गुरु चांडाल दोष",
     "hinglish": "Guru Chandal Dosh",
-    "kannada": "ಗುರು ಚಾಣ್ಡಾಲ ದೋಷ",
-    "malayalam": "വ്യാഴം ചാണ്ഡാല ദോഷ",
+    "kannada": "ಗುರು ಚಾಂಡಾಲ ದೋಷ",
+    "malayalam": "വ്യാഴം ചാംഡാല ദോഷ",
     "marathi": "गुरु चांडाल दोष",
     "odia": "ବୃହସ୍ପତି ଚାଣ୍ଡାଲ ଦୋଷ",
     "punjabi": "ਗੁਰੂ ਚਾਂਡਾਲ ਦੋਸ਼",
     "tamil": "குரு சாண்டால தோஷ",
-    "telugu": "గురుడు చాణ్డాల దోష"
+    "telugu": "గురుడు చాండాల దోష"
   },
   "dosh.name.guru_dosh": {
     "bengali": "বৃহস্পতি দোষ",
@@ -705,13 +705,13 @@
     "gujarati": "કેંદ્રાધિપતિ દોષ",
     "hindi": "केंद्राधिपति दोष",
     "hinglish": "Kendraadhipati Dosh",
-    "kannada": "ಕೇನ್ದ್ರಾಧಿಪತಿ ದೋಷ",
-    "malayalam": "കേന്ദ്രാധിപതി ദോഷ",
+    "kannada": "ಕೇಂದ್ರಾಧಿಪತಿ ದೋಷ",
+    "malayalam": "കേംദ്രാധിപതി ദോഷ",
     "marathi": "केंद्राधिपति दोष",
     "odia": "କେନ୍ଦ୍ରାଧିପତି ଦୋଷ",
     "punjabi": "ਕੇਂਦਰਾਧਿਪਤਿ ਦੋਸ਼",
     "tamil": "கேந்த்ராதிபதி தோஷ",
-    "telugu": "కేన్ద్రాధిపతి దోష"
+    "telugu": "కేంద్రాధిపతి దోష"
   },
   "dosh.name.khala_dosh": {
     "bengali": "খল দোষ",
@@ -765,7 +765,7 @@
     "malayalam": "മൃത്യു ഭാഗ ദോഷ",
     "marathi": "मृत्यु भाग दोष",
     "odia": "ମୃତ୍ଯୁ ଭାଗ ଦୋଷ",
-    "punjabi": "ਮृਤਯੁ ਭਾਗ ਦੋਸ਼",
+    "punjabi": "ਮਰਿਤਯੁ ਭਾਗ ਦੋਸ਼",
     "tamil": "ம்ருத்யு பாக தோஷ",
     "telugu": "మృత్యు భాగ దోష"
   },
@@ -807,7 +807,7 @@
     "malayalam": "പിതൃ ദോഷ",
     "marathi": "पितृ दोष",
     "odia": "ପିତୃ ଦୋଷ",
-    "punjabi": "ਪਿਤृ ਦੋਸ਼",
+    "punjabi": "ਪਿਤਰਿ ਦੋਸ਼",
     "tamil": "பித்ரு தோஷ",
     "telugu": "పితృ దోష"
   },
@@ -1792,18 +1792,18 @@
     "telugu": "కన్య"
   },
   "severity.mild": {
-    "bengali": "হল্কা",
+    "bengali": "মৃদু",
     "english": "Mild",
-    "gujarati": "હલ્કા",
+    "gujarati": "હળવું",
     "hindi": "हल्का",
     "hinglish": "Mild",
-    "kannada": "ಹಲ್ಕಾ",
-    "malayalam": "ഹല്കാ",
-    "marathi": "हल्का",
-    "odia": "ହଲ୍କା",
+    "kannada": "ಸೌಮ್ಯ",
+    "malayalam": "ലഘുവായ",
+    "marathi": "सौम्य",
+    "odia": "ମୃଦୁ",
     "punjabi": "ਹਲਕਾ",
-    "tamil": "ஹல்கா",
-    "telugu": "హల్కా"
+    "tamil": "லேசான",
+    "telugu": "స్వల్ప"
   },
   "severity.moderate": {
     "bengali": "মাঝারি",
@@ -1820,18 +1820,18 @@
     "telugu": "మధ్యస్థం"
   },
   "severity.none": {
-    "bengali": "কোঈ নহীং",
+    "bengali": "কিছুই না",
     "english": "None",
-    "gujarati": "કોઈ નહીં",
+    "gujarati": "કંઈ નહીં",
     "hindi": "कोई नहीं",
     "hinglish": "None",
-    "kannada": "ಕೋಈ ನಹೀಂ",
-    "malayalam": "കോഈ നഹീം",
-    "marathi": "कोई नहीं",
-    "odia": "କୋଈ ନହୀଂ",
-    "punjabi": "ਕੋਈ ਨਹੀਂ",
-    "tamil": "கோஈ நஹீம்",
-    "telugu": "కోఈ నహీం"
+    "kannada": "ಏನೂ ಇಲ್ಲ",
+    "malayalam": "ഒന്നുമില്ല",
+    "marathi": "काही नाही",
+    "odia": "କିଛି ନାହିଁ",
+    "punjabi": "ਕੁਝ ਨਹੀਂ",
+    "tamil": "எதுவும் இல்லை",
+    "telugu": "ఏమీ లేదు"
   },
   "severity.severe": {
     "bengali": "সংকটজনক",
@@ -1850,16 +1850,16 @@
   "strength.absent": {
     "bengali": "অনুপস্থিত",
     "english": "Absent",
-    "gujarati": "અનુપસ્થિત",
+    "gujarati": "ગેરહાજર",
     "hindi": "अनुपस्थित",
     "hinglish": "Absent",
-    "kannada": "ಅನುಪಸ್ಥಿತ",
-    "malayalam": "അനുപസ്ഥിത",
+    "kannada": "ಇಲ್ಲದ",
+    "malayalam": "ഇല്ലാത്ത",
     "marathi": "अनुपस्थित",
     "odia": "ଅନୁପସ୍ଥିତ",
-    "punjabi": "ਅਨੁਪਸਥਿਤ",
-    "tamil": "அநுபஸ்தித",
-    "telugu": "అనుపస్థిత"
+    "punjabi": "ਗੈਰਹਾਜ਼ਰ",
+    "tamil": "இல்லை",
+    "telugu": "లేని"
   },
   "strength.moderate": {
     "bengali": "মাঝারি",
@@ -2133,13 +2133,13 @@
     "gujarati": "ગુરુ ચાંડાલ યોગ",
     "hindi": "गुरु चांडाल योग",
     "hinglish": "Guru Chandal Yoga",
-    "kannada": "ಗುರು ಚಾಣ್ಡಾಲ ಯೋಗ",
-    "malayalam": "വ്യാഴം ചാണ്ഡാല യോഗ",
+    "kannada": "ಗುರು ಚಾಂಡಾಲ ಯೋಗ",
+    "malayalam": "വ്യാഴം ചാംഡാല യോഗ",
     "marathi": "गुरु चांडाल योग",
     "odia": "ବୃହସ୍ପତି ଚାଣ୍ଡାଲ ଯୋଗ",
     "punjabi": "ਗੁਰੂ ਚਾਂਡਾਲ ਯੋਗ",
     "tamil": "குரு சாண்டால யோக",
-    "telugu": "గురుడు చాణ్డాల యోగ"
+    "telugu": "గురుడు చాండాల యోగ"
   },
   "yoga.name.hamsa_yoga": {
     "bengali": "হংস যোগ",
@@ -2175,13 +2175,13 @@
     "gujarati": "ઇંદ્ર યોગ",
     "hindi": "इंद्र योग",
     "hinglish": "Indra Yoga",
-    "kannada": "ಇನ್ದ್ರ ಯೋಗ",
-    "malayalam": "ഇന്ദ്ര യോഗ",
+    "kannada": "ಇಂದ್ರ ಯೋಗ",
+    "malayalam": "ഇംദ്ര യോഗ",
     "marathi": "इंद्र योग",
     "odia": "ଇନ୍ଦ୍ର ଯୋଗ",
     "punjabi": "ਇਂਦਰ ਯੋਗ",
     "tamil": "இந்த்ர யோக",
-    "telugu": "ఇన్ద్ర యోగ"
+    "telugu": "ఇంద్ర యోగ"
   },
   "yoga.name.kahala_yoga": {
     "bengali": "কাহল যোগ",
@@ -2329,13 +2329,13 @@
     "gujarati": "નીચ ભંગ રાજ યોગ",
     "hindi": "नीच भंग राज योग",
     "hinglish": "Neech Bhang Raj Yoga",
-    "kannada": "ನೀಚ ಭಙ್ಗ ರಾಜ ಯೋಗ",
-    "malayalam": "നീചം ഭങ്ഗ രാജ യോഗ",
+    "kannada": "ನೀಚ ಭಂಗ ರಾಜ ಯೋಗ",
+    "malayalam": "നീചം ഭംഗ രാജ യോഗ",
     "marathi": "नीच भंग राज योग",
     "odia": "ନୀଚ ଭଙ୍ଗ ରାଜ ଯୋଗ",
     "punjabi": "ਨੀਚ ਭਂਗ ਰਾਜ ਯੋਗ",
     "tamil": "நீசம் பங்க ராஜ யோக",
-    "telugu": "నీచ భఙ్గ రాజ యోగ"
+    "telugu": "నీచ భంగ రాజ యోగ"
   },
   "yoga.name.parijata_yoga": {
     "bengali": "পারিজাত যোগ",
@@ -2399,13 +2399,13 @@
     "gujarati": "રાજ સંબંધ યોગ",
     "hindi": "राज संबंध योग",
     "hinglish": "Raja Sambandha Yoga",
-    "kannada": "ರಾಜ ಸಮ್ಬನ್ಧ ಯೋಗ",
-    "malayalam": "രാജ സമ്ബന്ധ യോഗ",
+    "kannada": "ರಾಜ ಸಂಬಂಧ ಯೋಗ",
+    "malayalam": "രാജ സംബംധ യോഗ",
     "marathi": "राज संबंध योग",
     "odia": "ରାଜ ସମ୍ବନ୍ଧ ଯୋଗ",
     "punjabi": "ਰਾਜ ਸਂਬਂਧ ਯੋਗ",
     "tamil": "ராஜ ஸம்பந்த யோக",
-    "telugu": "రాజ సమ్బన్ధ యోగ"
+    "telugu": "రాజ సంబంధ యోగ"
   },
   "yoga.name.ruchaka_yoga": {
     "bengali": "রুচক যোগ",
@@ -2427,13 +2427,13 @@
     "gujarati": "સંન્યાસ યોગ",
     "hindi": "संन्यास योग",
     "hinglish": "Sanyasa Yoga",
-    "kannada": "ಸನ್ನ್ಯಾಸ ಯೋಗ",
-    "malayalam": "സന്ന്യാസ യോഗ",
+    "kannada": "ಸಂನ್ಯಾಸ ಯೋಗ",
+    "malayalam": "സംന്യാസ യോഗ",
     "marathi": "संन्यास योग",
     "odia": "ସନ୍ନ୍ଯାସ ଯୋଗ",
     "punjabi": "ਸਂਨਯਾਸ ਯੋਗ",
     "tamil": "ஸந்ந்யாஸ யோக",
-    "telugu": "సన్న్యాస యోగ"
+    "telugu": "సంన్యాస యోగ"
   },
   "yoga.name.sarala_yoga": {
     "bengali": "সরল যোগ",
