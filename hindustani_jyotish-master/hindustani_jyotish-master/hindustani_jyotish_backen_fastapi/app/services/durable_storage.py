@@ -10,13 +10,49 @@ from __future__ import annotations
 
 import logging
 
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import inspect, select, text
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
 from app.models.stored_file import StoredFile
 from app.services import storage
 
 logger = logging.getLogger(__name__)
+
+
+def _ensure_longblob_sync(sync_conn) -> bool:
+    """Widen ``stored_files.data`` to LONGBLOB on MySQL if it is still a narrow
+    BLOB/MEDIUMBLOB. Returns True if an ALTER was issued. Sync-connection body
+    (called via ``run_sync``); MySQL-only and idempotent."""
+    if sync_conn.dialect.name != "mysql":
+        return False
+    insp = inspect(sync_conn)
+    if "stored_files" not in insp.get_table_names():
+        return False  # created later as LONGBLOB from the model
+    for col in insp.get_columns("stored_files"):
+        if col["name"] != "data":
+            continue
+        # SQLAlchemy reports the reflected type; only widen when it isn't
+        # already LONGBLOB (a bare BLOB caps at 64 KB, MEDIUMBLOB at 16 MB).
+        if "LONGBLOB" in str(col["type"]).upper():
+            return False
+        break
+    sync_conn.execute(text("ALTER TABLE stored_files MODIFY data LONGBLOB NOT NULL"))
+    return True
+
+
+async def ensure_blob_capacity(engine: AsyncEngine) -> bool:
+    """Startup safety net: guarantee ``stored_files.data`` can hold a real
+    document (LONGBLOB) even when the deploy fell back to ``create_all`` instead
+    of running the Alembic migration. Best-effort — never raises."""
+    try:
+        async with engine.begin() as conn:
+            altered = await conn.run_sync(_ensure_longblob_sync)
+        if altered:
+            logger.info("stored_files.data widened to LONGBLOB.")
+        return altered
+    except Exception:  # noqa: BLE001 — must never block boot
+        logger.warning("ensure_blob_capacity failed (continuing)", exc_info=True)
+        return False
 
 
 async def save_durable(
