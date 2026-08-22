@@ -23,6 +23,7 @@ from html import escape as _e
 from pathlib import Path
 from typing import Any
 
+from app.services.astro import pdf_labels
 from app.services.astro.pdf_localized import _L, _PLANET_ORDER
 from app.services.devapi_localize.catalog import normalize_lang
 from app.services.devapi_localize.catalog import t as _cat
@@ -203,8 +204,21 @@ def _planet_name(name: str, full: str) -> str:
     return name if loc.startswith("planet.") else loc
 
 
-def _north_indian_svg(chart: dict) -> str:
-    """Inline SVG North-Indian diamond from numeric indices (localization-safe)."""
+def _planet_abbr(name: str, full: str) -> str:
+    """Short planet label for the chart, in the caller's script: the first two
+    characters of the localized planet name (English 2-letter code for
+    english/unknown), so the octagon chart reads in the selected language."""
+    loc = _cat(f"planet.{name.lower()}", full)
+    if loc and not loc.startswith("planet."):
+        return loc[:2]
+    return {"Sun": "Su", "Moon": "Mo", "Mars": "Ma", "Mercury": "Me",
+            "Jupiter": "Ju", "Venus": "Ve", "Saturn": "Sa", "Rahu": "Ra",
+            "Ketu": "Ke"}.get(name, name[:2])
+
+
+def _north_indian_svg(chart: dict, full: str = "english") -> str:
+    """Inline SVG North-Indian diamond from numeric indices (localization-safe).
+    Planet labels are shown in the `full` language's script."""
     size = 340
     half = size / 2
     q = size / 4
@@ -219,8 +233,6 @@ def _north_indian_svg(chart: dict) -> str:
         8: (size - q, size - q * 0.55), 9: (size - q * 0.55, size - q),
         10: (size - q, half), 11: (size - q * 0.55, q), 12: (size - q, q * 0.55),
     }
-    abbr = {"Sun": "Su", "Moon": "Mo", "Mars": "Ma", "Mercury": "Me",
-            "Jupiter": "Ju", "Venus": "Ve", "Saturn": "Sa", "Rahu": "Ra", "Ketu": "Ke"}
     by_house: dict[int, list[str]] = {}
     for nm, p in (chart.get("planets") or {}).items():
         if not isinstance(p, dict):
@@ -229,7 +241,7 @@ def _north_indian_svg(chart: dict) -> str:
         if not isinstance(si, int):
             continue
         h = (si - lagna_idx) % 12 + 1
-        by_house.setdefault(h, []).append(abbr.get(nm, nm[:2]) + ("*" if p.get("vakri") else ""))
+        by_house.setdefault(h, []).append(_planet_abbr(nm, full) + ("*" if p.get("vakri") else ""))
     lines = [
         f'<rect x="0" y="0" width="{size}" height="{size}" fill="#FBF6EE" stroke="{_INDIGO}" stroke-width="2"/>',
         f'<line x1="0" y1="0" x2="{size}" y2="{size}" stroke="{_INDIGO}"/>',
@@ -304,7 +316,7 @@ def build_kundli_report_pdf(
     # North-Indian chart
     if chart.get("planets"):
         sections.append(
-            h2(L["chart"]) + f'<div class="chart">{_north_indian_svg(chart)}</div>'
+            h2(L["chart"]) + f'<div class="chart">{_north_indian_svg(chart, full)}</div>'
         )
 
     # Planetary positions
@@ -402,6 +414,30 @@ def build_kundli_report_pdf(
         sections.append(h2(S["chakra"]) + table(
             [S["chakra"], S["score"], S["status"]], rows))
 
+    # Gochar (transit) — per-rashi score + grade
+    gochar = data.get("gochar_today") or {}
+    grashis = gochar.get("rashis") if isinstance(gochar, dict) else None
+    if isinstance(grashis, list) and grashis:
+        rows = [[_t(r.get("rashi")), _num(r.get("score"), 1), _t(r.get("grade"))]
+                for r in grashis if isinstance(r, dict)]
+        sections.append(h2(pdf_labels.heading("gochar", full, fallback="Transit (Gochar)"))
+                        + table([L["sign"], S["score"], pdf_labels.heading("grade", full, fallback="Grade")], rows))
+
+    # Aspects (graha drishti) — which planets each planet aspects
+    am = data.get("aspect_matrix") or {}
+    gd = am.get("graha_drishti") if isinstance(am, dict) else None
+    if isinstance(gd, dict) and gd:
+        rows = []
+        for planet, targets in gd.items():
+            if not isinstance(targets, dict) or not targets:
+                continue
+            aspected = ", ".join(_planet_name(str(t), full) for t in targets.keys())
+            rows.append([_t(_planet_name(str(planet), full)), _t(aspected)])
+        if rows:
+            sections.append(
+                h2(pdf_labels.heading("aspects", full, fallback="Aspects (Drishti)"))
+                + table([L["planet"], pdf_labels.heading("aspect_on", full, fallback="Aspects On")], rows))
+
     # Numerology
     if numerology:
         sections.append(
@@ -476,8 +512,9 @@ def _humanize(key: str) -> str:
     return _HUMAN.get(key, key.replace("_", " ").strip().title())
 
 
-def _render_value(v: Any) -> str:
-    """Readable HTML for a scalar / list / dict curated value."""
+def _render_value(v: Any, *, lang: str | None = None) -> str:
+    """Readable HTML for a scalar / list / dict curated value. Nested-dict keys
+    are localized as sub-headings via [pdf_labels]."""
     if isinstance(v, bool):
         return "✓" if v else "—"
     if isinstance(v, (int, float)):
@@ -488,10 +525,11 @@ def _render_value(v: Any) -> str:
         items = [x for x in v if x not in (None, "")]
         if not items:
             return ""
-        return "<ul>" + "".join(f"<li>{_render_value(x)}</li>" for x in items) + "</ul>"
+        return "<ul>" + "".join(f"<li>{_render_value(x, lang=lang)}</li>" for x in items) + "</ul>"
     if isinstance(v, dict):
         rows = "".join(
-            f'<tr><th>{_t(_humanize(str(k)))}</th><td>{_render_value(val)}</td></tr>'
+            f'<tr><th>{_t(pdf_labels.heading(str(k), lang, fallback=_humanize(str(k))))}</th>'
+            f'<td>{_render_value(val, lang=lang)}</td></tr>'
             for k, val in v.items() if str(k) not in _SKIP and val not in (None, "", [], {})
         )
         return f'<table class="kv">{rows}</table>' if rows else ""
@@ -547,9 +585,10 @@ def build_insight_report_pdf(
         if key == "planets" and isinstance(val, dict):
             inner = _positions_table(val, full, L)
         else:
-            inner = _render_value(val)
+            inner = _render_value(val, lang=full)
         if inner:
-            blocks.append(f'<div class="section"><h2>{_t(_humanize(str(key)))}</h2>{inner}</div>')
+            head = pdf_labels.heading(str(key), full, fallback=_humanize(str(key)))
+            blocks.append(f'<div class="section"><h2>{_t(head)}</h2>{inner}</div>')
 
     body = det_html + "".join(blocks)
     html = f"""<!doctype html><html><head><meta charset="utf-8"><style>
@@ -568,7 +607,7 @@ tbody tr:nth-child(even) td {{ background:#FBF6EE; }}
 table.kv th {{ background:none; color:{_COPPER}; width:38%; }}
 ul {{ margin:2px 0 2px 16px; padding:0; }}
 </style></head><body>
-<h1>{_t(title)}</h1>
+<h1>{_t(pdf_labels.title(title, full))}</h1>
 {body}
 </body></html>"""
     return HTML(string=html).write_pdf()

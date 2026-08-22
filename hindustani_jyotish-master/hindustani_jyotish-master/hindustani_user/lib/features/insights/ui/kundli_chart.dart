@@ -21,13 +21,17 @@ class KundliChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Planet labels in the app's selected language (falls back to the English
+    // two-letter code for English/unknown locales), so the chart reads in the
+    // local language like the rest of the kundli.
+    final lang = Localizations.localeOf(context).languageCode;
     // Bucket planets into houses relative to the lagna sign.
     final houses = List.generate(12, (_) => <String>[]);
     for (final p in planets) {
       final idx = p.signIdx;
       if (idx == null) continue;
       final house = ((idx - lagnaSignIdx) % 12 + 12) % 12; // 0-based
-      houses[house].add('${p.abbr}${p.vakri ? '(R)' : ''}');
+      houses[house].add('${planetChartAbbr(p.name, lang)}${p.vakri ? '(R)' : ''}');
     }
     return AspectRatio(
       aspectRatio: 1,

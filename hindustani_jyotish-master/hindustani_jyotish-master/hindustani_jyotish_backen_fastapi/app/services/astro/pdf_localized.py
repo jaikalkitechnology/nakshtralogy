@@ -448,6 +448,96 @@ def build_localized_kundli_pdf(
             grid(rows, widths=[26 * mm, 30 * mm, 22 * mm, 40 * mm, 16 * mm, 26 * mm]),
         ]
 
+    # ── Full analysis sections (dasha, doshas, yogas, shadbala, ashtakavarga,
+    # bhava, life-areas, chakra, gochar, aspects) — so the fallback PDF is the
+    # COMPLETE report, not just chart+positions, matching the WeasyPrint report.
+    from app.services.astro import pdf_labels
+
+    def _n(v, dp=0):
+        if isinstance(v, bool) or v is None:
+            return ""
+        if isinstance(v, (int, float)):
+            return f"{v:.{dp}f}" if dp else f"{int(round(v))}"
+        return _s(v)
+
+    def _pname(nm):
+        loc = _cat(f"planet.{str(nm).lower()}", full)
+        return _s(nm) if loc.startswith("planet.") else _s(loc)
+
+    def _sec(key, fallback, headers, rows, widths=None):
+        if not rows:
+            return
+        e.append(Spacer(1, 6 * mm))
+        e.append(Paragraph(_s(pdf_labels.heading(key, full, fallback=fallback)), h2))
+        e.append(Spacer(1, 3 * mm))
+        e.append(grid([headers] + rows, widths=widths))
+
+    _hd = lambda k, fb: _s(pdf_labels.heading(k, full, fallback=fb))  # noqa: E731
+
+    # Vimshottari
+    dashas = (data.get("vimshottari") or {}).get("dashas") or []
+    _sec("dashas", "Vimshottari Dasha",
+         [_hd("planet", "Planet"), _hd("years", "Years"), _hd("date", "Start"), "→"],
+         [[_pname(d.get("planet")), _n(d.get("years"), 1), _s(d.get("start")), _s(d.get("end"))]
+          for d in dashas if isinstance(d, dict)])
+
+    # Doshas
+    doshas = [d for d in ((data.get("dosh_analysis") or {}).get("top")
+              or (data.get("dosh_analysis") or {}).get("doshas") or [])
+              if isinstance(d, dict) and d.get("present")][:12]
+    _sec("doshas", "Doshas", [_hd("title", "Name"), _hd("score", "Score"), _hd("status", "Severity")],
+         [[_s(d.get("name")), _n(d.get("score")), _s(d.get("severity"))] for d in doshas])
+
+    # Yogas
+    yogas = [y for y in ((data.get("yoga_analysis") or {}).get("top")
+             or (data.get("yoga_analysis") or {}).get("yogas") or [])
+             if isinstance(y, dict) and y.get("present")][:12]
+    _sec("yogas", "Yogas", [_hd("title", "Name"), _hd("score", "Score"), _hd("strength", "Strength")],
+         [[_s(y.get("name")), _n(y.get("score")), _s(y.get("strength"))] for y in yogas])
+
+    # Shadbala
+    sb = (data.get("shadbala") or {}).get("planets") or {}
+    _sec("shadbala", "Shadbala", [_hd("planet", "Planet"), _hd("score", "Score")],
+         [[_pname(n), _n(v.get("score_100"))] for n, v in sb.items()
+          if isinstance(v, dict) and n != "Lagna"])
+
+    # Ashtakavarga (SAV)
+    av = data.get("ashtakavarga") or {}
+    sav = av.get("sav") or {}
+    _sec("ashtakavarga", "Ashtakavarga", [_hd("sign", "Sign"), _hd("score", "Score")],
+         [[_s(sign), _n(score)] for sign, score in sav.items()])
+
+    # Bhava strength
+    bhava = data.get("bhava_strength") or {}
+    _sec("bhava", "House Strength", [_hd("house", "House"), _hd("sign", "Sign"), _hd("score", "Score")],
+         [[_n(b.get("house")), _s(b.get("sign")), _n(b.get("score"))]
+          for hk in sorted(bhava.keys()) for b in [bhava[hk]] if isinstance(b, dict)])
+
+    # Life areas
+    la = data.get("life_areas") or {}
+    _sec("life_areas", "Life Areas", [_hd("life_areas", "Area"), _hd("score", "Score")],
+         [[_s(k), _n(v.get("score"))] for k, v in la.items() if isinstance(v, dict)])
+
+    # Chakra health
+    chakras = (data.get("chakra_health") or {}).get("chakras") or []
+    _sec("chakra", "Chakra Health", [_hd("chakra", "Chakra"), _hd("score", "Score"), _hd("status", "Status")],
+         [[_s(c.get("name")), _n(c.get("chakra_score")), _s(c.get("chakra_status"))]
+          for c in chakras if isinstance(c, dict)])
+
+    # Gochar (transit)
+    grashis = (data.get("gochar_today") or {}).get("rashis") or []
+    _sec("gochar", "Transit (Gochar)", [_hd("sign", "Sign"), _hd("score", "Score"), _hd("grade", "Grade")],
+         [[_s(r.get("rashi")), _n(r.get("score"), 1), _s(r.get("grade"))]
+          for r in grashis if isinstance(r, dict)])
+
+    # Aspects
+    gd = (data.get("aspect_matrix") or {}).get("graha_drishti") or {}
+    _sec("aspects", "Aspects", [_hd("planet", "Planet"), _hd("aspect_on", "Aspects On")],
+         [[_pname(p), ", ".join(_cat(f"planet.{str(t).lower()}", full) if not
+           _cat(f"planet.{str(t).lower()}", full).startswith("planet.") else str(t)
+           for t in tg.keys())]
+          for p, tg in gd.items() if isinstance(tg, dict) and tg])
+
     # Numerology
     if numerology:
         e += [

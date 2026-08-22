@@ -188,11 +188,39 @@ class AgoraCallService {
       },
       onUserJoined: (RtcConnection connection, int uid, int elapsed) {
         debugPrint('[AgoraCallService] onUserJoined uid=$uid '
-            'channel=${connection.channelId}');
+            'channel=${connection.channelId} localUid=${connection.localUid}');
         remoteUid.value = uid;
         // The peer is present again — clear any pending "left" reason so a
         // caller's reconnect grace can see they came back.
         peerLeft.value = null;
+        // Force-subscribe the host's tracks. autoSubscribeVideo in the join
+        // options should already do this, but on some devices the audience
+        // silently subscribes audio only; explicitly un-muting the remote
+        // video for this uid reliably starts the video subscription so the
+        // renderer actually receives frames.
+        _subscribeRemote(uid);
+      },
+      // Audio-based fallbacks. Audio reaching the viewer is the ground truth
+      // that the host is present and publishing — so if `onUserJoined` was
+      // missed (a known audience-side timing edge on live channels), the audio
+      // events still reveal the host's uid, flip the view out of "Waiting…",
+      // and let the remote VIDEO render as soon as its frames arrive. This is
+      // the exact "audio works but stuck on Waiting for video" case.
+      onRemoteAudioStateChanged: (connection, uid, state, reason, elapsed) {
+        final stateName = state.toString().split('.').last;
+        debugPrint('[AgoraCallService] remote AUDIO state uid=$uid '
+            'state=$stateName reason=$reason');
+        if (remoteUid.value == null && stateName != 'remoteAudioStateStopped') {
+          remoteUid.value = uid;
+          _subscribeRemote(uid);
+        }
+      },
+      onFirstRemoteAudioFrame: (connection, uid, elapsed) {
+        debugPrint('[AgoraCallService] first remote AUDIO frame uid=$uid');
+        if (remoteUid.value == null) {
+          remoteUid.value = uid;
+          _subscribeRemote(uid);
+        }
       },
       // Fallback path to surface the remote party: if `onUserJoined` was
       // somehow missed (a timing edge on the audience side of a live channel),
@@ -384,6 +412,9 @@ class AgoraCallService {
     _channel = grant.channel;
     videoEnabled.value = asHost;
 
+    debugPrint('[AgoraCallService] joinLive channel=${grant.channel} '
+        'uid=${grant.uid} asHost=$asHost tokenLen=${grant.token.length} '
+        'appId=${grant.appId.length >= 8 ? grant.appId.substring(0, 8) : grant.appId}…');
     await engine.setChannelProfile(ChannelProfileType.channelProfileLiveBroadcasting);
     await engine.setClientRole(
       role: asHost ? ClientRoleType.clientRoleBroadcaster : ClientRoleType.clientRoleAudience,
@@ -446,6 +477,24 @@ class AgoraCallService {
       debugPrint('[AgoraCallService] host publish re-asserted (camera+mic)');
     } catch (e) {
       debugPrint('[AgoraCallService] ensureHostPublishing failed: $e');
+    }
+  }
+
+  /// Explicitly (re)subscribe to a remote user's audio+video. `autoSubscribe*`
+  /// in the join options should cover this, but on some Android devices an
+  /// audience member ends up subscribed to audio only — the host is heard but
+  /// their video never arrives, leaving the viewer stuck on "Waiting for the
+  /// astrologer's video…". Un-muting the remote streams for this uid reliably
+  /// starts the video subscription. Idempotent + guarded; never breaks playback.
+  Future<void> _subscribeRemote(int uid) async {
+    final engine = _engine;
+    if (engine == null) return;
+    try {
+      await engine.muteRemoteAudioStream(uid: uid, mute: false);
+      await engine.muteRemoteVideoStream(uid: uid, mute: false);
+      debugPrint('[AgoraCallService] force-subscribed remote uid=$uid (audio+video)');
+    } catch (e) {
+      debugPrint('[AgoraCallService] _subscribeRemote($uid) failed: $e');
     }
   }
 

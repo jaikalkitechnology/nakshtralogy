@@ -62,6 +62,33 @@ const kPlanetAbbr = {
   'Lagna': 'La',
 };
 
+/// Localized planet names per language, so the North-Indian chart labels (and
+/// anywhere a short planet label is shown) read in the selected language rather
+/// than English "Su/Mo/Ma…". Kept in sync with the backend planet catalog.
+const kPlanetNameByLang = <String, Map<String, String>>{
+  'hi': {'Sun':'सूर्य','Moon':'चंद्र','Mars':'मंगल','Mercury':'बुध','Jupiter':'गुरु','Venus':'शुक्र','Saturn':'शनि','Rahu':'राहु','Ketu':'केतु','Lagna':'लग्न'},
+  'gu': {'Sun':'સૂર્ય','Moon':'ચંદ્ર','Mars':'મંગળ','Mercury':'બુધ','Jupiter':'ગુરુ','Venus':'શુક્ર','Saturn':'શનિ','Rahu':'રાહુ','Ketu':'કેતુ','Lagna':'લગ્ન'},
+  'mr': {'Sun':'सूर्य','Moon':'चंद्र','Mars':'मंगळ','Mercury':'बुध','Jupiter':'गुरु','Venus':'शुक्र','Saturn':'शनि','Rahu':'राहू','Ketu':'केतू','Lagna':'लग्न'},
+  'bn': {'Sun':'সূর্য','Moon':'চন্দ্র','Mars':'মঙ্গল','Mercury':'বুধ','Jupiter':'বৃহস্পতি','Venus':'শুক্র','Saturn':'শনি','Rahu':'রাহু','Ketu':'কেতু','Lagna':'লগ্ন'},
+  'ta': {'Sun':'சூரியன்','Moon':'சந்திரன்','Mars':'செவ்வாய்','Mercury':'புதன்','Jupiter':'குரு','Venus':'சுக்கிரன்','Saturn':'சனி','Rahu':'ராகு','Ketu':'கேது','Lagna':'லக்னம்'},
+  'te': {'Sun':'సూర్యుడు','Moon':'చంద్రుడు','Mars':'కుజుడు','Mercury':'బుధుడు','Jupiter':'గురు','Venus':'శుక్రుడు','Saturn':'శని','Rahu':'రాహువు','Ketu':'కేతువు','Lagna':'లగ్నం'},
+  'kn': {'Sun':'ಸೂರ್ಯ','Moon':'ಚಂದ್ರ','Mars':'ಮಂಗಳ','Mercury':'ಬುಧ','Jupiter':'ಗುರು','Venus':'ಶುಕ್ರ','Saturn':'ಶನಿ','Rahu':'ರಾಹು','Ketu':'ಕೇತು','Lagna':'ಲಗ್ನ'},
+  'ml': {'Sun':'സൂര്യൻ','Moon':'ചന്ദ്രൻ','Mars':'ചൊവ്വ','Mercury':'ബുധൻ','Jupiter':'വ്യാഴം','Venus':'ശുക്രൻ','Saturn':'ശനി','Rahu':'രാഹു','Ketu':'കേതു','Lagna':'ലഗ്നം'},
+  'pa': {'Sun':'ਸੂਰਜ','Moon':'ਚੰਦਰ','Mars':'ਮੰਗਲ','Mercury':'ਬੁੱਧ','Jupiter':'ਗੁਰੂ','Venus':'ਸ਼ੁੱਕਰ','Saturn':'ਸ਼ਨੀ','Rahu':'ਰਾਹੂ','Ketu':'ਕੇਤੂ','Lagna':'ਲਗਨ'},
+  'or': {'Sun':'ସୂର୍ଯ୍ୟ','Moon':'ଚନ୍ଦ୍ର','Mars':'ମଙ୍ଗଳ','Mercury':'ବୁଧ','Jupiter':'ଗୁରୁ','Venus':'ଶୁକ୍ର','Saturn':'ଶନି','Rahu':'ରାହୁ','Ketu':'କେତୁ','Lagna':'ଲଗ୍ନ'},
+};
+
+/// A short chart label for [planetName] in [langCode] (2-char, local script);
+/// falls back to the English two-letter code for English/unknown locales.
+String planetChartAbbr(String planetName, String? langCode) {
+  final full = kPlanetNameByLang[langCode]?[planetName];
+  if (full != null && full.isNotEmpty) {
+    return full.length >= 2 ? full.substring(0, 2) : full;
+  }
+  return kPlanetAbbr[planetName] ??
+      (planetName.length >= 2 ? planetName.substring(0, 2) : planetName);
+}
+
 double? _num(dynamic v) =>
     v is num ? v.toDouble() : (v is String ? double.tryParse(v) : null);
 
