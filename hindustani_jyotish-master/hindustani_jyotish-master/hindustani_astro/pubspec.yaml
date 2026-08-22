@@ -53,6 +53,9 @@ dependencies:
   # Pure-Dart image codec — used to compress any picked photo down to ≤200 KB
   # JPEG on-device before upload (so large/HEIC camera shots always upload).
   image: ^4.3.0
+  # Lets KYC documents be picked as a PHOTO or a PDF/doc (image_picker is
+  # image-only); images are compressed, PDFs uploaded as-is.
+  file_picker: ^8.1.6
   firebase_core: ^3.8.0
   firebase_messaging: ^15.1.5
   google_sign_in: ^6.2.1
