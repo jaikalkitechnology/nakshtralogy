@@ -17,6 +17,7 @@ under `reports/` (storage.save_bytes), and the response data always carries
 """
 from __future__ import annotations
 
+import logging
 import uuid
 from datetime import date, datetime, time as dtime, timedelta, timezone
 from decimal import Decimal
@@ -30,6 +31,8 @@ from app.models.user import User
 from app.models.wallet import TransactionType
 from app.services import nakshatralogy as nk
 from app.services.devapi_localize import localize_devapi_response
+
+logger = logging.getLogger(__name__)
 
 
 def _effective_lang(user: User) -> str | None:
@@ -50,6 +53,7 @@ from app.services.astro import compatibility as compat
 from app.services.astro import horoscope, numerology, pricing
 from app.services.astro.engine import Chart, compute_chart
 from app.services.astro.pdf import build_insight_pdf, build_kundli_pdf
+from app.services.astro.pdf_localized import build_localized_kundli_pdf
 from app.services.astro.reference import (
     NAKSHATRA_LORDS,
     NAKSHATRAS,
@@ -573,12 +577,8 @@ async def generate_kundli(
         dob=dob, birth_time=birth_time, ayanamsa=ayanamsa,
         latitude=latitude, longitude=longitude, tz_offset_minutes=tz_offset_minutes,
     )
-    numbers = numerology.life_path_number(dob, lang=_effective_lang(user))
-    pdf_bytes = build_kundli_pdf(
-        chart=chart, name=name, dob=dob, birth_time=birth_time,
-        birth_place=birth_place, numerology=numbers,
-    )
-    key = storage.save_bytes(f"reports/{uuid.uuid4()}.pdf", pdf_bytes)
+    lang = _effective_lang(user)
+    numbers = numerology.life_path_number(dob, lang=lang)
     inputs = {
         "name": name,
         "dob": dob.isoformat(),
@@ -590,9 +590,25 @@ async def generate_kundli(
     # is already localized above). No-op for english; fixes stub mode (empty API
     # key) previously always returning English chart terms for non-English users.
     data = {
-        "chart": localize_devapi_response(_chart_to_dict(chart), _effective_lang(user)),
+        "chart": localize_devapi_response(_chart_to_dict(chart), lang),
         "numerology": numbers,
     }
+    # Build the downloadable PDF from the LOCALIZED response so a Gujarati
+    # kundli produces a Gujarati PDF (Noto fonts render the Indic script). If
+    # PDF generation fails for any reason, fall back to the classic English
+    # builder rather than failing the whole (free) kundli generation.
+    try:
+        pdf_bytes = build_localized_kundli_pdf(
+            data, name=name, dob=dob, birth_time=birth_time,
+            birth_place=birth_place, lang=lang,
+        )
+    except Exception:  # noqa: BLE001 — never fail generation on a PDF hiccup
+        logger.exception("localized kundli PDF failed; using English fallback")
+        pdf_bytes = build_kundli_pdf(
+            chart=chart, name=name, dob=dob, birth_time=birth_time,
+            birth_place=birth_place, numerology=numbers,
+        )
+    key = storage.save_bytes(f"reports/{uuid.uuid4()}.pdf", pdf_bytes)
     return await _finish(
         db, user, "detailed_kundli", inputs, amount, data,
         title="Detailed Kundli Report", details=[], pdf_key=key,
