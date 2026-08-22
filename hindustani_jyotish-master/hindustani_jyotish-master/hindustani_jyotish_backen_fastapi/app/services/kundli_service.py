@@ -510,6 +510,14 @@ def _chart_to_dict(chart: Chart) -> dict:
     return {
         "ascendant": chart.ascendant,
         "ascendant_sign": chart.ascendant_sign,
+        # Numeric lagna index (0 = Aries … 11 = Pisces). The client draws the
+        # North-Indian chart from this; keeping it a NUMBER (never a name) means
+        # localization of `ascendant_sign` can't break the chart — a localized
+        # rashi name is not resolvable back to an index on the client.
+        "ascendant_sign_idx": (
+            ZODIAC_NAMES.index(chart.ascendant_sign)
+            if chart.ascendant_sign in ZODIAC_NAMES else None
+        ),
         "moon_sign": chart.moon_sign,
         "sun_sign": chart.sun_sign,
         "nakshatra": chart.nakshatra,
