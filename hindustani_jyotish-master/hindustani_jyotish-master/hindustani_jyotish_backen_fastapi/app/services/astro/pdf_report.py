@@ -16,8 +16,11 @@ names and short descriptions the offline engine emits in English stay English
 """
 from __future__ import annotations
 
+import os
 from datetime import date, time
+from functools import lru_cache
 from html import escape as _e
+from pathlib import Path
 from typing import Any
 
 from app.services.astro.pdf_localized import _L, _PLANET_ORDER
@@ -27,6 +30,40 @@ from app.services.devapi_localize.catalog import t as _cat
 _INDIGO = "#1E1B4B"
 _SAFFRON = "#F4811F"
 _COPPER = "#C77B4A"
+
+# Bundled Noto Sans faces (committed under ./fonts) — embedded via @font-face so
+# the PDF renders Indic scripts WITHOUT depending on a system font package.
+FONTS_DIR = Path(__file__).parent / "fonts"
+
+# CSS family name → bundled file basename.
+_FACE_FILES = {
+    "Noto Sans": "NotoSans",
+    "Noto Sans Devanagari": "NotoSansDevanagari",
+    "Noto Sans Gujarati": "NotoSansGujarati",
+    "Noto Sans Bengali": "NotoSansBengali",
+    "Noto Sans Tamil": "NotoSansTamil",
+    "Noto Sans Telugu": "NotoSansTelugu",
+    "Noto Sans Kannada": "NotoSansKannada",
+    "Noto Sans Malayalam": "NotoSansMalayalam",
+    "Noto Sans Gurmukhi": "NotoSansGurmukhi",
+    "Noto Sans Oriya": "NotoSansOriya",
+}
+
+
+@lru_cache(maxsize=1)
+def _font_face_css() -> str:
+    """@font-face rules for every bundled Noto face (Regular + Bold), pointing at
+    the committed .ttf files by absolute file:// URL. Built once and cached."""
+    rules = []
+    for family, base in _FACE_FILES.items():
+        for weight, suffix in ((400, "Regular"), (700, "Bold")):
+            path = FONTS_DIR / f"{base}-{suffix}.ttf"
+            if path.exists():
+                rules.append(
+                    f"@font-face{{font-family:'{family}';font-weight:{weight};"
+                    f"font-style:normal;src:url('file://{path}') format('truetype');}}"
+                )
+    return "".join(rules)
 
 # Section titles / extra labels per language (english + ten Indian scripts).
 _SL: dict[str, dict[str, str]] = {
@@ -381,6 +418,7 @@ def build_kundli_report_pdf(
     place_line = f"<br/>{_t(birth_place)}" if birth_place else ""
 
     html = f"""<!doctype html><html><head><meta charset="utf-8"><style>
+{_font_face_css()}
 @page {{ size: A4; margin: 16mm 14mm; }}
 * {{ font-family: {_FONT_STACK}; }}
 body {{ color:#222; font-size:10.5pt; }}
@@ -515,6 +553,7 @@ def build_insight_report_pdf(
 
     body = det_html + "".join(blocks)
     html = f"""<!doctype html><html><head><meta charset="utf-8"><style>
+{_font_face_css()}
 @page {{ size: A4; margin: 16mm 14mm; }}
 * {{ font-family: {_FONT_STACK}; }}
 body {{ color:#222; font-size:10.5pt; }}

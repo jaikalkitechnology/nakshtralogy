@@ -47,8 +47,13 @@ _SCRIPT_FONT = {
     "odia": "NotoSansOriya",
 }
 
-# Where fonts-noto-core drops the faces (Debian) + a couple of fallbacks.
+# Bundled faces (committed with the repo) take priority so the reportlab
+# fallback embeds a real Unicode font even when no system font package is
+# installed; the system dirs remain as extra fallbacks.
+import os as _os  # noqa: E402
+_BUNDLED_FONTS = _os.path.join(_os.path.dirname(__file__), "fonts")
 _FONT_DIRS = [
+    _BUNDLED_FONTS,
     "/usr/share/fonts/truetype/noto",
     "/usr/share/fonts/noto",
     "/usr/share/fonts/opentype/noto",
