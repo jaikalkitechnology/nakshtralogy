@@ -43,6 +43,7 @@ from app.models.kundli import KundliReport
 from app.models.user import User
 from app.core import i18n
 from app.services import nakshatralogy as nk
+from app.services.devapi_localize import localize_devapi_response
 from app.services.nakshatralogy import NakshatralogyError
 from app.services.wallet_service import money
 
@@ -142,19 +143,46 @@ async def _load_report(chart_id: str, user: User, db: AsyncSession) -> KundliRep
     return report
 
 
+def _normalize_dob(dob: str) -> str:
+    """Return the birth date as ``DD/MM/YYYY`` — the ONLY format the offline
+    engine's ``calculate_chart`` accepts (it does a bare ``dob.split('/')``).
+
+    The two save paths store different shapes: ``/kundli/compute`` stores
+    ``DD/MM/YYYY`` already, while the Cosmic ``/kundli/generate`` path stores an
+    ISO ``YYYY-MM-DD``. Passing the ISO form straight through made
+    ``calculate_chart`` raise, which cascaded into every analysis section
+    returning empty ("No data available") when a Cosmic kundli was opened in
+    the full viewer. Normalise both (and ``DD-MM-YYYY``/``YYYY/MM/DD``) here."""
+    s = (dob or "").strip()
+    if not s:
+        return s
+    parts = s.replace("-", "/").split("/")
+    if len(parts) != 3:
+        return s
+    try:
+        if len(parts[0]) == 4:  # YYYY/MM/DD → DD/MM/YYYY
+            y, m, d = int(parts[0]), int(parts[1]), int(parts[2])
+        else:                   # DD/MM/YYYY
+            d, m, y = int(parts[0]), int(parts[1]), int(parts[2])
+    except ValueError:
+        return s
+    return f"{d:02d}/{m:02d}/{y:04d}"
+
+
 def _birth_inputs(report: KundliReport) -> dict:
     """Birth details needed to recompute the chart, from the stored inputs.
 
     Accepts BOTH input shapes: the offline-engine ``/kundli/compute`` rows
-    (``tob``) and the external-provider ``/kundli/generate`` rows (``time``,
-    ISO ``dob`` — the engine's ``_parse_dob`` already normalises the date), so
-    a chart saved by either path can be reopened in the full viewer.
+    (``tob``, ``DD/MM/YYYY``) and the external-provider ``/kundli/generate``
+    rows (``time``, ISO ``dob``). The date is normalised to ``DD/MM/YYYY`` (the
+    only format the offline engine parses) so a chart saved by either path can
+    be reopened in the full viewer without the analysis sections going blank.
     """
     inp = report.inputs_json or {}
     return {
         "name": inp.get("name") or "User",
         "gender": inp.get("gender") or "M",
-        "dob": inp.get("dob") or "",
+        "dob": _normalize_dob(inp.get("dob") or ""),
         "tob": inp.get("tob") or inp.get("time") or "",
         "place": inp.get("place") or "",
     }
@@ -199,6 +227,21 @@ def _effective_lang(user) -> str | None:
     User.language, else None (English). Keeps every dev-API call consistent."""
     req = i18n.get_request_lang()
     return req if req and req != "en" else getattr(user, "language", None)
+
+
+def _loc(data: Any, user) -> Any:
+    """Localize a full-analysis payload into the caller's language, offline and
+    deterministically (rashi / nakshatra / dignity / grade / band terms). The
+    offline engine computes in English, so this is what makes the full-analysis
+    sections match the selected language. No-op for english; already-localized
+    stored bundles pass through unchanged (their translated values don't match
+    the English catalog keys). Never raises."""
+    return localize_devapi_response(data, _effective_lang(user))
+
+
+def _loc_public(data: Any) -> Any:
+    """Localize a chartless/public payload (gochar) by the live request lang."""
+    return localize_devapi_response(data, i18n.get_request_lang())
 
 
 def _dev_birth(bi: dict) -> dict:
@@ -295,7 +338,9 @@ async def compute_and_save(req: BirthDataRequest, user: CurrentUser, db: DBSessi
     await db.flush()
     await db.refresh(report)
 
-    data = {"chart_id": str(report.id), **bundle}
+    # Localize into the caller's language (offline recompute is English; a
+    # dev-API bundle is already localized and passes through unchanged).
+    data = _loc({"chart_id": str(report.id), **bundle}, user)
     return _ok(
         data,
         meta={
@@ -317,7 +362,7 @@ async def get_full_kundli(chart_id: str, user: CurrentUser, db: DBSession):
     """Complete saved bundle (all sections; Moola excluded). Free reopen."""
     report = await _load_report(chart_id, user, db)
     data = {"chart_id": str(report.id), **_bundle(report)}
-    return _ok(data)
+    return _ok(_loc(data, user))
 
 
 @router.get("/kundli/{chart_id}/chart")
@@ -328,7 +373,7 @@ async def get_chart_only(chart_id: str, user: CurrentUser, db: DBSession):
     if not chart:  # older/partial rows — recompute (free, offline)
         c = _pdata_for(report)
         chart = {k: v for k, v in c.items() if k != "_pdata"}
-    return _ok(chart)
+    return _ok(_loc(chart, user))
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -348,7 +393,7 @@ async def vimshottari(
     if levels == 2:
         stored = _bundle(report).get("vimshottari")
         if stored:
-            return _ok(stored)
+            return _ok(_loc(stored, user))
     # Dev-API when configured, else the offline engine — both free to the user.
     if nk.enabled():
         try:
@@ -360,7 +405,7 @@ async def vimshottari(
         return _ok(_strip_moola(result))
     chart = _pdata_for(report)
     result = nk_engine.get_vimshottari(chart["_pdata"], chart["birth_jd"], levels)
-    return _ok(_strip_moola(result))
+    return _ok(_loc(_strip_moola(result), user))
 
 
 # (Intentionally NO `/kundli/{chart_id}/dasha/moola` route — Moola excluded.)
@@ -374,7 +419,7 @@ async def vimshottari(
 @router.get("/kundli/gochar/today")
 async def gochar_today(moon_sign: Optional[int] = Query(None, ge=0, le=11)):
     try:
-        return _ok(nk_engine.get_gochar("today", moon_sign))
+        return _ok(_loc_public(nk_engine.get_gochar("today", moon_sign)))
     except Exception as exc:
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Gochar failed: {exc}")
 
@@ -384,7 +429,7 @@ async def gochar_date(date_str: str, moon_sign: Optional[int] = Query(None, ge=0
     try:
         y, m, d = date_str.split("-")
         formatted = f"{d}/{m}/{y}"
-        return _ok(nk_engine.get_gochar(formatted, moon_sign))
+        return _ok(_loc_public(nk_engine.get_gochar(formatted, moon_sign)))
     except Exception as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, f"Invalid date: {exc}")
 
@@ -393,7 +438,7 @@ async def gochar_date(date_str: str, moon_sign: Optional[int] = Query(None, ge=0
 async def gochar_range(req: GocharRangeRequest):
     try:
         result = nk_engine.get_gochar_range(req.start, req.end, req.moon_sign)
-        return _ok(result, meta={"days": len(result)})
+        return _ok(_loc_public(result), meta={"days": len(result)})
     except Exception as exc:
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Gochar range failed: {exc}")
 
@@ -441,7 +486,9 @@ async def _section(chart_id: str, user: User, db: AsyncSession, key: str) -> dic
     data = _bundle(report).get(key)
     if not data:  # older/external rows — rebuild offline (free)
         data = _recompute_section(report, key)
-    return data or {}
+    # Localize into the caller's language — the offline recompute is English,
+    # so this is what makes each analysis section match the selected language.
+    return _loc(data or {}, user)
 
 
 @router.get("/kundli/{chart_id}/analysis/dosh")
@@ -492,7 +539,7 @@ async def dasha_activation(
     if not query_date:  # default (today) is what the stored bundle holds
         stored = _bundle(report).get("dasha_activation")
         if stored:
-            return _ok(stored)
+            return _ok(_loc(stored, user))
     # Dev-API when configured, else the offline engine — both free to the user.
     if nk.enabled():
         try:
@@ -504,7 +551,7 @@ async def dasha_activation(
         return _ok(_strip_moola(result))
     chart = _pdata_for(report)
     result = nk_engine.get_dasha_activation(chart["_pdata"], chart["birth_jd"], query_date)
-    return _ok(_strip_moola(result))
+    return _ok(_loc(_strip_moola(result), user))
 
 
 @router.get("/kundli/{chart_id}/analysis/chakra-health")
@@ -535,10 +582,10 @@ async def dashboard(chart_id: str, user: CurrentUser, db: DBSession):
         "chart": b.get("chart", {}),
         "gochar_today": b.get("gochar_today", {}),
         "vimshottari": b.get("vimshottari", {}),
-        "life_areas": b.get("life_areas", {}),
+        "life_areas": b.get("life_areas") or _recompute_section(report, "life_areas"),
         "dasha_activation": b.get("dasha_activation", {}),
     }
-    return _ok(result)
+    return _ok(_loc(result, user))
 
 
 @router.get("/kundli/{chart_id}/analysis/complete")
@@ -547,14 +594,19 @@ async def analysis_complete(chart_id: str, user: CurrentUser, db: DBSession):
     ashtakavarga + aspects + life-areas + bhava). No Moola."""
     report = await _load_report(chart_id, user, db)
     b = _bundle(report)
-    result = {
-        "dosh_analysis": b.get("dosh_analysis", {}),
-        "yoga_analysis": b.get("yoga_analysis", {}),
-        "chakra_health": b.get("chakra_health", {}),
-        "shadbala": b.get("shadbala", {}),
-        "ashtakavarga": b.get("ashtakavarga", {}),
-        "aspect_matrix": b.get("aspect_matrix", {}),
-        "life_areas": b.get("life_areas", {}),
-        "bhava_strength": b.get("bhava_strength", {}),
-    }
-    return _ok(result)
+    keys = (
+        "dosh_analysis", "yoga_analysis", "chakra_health", "shadbala",
+        "ashtakavarga", "aspect_matrix", "life_areas", "bhava_strength",
+    )
+    # Serve each section from the stored bundle, recomputing offline (free) any
+    # that a minimal/external row is missing — so the prefetched "complete"
+    # bundle actually seeds every tab (a Cosmic-generated kundli stores only the
+    # chart, which previously left every analysis tab blank). Localized so the
+    # seeded tabs match the selected language.
+    result = {}
+    for k in keys:
+        v = b.get(k)
+        if not v:
+            v = _recompute_section(report, k)
+        result[k] = v or {}
+    return _ok(_loc(result, user))
