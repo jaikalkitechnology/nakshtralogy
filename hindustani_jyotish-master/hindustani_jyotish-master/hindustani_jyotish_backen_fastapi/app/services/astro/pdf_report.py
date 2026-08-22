@@ -23,6 +23,7 @@ from html import escape as _e
 from pathlib import Path
 from typing import Any
 
+from app.services.astro import pdf_labels
 from app.services.astro.pdf_localized import _L, _PLANET_ORDER
 from app.services.devapi_localize.catalog import normalize_lang
 from app.services.devapi_localize.catalog import t as _cat
@@ -476,8 +477,9 @@ def _humanize(key: str) -> str:
     return _HUMAN.get(key, key.replace("_", " ").strip().title())
 
 
-def _render_value(v: Any) -> str:
-    """Readable HTML for a scalar / list / dict curated value."""
+def _render_value(v: Any, *, lang: str | None = None) -> str:
+    """Readable HTML for a scalar / list / dict curated value. Nested-dict keys
+    are localized as sub-headings via [pdf_labels]."""
     if isinstance(v, bool):
         return "✓" if v else "—"
     if isinstance(v, (int, float)):
@@ -488,10 +490,11 @@ def _render_value(v: Any) -> str:
         items = [x for x in v if x not in (None, "")]
         if not items:
             return ""
-        return "<ul>" + "".join(f"<li>{_render_value(x)}</li>" for x in items) + "</ul>"
+        return "<ul>" + "".join(f"<li>{_render_value(x, lang=lang)}</li>" for x in items) + "</ul>"
     if isinstance(v, dict):
         rows = "".join(
-            f'<tr><th>{_t(_humanize(str(k)))}</th><td>{_render_value(val)}</td></tr>'
+            f'<tr><th>{_t(pdf_labels.heading(str(k), lang, fallback=_humanize(str(k))))}</th>'
+            f'<td>{_render_value(val, lang=lang)}</td></tr>'
             for k, val in v.items() if str(k) not in _SKIP and val not in (None, "", [], {})
         )
         return f'<table class="kv">{rows}</table>' if rows else ""
@@ -547,9 +550,10 @@ def build_insight_report_pdf(
         if key == "planets" and isinstance(val, dict):
             inner = _positions_table(val, full, L)
         else:
-            inner = _render_value(val)
+            inner = _render_value(val, lang=full)
         if inner:
-            blocks.append(f'<div class="section"><h2>{_t(_humanize(str(key)))}</h2>{inner}</div>')
+            head = pdf_labels.heading(str(key), full, fallback=_humanize(str(key)))
+            blocks.append(f'<div class="section"><h2>{_t(head)}</h2>{inner}</div>')
 
     body = det_html + "".join(blocks)
     html = f"""<!doctype html><html><head><meta charset="utf-8"><style>
@@ -568,7 +572,7 @@ tbody tr:nth-child(even) td {{ background:#FBF6EE; }}
 table.kv th {{ background:none; color:{_COPPER}; width:38%; }}
 ul {{ margin:2px 0 2px 16px; padding:0; }}
 </style></head><body>
-<h1>{_t(title)}</h1>
+<h1>{_t(pdf_labels.title(title, full))}</h1>
 {body}
 </body></html>"""
     return HTML(string=html).write_pdf()
