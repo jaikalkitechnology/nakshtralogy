@@ -152,6 +152,10 @@ class BroadcastViewerCubit extends Cubit<BroadcastViewerState> {
     if (agora == null) return;
     final channelJoined = agora.joined.value;
     final remoteJoined = agora.remoteUid.value != null;
+    debugPrint('[live viewer] agora change: channelJoined=$channelJoined '
+        'remoteUid=${agora.remoteUid.value} remoteJoined=$remoteJoined '
+        'frame=${agora.remoteVideoInfo.value} vstate=${agora.remoteVideoState.value} '
+        'mediaFailure=${agora.mediaFailure.value}');
     var next = state.copyWith(
       channelJoined: channelJoined,
       remoteJoined: remoteJoined,
