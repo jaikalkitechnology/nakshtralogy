@@ -37,7 +37,8 @@ agora-token-builder==1.0.0
 
 # Kundli & cosmic insights (Phase 3)
 pyswisseph==2.10.3.2          # Swiss Ephemeris — planetary positions
-reportlab==4.2.5             # PDF report generation
+reportlab==4.2.5             # PDF report generation (Latin / fallback)
+weasyprint==62.3            # HTML→PDF with Pango/HarfBuzz shaping (Indic PDFs)
 
 # Server-side image compression for uploads (avatars, KYC photos, banners)
 Pillow==12.3.0
