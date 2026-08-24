@@ -50,6 +50,18 @@ _RASHI = {
 # ambiguous with the English disease/word — only translated as a whole value
 _AMBIGUOUS_RASHI = {"cancer"}
 
+# 2-letter short codes (SIGNS_SHORT in app/kundli/helper.py) → rashi slug.
+# These back `chart.planets.*.sign`, `chart.divisionals.*.D1..D60`,
+# `bhava_strength.H01.sign`, and list entries in `aspect_matrix.rashi_drishti`
+# — none of which are full sign names, so the token/whole-value passes above
+# never match them. Matched only as an EXACT whole value (not token-scanned,
+# to avoid colliding with unrelated 2-letter machine codes elsewhere).
+_RASHI_SHORT = {
+    "Ar": "aries", "Ta": "taurus", "Ge": "gemini", "Cn": "cancer",
+    "Le": "leo", "Vi": "virgo", "Li": "libra", "Sc": "scorpio",
+    "Sg": "sagittarius", "Cp": "capricorn", "Aq": "aquarius", "Pi": "pisces",
+}
+
 # nakshatra: normalized (letters only, lowercase) → slug
 _NAK_SLUGS = [
     "ashwini", "bharani", "krittika", "rohini", "mrigashira", "ardra",
@@ -134,6 +146,11 @@ def _localize_value(s: str, lang: str, key: str = "") -> str:
         nkw = _nk_norm(raw)
         if nkw in _NAK and _has("nakshatra", _NAK[nkw]):
             return t(f"nakshatra.{_NAK[nkw]}", lang)
+
+    # 1d. whole-value 2-letter sign short code ("Cn", "Le", ...) — exact match
+    #     only, so it can never fire on an unrelated 2-letter token.
+    if raw in _RASHI_SHORT and _has("rashi.name", _RASHI_SHORT[raw]):
+        return t(f"rashi.name.{_RASHI_SHORT[raw]}", lang)
 
     # 2. whole-value ambiguous rashi (e.g. "Cancer" as a sign field)
     if raw.lower() in _AMBIGUOUS_RASHI and _has("rashi.name", _RASHI[raw.lower()]):
