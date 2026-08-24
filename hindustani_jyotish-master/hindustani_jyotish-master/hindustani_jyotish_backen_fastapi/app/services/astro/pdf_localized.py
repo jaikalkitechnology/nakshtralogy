@@ -387,9 +387,22 @@ def build_localized_kundli_pdf(
     ]
 
     # Birth details + chart summary
-    lagna = chart.get("ascendant_sign") or chart.get("lagna")
-    asc = chart.get("ascendant")
-    lagna_val = _s(lagna) + (f" ({asc:.2f}°)" if isinstance(asc, (int, float)) else "")
+    # `chart["lagna"]`/`chart["ascendant_sign"]` are DICTS in the full-analysis
+    # bundle shape ({"sign_full": ..., "degree": ..., "nakshatra": ..., ...}),
+    # never a plain string — str()'ing one directly prints the Python repr, so
+    # every field below is pulled out explicitly instead.
+    lagna_raw = chart.get("lagna")
+    lagna_d = lagna_raw if isinstance(lagna_raw, dict) else {}
+    lagna_sign = lagna_d.get("sign_full") or (chart.get("ascendant_sign") if isinstance(chart.get("ascendant_sign"), str) else None)
+    lagna_deg = lagna_d.get("degree") if isinstance(lagna_d.get("degree"), (int, float)) else chart.get("ascendant")
+    lagna_val = (_s(lagna_sign) if lagna_sign else "") + (f" ({lagna_deg:.2f}°)" if isinstance(lagna_deg, (int, float)) else "")
+    planets_d = chart.get("planets") if isinstance(chart.get("planets"), dict) else {}
+    moon_p = planets_d.get("Moon") if isinstance(planets_d.get("Moon"), dict) else {}
+    sun_p = planets_d.get("Sun") if isinstance(planets_d.get("Sun"), dict) else {}
+    moon_sign_val = chart.get("moon_sign") if isinstance(chart.get("moon_sign"), str) else moon_p.get("sign_full")
+    sun_sign_val = chart.get("sun_sign") if isinstance(chart.get("sun_sign"), str) else sun_p.get("sign_full")
+    # Birth Nakshatra = the MOON's nakshatra (standard convention).
+    nakshatra_val = moon_p.get("nakshatra") or (chart.get("nakshatra") if isinstance(chart.get("nakshatra"), str) else None) or lagna_d.get("nakshatra")
     e += [
         Paragraph(_s(L["birth_details"]), h2),
         Spacer(1, 3 * mm),
@@ -404,9 +417,9 @@ def build_localized_kundli_pdf(
         Spacer(1, 3 * mm),
         kv_table([
             [_s(L["lagna"]), lagna_val or "—"],
-            [_s(L["moon"]), _s(chart.get("moon_sign")) or "—"],
-            [_s(L["sun"]), _s(chart.get("sun_sign")) or "—"],
-            [_s(L["nakshatra"]), _s(chart.get("nakshatra")) or "—"],
+            [_s(L["moon"]), _s(moon_sign_val) or "—"],
+            [_s(L["sun"]), _s(sun_sign_val) or "—"],
+            [_s(L["nakshatra"]), _s(nakshatra_val) or "—"],
         ]),
         PageBreak(),
     ]
@@ -474,12 +487,54 @@ def build_localized_kundli_pdf(
 
     _hd = lambda k, fb: _s(pdf_labels.heading(k, full, fallback=fb))  # noqa: E731
 
+    # Divisional (varga) charts — D1..D60, one row per planet + Lagna, one
+    # column per chart, matching the app's Division tab.
+    divisionals = chart.get("divisionals") or {}
+    if isinstance(divisionals, dict) and divisionals:
+        d_codes = [f"D{n}" for n in
+                   (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 16, 20, 24, 27, 30, 40, 45, 60)
+                   if any(isinstance(v, dict) and f"D{n}" in v for v in divisionals.values())]
+        d_order = ["Lagna"] + [n for n in _PLANET_ORDER if n in divisionals] + \
+                  [n for n in divisionals if n not in _PLANET_ORDER and n != "Lagna"]
+        div_rows = []
+        for n in d_order:
+            v = divisionals.get(n)
+            if isinstance(v, dict):
+                div_rows.append([_pname(n)] + [_s(v.get(c)) or "—" for c in d_codes])
+        if div_rows and d_codes:
+            _sec("divisionals", "Divisional Charts", [_hd("planet", "Planet")] + d_codes, div_rows)
+
     # Vimshottari
     dashas = (data.get("vimshottari") or {}).get("dashas") or []
     _sec("dashas", "Vimshottari Dasha",
          [_hd("planet", "Planet"), _hd("years", "Years"), _hd("date", "Start"), "→"],
          [[_pname(d.get("planet")), _n(d.get("years"), 1), _s(d.get("start")), _s(d.get("end"))]
           for d in dashas if isinstance(d, dict)])
+
+    # Dasha Activation — current Mahadasha/Antardasha + activated yogas.
+    da = data.get("dasha_activation") or {}
+    if isinstance(da, dict) and da:
+        vim = da.get("vimshottari") or {}
+        cur_rows = []
+        if isinstance(vim, dict) and vim.get("md"):
+            cur_rows.append([_hd("mahadasha", "Mahadasha"),
+                              f'{_pname(vim.get("md"))} ({_s(vim.get("md_start"))} → {_s(vim.get("md_end"))})'])
+        if isinstance(vim, dict) and vim.get("ad"):
+            cur_rows.append([_hd("antardasha", "Antardasha"),
+                              f'{_pname(vim.get("ad"))} ({_s(vim.get("ad_start"))} → {_s(vim.get("ad_end"))})'])
+        if cur_rows:
+            e.append(Spacer(1, 6 * mm))
+            e.append(Paragraph(_s(pdf_labels.heading("dasha_activation", full,
+                                fallback="Current Dasha & Activated Yogas")), h2))
+            e.append(Spacer(1, 3 * mm))
+            e.append(kv_table(cur_rows))
+        activated = da.get("activated_yogas") or []
+        yoga_rows = [[_s(y.get("name")), _s(y.get("strength")), _n(y.get("activation"), 1)]
+                     for y in activated if isinstance(y, dict)][:10]
+        if yoga_rows:
+            e.append(Spacer(1, 2 * mm))
+            e.append(grid([[_hd("title", "Name"), _hd("strength", "Strength"), _hd("score", "Score")]]
+                          + yoga_rows))
 
     # Doshas
     doshas = [d for d in ((data.get("dosh_analysis") or {}).get("top")
