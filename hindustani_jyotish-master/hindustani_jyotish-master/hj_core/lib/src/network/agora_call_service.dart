@@ -471,8 +471,40 @@ class AgoraCallService {
         publishCameraTrack: asHost,
         autoSubscribeAudio: true,
         autoSubscribeVideo: true,
+        // Audience receive path: the default audience latency level is
+        // ULTRA-low-latency, which needs the co-host/CDN path set up and on
+        // several projects/devices results in the audience never receiving the
+        // broadcaster's stream (permanent "Waiting for the astrologer's
+        // video…"). Standard LOW-latency is the compatible audience mode for a
+        // plain host→audience live broadcast. Host keeps the default.
+        audienceLatencyLevel: asHost
+            ? AudienceLatencyLevelType.audienceLatencyLevelUltraLowLatency
+            : AudienceLatencyLevelType.audienceLatencyLevelLowLatency,
       ),
     );
+    // Audience: force-subscribe ALL remote streams. autoSubscribeVideo above
+    // should do this, but on devices where it's silently not honoured the
+    // audience gets audio only / nothing — and since onUserJoined may not have
+    // fired yet we can't target a uid, so subscribe to all. Once frames arrive,
+    // onFirstRemoteVideoFrame/onRemoteVideoStateChanged bind the remote view.
+    if (!asHost) {
+      await subscribeAllRemote();
+    }
+  }
+
+  /// Force-subscribe to EVERY remote broadcaster's audio+video (no uid needed).
+  /// Used by the audience right after join so the host's video is subscribed
+  /// even if `autoSubscribeVideo` was ignored or `onUserJoined` hasn't fired.
+  Future<void> subscribeAllRemote() async {
+    final engine = _engine;
+    if (engine == null) return;
+    try {
+      await engine.muteAllRemoteAudioStreams(false);
+      await engine.muteAllRemoteVideoStreams(false);
+      debugPrint('[AgoraCallService] subscribeAllRemote: un-muted all remote a/v');
+    } catch (e) {
+      debugPrint('[AgoraCallService] subscribeAllRemote failed: $e');
+    }
   }
 
   /// Re-assert the host's camera + mic publish once the channel join has
