@@ -289,6 +289,7 @@ class _LiveViewerViewState extends State<_LiveViewerView> {
                         child: _WaitingSurface(
                           mediaError: state.mediaError,
                           channelJoined: state.channelJoined,
+                          agora: agora,
                         ),
                       ),
               ),
@@ -783,7 +784,7 @@ class _LiveEndedView extends StatelessWidget {
 }
 
 class _WaitingSurface extends StatelessWidget {
-  const _WaitingSurface({this.mediaError, this.channelJoined = false});
+  const _WaitingSurface({this.mediaError, this.channelJoined = false, this.agora});
 
   /// Null while genuinely still connecting (shows the default "Connecting…"
   /// copy). Set once Agora media has definitively failed to connect — must
@@ -800,6 +801,13 @@ class _WaitingSurface extends StatelessWidget {
   /// Agora credentials) reads as "the astrologer's video hasn't started"
   /// instead of a misleading endless "Connecting…" spinner.
   final bool channelJoined;
+
+  /// TEMPORARY — passed only so the debug line below can read its
+  /// diagnostics inline in the SAME text the viewer already sees/
+  /// screenshots, instead of a separately positioned overlay badge that
+  /// could get clipped/hidden on some devices. Remove alongside the debug
+  /// line once the live-video bug is closed.
+  final AgoraCallService? agora;
 
   @override
   Widget build(BuildContext context) {
@@ -824,6 +832,30 @@ class _WaitingSurface extends StatelessWidget {
             textAlign: TextAlign.center,
             style: AppTextStyles.body(color: AppColors.ivoryDim),
           ),
+          if (agora != null) ...[
+            const SizedBox(height: 14),
+            AnimatedBuilder(
+              animation: Listenable.merge([
+                agora!.joined,
+                agora!.remoteUid,
+                agora!.remoteVideoInfo,
+                agora!.remoteVideoState,
+                agora!.mediaFailure,
+              ]),
+              builder: (context, _) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  '[debug: joined=${agora!.joined.value} '
+                  'rUid=${agora!.remoteUid.value ?? "-"} '
+                  'frame=${agora!.remoteVideoInfo.value ?? "none"} '
+                  'vstate=${agora!.remoteVideoState.value ?? "-"} '
+                  'failure=${agora!.mediaFailure.value ?? "-"}]',
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.mono(size: 11, color: AppColors.gold),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
