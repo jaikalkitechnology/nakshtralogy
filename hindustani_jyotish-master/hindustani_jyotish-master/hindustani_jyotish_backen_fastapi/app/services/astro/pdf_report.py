@@ -217,9 +217,17 @@ def _planet_abbr(name: str, full: str) -> str:
 
 
 def _north_indian_svg(chart: dict, full: str = "english") -> str:
-    """Inline SVG North-Indian diamond from numeric indices (localization-safe).
-    Planet labels are shown in the `full` language's script."""
+    """North-Indian diamond: SVG for the grid/lines/sign-numbers (plain
+    digits — safe in SVG text), with planet labels rendered as an absolutely
+    positioned HTML overlay instead of SVG <text>. WeasyPrint's SVG text
+    renderer does not do full Indic shaping — a lone combining mark (e.g. the
+    anusvara in "ಮಂ") renders as a tofu box even with the right font-family
+    set, while the exact same text shapes correctly as normal HTML (proven by
+    the summary table above it on the same page). Regular HTML text goes
+    through WeasyPrint's full Pango/HarfBuzz pipeline, so the overlay is the
+    reliable way to get non-Latin planet labels inside the chart."""
     size = 340
+    rendered = 360  # the <svg> element's rendered width/height, below
     half = size / 2
     q = size / 4
     lagna_idx = chart.get("lagna", {}).get("sign_idx")
@@ -251,15 +259,22 @@ def _north_indian_svg(chart: dict, full: str = "english") -> str:
         f'<line x1="{size}" y1="{half}" x2="{half}" y2="{size}" stroke="{_INDIGO}"/>',
         f'<line x1="{half}" y1="{size}" x2="0" y2="{half}" stroke="{_INDIGO}"/>',
     ]
+    overlays = []
     for house, (x, y) in anchors.items():
         sign_no = (lagna_idx + house - 1) % 12 + 1
         lines.append(f'<text x="{x}" y="{y - 8}" font-size="10" fill="{_COPPER}" '
                      f'text-anchor="middle">{sign_no}</text>')
         occ = " ".join(by_house.get(house, []))
         if occ:
-            lines.append(f'<text x="{x}" y="{y + 10}" font-size="11" fill="{_INDIGO}" '
-                         f'text-anchor="middle" font-weight="bold">{_e(occ)}</text>')
-    return f'<svg viewBox="0 0 {size} {size}" width="360" height="360">{"".join(lines)}</svg>'
+            px, py = x / size * rendered, (y + 10) / size * rendered
+            overlays.append(
+                f'<div style="position:absolute; left:{px:.1f}px; top:{py:.1f}px; '
+                f'transform:translate(-50%,-50%); font-size:11px; font-weight:bold; '
+                f'color:{_INDIGO}; white-space:nowrap;">{_t(occ)}</div>'
+            )
+    svg = f'<svg viewBox="0 0 {size} {size}" width="{rendered}" height="{rendered}">{"".join(lines)}</svg>'
+    return (f'<div style="position:relative; width:{rendered}px; height:{rendered}px; '
+            f'margin:0 auto;">{svg}{"".join(overlays)}</div>')
 
 
 def build_kundli_report_pdf(
@@ -356,17 +371,27 @@ def build_kundli_report_pdf(
                    if any(isinstance(v, dict) and f"D{n}" in v for v in divisionals.values())]
         d_order = ["Lagna"] + [n for n in _PLANET_ORDER if n in divisionals] + \
                   [n for n in divisionals if n not in _PLANET_ORDER and n != "Lagna"]
-        rows = []
-        for n in d_order:
-            v = divisionals.get(n)
-            if not isinstance(v, dict):
+        # Split into two tables of ~10 D-chart columns each — all 20 in one
+        # table overflows an A4 portrait page width and gets clipped.
+        half = (len(d_codes) + 1) // 2
+        d_groups = [d_codes[:half], d_codes[half:]]
+        div_html = ""
+        for codes in d_groups:
+            if not codes:
                 continue
-            rows.append([_t(_planet_name(n, full)), *[_t(v.get(c)) or "—" for c in d_codes]])
-        if rows and d_codes:
+            rows = []
+            for n in d_order:
+                v = divisionals.get(n)
+                if not isinstance(v, dict):
+                    continue
+                rows.append([_t(_planet_name(n, full)), *[_t(v.get(c)) or "—" for c in codes]])
+            if rows:
+                div_html += table([L["planet"], *codes], rows)
+        if div_html:
             sections.append(
                 '<div style="font-size:8pt">'
                 + h2(pdf_labels.heading("divisionals", full, fallback="Divisional Charts"))
-                + table([L["planet"], *d_codes], rows) + '</div>'
+                + div_html + '</div>'
             )
 
     # Vimshottari dasha
