@@ -56,6 +56,22 @@ _RASHI = {
 # ambiguous with the English disease/word — only translated as a whole value
 _AMBIGUOUS_RASHI = {"cancer"}
 
+# 2-letter sign short codes the engine emits under sign fields (e.g. bhava
+# strength's `"sign": "Ge"`). Localized ONLY as an exact whole value (never as a
+# token inside text) so a stray "Ta"/"Li" in prose is never touched.
+_RASHI_SHORT = {
+    "ar": "aries", "ta": "taurus", "ge": "gemini", "cn": "cancer",
+    "le": "leo", "vi": "virgo", "li": "libra", "sc": "scorpio",
+    "sg": "sagittarius", "cp": "capricorn", "aq": "aquarius", "pi": "pisces",
+}
+
+# Graha-drishti aspect "type" values → catalog slug (aspect.type.*).
+_ASPECT_TYPE = {
+    "full": "full", "special": "special", "partial": "partial",
+    "half": "half", "quarter": "quarter", "three_quarter": "three_quarter",
+    "three-quarter": "three_quarter",
+}
+
 # nakshatra: normalized (letters only, lowercase) → slug
 _NAK_SLUGS = [
     "ashwini", "bharani", "krittika", "rohini", "mrigashira", "ardra",
@@ -188,6 +204,17 @@ def _localize_value(s: str, lang: str, key: str = "") -> str:
         return t(f"dosh.name.{_DOSH[namekey]}", lang)
     if namekey in _YOGA and _has("yoga.name", _YOGA[namekey]):
         return t(f"yoga.name.{_YOGA[namekey]}", lang)
+
+    # 1d. whole-value 2-letter sign short code ("Ge" → gemini localized). Exact
+    #     match only — never inside text — so it's collision-safe.
+    low = raw.lower()
+    if low in _RASHI_SHORT and _has("rashi.name", _RASHI_SHORT[low]):
+        return t(f"rashi.name.{_RASHI_SHORT[low]}", lang)
+
+    # 1e. graha-drishti aspect type ("full"/"special"/…), gated by a *type* key
+    #     so the common words are only translated where they're an aspect type.
+    if "type" in key.lower() and low in _ASPECT_TYPE and _has("aspect.type", _ASPECT_TYPE[low]):
+        return t(f"aspect.type.{_ASPECT_TYPE[low]}", lang)
 
     # 2. whole-value ambiguous rashi (e.g. "Cancer" as a sign field)
     if raw.lower() in _AMBIGUOUS_RASHI and _has("rashi.name", _RASHI[raw.lower()]):

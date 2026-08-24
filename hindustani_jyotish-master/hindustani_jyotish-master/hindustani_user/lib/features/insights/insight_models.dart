@@ -78,6 +78,11 @@ const kPlanetNameByLang = <String, Map<String, String>>{
   'or': {'Sun':'ସୂର୍ଯ୍ୟ','Moon':'ଚନ୍ଦ୍ର','Mars':'ମଙ୍ଗଳ','Mercury':'ବୁଧ','Jupiter':'ଗୁରୁ','Venus':'ଶୁକ୍ର','Saturn':'ଶନି','Rahu':'ରାହୁ','Ketu':'କେତୁ','Lagna':'ଲଗ୍ନ'},
 };
 
+/// Full localized planet name for [planetName] in [langCode]; the English name
+/// itself for English/unknown locales. Used for aspect targets, lords, etc.
+String planetLocalName(String planetName, String? langCode) =>
+    kPlanetNameByLang[langCode]?[planetName] ?? planetName;
+
 /// A short chart label for [planetName] in [langCode] (2-char, local script);
 /// falls back to the English two-letter code for English/unknown locales.
 String planetChartAbbr(String planetName, String? langCode) {

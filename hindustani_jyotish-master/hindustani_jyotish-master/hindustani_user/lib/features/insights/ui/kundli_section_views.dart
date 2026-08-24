@@ -718,6 +718,7 @@ class _AspectsBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
     final graha = (data['graha_drishti'] as Map?)?.cast<String, dynamic>() ?? const {};
     final rashi = (data['rashi_drishti'] as Map?)?.cast<String, dynamic>() ?? const {};
     if (graha.isEmpty && rashi.isEmpty) {
@@ -734,7 +735,7 @@ class _AspectsBody extends StatelessWidget {
           child: Column(children: [
             for (final e in graha.entries)
               if (e.value is Map && (e.value as Map).isNotEmpty)
-                _grahaRow(e.key, (e.value as Map).cast<String, dynamic>()),
+                _grahaRow(e.key, (e.value as Map).cast<String, dynamic>(), lang),
           ]),
         ),
         if (rashi.isNotEmpty)
@@ -767,7 +768,7 @@ class _AspectsBody extends StatelessWidget {
     );
   }
 
-  Widget _grahaRow(String aspector, Map<String, dynamic> targets) {
+  Widget _grahaRow(String aspector, Map<String, dynamic> targets, String lang) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -791,8 +792,8 @@ class _AspectsBody extends StatelessWidget {
               for (final t in targets.entries)
                 KundliBadge(
                   text: t.value is Map && (t.value as Map)['house'] != null
-                      ? '${t.key} (${(t.value as Map)['house']})'
-                      : t.key,
+                      ? '${planetLocalName(t.key, lang)} (${(t.value as Map)['house']})'
+                      : planetLocalName(t.key, lang),
                 ),
             ],
           ),

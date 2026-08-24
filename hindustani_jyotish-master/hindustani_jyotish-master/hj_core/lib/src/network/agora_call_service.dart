@@ -222,6 +222,17 @@ class AgoraCallService {
           _subscribeRemote(uid);
         }
       },
+      // HOST diagnostic: whether this device is actually capturing AND
+      // encoding/publishing its own camera. If this never reaches an
+      // "encoding" state, the host is NOT publishing video (viewers can't
+      // possibly see it) — distinguishing a host publish problem from a viewer
+      // subscribe/render problem. Param types inferred (build-safe across SDK
+      // minors); state compared by name.
+      onLocalVideoStateChanged: (source, state, reason) {
+        debugPrint('[AgoraCallService] LOCAL video state='
+            '${state.toString().split('.').last} reason='
+            '${reason.toString().split('.').last} source=$source');
+      },
       // Fallback path to surface the remote party: if `onUserJoined` was
       // somehow missed (a timing edge on the audience side of a live channel),
       // the first decoded remote video frame still tells us who to render, so
@@ -433,6 +444,18 @@ class AgoraCallService {
     await engine.enableAudio();
     await engine.enableVideo();
     if (asHost) {
+      // Define the published video stream explicitly. Without an encoder
+      // configuration some devices bring up the local capture (so the host
+      // sees their own preview) but never actually encode/publish a stream to
+      // the channel — viewers then get audio only / a black video. Setting a
+      // concrete config makes the camera track publish reliably.
+      await engine.setVideoEncoderConfiguration(const VideoEncoderConfiguration(
+        dimensions: VideoDimensions(width: 640, height: 360),
+        frameRate: 15,
+        bitrate: 0, // 0 = SDK standard bitrate for the dimensions
+        orientationMode: OrientationMode.orientationModeAdaptive,
+      ));
+      await engine.enableLocalVideo(true);
       await engine.startPreview();
     }
 
@@ -448,8 +471,40 @@ class AgoraCallService {
         publishCameraTrack: asHost,
         autoSubscribeAudio: true,
         autoSubscribeVideo: true,
+        // Audience receive path: the default audience latency level is
+        // ULTRA-low-latency, which needs the co-host/CDN path set up and on
+        // several projects/devices results in the audience never receiving the
+        // broadcaster's stream (permanent "Waiting for the astrologer's
+        // video…"). Standard LOW-latency is the compatible audience mode for a
+        // plain host→audience live broadcast. Host keeps the default.
+        audienceLatencyLevel: asHost
+            ? AudienceLatencyLevelType.audienceLatencyLevelUltraLowLatency
+            : AudienceLatencyLevelType.audienceLatencyLevelLowLatency,
       ),
     );
+    // Audience: force-subscribe ALL remote streams. autoSubscribeVideo above
+    // should do this, but on devices where it's silently not honoured the
+    // audience gets audio only / nothing — and since onUserJoined may not have
+    // fired yet we can't target a uid, so subscribe to all. Once frames arrive,
+    // onFirstRemoteVideoFrame/onRemoteVideoStateChanged bind the remote view.
+    if (!asHost) {
+      await subscribeAllRemote();
+    }
+  }
+
+  /// Force-subscribe to EVERY remote broadcaster's audio+video (no uid needed).
+  /// Used by the audience right after join so the host's video is subscribed
+  /// even if `autoSubscribeVideo` was ignored or `onUserJoined` hasn't fired.
+  Future<void> subscribeAllRemote() async {
+    final engine = _engine;
+    if (engine == null) return;
+    try {
+      await engine.muteAllRemoteAudioStreams(false);
+      await engine.muteAllRemoteVideoStreams(false);
+      debugPrint('[AgoraCallService] subscribeAllRemote: un-muted all remote a/v');
+    } catch (e) {
+      debugPrint('[AgoraCallService] subscribeAllRemote failed: $e');
+    }
   }
 
   /// Re-assert the host's camera + mic publish once the channel join has
