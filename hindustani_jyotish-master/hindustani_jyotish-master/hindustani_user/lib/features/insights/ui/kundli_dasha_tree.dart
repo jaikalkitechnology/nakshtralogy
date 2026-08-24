@@ -3,6 +3,7 @@ import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../insight_models.dart';
 import '../insights_repository.dart';
 import 'kundli_section_scaffold.dart';
 
@@ -187,7 +188,14 @@ class _KundliDashaTreeState extends State<KundliDashaTree>
     final subs = (item['sub'] as List? ?? const []);
     final running = _isRunning(start, end);
     final past = _isPast(end);
-    final pc = kundliPlanetColor(planet);
+    // `planet` is the API VALUE (not a dict key), so the backend may return
+    // it already localized (e.g. "Rahu" → "राहु"). The colour/symbol lookups
+    // below are keyed by the canonical English name, so resolve through
+    // `canonicalPlanetName` first — otherwise a localized value falls through
+    // to the default colour and a "first character" symbol instead of the
+    // real glyph.
+    final canonical = canonicalPlanetName(planet);
+    final pc = kundliPlanetColor(canonical);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -215,7 +223,7 @@ class _KundliDashaTreeState extends State<KundliDashaTree>
                 border: Border.all(color: pc.withValues(alpha: 0.5)),
               ),
               child: Text(
-                kundliPlanetSymbols[planet] ??
+                kundliPlanetSymbols[canonical] ??
                     (planet.isNotEmpty ? planet.characters.first : '?'),
                 style: TextStyle(color: pc, fontWeight: FontWeight.w700, fontSize: 16),
               ),

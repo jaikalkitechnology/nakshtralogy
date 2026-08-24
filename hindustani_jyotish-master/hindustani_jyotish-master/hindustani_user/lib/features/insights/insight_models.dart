@@ -94,6 +94,25 @@ String planetChartAbbr(String planetName, String? langCode) {
       (planetName.length >= 2 ? planetName.substring(0, 2) : planetName);
 }
 
+/// Reverse-maps a planet name that MAY already be localized (e.g. the
+/// Vimshottari `dashas[].planet` value, which the backend now returns
+/// pre-translated — "Rahu" → "राहु") back to its canonical English key
+/// ("Rahu"). Client-side lookups that are keyed by the English name
+/// ([kundliPlanetColor], [kundliPlanetSymbols]) must go through this first so
+/// they keep working once the API value is localized; callers that want the
+/// user-facing text should keep using the raw API value/[planetLocalName].
+/// Falls back to the input unchanged when it isn't found in any language
+/// table (already English, "Lagna", or an unrecognized value).
+String canonicalPlanetName(String name) {
+  if (kPlanetOrder.contains(name) || name == 'Lagna') return name;
+  for (final table in kPlanetNameByLang.values) {
+    for (final entry in table.entries) {
+      if (entry.value == name) return entry.key;
+    }
+  }
+  return name;
+}
+
 double? _num(dynamic v) =>
     v is num ? v.toDouble() : (v is String ? double.tryParse(v) : null);
 
@@ -119,6 +138,167 @@ int? signIdxOfShort(String? code) {
   final i = kSignShort.indexWhere((s) => s.toLowerCase() == code.toLowerCase());
   return i != -1 ? i : signIdxOf(code);
 }
+
+/// Localized rashi name per short sign code (`"Ar"` → "मेष"/"மேஷம்"/…), for
+/// the payload shapes that key a map BY sign short-code — e.g.
+/// `ashtakavarga.sav` (`{"Ar": 28, "Ta": 30, ...}`) and the Ashtakavarga SAV
+/// grid. The dict KEY itself is always the English short code by backend
+/// design (the client indexes by it), so it never arrives pre-localized —
+/// unlike `chart.planets.*.sign`, which is a VALUE field the backend now
+/// localizes directly. Reuses the exact translations already verified in
+/// [kLocalizedSignIdx] so the two tables never disagree.
+const Map<String, Map<String, String>> kSignNameByLang = {
+  'hi': {
+    'Ar': 'मेष', 'Ta': 'वृषभ', 'Ge': 'मिथुन', 'Cn': 'कर्क', 'Le': 'सिंह', 'Vi': 'कन्या',
+    'Li': 'तुला', 'Sc': 'वृश्चिक', 'Sg': 'धनु', 'Cp': 'मकर', 'Aq': 'कुम्भ', 'Pi': 'मीन',
+  },
+  'mr': {
+    'Ar': 'मेष', 'Ta': 'वृषभ', 'Ge': 'मिथुन', 'Cn': 'कर्क', 'Le': 'सिंह', 'Vi': 'कन्या',
+    'Li': 'तूळ', 'Sc': 'वृश्चिक', 'Sg': 'धनु', 'Cp': 'मकर', 'Aq': 'कुंभ', 'Pi': 'मीन',
+  },
+  'gu': {
+    'Ar': 'મેષ', 'Ta': 'વૃષભ', 'Ge': 'મિથુન', 'Cn': 'કર્ક', 'Le': 'સિંહ', 'Vi': 'કન્યા',
+    'Li': 'તુલા', 'Sc': 'વૃશ્ચિક', 'Sg': 'ધનુ', 'Cp': 'મકર', 'Aq': 'કુંભ', 'Pi': 'મીન',
+  },
+  'bn': {
+    'Ar': 'মেষ', 'Ta': 'বৃষ', 'Ge': 'মিথুন', 'Cn': 'কর্কট', 'Le': 'সিংহ', 'Vi': 'কন্যা',
+    'Li': 'তুলা', 'Sc': 'বৃশ্চিক', 'Sg': 'ধনু', 'Cp': 'মকর', 'Aq': 'কুম্ভ', 'Pi': 'মীন',
+  },
+  'ta': {
+    'Ar': 'மேஷம்', 'Ta': 'ரிஷபம்', 'Ge': 'மிதுனம்', 'Cn': 'கடகம்', 'Le': 'சிம்மம்', 'Vi': 'கன்னி',
+    'Li': 'துலாம்', 'Sc': 'விருச்சிகம்', 'Sg': 'தனுசு', 'Cp': 'மகரம்', 'Aq': 'கும்பம்', 'Pi': 'மீனம்',
+  },
+  'te': {
+    'Ar': 'మేషం', 'Ta': 'వృషభం', 'Ge': 'మిథునం', 'Cn': 'కర్కాటకం', 'Le': 'సింహం', 'Vi': 'కన్య',
+    'Li': 'తుల', 'Sc': 'వృశ్చికం', 'Sg': 'ధనుస్సు', 'Cp': 'మకరం', 'Aq': 'కుంభం', 'Pi': 'మీనం',
+  },
+  'kn': {
+    'Ar': 'ಮೇಷ', 'Ta': 'ವೃಷಭ', 'Ge': 'ಮಿಥುನ', 'Cn': 'ಕರ್ಕಾಟಕ', 'Le': 'ಸಿಂಹ', 'Vi': 'ಕನ್ಯಾ',
+    'Li': 'ತುಲಾ', 'Sc': 'ವೃಶ್ಚಿಕ', 'Sg': 'ಧನು', 'Cp': 'ಮಕರ', 'Aq': 'ಕುಂಭ', 'Pi': 'ಮೀನ',
+  },
+  'ml': {
+    'Ar': 'മേടം', 'Ta': 'ഇടവം', 'Ge': 'മിഥുനം', 'Cn': 'കർക്കടകം', 'Le': 'ചിങ്ങം', 'Vi': 'കന്നി',
+    'Li': 'തുലാം', 'Sc': 'വൃശ്ചികം', 'Sg': 'ധനു', 'Cp': 'മകരം', 'Aq': 'കുംഭം', 'Pi': 'മീനം',
+  },
+  'pa': {
+    'Ar': 'ਮੇਖ', 'Ta': 'ਬ੍ਰਿਖ', 'Ge': 'ਮਿਥੁਨ', 'Cn': 'ਕਰਕ', 'Le': 'ਸਿੰਘ', 'Vi': 'ਕੰਨਿਆ',
+    'Li': 'ਤੁਲਾ', 'Sc': 'ਬ੍ਰਿਸ਼ਚਿਕ', 'Sg': 'ਧਨੁ', 'Cp': 'ਮਕਰ', 'Aq': 'ਕੁੰਭ', 'Pi': 'ਮੀਨ',
+  },
+  'or': {
+    'Ar': 'ମେଷ', 'Ta': 'ବୃଷ', 'Ge': 'ମିଥୁନ', 'Cn': 'କର୍କଟ', 'Le': 'ସିଂହ', 'Vi': 'କନ୍ୟା',
+    'Li': 'ତୁଳା', 'Sc': 'ବିଛା', 'Sg': 'ଧନୁ', 'Cp': 'ମକର', 'Aq': 'କୁମ୍ଭ', 'Pi': 'ମୀନ',
+  },
+};
+
+/// Localized display name for a sign short code (`"Ar"` → "मेष"); the code
+/// itself for English/unknown locales or unrecognized codes.
+String signLocalName(String? shortCode, String? langCode) {
+  if (shortCode == null) return '—';
+  return kSignNameByLang[langCode]?[shortCode] ?? shortCode;
+}
+
+/// Localized names for the 20 classical divisional (varga) charts (`"D1"` …
+/// `"D60"`) — structural UI chrome (the tile subtitle under each varga chart
+/// thumbnail), never returned by the API, so it must be localized client-side
+/// like the planet/sign tables above.
+const Map<String, Map<String, String>> kDivisionalNameByLang = {
+  'hi': {
+    'D1': 'राशि', 'D2': 'होरा', 'D3': 'द्रेष्काण', 'D4': 'चतुर्थांश', 'D5': 'पंचमांश',
+    'D6': 'षष्ठांश', 'D7': 'सप्तमांश', 'D8': 'अष्टमांश', 'D9': 'नवमांश', 'D10': 'दशमांश',
+    'D11': 'रुद्रांश', 'D12': 'द्वादशांश', 'D16': 'षोडशांश', 'D20': 'विंशांश',
+    'D24': 'चतुर्विंशांश', 'D27': 'भांश', 'D30': 'त्रिंशांश', 'D40': 'खवेदांश',
+    'D45': 'अक्षवेदांश', 'D60': 'षष्ट्यंश',
+  },
+  'mr': {
+    'D1': 'राशी', 'D2': 'होरा', 'D3': 'द्रेष्काण', 'D4': 'चतुर्थांश', 'D5': 'पंचमांश',
+    'D6': 'षष्ठांश', 'D7': 'सप्तमांश', 'D8': 'अष्टमांश', 'D9': 'नवमांश', 'D10': 'दशमांश',
+    'D11': 'रुद्रांश', 'D12': 'द्वादशांश', 'D16': 'षोडशांश', 'D20': 'विंशांश',
+    'D24': 'चतुर्विंशांश', 'D27': 'भांश', 'D30': 'त्रिंशांश', 'D40': 'खवेदांश',
+    'D45': 'अक्षवेदांश', 'D60': 'षष्ट्यंश',
+  },
+  'gu': {
+    'D1': 'રાશિ', 'D2': 'હોરા', 'D3': 'દ્રેષ્કાણ', 'D4': 'ચતુર્થાંશ', 'D5': 'પંચમાંશ',
+    'D6': 'ષષ્ઠાંશ', 'D7': 'સપ્તમાંશ', 'D8': 'અષ્ટમાંશ', 'D9': 'નવમાંશ', 'D10': 'દશમાંશ',
+    'D11': 'રુદ્રાંશ', 'D12': 'દ્વાદશાંશ', 'D16': 'ષોડશાંશ', 'D20': 'વિંશાંશ',
+    'D24': 'ચતુર્વિંશાંશ', 'D27': 'ભાંશ', 'D30': 'ત્રિંશાંશ', 'D40': 'ખવેદાંશ',
+    'D45': 'અક્ષવેદાંશ', 'D60': 'ષષ્ટ્યંશ',
+  },
+  'bn': {
+    'D1': 'রাশি', 'D2': 'হোরা', 'D3': 'দ্রেষ্কাণ', 'D4': 'চতুর্থাংশ', 'D5': 'পঞ্চমাংশ',
+    'D6': 'ষষ্ঠাংশ', 'D7': 'সপ্তমাংশ', 'D8': 'অষ্টমাংশ', 'D9': 'নবমাংশ', 'D10': 'দশমাংশ',
+    'D11': 'রুদ্রাংশ', 'D12': 'দ্বাদশাংশ', 'D16': 'ষোড়শাংশ', 'D20': 'বিংশাংশ',
+    'D24': 'চতুর্বিংশাংশ', 'D27': 'ভাংশ', 'D30': 'ত্রিংশাংশ', 'D40': 'খবেদাংশ',
+    'D45': 'অক্ষবেদাংশ', 'D60': 'ষষ্ট্যংশ',
+  },
+  'ta': {
+    'D1': 'ராசி', 'D2': 'ஓரை', 'D3': 'திரேக்காணம்', 'D4': 'சதுர்த்தாம்சம்', 'D5': 'பஞ்சமாம்சம்',
+    'D6': 'சஷ்டாம்சம்', 'D7': 'சப்தமாம்சம்', 'D8': 'அஷ்டமாம்சம்', 'D9': 'நவாம்சம்', 'D10': 'தசமாம்சம்',
+    'D11': 'ருத்ராம்சம்', 'D12': 'துவாதசாம்சம்', 'D16': 'ஷோடசாம்சம்', 'D20': 'விம்சாம்சம்',
+    'D24': 'சதுர்விம்சாம்சம்', 'D27': 'பாம்சம்', 'D30': 'திரிம்சாம்சம்', 'D40': 'கவேதாம்சம்',
+    'D45': 'அக்ஷவேதாம்சம்', 'D60': 'சஷ்டியாம்சம்',
+  },
+  'te': {
+    'D1': 'రాశి', 'D2': 'హోర', 'D3': 'ద్రేష్కాణం', 'D4': 'చతుర్థాంశ', 'D5': 'పంచమాంశ',
+    'D6': 'షష్ఠాంశ', 'D7': 'సప్తమాంశ', 'D8': 'అష్టమాంశ', 'D9': 'నవాంశ', 'D10': 'దశాంశ',
+    'D11': 'రుద్రాంశ', 'D12': 'ద్వాదశాంశ', 'D16': 'షోడశాంశ', 'D20': 'వింశాంశ',
+    'D24': 'చతుర్వింశాంశ', 'D27': 'భాంశ', 'D30': 'త్రింశాంశ', 'D40': 'ఖవేదాంశ',
+    'D45': 'అక్షవేదాంశ', 'D60': 'షష్ట్యంశ',
+  },
+  'kn': {
+    'D1': 'ರಾಶಿ', 'D2': 'ಹೋರಾ', 'D3': 'ದ್ರೇಷ್ಕಾಣ', 'D4': 'ಚತುರ್ಥಾಂಶ', 'D5': 'ಪಂಚಮಾಂಶ',
+    'D6': 'ಷಷ್ಠಾಂಶ', 'D7': 'ಸಪ್ತಮಾಂಶ', 'D8': 'ಅಷ್ಟಮಾಂಶ', 'D9': 'ನವಾಂಶ', 'D10': 'ದಶಾಂಶ',
+    'D11': 'ರುದ್ರಾಂಶ', 'D12': 'ದ್ವಾದಶಾಂಶ', 'D16': 'ಷೋಡಶಾಂಶ', 'D20': 'ವಿಂಶಾಂಶ',
+    'D24': 'ಚತುರ್ವಿಂಶಾಂಶ', 'D27': 'ಭಾಂಶ', 'D30': 'ತ್ರಿಂಶಾಂಶ', 'D40': 'ಖವೇದಾಂಶ',
+    'D45': 'ಅಕ್ಷವೇದಾಂಶ', 'D60': 'ಷಷ್ಟ್ಯಂಶ',
+  },
+  'ml': {
+    'D1': 'രാശി', 'D2': 'ഹോറ', 'D3': 'ദ്രേഷ്കാണം', 'D4': 'ചതുർത്ഥാംശം', 'D5': 'പഞ്ചമാംശം',
+    'D6': 'ഷഷ്ഠാംശം', 'D7': 'സപ്തമാംശം', 'D8': 'അഷ്ടമാംശം', 'D9': 'നവാംശം', 'D10': 'ദശാംശം',
+    'D11': 'രുദ്രാംശം', 'D12': 'ദ്വാദശാംശം', 'D16': 'ഷോഡശാംശം', 'D20': 'വിംശാംശം',
+    'D24': 'ചതുർവിംശാംശം', 'D27': 'ഭാംശം', 'D30': 'ത്രിംശാംശം', 'D40': 'ഖവേദാംശം',
+    'D45': 'അക്ഷവേദാംശം', 'D60': 'ഷഷ്ട്യംശം',
+  },
+  'pa': {
+    'D1': 'ਰਾਸ਼ੀ', 'D2': 'ਹੋਰਾ', 'D3': 'ਦ੍ਰੇਸ਼ਕਾਣ', 'D4': 'ਚਤੁਰਥਾਂਸ਼', 'D5': 'ਪੰਚਮਾਂਸ਼',
+    'D6': 'ਸ਼ਸ਼ਠਾਂਸ਼', 'D7': 'ਸਪਤਮਾਂਸ਼', 'D8': 'ਅਸ਼ਟਮਾਂਸ਼', 'D9': 'ਨਵਮਾਂਸ਼', 'D10': 'ਦਸ਼ਮਾਂਸ਼',
+    'D11': 'ਰੁਦਰਾਂਸ਼', 'D12': 'ਦਵਾਦਸ਼ਾਂਸ਼', 'D16': 'ਸ਼ੋਡਸ਼ਾਂਸ਼', 'D20': 'ਵਿੰਸ਼ਾਂਸ਼',
+    'D24': 'ਚਤੁਰਵਿੰਸ਼ਾਂਸ਼', 'D27': 'ਭਾਂਸ਼', 'D30': 'ਤ੍ਰਿੰਸ਼ਾਂਸ਼', 'D40': 'ਖਵੇਦਾਂਸ਼',
+    'D45': 'ਅਕਸ਼ਵੇਦਾਂਸ਼', 'D60': 'ਸ਼ਸ਼ਟਯੰਸ਼',
+  },
+  'or': {
+    'D1': 'ରାଶି', 'D2': 'ହୋରା', 'D3': 'ଦ୍ରେଷ୍କାଣ', 'D4': 'ଚତୁର୍ଥାଂଶ', 'D5': 'ପଞ୍ଚମାଂଶ',
+    'D6': 'ଷଷ୍ଠାଂଶ', 'D7': 'ସପ୍ତମାଂଶ', 'D8': 'ଅଷ୍ଟମାଂଶ', 'D9': 'ନବମାଂଶ', 'D10': 'ଦଶମାଂଶ',
+    'D11': 'ରୁଦ୍ରାଂଶ', 'D12': 'ଦ୍ୱାଦଶାଂଶ', 'D16': 'ଷୋଡଶାଂଶ', 'D20': 'ବିଂଶାଂଶ',
+    'D24': 'ଚତୁର୍ବିଂଶାଂଶ', 'D27': 'ଭାଂଶ', 'D30': 'ତ୍ରିଂଶାଂଶ', 'D40': 'ଖଭେଦାଂଶ',
+    'D45': 'ଅକ୍ଷଭେଦାଂଶ', 'D60': 'ଷଷ୍ଟ୍ୟଂଶ',
+  },
+};
+
+/// Localized varga-chart name for [code] (`"D9"` → "नवमांश"); falls back to
+/// [englishName] for English/unknown locales.
+String divisionalDisplayName(String code, String englishName, String? langCode) =>
+    kDivisionalNameByLang[langCode]?[code] ?? englishName;
+
+/// Localized labels for the six Shadbala component "balas" — structural UI
+/// chrome (per-planet strength breakdown row labels), never returned by the
+/// API.
+const Map<String, Map<String, String>> kBalaLabelByLang = {
+  'hi': {'sthana_bala': 'स्थान', 'dig_bala': 'दिक्', 'kala_bala': 'काल', 'chesta_bala': 'चेष्टा', 'naisargika_bala': 'नैसर्गिक', 'drik_bala': 'दृक्'},
+  'mr': {'sthana_bala': 'स्थान', 'dig_bala': 'दिक्', 'kala_bala': 'काल', 'chesta_bala': 'चेष्टा', 'naisargika_bala': 'नैसर्गिक', 'drik_bala': 'दृक्'},
+  'gu': {'sthana_bala': 'સ્થાન', 'dig_bala': 'દિક્', 'kala_bala': 'કાલ', 'chesta_bala': 'ચેષ્ટા', 'naisargika_bala': 'નૈસર્ગિક', 'drik_bala': 'દૃક્'},
+  'bn': {'sthana_bala': 'স্থান', 'dig_bala': 'দিক্', 'kala_bala': 'কাল', 'chesta_bala': 'চেষ্টা', 'naisargika_bala': 'নৈসর্গিক', 'drik_bala': 'দৃক্'},
+  'ta': {'sthana_bala': 'ஸ்தான', 'dig_bala': 'திக்', 'kala_bala': 'கால', 'chesta_bala': 'சேஷ்டா', 'naisargika_bala': 'நைசர்கிக', 'drik_bala': 'த்ருக்'},
+  'te': {'sthana_bala': 'స్థాన', 'dig_bala': 'దిక్', 'kala_bala': 'కాల', 'chesta_bala': 'చేష్టా', 'naisargika_bala': 'నైసర్గిక', 'drik_bala': 'దృక్'},
+  'kn': {'sthana_bala': 'ಸ್ಥಾನ', 'dig_bala': 'ದಿಕ್', 'kala_bala': 'ಕಾಲ', 'chesta_bala': 'ಚೇಷ್ಟಾ', 'naisargika_bala': 'ನೈಸರ್ಗಿಕ', 'drik_bala': 'ದೃಕ್'},
+  'ml': {'sthana_bala': 'സ്ഥാന', 'dig_bala': 'ദിക്', 'kala_bala': 'കാല', 'chesta_bala': 'ചേഷ്ടാ', 'naisargika_bala': 'നൈസർഗിക', 'drik_bala': 'ദൃക്'},
+  'pa': {'sthana_bala': 'ਸਥਾਨ', 'dig_bala': 'ਦਿਕ', 'kala_bala': 'ਕਾਲ', 'chesta_bala': 'ਚੇਸ਼ਟਾ', 'naisargika_bala': 'ਨੈਸਰਗਿਕ', 'drik_bala': 'ਦ੍ਰਿਕ'},
+  'or': {'sthana_bala': 'ସ୍ଥାନ', 'dig_bala': 'ଦିକ୍', 'kala_bala': 'କାଳ', 'chesta_bala': 'ଚେଷ୍ଟା', 'naisargika_bala': 'ନୈସର୍ଗିକ', 'drik_bala': 'ଦୃକ୍'},
+};
+
+/// Localized short label for a Shadbala component key (`"dig_bala"` →
+/// "दिक्"); falls back to [englishLabel] for English/unknown locales.
+String balaLabel(String key, String englishLabel, String? langCode) =>
+    kBalaLabelByLang[langCode]?[key] ?? englishLabel;
 
 /// One graha (or the lagna) row: sign / degree / nakshatra / pada + flags.
 class InsightPlanet {

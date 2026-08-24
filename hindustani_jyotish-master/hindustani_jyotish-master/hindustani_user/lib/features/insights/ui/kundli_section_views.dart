@@ -155,6 +155,7 @@ class _PlanetRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
     final badges = <Widget>[
       if (p.vakri) KundliBadge(text: 'R', color: AppColors.info),
       if (p.combust) KundliBadge(text: 'C', color: AppColors.saffron),
@@ -180,7 +181,7 @@ class _PlanetRow extends StatelessWidget {
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                Text(p.name,
+                Text(planetLocalName(p.name, lang),
                     style: AppTextStyles.body(size: 13.5, weight: FontWeight.w700)),
                 const SizedBox(width: 8),
                 for (final b in badges) ...[b, const SizedBox(width: 4)],
@@ -556,6 +557,7 @@ class _ShadbalaBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
     final r = ShadbalaResult.fromData(data);
     if (r.isEmpty) {
       return Center(
@@ -573,23 +575,23 @@ class _ShadbalaBody extends StatelessWidget {
           child: Column(children: [
             for (final p in ranked)
               ScoreBar(
-                label: p.planet,
+                label: planetLocalName(p.planet, lang),
                 value: p.score ?? 0,
                 max: 130,
                 color: kundliGradeColor(p.score ?? 0, max: 130),
               ),
           ]),
         ),
-        for (final p in ranked) _planetCard(l, p),
+        for (final p in ranked) _planetCard(l, p, lang),
       ],
     );
   }
 
-  Widget _planetCard(AppLocalizations l, ShadbalaPlanet p) {
+  Widget _planetCard(AppLocalizations l, ShadbalaPlanet p, String lang) {
     final score = p.score ?? 0;
     final color = kundliGradeColor(score, max: 130);
     return KundliSectionCard(
-      title: p.planet,
+      title: planetLocalName(p.planet, lang),
       icon: null,
       trailing: Text(
         '${score.toStringAsFixed(0)} · ${(p.totalRupas ?? 0).toStringAsFixed(2)} ${l.shadbalaRupas}',
@@ -598,7 +600,7 @@ class _ShadbalaBody extends StatelessWidget {
       child: Column(children: [
         for (final e in p.balas.entries)
           ScoreBar(
-            label: _balaLabels[e.key] ?? e.key,
+            label: balaLabel(e.key, _balaLabels[e.key] ?? e.key, lang),
             value: e.value,
             max: 6,
             valueText: e.value.toStringAsFixed(2),
@@ -632,6 +634,7 @@ class _AshtakavargaBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
     final av = AshtakavargaResult.fromData(data);
     if (av.isEmpty) {
       return Center(
@@ -650,7 +653,7 @@ class _AshtakavargaBody extends StatelessWidget {
             runSpacing: 8,
             children: [
               for (final code in kSignShort)
-                if (av.sav[code] != null) _savCell(code, av.sav[code]!),
+                if (av.sav[code] != null) _savCell(code, av.sav[code]!, lang),
             ],
           ),
         ),
@@ -661,7 +664,7 @@ class _AshtakavargaBody extends StatelessWidget {
             child: Column(children: [
               for (final e in av.planetsBav.entries)
                 ScoreBar(
-                  label: e.key,
+                  label: planetLocalName(e.key, lang),
                   value: (e.value['total_rekha'] as num?)?.toDouble() ?? 0,
                   max: 56,
                   color: kundliPlanetColor(e.key),
@@ -673,7 +676,7 @@ class _AshtakavargaBody extends StatelessWidget {
     );
   }
 
-  Widget _savCell(String code, int value) {
+  Widget _savCell(String code, int value, String lang) {
     final color = kundliGradeColor(value.toDouble(), max: 40);
     return Container(
       width: 60,
@@ -684,7 +687,9 @@ class _AshtakavargaBody extends StatelessWidget {
         border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Column(children: [
-        Text(code,
+        Text(signLocalName(code, lang),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: AppTextStyles.label(size: 10, color: AppColors.ivoryDim)),
         const SizedBox(height: 2),
         Text('$value',
