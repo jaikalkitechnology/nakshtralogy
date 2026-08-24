@@ -496,13 +496,23 @@ def build_localized_kundli_pdf(
                    if any(isinstance(v, dict) and f"D{n}" in v for v in divisionals.values())]
         d_order = ["Lagna"] + [n for n in _PLANET_ORDER if n in divisionals] + \
                   [n for n in divisionals if n not in _PLANET_ORDER and n != "Lagna"]
-        div_rows = []
-        for n in d_order:
-            v = divisionals.get(n)
-            if isinstance(v, dict):
-                div_rows.append([_pname(n)] + [_s(v.get(c)) or "—" for c in d_codes])
-        if div_rows and d_codes:
-            _sec("divisionals", "Divisional Charts", [_hd("planet", "Planet")] + d_codes, div_rows)
+        # Split into two tables of ~10 D-chart columns each — all 20 in one
+        # table overflows an A4 portrait page width and gets clipped.
+        half = (len(d_codes) + 1) // 2
+        d_groups = [g for g in (d_codes[:half], d_codes[half:]) if g]
+        for gi, codes in enumerate(d_groups):
+            div_rows = []
+            for n in d_order:
+                v = divisionals.get(n)
+                if isinstance(v, dict):
+                    div_rows.append([_pname(n)] + [_s(v.get(c)) or "—" for c in codes])
+            if not div_rows:
+                continue
+            if gi == 0:
+                _sec("divisionals", "Divisional Charts", [_hd("planet", "Planet")] + codes, div_rows)
+            else:
+                e.append(Spacer(1, 2 * mm))
+                e.append(grid([[_hd("planet", "Planet")] + codes] + div_rows))
 
     # Vimshottari
     dashas = (data.get("vimshottari") or {}).get("dashas") or []
