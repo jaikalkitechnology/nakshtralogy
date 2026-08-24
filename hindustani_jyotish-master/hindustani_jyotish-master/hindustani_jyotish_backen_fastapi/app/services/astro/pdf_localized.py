@@ -553,3 +553,121 @@ def build_localized_kundli_pdf(
 
     doc.build(e)
     return buf.getvalue()
+
+
+def _generic_flow(v: Any, *, reg: str, body_style, lead: str = "") -> list:
+    """Render a curated scalar/list/dict value into reportlab flowables using
+    the already-registered Unicode font `reg` (mirrors pdf_report._render_value,
+    but for reportlab Paragraph/Table instead of HTML)."""
+    from reportlab.lib import colors
+    from reportlab.lib.units import mm
+    from reportlab.platypus import Paragraph, Spacer, Table, TableStyle
+
+    if isinstance(v, bool):
+        return [Paragraph(f"{lead}{'✓' if v else '—'}", body_style)]
+    if isinstance(v, (int, float)):
+        return [Paragraph(f"{lead}{v}", body_style)]
+    if isinstance(v, str):
+        if not v.strip():
+            return []
+        return [Paragraph(f"{lead}{_s(v)}", body_style)]
+    if isinstance(v, list):
+        items = [x for x in v if x not in (None, "")]
+        out: list = []
+        for x in items:
+            out += _generic_flow(x, reg=reg, body_style=body_style, lead="• ")
+        return out
+    if isinstance(v, dict):
+        rows = [
+            [_s(_humanize_key(str(k))), _s(val) if not isinstance(val, (list, dict)) else
+             ("; ".join(_s(x) for x in val) if isinstance(val, list) else "—")]
+            for k, val in v.items()
+            if str(k) not in _GENERIC_SKIP and val not in (None, "", [], {})
+        ]
+        if not rows:
+            return []
+        t = Table(rows, colWidths=[55 * mm, 105 * mm])
+        t.setStyle(TableStyle([
+            ("TEXTCOLOR", (0, 0), (0, -1), colors.HexColor(_COPPER)),
+            ("FONTNAME", (0, 0), (-1, -1), reg),
+            ("FONTSIZE", (0, 0), (-1, -1), 9.5),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+            ("LINEBELOW", (0, 0), (-1, -1), 0.25, colors.HexColor("#E0E0E0")),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ]))
+        return [t, Spacer(1, 2 * mm)]
+    return [Paragraph(f"{lead}{_s(str(v))}", body_style)]
+
+
+_GENERIC_SKIP = {"pdf_url", "source", "full_response", "chart_id", "engine",
+                  "version", "domain", "birth_jd", "schema_valid"}
+
+
+def _humanize_key(key: str) -> str:
+    from app.services.astro.pdf_report import _humanize
+    return _humanize(key)
+
+
+def build_localized_insight_pdf(
+    *, title: str, details: list[tuple[str, str]], data: dict, lang: str | None,
+) -> bytes:
+    """Generic reportlab fallback for the non-kundli cosmic services (planet
+    position, love compatibility, birthday number, daily horoscope/prediction,
+    specialist reports) — same role as ``build_localized_kundli_pdf`` but for
+    ``build_insight_report_pdf``'s curated ``data`` shape. Uses a registered
+    Noto face so Indic scripts render as real glyphs (not the Helvetica tofu
+    boxes of the old plain ``build_insight_pdf``) when WeasyPrint itself is
+    unavailable. Values are already localized by the caller; this only lays
+    them out and translates structural headings via [pdf_labels]."""
+    from reportlab.lib import colors
+    from reportlab.lib.enums import TA_CENTER
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import ParagraphStyle
+    from reportlab.lib.units import mm
+    from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+
+    from app.services.astro import pdf_labels
+
+    full = normalize_lang(lang) if lang else "english"
+    reg, bold = _fonts_for(full)
+
+    def sty(size: float, color: str, *, b: bool = False, center: bool = False):
+        return ParagraphStyle(
+            f"g{size}{color}{b}{center}", fontName=bold if b else reg,
+            fontSize=size, leading=size * 1.4, textColor=colors.HexColor(color),
+            alignment=TA_CENTER if center else 0,
+        )
+
+    h1 = sty(20, _INDIGO, b=True, center=True)
+    h2 = sty(13, _SAFFRON, b=True)
+    body = sty(10.5, "#222222")
+
+    buf = io.BytesIO()
+    doc = SimpleDocTemplate(buf, pagesize=A4, title=f"Hindustani Jyotish — {title}",
+                            topMargin=18 * mm, bottomMargin=18 * mm)
+    e: list = [Paragraph(_s(pdf_labels.title(title, full)), h1), Spacer(1, 6 * mm)]
+
+    if details:
+        rows = [[_s(k), _s(v)] for k, v in details if v]
+        if rows:
+            t = Table(rows, colWidths=[55 * mm, 105 * mm])
+            t.setStyle(TableStyle([
+                ("TEXTCOLOR", (0, 0), (0, -1), colors.HexColor(_COPPER)),
+                ("FONTNAME", (0, 0), (-1, -1), reg),
+                ("FONTSIZE", (0, 0), (-1, -1), 10),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                ("LINEBELOW", (0, 0), (-1, -1), 0.25, colors.HexColor("#E0E0E0")),
+            ]))
+            e += [t, Spacer(1, 6 * mm)]
+
+    for key, val in (data.items() if isinstance(data, dict) else []):
+        if str(key) in _GENERIC_SKIP or val in (None, "", [], {}):
+            continue
+        flow = _generic_flow(val, reg=reg, body_style=body)
+        if not flow:
+            continue
+        head = pdf_labels.heading(str(key), full, fallback=_humanize_key(str(key)))
+        e += [Paragraph(_s(head), h2), Spacer(1, 2 * mm), *flow, Spacer(1, 5 * mm)]
+
+    doc.build(e)
+    return buf.getvalue()
