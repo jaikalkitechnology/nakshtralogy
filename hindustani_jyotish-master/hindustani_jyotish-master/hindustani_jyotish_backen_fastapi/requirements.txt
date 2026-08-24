@@ -39,6 +39,13 @@ agora-token-builder==1.0.0
 pyswisseph==2.10.3.2          # Swiss Ephemeris — planetary positions
 reportlab==4.2.5             # PDF report generation (Latin / fallback)
 weasyprint==62.3            # HTML→PDF with Pango/HarfBuzz shaping (Indic PDFs)
+pydyf==0.11.0                # weasyprint 62.3 pins pydyf>=0.10.0 with no upper bound, but
+                              # pydyf 0.12 renamed/removed the Stream.transform() API weasyprint
+                              # 62.3 calls — an unpinned install silently picks up pydyf's latest
+                              # and every write_pdf() throws AttributeError("'super' object has
+                              # no attribute 'transform'"), caught by the broad except in
+                              # kundli_service._save_pdf() and silently falling back to the old
+                              # Helvetica-only reportlab builder (tofu boxes for non-Latin text).
 
 # Server-side image compression for uploads (avatars, KYC photos, banners)
 Pillow==12.3.0
