@@ -573,6 +573,7 @@ class _PlanetTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
     TableRow row(List<Widget> cells, {BoxDecoration? decoration}) => TableRow(
           decoration: decoration,
           children: [
@@ -617,7 +618,7 @@ class _PlanetTable extends StatelessWidget {
           for (final p in planets)
             row([
               cell(
-                '${p.name}${p.vakri ? ' (R)' : ''}',
+                '${planetLocalName(p.name, lang)}${p.vakri ? ' (R)' : ''}',
                 color: AppColors.ivory,
                 weight: FontWeight.w700,
               ),

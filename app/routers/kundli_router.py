@@ -261,7 +261,7 @@ def vimshottari(
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
     result = nk_engine.get_vimshottari(data["_pdata"], data["birth_jd"], levels)
-    return _ok(result)
+    return _ok(localize_report(result, lang))
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -368,7 +368,7 @@ def shadbala(
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
-    return _ok(nk_engine.get_shadbala(data["_pdata"], data["birth_jd"]))
+    return _ok(localize_report(nk_engine.get_shadbala(data["_pdata"], data["birth_jd"]), lang))
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -384,7 +384,7 @@ def ashtakavarga(
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
-    return _ok(nk_engine.get_ashtakavarga(data["_pdata"]))
+    return _ok(localize_report(nk_engine.get_ashtakavarga(data["_pdata"]), lang))
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -400,7 +400,7 @@ def aspects(
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
-    return _ok(nk_engine.get_aspect_matrix(data["_pdata"]))
+    return _ok(localize_report(nk_engine.get_aspect_matrix(data["_pdata"]), lang))
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -449,7 +449,8 @@ def dasha_activation(
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
-    return _ok(nk_engine.get_dasha_activation(data["_pdata"], data["birth_jd"], query_date))
+    result = nk_engine.get_dasha_activation(data["_pdata"], data["birth_jd"], query_date)
+    return _ok(localize_report(result, lang))
 
 
 # ═══════════════════════════════════════════════════════════════════

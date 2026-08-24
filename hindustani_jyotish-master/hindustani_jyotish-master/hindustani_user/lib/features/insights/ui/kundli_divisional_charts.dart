@@ -31,6 +31,7 @@ class KundliDivisionalCharts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
     if (_divisionals.isEmpty) {
       return Center(
           child: Text(l.kunNoData,
@@ -57,7 +58,7 @@ class KundliDivisionalCharts extends StatelessWidget {
                     width: tileW,
                     child: _DivTile(
                       code: code,
-                      name: _labels[code] ?? code,
+                      name: divisionalDisplayName(code, _labels[code] ?? code, lang),
                       divisionals: _divisionals,
                       planets: _planets,
                     ),
