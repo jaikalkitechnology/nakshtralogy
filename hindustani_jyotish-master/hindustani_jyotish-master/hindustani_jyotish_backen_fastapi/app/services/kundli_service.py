@@ -168,19 +168,29 @@ def _save_pdf(
 ) -> str:
     """Render the curated data as a PDF and store it under reports/.
 
-    Prefers the WeasyPrint localized builder (Pango/HarfBuzz — renders Indic
-    scripts correctly for the selected language); if WeasyPrint or its system
-    libs are unavailable, falls back to the classic reportlab English builder so
-    a report is always produced."""
+    3-tier fallback, same shape as the Detailed Kundli PDF's:
+      1. WeasyPrint (Pango/HarfBuzz — best-quality Indic shaping).
+      2. reportlab + a registered Noto face (still renders real Indic glyphs,
+         just without HarfBuzz's conjunct shaping) — so a WeasyPrint hiccup
+         degrades to a still-readable localized PDF instead of English.
+      3. The classic English-only reportlab builder, as an absolute last
+         resort so a report is always produced."""
     try:
         from app.services.astro.pdf_report import build_insight_report_pdf
         pdf_bytes = build_insight_report_pdf(
             title=title, details=details, data=data, lang=lang,
         )
-    except Exception:  # noqa: BLE001 — WeasyPrint missing/broken → English fallback
-        logger.exception("localized insight PDF failed; using English fallback")
-        sections = [(k, v) for k, v in data.items() if k not in ("pdf_url", "source")]
-        pdf_bytes = build_insight_pdf(title=title, details=details, sections=sections)
+    except Exception:  # noqa: BLE001 — WeasyPrint missing/broken → try reportlab-localized
+        logger.exception("WeasyPrint insight PDF failed; trying reportlab localized")
+        try:
+            from app.services.astro.pdf_localized import build_localized_insight_pdf
+            pdf_bytes = build_localized_insight_pdf(
+                title=title, details=details, data=data, lang=lang,
+            )
+        except Exception:  # noqa: BLE001
+            logger.exception("reportlab localized insight PDF failed; using English fallback")
+            sections = [(k, v) for k, v in data.items() if k not in ("pdf_url", "source")]
+            pdf_bytes = build_insight_pdf(title=title, details=details, sections=sections)
     return storage.save_bytes(f"reports/{uuid.uuid4()}.pdf", pdf_bytes)
 
 
