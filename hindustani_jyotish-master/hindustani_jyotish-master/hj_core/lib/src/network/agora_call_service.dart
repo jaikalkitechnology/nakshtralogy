@@ -489,7 +489,41 @@ class AgoraCallService {
     // onFirstRemoteVideoFrame/onRemoteVideoStateChanged bind the remote view.
     if (!asHost) {
       await subscribeAllRemote();
+      _armResubscribeRetry();
     }
+  }
+
+  /// Retries [subscribeAllRemote] every few seconds for a bounded window
+  /// after an audience member joins, stopping as soon as a remote stream
+  /// actually binds ([remoteUid] becomes non-null) or the window elapses.
+  ///
+  /// The single subscribeAllRemote() call right after joinChannel can race
+  /// the Agora SDK's own internal channel/subscription setup — a documented
+  /// timing issue where a mute/unmute call issued too soon after joining is
+  /// silently dropped rather than queued. One retry a few seconds later,
+  /// once the SDK has settled, is a known workaround. Also covers the case
+  /// where the astrologer hasn't started publishing yet at join time and
+  /// begins shortly after — though onUserJoined et al. should already catch
+  /// that, this is a belt-and-suspenders path in case an event is missed.
+  Timer? _resubscribeTimer;
+  int _resubscribeAttempts = 0;
+  static const _resubscribeMaxAttempts = 8; // ~ every 4s for 32s
+  static const _resubscribeInterval = Duration(seconds: 4);
+
+  void _armResubscribeRetry() {
+    _resubscribeTimer?.cancel();
+    _resubscribeAttempts = 0;
+    _resubscribeTimer = Timer.periodic(_resubscribeInterval, (timer) {
+      if (_disposed || remoteUid.value != null ||
+          _resubscribeAttempts >= _resubscribeMaxAttempts) {
+        timer.cancel();
+        return;
+      }
+      _resubscribeAttempts++;
+      debugPrint('[AgoraCallService] resubscribe retry #$_resubscribeAttempts '
+          '(remoteUid still null)');
+      subscribeAllRemote();
+    });
   }
 
   /// Force-subscribe to EVERY remote broadcaster's audio+video (no uid needed).
@@ -637,6 +671,8 @@ class AgoraCallService {
     // no-op, not a "ValueNotifier used after being disposed" crash.
     if (_disposed) return;
     _disposed = true;
+    _resubscribeTimer?.cancel();
+    _resubscribeTimer = null;
     remoteUid.dispose();
     peerLeft.dispose();
     joined.dispose();

@@ -51,6 +51,27 @@ class BroadcastCubit extends Cubit<BroadcastState> {
   Timer? _mediaGraceTimer;
   static const _mediaGrace = Duration(seconds: 45);
 
+  // Publish re-assertion retry — see the call site in [start] for why a
+  // single ensureHostPublishing() call isn't always enough.
+  Timer? _publishRetryTimer;
+  int _publishRetryAttempts = 0;
+  static const _publishRetryMaxAttempts = 6; // every 4s for ~24s
+  static const _publishRetryInterval = Duration(seconds: 4);
+
+  void _armPublishRetry(AgoraCallService agora) {
+    _publishRetryTimer?.cancel();
+    _publishRetryAttempts = 0;
+    _publishRetryTimer = Timer.periodic(_publishRetryInterval, (timer) {
+      if (isClosed || state.phase != BroadcastPhase.live ||
+          _publishRetryAttempts >= _publishRetryMaxAttempts) {
+        timer.cancel();
+        return;
+      }
+      _publishRetryAttempts++;
+      agora.ensureHostPublishing();
+    });
+  }
+
   bool _wakelockHeld = false;
 
   /// Starts the broadcast: requests permissions, tells the server, opens the
@@ -124,6 +145,13 @@ class BroadcastCubit extends Cubit<BroadcastState> {
       // the camera, so viewers hear the astrologer but see a black video —
       // this reliably starts the camera publish. Guarded; never fails go-live.
       await agora.ensureHostPublishing();
+      // A single re-assertion can itself race the SDK's own post-join
+      // internal setup (a known Agora timing issue — a publish call made too
+      // soon after joinChannel can be silently dropped). Retry a few times
+      // over the first ~24s so a late-settling SDK still ends up actually
+      // publishing the camera track even if the immediate call above lands
+      // in that window.
+      _armPublishRetry(agora);
       agora.mediaFailure.addListener(_onAgoraMediaFailure);
 
       _emit(state.copyWith(
@@ -164,6 +192,8 @@ class BroadcastCubit extends Cubit<BroadcastState> {
     _heartbeatTimer = null;
     _mediaGraceTimer?.cancel();
     _mediaGraceTimer = null;
+    _publishRetryTimer?.cancel();
+    _publishRetryTimer = null;
     await _socketSub?.cancel();
     _socket?.dispose();
     _socket = null;
@@ -502,6 +532,8 @@ class BroadcastCubit extends Cubit<BroadcastState> {
     _heartbeatTimer = null;
     _mediaGraceTimer?.cancel();
     _mediaGraceTimer = null;
+    _publishRetryTimer?.cancel();
+    _publishRetryTimer = null;
     await _socketSub?.cancel();
     _socket?.dispose();
     _socket = null;
