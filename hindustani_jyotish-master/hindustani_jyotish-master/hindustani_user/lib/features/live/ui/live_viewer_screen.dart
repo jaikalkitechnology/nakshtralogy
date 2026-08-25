@@ -833,7 +833,7 @@ class _WaitingSurface extends StatelessWidget {
             style: AppTextStyles.body(color: AppColors.ivoryDim),
           ),
           if (agora != null) ...[
-            const SizedBox(height: 14),
+            const SizedBox(height: 20),
             AnimatedBuilder(
               animation: Listenable.merge([
                 agora!.joined,
@@ -842,16 +842,34 @@ class _WaitingSurface extends StatelessWidget {
                 agora!.remoteVideoState,
                 agora!.mediaFailure,
               ]),
-              builder: (context, _) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+              // TEMPORARY, deliberately loud (solid bright background, large
+              // bold black text): the previous subtle gold-on-transparent
+              // version wasn't visible in a couple of forwarded screenshots —
+              // whether that was WhatsApp's image recompression eating fine
+              // small text, or a stale build not running this code at all,
+              // this version can't be missed or blurred away if it's on
+              // screen at all, which itself is the useful signal.
+              builder: (context, _) => Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFEB3B),
+                  borderRadius: BorderRadius.circular(6),
+                ),
                 child: Text(
-                  '[debug: joined=${agora!.joined.value} '
-                  'rUid=${agora!.remoteUid.value ?? "-"} '
-                  'frame=${agora!.remoteVideoInfo.value ?? "none"} '
-                  'vstate=${agora!.remoteVideoState.value ?? "-"} '
-                  'failure=${agora!.mediaFailure.value ?? "-"}]',
+                  'DEBUG BUILD CHECK\n'
+                  'joined=${agora!.joined.value}  '
+                  'rUid=${agora!.remoteUid.value ?? "-"}\n'
+                  'frame=${agora!.remoteVideoInfo.value ?? "none"}  '
+                  'vstate=${agora!.remoteVideoState.value ?? "-"}\n'
+                  'failure=${agora!.mediaFailure.value ?? "-"}',
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.mono(size: 11, color: AppColors.gold),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.black,
+                    height: 1.4,
+                  ),
                 ),
               ),
             ),
