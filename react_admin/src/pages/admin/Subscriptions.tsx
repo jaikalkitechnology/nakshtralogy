@@ -183,13 +183,13 @@ export default function Subscriptions() {
       )}
 
       {editing && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4" onClick={() => setEditing(null)}>
-          <div className="w-full max-w-lg rounded-2xl border border-border bg-card p-5 space-y-3" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-black/60 p-4" onClick={() => setEditing(null)}>
+          <div className="my-8 w-full max-w-lg rounded-2xl border border-border bg-card p-5 space-y-3" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-foreground">{editing.id ? "Edit plan" : "New plan"}</h2>
               <button onClick={() => setEditing(null)}><X className="w-5 h-5 text-muted-foreground" /></button>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <label className="text-xs text-muted-foreground">Code (plus_7…)<Input value={editing.code ?? ""} onChange={(e) => setEditing({ ...editing, code: e.target.value })} /></label>
               <label className="text-xs text-muted-foreground">Duration (days)<Input type="number" value={editing.duration_days ?? 0} onChange={(e) => setEditing({ ...editing, duration_days: Number(e.target.value) })} /></label>
               <label className="col-span-2 text-xs text-muted-foreground">Name<Input value={editing.name ?? ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })} /></label>
