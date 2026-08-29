@@ -239,6 +239,11 @@ const AdminFeatures = () => {
   });
   const [kycRejectReason, setKycRejectReason] = useState<string>("");
 
+  // KYC view-docs dialog (popup) — Front/Back/Selfie for one KYC row
+  const [kycDocsDialog, setKycDocsDialog] = useState<{ open: boolean; kyc: any }>({
+    open: false, kyc: null,
+  });
+
   // ── Reviews Management state ─────────────────────────────────────
   const REVIEWS_PAGE_SIZE = 15;
   const [reviewsList, setReviewsList] = useState<any[]>([]);
@@ -1745,35 +1750,35 @@ const AdminFeatures = () => {
                             {k.rejection_reason && (
                               <p className="text-xs text-destructive mt-1">Rejected: {k.rejection_reason}</p>
                             )}
-                            {/* Document images — auth-protected paths, so these must be
-                                fetched with the admin token (KycFileView) rather than a
-                                plain <a href> tab-open, which sends no Authorization
-                                header and fails. */}
-                            <div className="grid grid-cols-3 gap-2 mt-2 max-w-md">
-                              <KycFileView label="Front" path={k.front_url} />
-                              <KycFileView label="Back" path={k.back_url} />
-                              <KycFileView label="Selfie" path={k.selfie_url} />
-                            </div>
                           </div>
                         </div>
-                        {k.status === "pending" && (
-                          <div className="flex gap-1">
-                            <Button
-                              size="sm"
-                              className="gradient-gold text-primary-foreground h-8 text-xs"
-                              onClick={() => approveKycDoc(k.id)}
-                            >
-                              <CheckCircle className="w-3 h-3 mr-1" /> Approve
-                            </Button>
-                            <Button
-                              size="sm" variant="outline"
-                              className="border-destructive text-destructive h-8 text-xs hover:bg-destructive/10"
-                              onClick={() => openKycRejectDialog(k)}
-                            >
-                              <X className="w-3 h-3 mr-1" /> Reject
-                            </Button>
-                          </div>
-                        )}
+                        <div className="flex flex-col gap-1 items-end">
+                          <Button
+                            size="sm" variant="outline"
+                            className="border-border h-8 text-xs whitespace-nowrap"
+                            onClick={() => setKycDocsDialog({ open: true, kyc: k })}
+                          >
+                            <Eye className="w-3 h-3 mr-1" /> View Docs
+                          </Button>
+                          {k.status === "pending" && (
+                            <div className="flex gap-1">
+                              <Button
+                                size="sm"
+                                className="gradient-gold text-primary-foreground h-8 text-xs"
+                                onClick={() => approveKycDoc(k.id)}
+                              >
+                                <CheckCircle className="w-3 h-3 mr-1" /> Approve
+                              </Button>
+                              <Button
+                                size="sm" variant="outline"
+                                className="border-destructive text-destructive h-8 text-xs hover:bg-destructive/10"
+                                onClick={() => openKycRejectDialog(k)}
+                              >
+                                <X className="w-3 h-3 mr-1" /> Reject
+                              </Button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -2208,6 +2213,44 @@ const AdminFeatures = () => {
                   <Button variant="outline" onClick={() => { setRejectDialog({ open: false, astro: null }); setRejectSections([]); }}>Cancel</Button>
                   <Button onClick={submitReject} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                     Reject & Notify
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            {/* ══════ KYC View Docs Dialog (popup) ══════ */}
+            <Dialog open={kycDocsDialog.open} onOpenChange={(v) => !v && setKycDocsDialog({ open: false, kyc: null })}>
+              <DialogContent className="bg-card border-border sm:max-w-lg">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-foreground">
+                    <Eye className="w-5 h-5 text-primary" /> KYC Documents
+                  </DialogTitle>
+                </DialogHeader>
+                {kycDocsDialog.kyc && (
+                  <div className="space-y-4 py-2">
+                    <div className="bg-muted/40 rounded-lg p-3 border border-border">
+                      <p className="text-sm text-foreground font-medium">{kycDocsDialog.kyc.user_name}</p>
+                      <p className="text-xs text-muted-foreground">{kycDocsDialog.kyc.user_email}</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Doc: <span className="text-foreground capitalize">{kycDocsDialog.kyc.doc_type}</span>
+                        {kycDocsDialog.kyc.doc_number && <> · #{kycDocsDialog.kyc.doc_number}</>}
+                      </p>
+                    </div>
+                    {/* Auth-protected paths — fetched with the admin token via
+                        KycFileView rather than a plain link/tab-open. */}
+                    <div className="grid grid-cols-3 gap-3">
+                      <KycFileView label="Front" path={kycDocsDialog.kyc.front_url} />
+                      <KycFileView label="Back" path={kycDocsDialog.kyc.back_url} />
+                      <KycFileView label="Selfie" path={kycDocsDialog.kyc.selfie_url} />
+                    </div>
+                    {kycDocsDialog.kyc.rejection_reason && (
+                      <p className="text-xs text-destructive">Rejected: {kycDocsDialog.kyc.rejection_reason}</p>
+                    )}
+                  </div>
+                )}
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setKycDocsDialog({ open: false, kyc: null })}>
+                    Close
                   </Button>
                 </DialogFooter>
               </DialogContent>
