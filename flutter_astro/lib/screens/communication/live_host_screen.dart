@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 
@@ -198,6 +199,11 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
       _startPolling();
       _startWatchdog();
       _durationTimer = Timer.periodic(const Duration(seconds: 1), (_) => setState(() => _seconds++));
+      // Keep the screen on for the whole broadcast — the normal screen-timeout
+      // would otherwise dim/lock the device mid-session, which on most phones
+      // also suspends the camera and silently drops the astrologer's video.
+      // Released on every exit path (manual end, auto-end, and dispose) below.
+      unawaited(WakelockPlus.enable());
     }
   }
 
@@ -265,6 +271,7 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
     _pollTimer?.cancel();
     _durationTimer?.cancel();
     _watchdogTimer?.cancel();
+    unawaited(WakelockPlus.disable());
     try {
       await _engine?.leaveChannel();
       await _engine?.release();
@@ -299,6 +306,7 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
     _pollTimer?.cancel();
     _durationTimer?.cancel();
     _watchdogTimer?.cancel();
+    unawaited(WakelockPlus.disable());
     await _engine?.leaveChannel();
     await _engine?.release();
     _engine = null;
@@ -449,6 +457,10 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
     _watchdogTimer?.cancel();
     _replyCtrl.dispose();
     _replyFocus.dispose();
+    // Safety net: covers a screen teardown that bypasses both _endStream and
+    // _autoEndStream (e.g. the route being popped/replaced some other way).
+    // Disabling when it was never enabled is a harmless no-op.
+    if (_isLive) unawaited(WakelockPlus.disable());
     _engine?.leaveChannel();
     _engine?.release();
     super.dispose();

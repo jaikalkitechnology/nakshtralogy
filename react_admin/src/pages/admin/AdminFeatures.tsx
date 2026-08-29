@@ -1737,17 +1737,14 @@ const AdminFeatures = () => {
                             {k.rejection_reason && (
                               <p className="text-xs text-destructive mt-1">Rejected: {k.rejection_reason}</p>
                             )}
-                            {/* Document images */}
-                            <div className="flex gap-2 mt-2 flex-wrap">
-                              {k.front_url && (
-                                <a href={k.front_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">Front ↗</a>
-                              )}
-                              {k.back_url && (
-                                <a href={k.back_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">Back ↗</a>
-                              )}
-                              {k.selfie_url && (
-                                <a href={k.selfie_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">Selfie ↗</a>
-                              )}
+                            {/* Document images — auth-protected paths, so these must be
+                                fetched with the admin token (KycFileView) rather than a
+                                plain <a href> tab-open, which sends no Authorization
+                                header and fails. */}
+                            <div className="grid grid-cols-3 gap-2 mt-2 max-w-md">
+                              <KycFileView label="Front" path={k.front_url} />
+                              <KycFileView label="Back" path={k.back_url} />
+                              <KycFileView label="Selfie" path={k.selfie_url} />
                             </div>
                           </div>
                         </div>
