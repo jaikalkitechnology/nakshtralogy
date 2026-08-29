@@ -1543,10 +1543,18 @@ const AdminFeatures = () => {
                         <span><Video className="w-3 h-3 inline" /> ₹{a.rate_per_min_video}/m Video</span>
                       </div>
 
-                      {/* Primary action row: Approve/Reject (pending) or View/Commission */}
+                      {/* Primary action row: View/Approve/Reject (pending) or View/Commission */}
                       <div className="flex gap-2">
                         {!a.is_approved ? (
                           <>
+                            <Button
+                              size="sm" variant="outline"
+                              className="flex-1 border-border text-xs"
+                              onClick={() => openAstroDetail(a)}
+                              title="View full profile & KYC documents before deciding"
+                            >
+                              <Eye className="w-3 h-3 mr-1" /> View
+                            </Button>
                             <Button
                               size="sm"
                               className="flex-1 gradient-gold text-primary-foreground text-xs"
