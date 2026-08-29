@@ -1549,7 +1549,7 @@ const AdminFeatures = () => {
                       </div>
 
                       {/* Primary action row: View/Approve/Reject (pending) or View/Commission */}
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         {!a.is_approved ? (
                           <>
                             <Button
@@ -1698,10 +1698,10 @@ const AdminFeatures = () => {
             {/* ══════ KYC MANAGEMENT ══════ */}
             {activeTab === "kyc" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <h2 className="text-xl font-display text-gold-gradient">KYC Verification</h2>
                   <Select value={kycFilter} onValueChange={setKycFilter}>
-                    <SelectTrigger className="w-48 bg-muted border-border">
+                    <SelectTrigger className="w-full sm:w-48 bg-muted border-border">
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -2687,9 +2687,9 @@ const AdminFeatures = () => {
             {/* ══════ PRICING ══════ */}
             {activeTab === "pricing" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <h2 className="text-xl font-display text-gold-gradient">Service Pricing</h2>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <Button size="sm" onClick={handleSeedPricing} variant="outline" className="border-border text-muted-foreground">
                       <RefreshCw className="w-3 h-3 mr-1" /> Seed Defaults
                     </Button>
@@ -2988,9 +2988,9 @@ const AdminFeatures = () => {
             {/* ══════ GIFTS ══════ */}
             {activeTab === "gifts" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <h2 className="text-xl font-display text-gold-gradient">Gift Pricing (Live Stream)</h2>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <Button size="sm" onClick={handleSeedGifts} variant="outline" className="border-border text-muted-foreground">
                       <RefreshCw className="w-3 h-3 mr-1" /> Seed Defaults
                     </Button>

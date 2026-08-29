@@ -79,7 +79,7 @@ export default function DeveloperPlans() {
       </CardHeader>
       <CardContent className="space-y-4">
         {error && (
-          <div className="flex items-center justify-between rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
             <span className="flex items-center gap-2"><AlertTriangle className="h-4 w-4" /> {error}</span>
             <Button size="sm" variant="outline" onClick={load}>Retry</Button>
           </div>
@@ -98,8 +98,8 @@ export default function DeveloperPlans() {
             const dirty = !!drafts[plan.id];
             return (
               <div key={plan.id} className="rounded-xl border border-border/60 p-4">
-                <div className="mb-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="font-medium">{plan.code}</span>
                     <Badge variant="outline" className={plan.active ? "border-emerald-500/30 text-emerald-400" : "border-red-500/30 text-red-400"}>
                       {plan.active ? "active" : "inactive"}

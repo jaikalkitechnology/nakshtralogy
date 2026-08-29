@@ -138,7 +138,7 @@ export default function DevelopersManager() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <div className="relative">
+            <div className="relative w-full sm:w-64">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search name, email, company..."
@@ -147,7 +147,7 @@ export default function DevelopersManager() {
                   setPage(0);
                   setSearch(e.target.value);
                 }}
-                className="w-64 pl-8"
+                className="w-full pl-8"
               />
             </div>
             <Select value={statusFilter} onValueChange={(v) => { setPage(0); setStatusFilter(v); }}>
@@ -184,9 +184,9 @@ export default function DevelopersManager() {
 
         <CardContent>
           {selectedIds.size > 0 && (
-            <div className="mb-3 flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 px-3 py-2">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border/60 bg-muted/30 px-3 py-2">
               <span className="text-sm">{selectedIds.size} selected</span>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button size="sm" variant="outline" onClick={bulkSuspend}>
                   <Ban className="mr-1 h-3.5 w-3.5" /> Suspend selected
                 </Button>
@@ -196,7 +196,7 @@ export default function DevelopersManager() {
           )}
 
           {error && (
-            <div className="mb-3 flex items-center justify-between rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
               <span className="flex items-center gap-2"><AlertTriangle className="h-4 w-4" /> {error}</span>
               <Button size="sm" variant="outline" onClick={fetchData}>Retry</Button>
             </div>
