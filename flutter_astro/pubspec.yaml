@@ -33,6 +33,10 @@ dependencies:
   url_launcher: ^6.2.5
   app_links: ^6.3.0
   file_picker: ^8.1.2
+  # Keeps the screen awake for the duration of a live broadcast — without it
+  # the device's normal screen-timeout dims/locks the astrologer's screen
+  # mid-session, which on most devices also suspends the camera preview.
+  wakelock_plus: ^1.2.8
 
 dev_dependencies:
   flutter_test:
