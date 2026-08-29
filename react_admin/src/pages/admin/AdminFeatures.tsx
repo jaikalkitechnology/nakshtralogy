@@ -1391,11 +1391,11 @@ const AdminFeatures = () => {
 
                     <div>
                       <h3 className="text-sm font-semibold text-primary mb-2">Wallet Statement (last 30)</h3>
-                      <div className="bg-muted/30 rounded-lg border border-border max-h-72 overflow-y-auto">
+                      <div className="bg-muted/30 rounded-lg border border-border max-h-72 overflow-auto">
                         {!userDetail.transactions?.length ? (
                           <p className="p-4 text-sm text-muted-foreground text-center">No transactions yet</p>
                         ) : (
-                          <table className="w-full text-xs">
+                          <table className="w-full min-w-[520px] text-xs">
                             <thead className="sticky top-0 bg-muted/80">
                               <tr className="border-b border-border">
                                 <th className="text-left p-2 text-muted-foreground">Type</th>

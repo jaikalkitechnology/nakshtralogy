@@ -199,7 +199,7 @@ export default function DashboardOverview() {
         </GlassPanel>
 
         <GlassPanel title="System Health">
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Ring value={Number(sys.cpu) || 0} label="CPU" color="#4ecb8d" />
             <Ring value={Number(sys.ram) || 0} label="RAM" color="#e8b547" />
             <Ring value={Number(sys.disk) || 0} label="Disk" color="#4fb0c6" />

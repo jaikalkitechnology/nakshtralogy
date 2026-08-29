@@ -164,14 +164,14 @@ export default function Payments() {
           )}
         </select>
         {tab === "transactions" && (
-          <div className="flex items-center gap-1 bg-slate-800 border border-slate-700 rounded-lg px-2">
-            <Search className="w-4 h-4 text-slate-500" />
+          <div className="flex w-full items-center gap-1 rounded-lg border border-slate-700 bg-slate-800 px-2 sm:w-56">
+            <Search className="w-4 h-4 text-slate-500 flex-none" />
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && (setPage(0), load())}
               placeholder="Order / payment id / user…"
-              className="bg-transparent py-2 text-sm text-slate-200 outline-none w-56"
+              className="w-full bg-transparent py-2 text-sm text-slate-200 outline-none"
             />
           </div>
         )}

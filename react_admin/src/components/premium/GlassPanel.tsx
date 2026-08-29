@@ -13,7 +13,7 @@ export default function GlassPanel({ children, className, title, action }: Glass
   return (
     <div className={cn("glass rounded-[20px] p-5", className)}>
       {(title || action) && (
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           {title && <h3 className="text-[15px] font-bold text-foreground">{title}</h3>}
           {action}
         </div>
