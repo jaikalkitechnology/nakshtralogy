@@ -2798,7 +2798,7 @@ const AdminFeatures = () => {
                   </DialogTitle>
                 </DialogHeader>
                 <div className="space-y-3 py-2">
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div>
                       <Label className="text-foreground/80 text-xs">Service Key *</Label>
                       <Input
@@ -2837,7 +2837,7 @@ const AdminFeatures = () => {
                       className="bg-muted border-border mt-1 min-h-[60px]"
                     />
                   </div>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                     <div>
                       <Label className="text-foreground/80 text-xs">Category</Label>
                       <Select value={pricingForm.category} onValueChange={(v) => setPricingForm({ ...pricingForm, category: v })}>
@@ -2873,7 +2873,7 @@ const AdminFeatures = () => {
                     </div>
                   </div>
                   {/* USD / store IAP (international). Blank price_usd = auto from rule. */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div>
                       <Label className="text-foreground/80 text-xs">USD Price ($) — override</Label>
                       <Input
@@ -2917,7 +2917,7 @@ const AdminFeatures = () => {
                       className="bg-muted border-border mt-1"
                     />
                   </div>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                     <div>
                       <Label className="text-foreground/80 text-xs">Engine Function</Label>
                       <Input
@@ -3109,7 +3109,7 @@ const AdminFeatures = () => {
                   </DialogTitle>
                 </DialogHeader>
                 <div className="space-y-3 py-2">
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div>
                       <Label className="text-foreground/80 text-xs">Name *</Label>
                       <Input
@@ -3129,7 +3129,7 @@ const AdminFeatures = () => {
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div>
                       <Label className="text-foreground/80 text-xs">Price (₹) *</Label>
                       <Input
