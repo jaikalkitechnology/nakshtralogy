@@ -2326,7 +2326,7 @@ const AdminFeatures = () => {
                   <div className="space-y-3 py-2 text-sm">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div><span className="text-muted-foreground">Name:</span> <span className="text-foreground">{astroDetail.display_name}</span></div>
-                      <div><span className="text-muted-foreground">Email:</span> <span className="text-foreground">{astroDetail.email}</span></div>
+                      <div className="min-w-0"><span className="text-muted-foreground">Email:</span> <span className="text-foreground break-all">{astroDetail.email}</span></div>
                       <div><span className="text-muted-foreground">Phone:</span> <span className="text-foreground">{astroDetail.phone || "—"}</span></div>
                       <div><span className="text-muted-foreground">Experience:</span> <span className="text-foreground">{astroDetail.experience_years} yrs</span></div>
                       <div><span className="text-muted-foreground">Qualification:</span> <span className="text-foreground">{astroDetail.qualification || "—"}</span></div>
