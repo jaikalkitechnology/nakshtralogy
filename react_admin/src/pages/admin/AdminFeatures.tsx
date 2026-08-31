@@ -582,8 +582,18 @@ const AdminFeatures = () => {
     try {
       const { ok, data } = await adminAstrologerDetail(a.id);
       if (ok) {
+        // The dialog reads flat fields (display_name, email, bio, qualification,
+        // languages, rate_per_min_*, …) — merge the detail endpoint's richer
+        // personal/professional data into those same flat keys (detail wins
+        // over the list-row summary in `a`, which is often thinner — e.g. a
+        // pending astrologer's row may not carry bio/qualification/languages
+        // at all, so without this merge those fields stayed permanently
+        // blank even though the detail endpoint has always returned them).
         setAstroDetail({
           ...a,
+          ...(data.personal || {}),
+          ...(data.professional || {}),
+          wallet_balance: data.wallet_balance ?? a.wallet_balance,
           personal: data.personal,
           professional: data.professional,
           payout_kyc: data.payout_kyc || null,
