@@ -2248,10 +2248,10 @@ const AdminFeatures = () => {
                     </div>
                     {/* Auth-protected paths — fetched with the admin token via
                         KycFileView rather than a plain link/tab-open. */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      <KycFileView label="Front" path={kycDocsDialog.kyc.front_url} />
-                      <KycFileView label="Back" path={kycDocsDialog.kyc.back_url} />
-                      <KycFileView label="Selfie" path={kycDocsDialog.kyc.selfie_url} />
+                    <div className="flex flex-wrap gap-3">
+                      <div className="w-32"><KycFileView label="Front" path={kycDocsDialog.kyc.front_url} /></div>
+                      <div className="w-32"><KycFileView label="Back" path={kycDocsDialog.kyc.back_url} /></div>
+                      <div className="w-32"><KycFileView label="Selfie" path={kycDocsDialog.kyc.selfie_url} /></div>
                     </div>
                     {kycDocsDialog.kyc.rejection_reason && (
                       <p className="text-xs text-destructive">Rejected: {kycDocsDialog.kyc.rejection_reason}</p>
@@ -2334,9 +2334,13 @@ const AdminFeatures = () => {
                 </DialogHeader>
                 {astroDetail && (
                   <div className="space-y-3 py-2 text-sm">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Plain vertical list, not a CSS grid — a 2-column grid here
+                        kept rendering its second column pushed off the visible
+                        dialog width on some builds/viewports. A block-level
+                        stack has no columns to overflow, so it can't recur. */}
+                    <div className="space-y-1.5">
                       <div><span className="text-muted-foreground">Name:</span> <span className="text-foreground">{astroDetail.display_name}</span></div>
-                      <div className="min-w-0"><span className="text-muted-foreground">Email:</span> <span className="text-foreground break-all">{astroDetail.email}</span></div>
+                      <div className="break-all"><span className="text-muted-foreground">Email:</span> <span className="text-foreground">{astroDetail.email}</span></div>
                       <div><span className="text-muted-foreground">Phone:</span> <span className="text-foreground">{astroDetail.phone || "—"}</span></div>
                       <div><span className="text-muted-foreground">Experience:</span> <span className="text-foreground">{astroDetail.experience_years} yrs</span></div>
                       <div><span className="text-muted-foreground">Qualification:</span> <span className="text-foreground">{astroDetail.qualification || "—"}</span></div>
@@ -2406,7 +2410,11 @@ const AdminFeatures = () => {
                             : <Badge className="bg-yellow-500/20 text-yellow-400">incomplete</Badge>}
                         </p>
                         <div className="rounded-xl border border-border p-3 bg-muted/20 space-y-1.5 text-xs">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1">
+                          {/* Plain vertical list, not a CSS grid — a 2-column grid here
+                              kept rendering its second column pushed off the visible
+                              dialog width on some builds/viewports. A block-level
+                              stack has no columns to overflow, so it can't recur. */}
+                          <div className="flex flex-wrap gap-x-4 gap-y-1">
                             <div><span className="text-muted-foreground">PAN:</span> <span className="font-mono text-foreground">{astroDetail.payout_kyc.pan_number || "—"}</span></div>
                             <div><span className="text-muted-foreground">Name (PAN):</span> <span className="text-foreground">{astroDetail.payout_kyc.pan_name || "—"}</span></div>
                             <div><span className="text-muted-foreground">GST:</span> <span className="font-mono text-foreground">{astroDetail.payout_kyc.gst_number || "—"}</span></div>
@@ -2414,9 +2422,9 @@ const AdminFeatures = () => {
                             <div><span className="text-muted-foreground">A/C no.:</span> <span className="font-mono text-foreground">{astroDetail.payout_kyc.bank_account_number || "—"}</span></div>
                             <div><span className="text-muted-foreground">IFSC:</span> <span className="font-mono text-foreground">{astroDetail.payout_kyc.bank_ifsc || "—"}</span></div>
                           </div>
-                          <div className="grid grid-cols-2 gap-2 pt-1">
-                            <KycFileView label="PAN card" path={astroDetail.payout_kyc.pan_doc_url} />
-                            <KycFileView label="Bank proof" path={astroDetail.payout_kyc.bank_proof_url} />
+                          <div className="flex flex-wrap gap-2 pt-1">
+                            <div className="w-32"><KycFileView label="PAN card" path={astroDetail.payout_kyc.pan_doc_url} /></div>
+                            <div className="w-32"><KycFileView label="Bank proof" path={astroDetail.payout_kyc.bank_proof_url} /></div>
                           </div>
                         </div>
                       </div>
@@ -2446,10 +2454,10 @@ const AdminFeatures = () => {
                                     : "bg-yellow-500/20 text-yellow-400"
                                 }>{k.status}</Badge>
                               </div>
-                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                <KycFileView label="Front" path={k.front_url} />
-                                <KycFileView label="Back" path={k.back_url} />
-                                <KycFileView label="Selfie" path={k.selfie_url} />
+                              <div className="flex flex-wrap gap-2">
+                                <div className="w-32"><KycFileView label="Front" path={k.front_url} /></div>
+                                <div className="w-32"><KycFileView label="Back" path={k.back_url} /></div>
+                                <div className="w-32"><KycFileView label="Selfie" path={k.selfie_url} /></div>
                               </div>
                               {k.rejection_reason ? (
                                 <p className="text-[11px] text-destructive mt-2">Reason: {k.rejection_reason}</p>
