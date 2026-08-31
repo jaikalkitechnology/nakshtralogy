@@ -278,7 +278,7 @@ export default function CouponManager() {
               <h3 className="font-display text-lg text-foreground">{editing.id ? "Edit coupon" : "New coupon"}</h3>
               <button onClick={() => setEditing(null)} className="text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Field label="Code (optional)"><Input value={editing.code} onChange={(e) => setEditing({ ...editing, code: e.target.value.toUpperCase() })} placeholder="FREE100" /></Field>
               <Field label="Kind">
                 <Select value={editing.kind} onChange={(v) => setEditing({ ...editing, kind: v })} opts={["product", "all_free", "flat", "consultation", "first_consult"]} />

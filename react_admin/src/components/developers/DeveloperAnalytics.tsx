@@ -73,7 +73,7 @@ export default function DeveloperAnalytics() {
 
   return (
     <Card className="rounded-2xl border-border/60 bg-card/60 backdrop-blur">
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
         <CardTitle className="text-lg">Revenue &amp; Usage Analytics</CardTitle>
         <div className="flex items-center gap-2">
           <Select value={days} onValueChange={setDays}>
@@ -89,7 +89,7 @@ export default function DeveloperAnalytics() {
       </CardHeader>
       <CardContent>
         {error && (
-          <div className="mb-4 flex items-center justify-between rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
             <span className="flex items-center gap-2"><AlertTriangle className="h-4 w-4" /> {error}</span>
             <Button size="sm" variant="outline" onClick={load}>Retry</Button>
           </div>

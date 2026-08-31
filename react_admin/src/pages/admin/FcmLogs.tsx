@@ -134,8 +134,8 @@ export default function FcmLogs() {
           {recent.length === 0 ? (
             <p className="p-4 text-sm text-muted-foreground text-center">No send attempts recorded yet. Trigger a notification (chat/call or Send Notification), then refresh.</p>
           ) : (
-            <div className="max-h-96 overflow-y-auto">
-              <table className="w-full text-xs">
+            <div className="max-h-96 overflow-auto">
+              <table className="w-full min-w-[480px] text-xs">
                 <thead className="sticky top-0 bg-muted/60 text-muted-foreground">
                   <tr>
                     <th className="text-left p-2">Status</th>

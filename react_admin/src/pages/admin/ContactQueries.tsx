@@ -170,7 +170,7 @@ export default function ContactQueries() {
             <div className="space-y-2">
               <div className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">Reply to {open.email}</div>
               <Textarea rows={5} value={reply} onChange={(e) => setReply(e.target.value)} placeholder="Type your reply — it will be emailed to the person who wrote in." />
-              <div className="flex justify-end gap-2">
+              <div className="flex flex-wrap justify-end gap-2">
                 <Button variant="outline" onClick={() => sendReply(false)} disabled={busy || !reply.trim()}><Send className="w-4 h-4 mr-1" /> Send reply</Button>
                 <Button onClick={() => sendReply(true)} disabled={busy || !reply.trim()}><CheckCircle2 className="w-4 h-4 mr-1" /> Send &amp; resolve</Button>
               </div>

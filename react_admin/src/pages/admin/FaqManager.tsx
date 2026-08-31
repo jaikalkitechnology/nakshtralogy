@@ -121,7 +121,7 @@ export default function FaqManager() {
           <h1 className="text-2xl font-display text-gold-gradient flex items-center gap-2"><HelpCircle className="w-6 h-6 text-primary" /> FAQ Management</h1>
           <p className="text-sm text-muted-foreground">Help content shown in the apps' Customer Support screen — separate per app.</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" onClick={seed} disabled={seeding} title="Seeds the recommended FAQ set in every supported language (English + Hindi hand-written; others auto-translated best-effort)">{seeding ? "Seeding all languages…" : "Add recommended FAQ (all languages)"}</Button>
           <Button variant="outline" size="sm" onClick={load} disabled={loading}><RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} /></Button>
           <Button size="sm" onClick={() => setEditing({ audience: "user", lang: langFilter || "en", is_active: true, sort_order: items.length })}><Plus className="w-4 h-4 mr-1" /> Add FAQ</Button>
@@ -173,8 +173,8 @@ export default function FaqManager() {
       </div>
 
       {editing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setEditing(null)}>
-          <div className="w-full max-w-lg rounded-2xl border border-border bg-card p-5 space-y-3" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-4" onClick={() => setEditing(null)}>
+          <div className="my-8 w-full max-w-lg rounded-2xl border border-border bg-card p-5 space-y-3" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h3 className="font-display text-lg text-foreground">{editing.id ? "Edit FAQ" : "Add FAQ"}</h3>
               <button onClick={() => setEditing(null)} className="text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>

@@ -96,7 +96,7 @@ export default function DeveloperDetail({ developerId, onClose, onChanged }: Pro
             {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-10 w-full rounded-lg" />)}
           </div>
         ) : error ? (
-          <div className="mt-6 flex items-center justify-between rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
             <span className="flex items-center gap-2"><AlertTriangle className="h-4 w-4" /> {error}</span>
             <Button size="sm" variant="outline" onClick={loadDetail}>Retry</Button>
           </div>
@@ -124,7 +124,7 @@ export default function DeveloperDetail({ developerId, onClose, onChanged }: Pro
             </div>
 
             <Tabs value={tab} onValueChange={setTab} className="mt-6">
-              <TabsList className="grid w-full grid-cols-5">
+              <TabsList className="no-scrollbar flex w-full items-center justify-start gap-1 overflow-x-auto sm:grid sm:grid-cols-5 sm:overflow-visible">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="keys">Keys</TabsTrigger>
                 <TabsTrigger value="subscription">Plan</TabsTrigger>
