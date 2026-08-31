@@ -2238,7 +2238,7 @@ const AdminFeatures = () => {
                     </div>
                     {/* Auth-protected paths — fetched with the admin token via
                         KycFileView rather than a plain link/tab-open. */}
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                       <KycFileView label="Front" path={kycDocsDialog.kyc.front_url} />
                       <KycFileView label="Back" path={kycDocsDialog.kyc.back_url} />
                       <KycFileView label="Selfie" path={kycDocsDialog.kyc.selfie_url} />
@@ -2324,7 +2324,7 @@ const AdminFeatures = () => {
                 </DialogHeader>
                 {astroDetail && (
                   <div className="space-y-3 py-2 text-sm">
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div><span className="text-muted-foreground">Name:</span> <span className="text-foreground">{astroDetail.display_name}</span></div>
                       <div><span className="text-muted-foreground">Email:</span> <span className="text-foreground">{astroDetail.email}</span></div>
                       <div><span className="text-muted-foreground">Phone:</span> <span className="text-foreground">{astroDetail.phone || "—"}</span></div>
@@ -2396,7 +2396,7 @@ const AdminFeatures = () => {
                             : <Badge className="bg-yellow-500/20 text-yellow-400">incomplete</Badge>}
                         </p>
                         <div className="rounded-xl border border-border p-3 bg-muted/20 space-y-1.5 text-xs">
-                          <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1">
                             <div><span className="text-muted-foreground">PAN:</span> <span className="font-mono text-foreground">{astroDetail.payout_kyc.pan_number || "—"}</span></div>
                             <div><span className="text-muted-foreground">Name (PAN):</span> <span className="text-foreground">{astroDetail.payout_kyc.pan_name || "—"}</span></div>
                             <div><span className="text-muted-foreground">GST:</span> <span className="font-mono text-foreground">{astroDetail.payout_kyc.gst_number || "—"}</span></div>
@@ -2436,7 +2436,7 @@ const AdminFeatures = () => {
                                     : "bg-yellow-500/20 text-yellow-400"
                                 }>{k.status}</Badge>
                               </div>
-                              <div className="grid grid-cols-3 gap-2">
+                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                 <KycFileView label="Front" path={k.front_url} />
                                 <KycFileView label="Back" path={k.back_url} />
                                 <KycFileView label="Selfie" path={k.selfie_url} />
