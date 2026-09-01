@@ -258,7 +258,11 @@ export default function Payments() {
               <button onClick={() => setDetail(null)} className="text-slate-400 hover:text-white"><X className="w-5 h-5" /></button>
             </div>
             <div className="p-4 overflow-auto space-y-3">
-              <div className="grid grid-cols-2 gap-2 text-sm">
+              {/* Plain vertical list, not a CSS grid — a 2-column grid of
+                  key/value pairs whose values can be long gateway ids/refs
+                  has been seen rendering its second column pushed off the
+                  visible modal width. A block-level stack can't do that. */}
+              <div className="space-y-2 text-sm">
                 <KV k="Event id" v={detail.event_id} />
                 <KV k="Signature valid" v={detail.signature_valid ? "Yes" : "No"} />
                 <KV k="Payment id" v={detail.payment_id} />
