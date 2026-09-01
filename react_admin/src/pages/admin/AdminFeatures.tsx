@@ -1374,16 +1374,20 @@ const AdminFeatures = () => {
                   <div className="py-8 text-center text-muted-foreground">Loading...</div>
                 ) : userDetail ? (
                   <div className="space-y-4 py-2">
-                    <div className="grid grid-cols-2 gap-3 text-sm">
+                    {/* Plain vertical list, not a CSS grid — a 2-column grid here
+                        can render its second column pushed off the visible
+                        dialog width (seen with the Astrologer Details dialog).
+                        A block-level stack has no columns to overflow. */}
+                    <div className="space-y-1.5 text-sm">
                       <div><span className="text-muted-foreground">Name:</span> <span className="text-foreground">{userDetail.name || "—"}</span></div>
                       <div><span className="text-muted-foreground">Role:</span> <span className="text-foreground capitalize">{userDetail.role}</span></div>
-                      <div><span className="text-muted-foreground">Email:</span> <span className="text-foreground">{userDetail.email}</span></div>
+                      <div className="break-all"><span className="text-muted-foreground">Email:</span> <span className="text-foreground">{userDetail.email}</span></div>
                       <div><span className="text-muted-foreground">Phone:</span> <span className="text-foreground">{userDetail.phone || "—"}</span></div>
                       <div><span className="text-muted-foreground">DOB:</span> <span className="text-foreground">{userDetail.dob || "—"}</span></div>
                       <div><span className="text-muted-foreground">Birth Place:</span> <span className="text-foreground">{userDetail.birth_place || "—"}</span></div>
                       <div><span className="text-muted-foreground">Balance:</span> <span className="text-primary font-semibold">₹{userDetail.wallet_balance}</span></div>
                       <div><span className="text-muted-foreground">Status:</span> <Badge className={userDetail.is_active ? "bg-green-500/20 text-green-400" : "bg-destructive/20 text-destructive"}>{userDetail.is_active ? "active" : "blocked"}</Badge></div>
-                      <div className="col-span-2"><span className="text-muted-foreground">Created:</span> <span className="text-foreground">{userDetail.created_at?.slice(0, 16) || "—"}</span></div>
+                      <div><span className="text-muted-foreground">Created:</span> <span className="text-foreground">{userDetail.created_at?.slice(0, 16) || "—"}</span></div>
                     </div>
 
                     {/* Push tokens + send notification */}
@@ -2362,16 +2366,19 @@ const AdminFeatures = () => {
                         <p className="text-foreground text-xs bg-muted/30 rounded-lg p-3 border border-border">{astroDetail.bio}</p>
                       </div>
                     )}
-                    <div className="grid grid-cols-3 gap-2">
-                      <div className="bg-muted rounded-lg p-2 text-center">
+                    {/* flex-wrap, not a grid — same dialog that previously
+                        rendered grid columns pushed off-screen; fixed-width
+                        cards side by side can't exhibit that failure mode. */}
+                    <div className="flex flex-wrap gap-2">
+                      <div className="w-24 bg-muted rounded-lg p-2 text-center">
                         <p className="text-[10px] text-muted-foreground">Chat</p>
                         <p className="text-sm font-semibold text-foreground">₹{astroDetail.rate_per_min_chat}/m</p>
                       </div>
-                      <div className="bg-muted rounded-lg p-2 text-center">
+                      <div className="w-24 bg-muted rounded-lg p-2 text-center">
                         <p className="text-[10px] text-muted-foreground">Call</p>
                         <p className="text-sm font-semibold text-foreground">₹{astroDetail.rate_per_min_call}/m</p>
                       </div>
-                      <div className="bg-muted rounded-lg p-2 text-center">
+                      <div className="w-24 bg-muted rounded-lg p-2 text-center">
                         <p className="text-[10px] text-muted-foreground">Video</p>
                         <p className="text-sm font-semibold text-foreground">₹{astroDetail.rate_per_min_video}/m</p>
                       </div>
