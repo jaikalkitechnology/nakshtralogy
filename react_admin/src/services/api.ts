@@ -192,6 +192,20 @@ export async function fetchAuthedObjectUrl(
   }
 }
 
+/// Build a directly-loadable <img src> URL for a profile photo. Google-hosted
+/// avatars (User.avatar_url) are already public absolute URLs and pass
+/// through unchanged. Uploaded astrologer photos are relative paths served by
+/// an auth-protected endpoint that (unlike the KYC file endpoint) accepts the
+/// JWT via a `?token=` query param specifically so plain <img> tags can load
+/// it without a blob-fetch round-trip.
+export function resolveAvatarUrl(raw?: string | null): string | null {
+  if (!raw) return null;
+  if (raw.startsWith("http")) return raw;
+  const token = getToken();
+  const path = raw.startsWith("/") ? raw : `/${raw}`;
+  return `https://api.nakshatralogy.com${path}${token ? `?token=${encodeURIComponent(token)}` : ""}`;
+}
+
 export async function adminApproveAstrologer(profileId: string) {
   return request(`/admin/astrologers/${profileId}/approve`, { method: "PATCH" });
 }
