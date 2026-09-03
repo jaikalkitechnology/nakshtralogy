@@ -184,6 +184,21 @@
   }
   .no-scrollbar::-webkit-scrollbar { width: 0; height: 0; }
 
+  /* Thin, theme-colored scrollbar — visible affordance when content
+     overflows (e.g. wide data tables), unlike .no-scrollbar which hides
+     the fact that there's more content to scroll to. */
+  .thin-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+  .thin-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+  .thin-scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .thin-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 9999px;
+  }
+  .thin-scrollbar::-webkit-scrollbar-thumb:hover { background: hsl(var(--gold) / 0.5); }
+
   .active-glow {
     box-shadow: 0 6px 22px hsl(var(--gold) / 0.35);
   }

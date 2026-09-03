@@ -12,8 +12,11 @@ import {
   ChevronLeft, ChevronRight, PlusCircle, MinusCircle, Sparkles, X,
   FileText, Mail, Filter, Trash2, Database,
   Upload, Save, KeyRound, CreditCard, Send,
-  LayoutGrid, List,
+  LayoutGrid, List, MoreVertical,
 } from "lucide-react";
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import DevelopersManager from "@/components/developers/DevelopersManager";
 
 /** Compact display of a (possibly long/absent) FCM token with copy. */
@@ -1158,8 +1161,8 @@ const AdminFeatures = () => {
 
   // ── Astrologers list-view columns (mirrors the card grid's fields/actions) ──
   const astroColumns: DataTableColumn<any>[] = [
-    { key: "display_name", header: "Astrologer", sortable: true, render: (a) => (
-      <div className="min-w-0">
+    { key: "display_name", header: "Astrologer", sortable: true, minWidth: 180, render: (a) => (
+      <div className="min-w-0 max-w-[220px]">
         <span className="font-medium text-foreground inline-flex items-center gap-1.5 flex-wrap">
           {a.display_name || "—"}
           {a.is_online && <Badge className="bg-green-500/20 text-green-400 text-[10px]">Online</Badge>}
@@ -1170,8 +1173,8 @@ const AdminFeatures = () => {
         <p className="text-xs text-primary truncate">{(a.specializations || []).join(", ") || "No specialization"}</p>
       </div>
     ) },
-    { key: "email", header: "Email", sortable: true, hideBelow: "md", render: (a) => (
-      <div className="min-w-0">
+    { key: "email", header: "Email", sortable: true, hideBelow: "md", minWidth: 160, render: (a) => (
+      <div className="min-w-0 max-w-[180px]">
         <p className="truncate">{a.email}</p>
         {a.phone && <p className="text-xs text-muted-foreground truncate">{a.phone}</p>}
       </div>
@@ -1180,11 +1183,11 @@ const AdminFeatures = () => {
     { key: "total_consultations", header: "Sessions", align: "center", sortable: true, hideBelow: "lg", render: (a) => a.total_consultations || 0 },
     { key: "commission_pct", header: "Comm.", align: "center", hideBelow: "lg", render: (a) => `${a.commission_pct}%` },
     { key: "wallet_balance", header: "Wallet", align: "right", sortable: true, render: (a) => <span className="font-semibold text-primary">₹{a.wallet_balance}</span> },
-    { key: "rates", header: "Rates (₹/min)", hideBelow: "lg", render: (a) => (
-      <div className="flex flex-col text-xs text-muted-foreground">
-        <span><MessageCircle className="w-3 h-3 inline" /> {a.rate_per_min_chat} Chat</span>
-        <span><Phone className="w-3 h-3 inline" /> {a.rate_per_min_call} Call</span>
-        <span><Video className="w-3 h-3 inline" /> {a.rate_per_min_video} Video</span>
+    { key: "rates", header: "Rates (₹/min)", hideBelow: "lg", className: "whitespace-nowrap", render: (a) => (
+      <div className="flex items-center gap-2 text-xs text-muted-foreground" title="Chat / Call / Video rate per minute">
+        <span className="inline-flex items-center gap-0.5"><MessageCircle className="w-3 h-3" /> {a.rate_per_min_chat}</span>
+        <span className="inline-flex items-center gap-0.5"><Phone className="w-3 h-3" /> {a.rate_per_min_call}</span>
+        <span className="inline-flex items-center gap-0.5"><Video className="w-3 h-3" /> {a.rate_per_min_video}</span>
       </div>
     ) },
     { key: "is_approved", header: "Status", align: "center", render: (a) => (
@@ -1192,58 +1195,64 @@ const AdminFeatures = () => {
         {a.is_approved ? "Approved" : "Pending"}
       </Badge>
     ) },
-    { key: "actions", header: "Actions", align: "center", className: "whitespace-nowrap", render: (a) => (
-      <div className="flex gap-1 justify-center flex-wrap" onClick={(e) => e.stopPropagation()}>
-        <Button size="sm" variant="outline" onClick={() => openAstroDetail(a)} className="h-7 text-xs border-border" title="View full profile & KYC documents">
+    { key: "actions", header: "Actions", align: "center", className: "whitespace-nowrap", width: 150, minWidth: 150, render: (a) => (
+      <div className="flex gap-1 justify-center items-center" onClick={(e) => e.stopPropagation()}>
+        <Button size="sm" variant="outline" onClick={() => openAstroDetail(a)} className="h-7 w-7 p-0 border-border" title="View full profile & KYC documents">
           <Eye className="w-3 h-3" />
         </Button>
         {!a.is_approved ? (
           <>
-            <Button size="sm" className="h-7 text-xs gradient-gold text-primary-foreground" onClick={() => approveAstrologer(a.id)} title="Approve (sends FCM notification)">
+            <Button size="sm" className="h-7 w-7 p-0 gradient-gold text-primary-foreground" onClick={() => approveAstrologer(a.id)} title="Approve (sends FCM notification)">
               <CheckCircle className="w-3 h-3" />
             </Button>
-            <Button size="sm" variant="outline" onClick={() => openRejectDialog(a)} className="h-7 text-xs border-destructive text-destructive hover:bg-destructive/10" title="Reject with reason">
+            <Button size="sm" variant="outline" onClick={() => openRejectDialog(a)} className="h-7 w-7 p-0 border-destructive text-destructive hover:bg-destructive/10" title="Reject with reason">
               <X className="w-3 h-3" />
             </Button>
           </>
         ) : (
-          <Button size="sm" variant="outline" onClick={() => openCommissionDialog(a)} className="h-7 text-xs border-primary text-primary hover:bg-primary/10" title="Edit commission">
+          <Button size="sm" variant="outline" onClick={() => openCommissionDialog(a)} className="h-7 w-7 p-0 border-primary text-primary hover:bg-primary/10" title="Edit commission">
             <Pencil className="w-3 h-3" />
           </Button>
         )}
-        <Button size="sm" variant="outline" onClick={() => openAstroWalletDialog(a, "add_fund")} className="h-7 text-xs border-green-500/50 text-green-400 hover:bg-green-500/10" title="Add funds">
-          <PlusCircle className="w-3 h-3" />
-        </Button>
-        <Button size="sm" variant="outline" onClick={() => openAstroWalletDialog(a, "remove_fund")} className="h-7 text-xs border-orange-500/50 text-orange-400 hover:bg-orange-500/10" title="Remove funds">
-          <MinusCircle className="w-3 h-3" />
-        </Button>
-        <Button size="sm" variant="outline" onClick={() => openAstroWalletDialog(a, "bonus")} className="h-7 text-xs border-primary/50 text-primary hover:bg-primary/10" title="Bonus">
-          <Sparkles className="w-3 h-3" />
-        </Button>
-        <Button
-          size="sm" variant="outline"
-          onClick={() => blockAstrologer(a.id)}
-          className={`h-7 text-xs ${a.is_active ? "border-destructive text-destructive hover:bg-destructive/10" : "border-green-500 text-green-400 hover:bg-green-500/10"}`}
-          title={a.is_active ? "Block" : "Unblock"}
-        >
-          {a.is_active ? <Ban className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />}
-        </Button>
-        {!a.deleted_at && (
-          a.deletion_requested_at ? (
-            <Button size="sm" variant="outline" onClick={() => cancelUserDeletion({ id: a.user_id, name: a.display_name, email: a.email })} className="h-7 text-xs border-green-500/60 text-green-400 hover:bg-green-500/10" title="Deletion scheduled — click to restore">
-              <CheckCircle className="w-3 h-3" />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="sm" variant="outline" className="h-7 w-7 p-0 border-border" title="More actions">
+              <MoreVertical className="w-3 h-3" />
             </Button>
-          ) : (
-            <>
-              <Button size="sm" variant="outline" onClick={() => deleteUserAccount({ id: a.user_id, name: a.display_name, email: a.email }, "schedule")} className="h-7 text-xs border-destructive/60 text-destructive hover:bg-destructive/10" title="Schedule deletion (30-day grace)">
-                <Trash2 className="w-3 h-3" />
-              </Button>
-              <Button size="sm" variant="outline" onClick={() => deleteUserAccount({ id: a.user_id, name: a.display_name, email: a.email }, "immediate")} className="h-7 text-xs border-destructive text-destructive hover:bg-destructive/20" title="Delete now (permanent)">
-                <Trash2 className="w-3 h-3" />
-              </Button>
-            </>
-          )
-        )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="bg-card border-border">
+            <DropdownMenuItem onClick={() => openAstroWalletDialog(a, "add_fund")} className="text-green-400 focus:text-green-400">
+              <PlusCircle className="w-3.5 h-3.5 mr-2" /> Add funds
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => openAstroWalletDialog(a, "remove_fund")} className="text-orange-400 focus:text-orange-400">
+              <MinusCircle className="w-3.5 h-3.5 mr-2" /> Remove funds
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => openAstroWalletDialog(a, "bonus")} className="text-primary focus:text-primary">
+              <Sparkles className="w-3.5 h-3.5 mr-2" /> Give bonus
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => blockAstrologer(a.id)} className={a.is_active ? "text-destructive focus:text-destructive" : "text-green-400 focus:text-green-400"}>
+              {a.is_active ? <Ban className="w-3.5 h-3.5 mr-2" /> : <CheckCircle className="w-3.5 h-3.5 mr-2" />}
+              {a.is_active ? "Block" : "Unblock"}
+            </DropdownMenuItem>
+            {!a.deleted_at && (
+              a.deletion_requested_at ? (
+                <DropdownMenuItem onClick={() => cancelUserDeletion({ id: a.user_id, name: a.display_name, email: a.email })} className="text-green-400 focus:text-green-400">
+                  <CheckCircle className="w-3.5 h-3.5 mr-2" /> Restore account
+                </DropdownMenuItem>
+              ) : (
+                <>
+                  <DropdownMenuItem onClick={() => deleteUserAccount({ id: a.user_id, name: a.display_name, email: a.email }, "schedule")} className="text-destructive focus:text-destructive">
+                    <Trash2 className="w-3.5 h-3.5 mr-2" /> Schedule deletion
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => deleteUserAccount({ id: a.user_id, name: a.display_name, email: a.email }, "immediate")} className="text-destructive focus:text-destructive">
+                    <Trash2 className="w-3.5 h-3.5 mr-2" /> Delete now
+                  </DropdownMenuItem>
+                </>
+              )
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     ) },
   ];

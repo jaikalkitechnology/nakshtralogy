@@ -258,8 +258,8 @@ export default function DataTable<T>({
       )}
 
       {/* Table */}
-      <div className="max-h-[560px] overflow-auto no-scrollbar">
-        <table className="w-full border-collapse text-[13px]">
+      <div className="max-h-[560px] overflow-auto thin-scrollbar">
+        <table className="w-full min-w-max border-collapse text-[13px]">
           <thead className="sticky top-0 z-10 bg-card/95 backdrop-blur">
             <tr className="border-b border-border/70">
               {selectable && (
@@ -360,7 +360,7 @@ export default function DataTable<T>({
                       key={c.key}
                       style={{ width: widths[c.key] ?? c.width }}
                       className={cn(
-                        "p-3 text-foreground",
+                        "p-3 align-top text-foreground",
                         c.align === "right" && "text-right",
                         c.align === "center" && "text-center",
                         c.hideBelow === "md" && "hidden md:table-cell",
