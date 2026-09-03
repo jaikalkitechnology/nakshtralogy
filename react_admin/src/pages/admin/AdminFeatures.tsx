@@ -69,6 +69,32 @@ function ViewModeToggle({ value, onChange }: { value: "grid" | "list"; onChange:
   );
 }
 
+/**
+ * Circular profile photo with an emoji/initial fallback. Falls back to
+ * `fallback` if no image URL is available, or if the image fails to load
+ * (broken/expired upload). `sizeClass` sets width/height/text-size, e.g.
+ * "w-12 h-12 text-xl" for cards or "w-8 h-8 text-sm" for table rows.
+ */
+function ProfileAvatar({ src, fallback, sizeClass }: { src?: string | null; fallback: string; sizeClass: string }) {
+  const [failed, setFailed] = useState(false);
+  const resolved = !failed ? resolveAvatarUrl(src) : null;
+  if (resolved) {
+    return (
+      <img
+        src={resolved}
+        alt=""
+        onError={() => setFailed(true)}
+        className={`${sizeClass} rounded-full object-cover bg-secondary shrink-0`}
+      />
+    );
+  }
+  return (
+    <div className={`${sizeClass} rounded-full bg-secondary flex items-center justify-center shrink-0`}>
+      {fallback}
+    </div>
+  );
+}
+
 import DeveloperAnalytics from "@/components/developers/DeveloperAnalytics";
 import DeveloperPlans from "@/components/developers/DeveloperPlans";
 import DataTable, { type DataTableColumn } from "@/components/premium/DataTable";
@@ -87,6 +113,7 @@ import {
   adminListTransactions,
   adminListReviews, adminEditReview, adminToggleReviewVisibility, adminDeleteReview,
   adminListSettings, adminGetCategorySettings, adminUpsertSettings, adminUploadFcmFile,
+  resolveAvatarUrl,
   type WalletAction,
 } from "@/services/api";
 import KycFileView from "@/components/admin/KycFileView";
@@ -1081,12 +1108,15 @@ const AdminFeatures = () => {
   // ── DataTable column definitions (D.1/D.2/D.3 premium tables) ────
   // Render cells reuse the exact same handlers as before — no behavior change.
   const userColumns: DataTableColumn<any>[] = [
-    { key: "name", header: "Name", sortable: true, minWidth: 160, render: (u) => (
-      <span className="font-medium text-foreground inline-flex items-center gap-1.5 flex-wrap max-w-[200px]">
-        {u.name || "—"}
-        {u.deleted_at && <Badge className="bg-destructive/20 text-destructive text-[10px]">deleted</Badge>}
-        {!u.deleted_at && u.deletion_scheduled_at && <Badge className="bg-amber-500/20 text-amber-400 text-[10px]">deleting</Badge>}
-      </span>
+    { key: "name", header: "Name", sortable: true, minWidth: 180, render: (u) => (
+      <div className="flex items-center gap-2 max-w-[220px]">
+        <ProfileAvatar src={u.avatar_url} fallback="👤" sizeClass="w-8 h-8 text-sm" />
+        <span className="font-medium text-foreground inline-flex items-center gap-1.5 flex-wrap min-w-0">
+          {u.name || "—"}
+          {u.deleted_at && <Badge className="bg-destructive/20 text-destructive text-[10px]">deleted</Badge>}
+          {!u.deleted_at && u.deletion_scheduled_at && <Badge className="bg-amber-500/20 text-amber-400 text-[10px]">deleting</Badge>}
+        </span>
+      </div>
     ) },
     { key: "email", header: "Email", sortable: true, hideBelow: "md", minWidth: 170, className: "max-w-[200px] truncate" },
     { key: "phone", header: "Phone", hideBelow: "lg", render: (u) => u.phone || "—" },
@@ -1155,16 +1185,19 @@ const AdminFeatures = () => {
 
   // ── Astrologers list-view columns (mirrors the card grid's fields/actions) ──
   const astroColumns: DataTableColumn<any>[] = [
-    { key: "display_name", header: "Astrologer", sortable: true, minWidth: 180, render: (a) => (
-      <div className="min-w-0 max-w-[220px]">
-        <span className="font-medium text-foreground inline-flex items-center gap-1.5 flex-wrap">
-          {a.display_name || "—"}
-          {a.is_online && <Badge className="bg-green-500/20 text-green-400 text-[10px]">Online</Badge>}
-          {!a.is_active && <Badge className="bg-destructive/20 text-destructive text-[10px]">Blocked</Badge>}
-          {a.deleted_at && <Badge className="bg-destructive/20 text-destructive text-[10px]">Deleted</Badge>}
-          {!a.deleted_at && a.deletion_scheduled_at && <Badge className="bg-amber-500/20 text-amber-400 text-[10px]">Deleting</Badge>}
-        </span>
-        <p className="text-xs text-primary truncate">{(a.specializations || []).join(", ") || "No specialization"}</p>
+    { key: "display_name", header: "Astrologer", sortable: true, minWidth: 200, render: (a) => (
+      <div className="flex items-center gap-2 max-w-[240px]">
+        <ProfileAvatar src={a.profile_image_url} fallback="🔮" sizeClass="w-8 h-8 text-sm" />
+        <div className="min-w-0">
+          <span className="font-medium text-foreground inline-flex items-center gap-1.5 flex-wrap">
+            {a.display_name || "—"}
+            {a.is_online && <Badge className="bg-green-500/20 text-green-400 text-[10px]">Online</Badge>}
+            {!a.is_active && <Badge className="bg-destructive/20 text-destructive text-[10px]">Blocked</Badge>}
+            {a.deleted_at && <Badge className="bg-destructive/20 text-destructive text-[10px]">Deleted</Badge>}
+            {!a.deleted_at && a.deletion_scheduled_at && <Badge className="bg-amber-500/20 text-amber-400 text-[10px]">Deleting</Badge>}
+          </span>
+          <p className="text-xs text-primary truncate">{(a.specializations || []).join(", ") || "No specialization"}</p>
+        </div>
       </div>
     ) },
     { key: "email", header: "Email", sortable: true, hideBelow: "md", minWidth: 160, render: (a) => (
@@ -1440,7 +1473,7 @@ const AdminFeatures = () => {
                       {users.map((u: any) => (
                         <div key={u.id} className="bg-card/60 border border-border rounded-xl p-4 space-y-3">
                           <div className="flex items-start gap-3">
-                            <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-xl">👤</div>
+                            <ProfileAvatar src={u.avatar_url} fallback="👤" sizeClass="w-12 h-12 text-xl" />
                             <div className="flex-1 min-w-0">
                               <h4 className="font-semibold text-foreground truncate">{u.name || "—"}</h4>
                               <p className="text-xs text-muted-foreground truncate">{u.email}</p>
@@ -1619,6 +1652,13 @@ const AdminFeatures = () => {
                   <div className="py-8 text-center text-muted-foreground">Loading...</div>
                 ) : userDetail ? (
                   <div className="space-y-4 py-2">
+                    <div className="flex items-center gap-3">
+                      <ProfileAvatar src={userDetail.avatar_url} fallback="👤" sizeClass="w-14 h-14 text-2xl" />
+                      <div className="min-w-0">
+                        <p className="font-semibold text-foreground truncate">{userDetail.name || "—"}</p>
+                        <p className="text-xs text-muted-foreground truncate">{userDetail.email}</p>
+                      </div>
+                    </div>
                     {/* Plain vertical list, not a CSS grid — a 2-column grid here
                         can render its second column pushed off the visible
                         dialog width (seen with the Astrologer Details dialog).
@@ -1783,7 +1823,7 @@ const AdminFeatures = () => {
                     <div key={a.id} className="bg-card/60 border border-border rounded-xl p-4 space-y-3">
                       {/* Header */}
                       <div className="flex items-start gap-3">
-                        <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-xl">🔮</div>
+                        <ProfileAvatar src={a.profile_image_url} fallback="🔮" sizeClass="w-12 h-12 text-xl" />
                         <div className="flex-1 min-w-0">
                           <h4 className="font-semibold text-foreground truncate">{a.display_name || "—"}</h4>
                           <p className="text-xs text-muted-foreground truncate">{a.email}</p>
@@ -2606,6 +2646,13 @@ const AdminFeatures = () => {
                 </DialogHeader>
                 {astroDetail && (
                   <div className="space-y-3 py-2 text-sm">
+                    <div className="flex items-center gap-3">
+                      <ProfileAvatar src={astroDetail.profile_image_url} fallback="🔮" sizeClass="w-14 h-14 text-2xl" />
+                      <div className="min-w-0">
+                        <p className="font-semibold text-foreground truncate">{astroDetail.display_name || "—"}</p>
+                        <p className="text-xs text-muted-foreground truncate">{astroDetail.email}</p>
+                      </div>
+                    </div>
                     {/* Plain vertical list, not a CSS grid — a 2-column grid here
                         kept rendering its second column pushed off the visible
                         dialog width on some builds/viewports. A block-level
