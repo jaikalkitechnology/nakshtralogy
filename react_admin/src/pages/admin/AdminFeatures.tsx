@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import {
   ChevronLeft, ChevronRight, PlusCircle, MinusCircle, Sparkles, X,
   FileText, Mail, Filter, Trash2, Database,
   Upload, Save, KeyRound, CreditCard, Send,
-  LayoutGrid, List, MoreVertical,
+  LayoutGrid, List, MoreVertical, Camera, Loader2,
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
@@ -74,23 +74,54 @@ function ViewModeToggle({ value, onChange }: { value: "grid" | "list"; onChange:
  * `fallback` if no image URL is available, or if the image fails to load
  * (broken/expired upload). `sizeClass` sets width/height/text-size, e.g.
  * "w-12 h-12 text-xl" for cards or "w-8 h-8 text-sm" for table rows.
+ *
+ * When `onUpload` is given, hovering shows a camera overlay that opens a
+ * file picker — lets a Super Admin set/replace the photo directly, instead
+ * of waiting for the astrologer/user to upload one from their own app.
  */
-function ProfileAvatar({ src, fallback, sizeClass }: { src?: string | null; fallback: string; sizeClass: string }) {
+function ProfileAvatar({
+  src, fallback, sizeClass, onUpload, uploading,
+}: {
+  src?: string | null; fallback: string; sizeClass: string;
+  onUpload?: (file: File) => void; uploading?: boolean;
+}) {
   const [failed, setFailed] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   const resolved = !failed ? resolveAvatarUrl(src) : null;
-  if (resolved) {
-    return (
-      <img
-        src={resolved}
-        alt=""
-        onError={() => setFailed(true)}
-        className={`${sizeClass} rounded-full object-cover bg-secondary shrink-0`}
-      />
-    );
-  }
+
+  const photo = resolved ? (
+    <img src={resolved} alt="" onError={() => setFailed(true)} className="w-full h-full rounded-full object-cover" />
+  ) : (
+    <div className="w-full h-full rounded-full flex items-center justify-center">{fallback}</div>
+  );
+
   return (
-    <div className={`${sizeClass} rounded-full bg-secondary flex items-center justify-center shrink-0`}>
-      {fallback}
+    <div className={`${sizeClass} relative shrink-0 overflow-hidden rounded-full bg-secondary`}>
+      {photo}
+      {onUpload && (
+        <>
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={uploading}
+            title="Change profile photo"
+            className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 text-white opacity-0 transition-opacity hover:opacity-100 hover:bg-black/50 disabled:opacity-100 disabled:bg-black/50"
+          >
+            {uploading ? <Loader2 className="w-1/2 h-1/2 animate-spin" /> : <Camera className="w-2/5 h-2/5" />}
+          </button>
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              e.target.value = "";
+              if (file) onUpload(file);
+            }}
+          />
+        </>
+      )}
     </div>
   );
 }
@@ -113,7 +144,7 @@ import {
   adminListTransactions,
   adminListReviews, adminEditReview, adminToggleReviewVisibility, adminDeleteReview,
   adminListSettings, adminGetCategorySettings, adminUpsertSettings, adminUploadFcmFile,
-  resolveAvatarUrl,
+  resolveAvatarUrl, adminUploadUserAvatar, adminUploadAstrologerAvatar,
   type WalletAction,
 } from "@/services/api";
 import KycFileView from "@/components/admin/KycFileView";
@@ -188,6 +219,8 @@ const AdminFeatures = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [usersTotal, setUsersTotal] = useState(0);
   const [astrologers, setAstrologers] = useState<any[]>([]);
+  // id of the row/dialog currently uploading a new profile photo (drives the spinner)
+  const [avatarUploading, setAvatarUploading] = useState<string | null>(null);
   const [walletStats, setWalletStats] = useState<any>(null);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [pricing, setPricing] = useState<any[]>([]);
@@ -554,6 +587,37 @@ const AdminFeatures = () => {
   const toggleUser = async (userId: string) => {
     await adminToggleUser(userId);
     fetchData();
+  };
+
+  // ── Admin-set profile photos ──────────────────────────────────────
+  const uploadUserAvatar = async (userId: string, file: File) => {
+    setAvatarUploading(userId);
+    try {
+      const { ok, data } = await adminUploadUserAvatar(userId, file);
+      if (!ok) { toast.error(data?.detail || "Could not upload photo"); return; }
+      setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, avatar_url: data.avatar_url } : u)));
+      setUserDetail((prev: any) => (prev && prev.id === userId ? { ...prev, avatar_url: data.avatar_url } : prev));
+      toast.success("Profile photo updated");
+    } catch {
+      toast.error("Could not upload photo");
+    } finally {
+      setAvatarUploading(null);
+    }
+  };
+
+  const uploadAstrologerAvatar = async (profileId: string, file: File) => {
+    setAvatarUploading(profileId);
+    try {
+      const { ok, data } = await adminUploadAstrologerAvatar(profileId, file);
+      if (!ok) { toast.error(data?.detail || "Could not upload photo"); return; }
+      setAstrologers((prev) => prev.map((a) => (a.id === profileId ? { ...a, profile_image_url: data.profile_image_url } : a)));
+      setAstroDetail((prev: any) => (prev && prev.id === profileId ? { ...prev, profile_image_url: data.profile_image_url } : prev));
+      toast.success("Profile photo updated");
+    } catch {
+      toast.error("Could not upload photo");
+    } finally {
+      setAvatarUploading(null);
+    }
   };
 
   // ── Account deletion (user / astrologer / developer) ────────────
@@ -1110,7 +1174,10 @@ const AdminFeatures = () => {
   const userColumns: DataTableColumn<any>[] = [
     { key: "name", header: "Name", sortable: true, minWidth: 180, render: (u) => (
       <div className="flex items-center gap-2 max-w-[220px]">
-        <ProfileAvatar src={u.avatar_url} fallback="👤" sizeClass="w-8 h-8 text-sm" />
+        <ProfileAvatar
+          src={u.avatar_url} fallback="👤" sizeClass="w-8 h-8 text-sm"
+          onUpload={(file) => uploadUserAvatar(u.id, file)} uploading={avatarUploading === u.id}
+        />
         <span className="font-medium text-foreground inline-flex items-center gap-1.5 flex-wrap min-w-0">
           {u.name || "—"}
           {u.deleted_at && <Badge className="bg-destructive/20 text-destructive text-[10px]">deleted</Badge>}
@@ -1187,7 +1254,10 @@ const AdminFeatures = () => {
   const astroColumns: DataTableColumn<any>[] = [
     { key: "display_name", header: "Astrologer", sortable: true, minWidth: 200, render: (a) => (
       <div className="flex items-center gap-2 max-w-[240px]">
-        <ProfileAvatar src={a.profile_image_url} fallback="🔮" sizeClass="w-8 h-8 text-sm" />
+        <ProfileAvatar
+          src={a.profile_image_url} fallback="🔮" sizeClass="w-8 h-8 text-sm"
+          onUpload={(file) => uploadAstrologerAvatar(a.id, file)} uploading={avatarUploading === a.id}
+        />
         <div className="min-w-0">
           <span className="font-medium text-foreground inline-flex items-center gap-1.5 flex-wrap">
             {a.display_name || "—"}
@@ -1473,7 +1543,10 @@ const AdminFeatures = () => {
                       {users.map((u: any) => (
                         <div key={u.id} className="bg-card/60 border border-border rounded-xl p-4 space-y-3">
                           <div className="flex items-start gap-3">
-                            <ProfileAvatar src={u.avatar_url} fallback="👤" sizeClass="w-12 h-12 text-xl" />
+                            <ProfileAvatar
+                              src={u.avatar_url} fallback="👤" sizeClass="w-12 h-12 text-xl"
+                              onUpload={(file) => uploadUserAvatar(u.id, file)} uploading={avatarUploading === u.id}
+                            />
                             <div className="flex-1 min-w-0">
                               <h4 className="font-semibold text-foreground truncate">{u.name || "—"}</h4>
                               <p className="text-xs text-muted-foreground truncate">{u.email}</p>
@@ -1653,7 +1726,10 @@ const AdminFeatures = () => {
                 ) : userDetail ? (
                   <div className="space-y-4 py-2">
                     <div className="flex items-center gap-3">
-                      <ProfileAvatar src={userDetail.avatar_url} fallback="👤" sizeClass="w-14 h-14 text-2xl" />
+                      <ProfileAvatar
+                        src={userDetail.avatar_url} fallback="👤" sizeClass="w-14 h-14 text-2xl"
+                        onUpload={(file) => uploadUserAvatar(userDetail.id, file)} uploading={avatarUploading === userDetail.id}
+                      />
                       <div className="min-w-0">
                         <p className="font-semibold text-foreground truncate">{userDetail.name || "—"}</p>
                         <p className="text-xs text-muted-foreground truncate">{userDetail.email}</p>
@@ -1823,7 +1899,10 @@ const AdminFeatures = () => {
                     <div key={a.id} className="bg-card/60 border border-border rounded-xl p-4 space-y-3">
                       {/* Header */}
                       <div className="flex items-start gap-3">
-                        <ProfileAvatar src={a.profile_image_url} fallback="🔮" sizeClass="w-12 h-12 text-xl" />
+                        <ProfileAvatar
+                          src={a.profile_image_url} fallback="🔮" sizeClass="w-12 h-12 text-xl"
+                          onUpload={(file) => uploadAstrologerAvatar(a.id, file)} uploading={avatarUploading === a.id}
+                        />
                         <div className="flex-1 min-w-0">
                           <h4 className="font-semibold text-foreground truncate">{a.display_name || "—"}</h4>
                           <p className="text-xs text-muted-foreground truncate">{a.email}</p>
@@ -2647,7 +2726,10 @@ const AdminFeatures = () => {
                 {astroDetail && (
                   <div className="space-y-3 py-2 text-sm">
                     <div className="flex items-center gap-3">
-                      <ProfileAvatar src={astroDetail.profile_image_url} fallback="🔮" sizeClass="w-14 h-14 text-2xl" />
+                      <ProfileAvatar
+                        src={astroDetail.profile_image_url} fallback="🔮" sizeClass="w-14 h-14 text-2xl"
+                        onUpload={(file) => uploadAstrologerAvatar(astroDetail.id, file)} uploading={avatarUploading === astroDetail.id}
+                      />
                       <div className="min-w-0">
                         <p className="font-semibold text-foreground truncate">{astroDetail.display_name || "—"}</p>
                         <p className="text-xs text-muted-foreground truncate">{astroDetail.email}</p>

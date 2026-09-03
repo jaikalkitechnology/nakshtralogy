@@ -859,6 +859,32 @@ export async function adminUploadFcmFile(project: "user" | "astro", file: File) 
   return { ok: res.ok, status: res.status, data };
 }
 
+export async function adminUploadUserAvatar(userId: string, file: File) {
+  const token = localStorage.getItem("access_token");
+  const fd = new FormData();
+  fd.append("file", file);
+  const res = await fetch(`https://api.nakshatralogy.com/api/v1/admin/users/${userId}/avatar`, {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: fd,
+  });
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, status: res.status, data };
+}
+
+export async function adminUploadAstrologerAvatar(profileId: string, file: File) {
+  const token = localStorage.getItem("access_token");
+  const fd = new FormData();
+  fd.append("file", file);
+  const res = await fetch(`https://api.nakshatralogy.com/api/v1/admin/astrologers/${profileId}/avatar`, {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: fd,
+  });
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, status: res.status, data };
+}
+
 // ── Seed ─────────────────────────────────────────────────────────
 
 export async function seedAll() {
