@@ -12,6 +12,7 @@ import {
   ChevronLeft, ChevronRight, PlusCircle, MinusCircle, Sparkles, X,
   FileText, Mail, Filter, Trash2, Database,
   Upload, Save, KeyRound, CreditCard, Send,
+  LayoutGrid, List,
 } from "lucide-react";
 import DevelopersManager from "@/components/developers/DevelopersManager";
 
@@ -37,6 +38,34 @@ function TokenRow({ label, value }: { label: string; value?: string | null }) {
     </div>
   );
 }
+/** Grid/List view switcher shown on tabs that support both layouts. */
+function ViewModeToggle({ value, onChange }: { value: "grid" | "list"; onChange: (v: "grid" | "list") => void }) {
+  return (
+    <div className="flex items-center rounded-lg border border-border bg-muted p-0.5 shrink-0">
+      <button
+        type="button"
+        onClick={() => onChange("grid")}
+        title="Grid view"
+        className={`flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+          value === "grid" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+        }`}
+      >
+        <LayoutGrid className="w-3.5 h-3.5" /> Grid
+      </button>
+      <button
+        type="button"
+        onClick={() => onChange("list")}
+        title="List view"
+        className={`flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+          value === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+        }`}
+      >
+        <List className="w-3.5 h-3.5" /> List
+      </button>
+    </div>
+  );
+}
+
 import DeveloperAnalytics from "@/components/developers/DeveloperAnalytics";
 import DeveloperPlans from "@/components/developers/DeveloperPlans";
 import DataTable, { type DataTableColumn } from "@/components/premium/DataTable";
@@ -149,6 +178,7 @@ const AdminFeatures = () => {
   const [userFilterStatus, setUserFilterStatus] = useState<string>("all"); // all | active | blocked
   const [userFilterRole, setUserFilterRole] = useState<string>("user");    // user | astrologer | admin | all
   const [userDeletionFilter, setUserDeletionFilter] = useState<string>("active"); // active | pending | deleted | all
+  const [userViewMode, setUserViewMode] = useState<"grid" | "list">("list");
 
   // Wallet action dialog
   const [walletDialog, setWalletDialog] = useState<{
@@ -169,6 +199,7 @@ const AdminFeatures = () => {
   const [astroFilter, setAstroFilter] = useState<string>("all"); // all | pending | approved | online
   const [astroDeletionFilter, setAstroDeletionFilter] = useState<string>("active"); // active | pending | deleted | all
   const [astroSearch, setAstroSearch] = useState("");
+  const [astroViewMode, setAstroViewMode] = useState<"grid" | "list">("grid");
 
   // Astrologer wallet dialog (reuses same walletDialog pattern)
   const [astroWalletDialog, setAstroWalletDialog] = useState<{
@@ -1125,6 +1156,98 @@ const AdminFeatures = () => {
     ) },
   ];
 
+  // ── Astrologers list-view columns (mirrors the card grid's fields/actions) ──
+  const astroColumns: DataTableColumn<any>[] = [
+    { key: "display_name", header: "Astrologer", sortable: true, render: (a) => (
+      <div className="min-w-0">
+        <span className="font-medium text-foreground inline-flex items-center gap-1.5 flex-wrap">
+          {a.display_name || "—"}
+          {a.is_online && <Badge className="bg-green-500/20 text-green-400 text-[10px]">Online</Badge>}
+          {!a.is_active && <Badge className="bg-destructive/20 text-destructive text-[10px]">Blocked</Badge>}
+          {a.deleted_at && <Badge className="bg-destructive/20 text-destructive text-[10px]">Deleted</Badge>}
+          {!a.deleted_at && a.deletion_scheduled_at && <Badge className="bg-amber-500/20 text-amber-400 text-[10px]">Deleting</Badge>}
+        </span>
+        <p className="text-xs text-primary truncate">{(a.specializations || []).join(", ") || "No specialization"}</p>
+      </div>
+    ) },
+    { key: "email", header: "Email", sortable: true, hideBelow: "md", render: (a) => (
+      <div className="min-w-0">
+        <p className="truncate">{a.email}</p>
+        {a.phone && <p className="text-xs text-muted-foreground truncate">{a.phone}</p>}
+      </div>
+    ) },
+    { key: "rating", header: "Rating", align: "center", sortable: true, render: (a) => <>⭐ {a.rating || 0}</> },
+    { key: "total_consultations", header: "Sessions", align: "center", sortable: true, hideBelow: "lg", render: (a) => a.total_consultations || 0 },
+    { key: "commission_pct", header: "Comm.", align: "center", hideBelow: "lg", render: (a) => `${a.commission_pct}%` },
+    { key: "wallet_balance", header: "Wallet", align: "right", sortable: true, render: (a) => <span className="font-semibold text-primary">₹{a.wallet_balance}</span> },
+    { key: "rates", header: "Rates (₹/min)", hideBelow: "lg", render: (a) => (
+      <div className="flex flex-col text-xs text-muted-foreground">
+        <span><MessageCircle className="w-3 h-3 inline" /> {a.rate_per_min_chat} Chat</span>
+        <span><Phone className="w-3 h-3 inline" /> {a.rate_per_min_call} Call</span>
+        <span><Video className="w-3 h-3 inline" /> {a.rate_per_min_video} Video</span>
+      </div>
+    ) },
+    { key: "is_approved", header: "Status", align: "center", render: (a) => (
+      <Badge className={a.is_approved ? "bg-green-500/20 text-green-400" : "bg-yellow-500/20 text-yellow-400"}>
+        {a.is_approved ? "Approved" : "Pending"}
+      </Badge>
+    ) },
+    { key: "actions", header: "Actions", align: "center", className: "whitespace-nowrap", render: (a) => (
+      <div className="flex gap-1 justify-center flex-wrap" onClick={(e) => e.stopPropagation()}>
+        <Button size="sm" variant="outline" onClick={() => openAstroDetail(a)} className="h-7 text-xs border-border" title="View full profile & KYC documents">
+          <Eye className="w-3 h-3" />
+        </Button>
+        {!a.is_approved ? (
+          <>
+            <Button size="sm" className="h-7 text-xs gradient-gold text-primary-foreground" onClick={() => approveAstrologer(a.id)} title="Approve (sends FCM notification)">
+              <CheckCircle className="w-3 h-3" />
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => openRejectDialog(a)} className="h-7 text-xs border-destructive text-destructive hover:bg-destructive/10" title="Reject with reason">
+              <X className="w-3 h-3" />
+            </Button>
+          </>
+        ) : (
+          <Button size="sm" variant="outline" onClick={() => openCommissionDialog(a)} className="h-7 text-xs border-primary text-primary hover:bg-primary/10" title="Edit commission">
+            <Pencil className="w-3 h-3" />
+          </Button>
+        )}
+        <Button size="sm" variant="outline" onClick={() => openAstroWalletDialog(a, "add_fund")} className="h-7 text-xs border-green-500/50 text-green-400 hover:bg-green-500/10" title="Add funds">
+          <PlusCircle className="w-3 h-3" />
+        </Button>
+        <Button size="sm" variant="outline" onClick={() => openAstroWalletDialog(a, "remove_fund")} className="h-7 text-xs border-orange-500/50 text-orange-400 hover:bg-orange-500/10" title="Remove funds">
+          <MinusCircle className="w-3 h-3" />
+        </Button>
+        <Button size="sm" variant="outline" onClick={() => openAstroWalletDialog(a, "bonus")} className="h-7 text-xs border-primary/50 text-primary hover:bg-primary/10" title="Bonus">
+          <Sparkles className="w-3 h-3" />
+        </Button>
+        <Button
+          size="sm" variant="outline"
+          onClick={() => blockAstrologer(a.id)}
+          className={`h-7 text-xs ${a.is_active ? "border-destructive text-destructive hover:bg-destructive/10" : "border-green-500 text-green-400 hover:bg-green-500/10"}`}
+          title={a.is_active ? "Block" : "Unblock"}
+        >
+          {a.is_active ? <Ban className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />}
+        </Button>
+        {!a.deleted_at && (
+          a.deletion_requested_at ? (
+            <Button size="sm" variant="outline" onClick={() => cancelUserDeletion({ id: a.user_id, name: a.display_name, email: a.email })} className="h-7 text-xs border-green-500/60 text-green-400 hover:bg-green-500/10" title="Deletion scheduled — click to restore">
+              <CheckCircle className="w-3 h-3" />
+            </Button>
+          ) : (
+            <>
+              <Button size="sm" variant="outline" onClick={() => deleteUserAccount({ id: a.user_id, name: a.display_name, email: a.email }, "schedule")} className="h-7 text-xs border-destructive/60 text-destructive hover:bg-destructive/10" title="Schedule deletion (30-day grace)">
+                <Trash2 className="w-3 h-3" />
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => deleteUserAccount({ id: a.user_id, name: a.display_name, email: a.email }, "immediate")} className="h-7 text-xs border-destructive text-destructive hover:bg-destructive/20" title="Delete now (permanent)">
+                <Trash2 className="w-3 h-3" />
+              </Button>
+            </>
+          )
+        )}
+      </div>
+    ) },
+  ];
+
   const pricingColumns: DataTableColumn<any>[] = [
     { key: "service_name", header: "Service", sortable: true, render: (p) => (
       <div className="flex items-center gap-2">
@@ -1276,30 +1399,149 @@ const AdminFeatures = () => {
                   </Select>
                 </div>
 
-                {/* Summary & Pagination info */}
-                <div className="flex items-center justify-between">
+                {/* Summary, view toggle & pagination info */}
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="text-xs text-muted-foreground">
                     Showing {users.length} of {usersTotal} users
                     {userFilterRole !== "all" && <> · Role: <span className="text-primary">{userFilterRole}</span></>}
                     {userFilterStatus !== "all" && <> · Status: <span className="text-primary">{userFilterStatus}</span></>}
                   </p>
+                  <ViewModeToggle value={userViewMode} onChange={setUserViewMode} />
                 </div>
 
-                {/* Users — premium DataTable (sort/export/pagination), all existing actions preserved */}
-                <DataTable<any>
-                  columns={userColumns}
-                  data={users}
-                  keyField={(u) => u.id}
-                  loading={loading}
-                  page={userPage}
-                  pageSize={USERS_PAGE_SIZE}
-                  total={usersTotal}
-                  onPageChange={setUserPage}
-                  hideExport={false}
-                  exportFileName="nakshtralogy-users"
-                  emptyTitle="No users found"
-                  emptyMessage="Adjust filters or run seed."
-                />
+                {userViewMode === "list" ? (
+                  /* Users — premium DataTable (sort/export/pagination), all existing actions preserved */
+                  <DataTable<any>
+                    columns={userColumns}
+                    data={users}
+                    keyField={(u) => u.id}
+                    loading={loading}
+                    page={userPage}
+                    pageSize={USERS_PAGE_SIZE}
+                    total={usersTotal}
+                    onPageChange={setUserPage}
+                    hideExport={false}
+                    exportFileName="nakshtralogy-users"
+                    emptyTitle="No users found"
+                    emptyMessage="Adjust filters or run seed."
+                  />
+                ) : (
+                  <>
+                    {/* User cards */}
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {users.length === 0 && (
+                        <div className="col-span-2 p-8 text-center text-muted-foreground bg-card/60 border border-border rounded-xl">
+                          No users found for this filter.
+                        </div>
+                      )}
+                      {users.map((u: any) => (
+                        <div key={u.id} className="bg-card/60 border border-border rounded-xl p-4 space-y-3">
+                          <div className="flex items-start gap-3">
+                            <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-xl">👤</div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-semibold text-foreground truncate">{u.name || "—"}</h4>
+                              <p className="text-xs text-muted-foreground truncate">{u.email}</p>
+                              {u.phone && <p className="text-xs text-muted-foreground truncate">{u.phone}</p>}
+                              <Badge variant="outline" className="border-border text-xs capitalize mt-1">{u.role}</Badge>
+                            </div>
+                            <div className="flex flex-col items-end gap-1">
+                              {u.deleted_at ? (
+                                <Badge className="bg-destructive/20 text-destructive text-[10px]">deleted</Badge>
+                              ) : (
+                                <Badge className={u.is_active ? "bg-green-500/20 text-green-400" : "bg-destructive/20 text-destructive"}>
+                                  {u.is_active ? "active" : "blocked"}
+                                </Badge>
+                              )}
+                              {!u.deleted_at && u.deletion_scheduled_at && <Badge className="bg-amber-500/20 text-amber-400 text-[10px]">deleting</Badge>}
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between bg-muted rounded-lg p-2">
+                            <span className="text-xs text-muted-foreground">Wallet balance</span>
+                            <span className="text-sm font-semibold text-primary">₹{u.wallet_balance}</span>
+                          </div>
+
+                          <div className="flex flex-wrap gap-1">
+                            <Button size="sm" variant="outline" onClick={() => openUserDetail(u.id)} className="h-7 text-xs border-border" title="View details">
+                              <Eye className="w-3 h-3 mr-1" /> View
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => openWalletDialog(u, "add_fund")} className="h-7 text-xs border-green-500/50 text-green-400 hover:bg-green-500/10" title="Add funds">
+                              <PlusCircle className="w-3 h-3" />
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => openWalletDialog(u, "remove_fund")} className="h-7 text-xs border-orange-500/50 text-orange-400 hover:bg-orange-500/10" title="Remove funds">
+                              <MinusCircle className="w-3 h-3" />
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => openWalletDialog(u, "bonus")} className="h-7 text-xs border-primary/50 text-primary hover:bg-primary/10" title="Give bonus">
+                              <Sparkles className="w-3 h-3" />
+                            </Button>
+                            <Button
+                              size="sm" variant="outline"
+                              onClick={() => toggleUser(u.id)}
+                              className={`h-7 text-xs ${u.is_active ? "border-destructive text-destructive hover:bg-destructive/10" : "border-green-500 text-green-400 hover:bg-green-500/10"}`}
+                              title={u.is_active ? "Block user" : "Activate user"}
+                            >
+                              {u.is_active ? <Ban className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />}
+                            </Button>
+                          </div>
+
+                          {u.role !== "admin" && !u.deleted_at && (
+                            u.deletion_requested_at ? (
+                              <Button
+                                size="sm" variant="outline"
+                                onClick={() => cancelUserDeletion(u)}
+                                className="h-7 text-xs w-full border-green-500/60 text-green-400 hover:bg-green-500/10"
+                                title={`Deletion scheduled${u.deletion_scheduled_at ? ` for ${new Date(u.deletion_scheduled_at).toLocaleDateString()}` : ""} — click to restore`}
+                              >
+                                <CheckCircle className="w-3 h-3 mr-1" /> Restore account
+                              </Button>
+                            ) : (
+                              <div className="grid grid-cols-2 gap-1">
+                                <Button
+                                  size="sm" variant="outline"
+                                  onClick={() => deleteUserAccount(u, "schedule")}
+                                  className="h-7 text-xs border-destructive/60 text-destructive hover:bg-destructive/10"
+                                  title="Schedule deletion (30-day grace)"
+                                >
+                                  <Trash2 className="w-3 h-3 mr-1" /> Delete
+                                </Button>
+                                <Button
+                                  size="sm" variant="outline"
+                                  onClick={() => deleteUserAccount(u, "immediate")}
+                                  className="h-7 text-xs border-destructive text-destructive hover:bg-destructive/20"
+                                  title="Delete now (permanent)"
+                                >
+                                  <Trash2 className="w-3 h-3 mr-1" /> Delete now
+                                </Button>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Pagination */}
+                    {usersTotal > USERS_PAGE_SIZE && (
+                      <div className="flex items-center justify-between pt-2">
+                        <p className="text-xs text-muted-foreground">
+                          Page {userPage + 1} of {Math.max(1, Math.ceil(usersTotal / USERS_PAGE_SIZE))}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline" disabled={userPage === 0}
+                            onClick={() => setUserPage((p) => Math.max(0, p - 1))}
+                            className="h-8 border-border">
+                            <ChevronLeft className="w-4 h-4" /> Prev
+                          </Button>
+                          <Button size="sm" variant="outline"
+                            disabled={(userPage + 1) * USERS_PAGE_SIZE >= usersTotal}
+                            onClick={() => setUserPage((p) => p + 1)}
+                            className="h-8 border-border">
+                            Next <ChevronRight className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
             )}
 
@@ -1491,10 +1733,13 @@ const AdminFeatures = () => {
                   </Select>
                 </div>
 
-                <p className="text-xs text-muted-foreground">
-                  Showing {astrologers.length} of {astroTotal} astrologers
-                  {astroFilter !== "all" && <> · Filter: <span className="text-primary">{astroFilter}</span></>}
-                </p>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-xs text-muted-foreground">
+                    Showing {astrologers.length} of {astroTotal} astrologers
+                    {astroFilter !== "all" && <> · Filter: <span className="text-primary">{astroFilter}</span></>}
+                  </p>
+                  <ViewModeToggle value={astroViewMode} onChange={setAstroViewMode} />
+                </div>
 
                 {/* Pending approval banner */}
                 {astroFilter === "pending" && astrologers.length > 0 && (
@@ -1506,6 +1751,24 @@ const AdminFeatures = () => {
                   </div>
                 )}
 
+                {astroViewMode === "list" ? (
+                  /* Astrologers — premium DataTable (sort/export/pagination), all existing actions preserved */
+                  <DataTable<any>
+                    columns={astroColumns}
+                    data={astrologers}
+                    keyField={(a) => a.id}
+                    loading={loading}
+                    page={astroPage}
+                    pageSize={ASTRO_PAGE_SIZE}
+                    total={astroTotal}
+                    onPageChange={setAstroPage}
+                    hideExport={false}
+                    exportFileName="nakshtralogy-astrologers"
+                    emptyTitle="No astrologers found"
+                    emptyMessage="Adjust filters."
+                  />
+                ) : (
+                <>
                 {/* Astrologer cards */}
                 <div className="grid md:grid-cols-2 gap-4">
                   {astrologers.length === 0 && (
@@ -1705,6 +1968,8 @@ const AdminFeatures = () => {
                       </Button>
                     </div>
                   </div>
+                )}
+                </>
                 )}
               </div>
             )}
