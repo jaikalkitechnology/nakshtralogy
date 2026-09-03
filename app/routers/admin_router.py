@@ -11,6 +11,7 @@ Users:
   GET  /users                          — list users (paginated, search, role filter)
   GET  /users/{id}                     — user detail + wallet txns
   PUT  /users/{id}/edit                — edit user fields (name, phone, gender, etc.)
+  POST /users/{id}/avatar              — admin-set profile photo
   PATCH /users/{id}/toggle             — activate/deactivate
   PATCH /users/{id}/approve-profile    — approve user profile
   PATCH /users/{id}/verify             — mark email verified
@@ -19,6 +20,7 @@ Astrologers:
   GET  /astrologers                    — list all with profiles
   GET  /astrologers/{id}               — astrologer detail
   PUT  /astrologers/{id}/edit          — edit astrologer profile (rates, bio, etc.)
+  POST /astrologers/{id}/avatar        — admin-set profile photo
   PATCH /astrologers/{id}/approve      — approve astrologer
   PATCH /astrologers/{id}/block        — block/unblock
   PATCH /astrologers/{id}/commission   — update commission %
@@ -35,6 +37,8 @@ KYC:
   PATCH /kyc/{id}/reject               — reject KYC with reason
 """
 
+import os
+import uuid
 from datetime import datetime, timedelta
 from typing import Optional
 from decimal import Decimal
@@ -702,6 +706,50 @@ def get_user_detail(
     }
 
 
+# ── Admin-set profile photos (users + astrologers) ───────────────────
+# Stored in the same date-partitioned folder and served by the same
+# GET /comm/chat/file/{y}/{m}/{d}/{filename} endpoint as chat uploads, so
+# the admin panel's existing avatar-rendering code needs no changes.
+_AVATAR_UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "uploads", "chat")
+_AVATAR_ALLOWED_EXT = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
+_AVATAR_MAX_SIZE = 5 * 1024 * 1024  # 5 MB
+
+
+async def _save_avatar_upload(file: UploadFile, lang: str) -> str:
+    if not file.filename:
+        raise HTTPException(status_code=400, detail=t("err.no_file_provided", lang))
+    ext = os.path.splitext(file.filename)[1].lower()
+    if ext not in _AVATAR_ALLOWED_EXT:
+        raise HTTPException(status_code=400, detail=t("err.file_type_not_allowed", lang, allowed=", ".join(_AVATAR_ALLOWED_EXT)))
+    contents = await file.read()
+    if len(contents) > _AVATAR_MAX_SIZE:
+        raise HTTPException(status_code=400, detail=t("err.file_too_large", lang))
+    unique_name = f"{uuid.uuid4().hex}{ext}"
+    date_folder = datetime.utcnow().strftime("%Y/%m/%d")
+    folder_path = os.path.join(_AVATAR_UPLOAD_DIR, date_folder)
+    os.makedirs(folder_path, exist_ok=True)
+    with open(os.path.join(folder_path, unique_name), "wb") as f:
+        f.write(contents)
+    return f"/api/v1/comm/chat/file/{date_folder}/{unique_name}"
+
+
+@router.post("/users/{user_id}/avatar")
+async def upload_user_avatar(
+    user_id: str,
+    file: UploadFile = File(...),
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Admin-set profile photo for a user (jpg/png/gif/webp, max 5 MB)."""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail=t("err.user_not_found", lang))
+    user.avatar_url = await _save_avatar_upload(file, lang)
+    db.commit()
+    return {"avatar_url": user.avatar_url}
+
+
 @router.put("/users/{user_id}/edit")
 def edit_user(
     user_id: str,
@@ -976,6 +1024,23 @@ def astrologer_detail_admin(
             for k in kyc
         ],
     }
+
+
+@router.post("/astrologers/{profile_id}/avatar")
+async def upload_astrologer_avatar(
+    profile_id: str,
+    file: UploadFile = File(...),
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Admin-set profile photo for an astrologer (jpg/png/gif/webp, max 5 MB)."""
+    profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == profile_id).first()
+    if not profile:
+        raise HTTPException(status_code=404, detail=t("err.profile_not_found", lang))
+    profile.profile_image_url = await _save_avatar_upload(file, lang)
+    db.commit()
+    return {"profile_image_url": profile.profile_image_url}
 
 
 @router.put("/astrologers/{profile_id}/edit")
