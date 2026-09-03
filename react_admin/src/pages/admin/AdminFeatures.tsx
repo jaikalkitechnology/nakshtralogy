@@ -1081,14 +1081,14 @@ const AdminFeatures = () => {
   // ── DataTable column definitions (D.1/D.2/D.3 premium tables) ────
   // Render cells reuse the exact same handlers as before — no behavior change.
   const userColumns: DataTableColumn<any>[] = [
-    { key: "name", header: "Name", sortable: true, render: (u) => (
-      <span className="font-medium text-foreground inline-flex items-center gap-1.5">
+    { key: "name", header: "Name", sortable: true, minWidth: 160, render: (u) => (
+      <span className="font-medium text-foreground inline-flex items-center gap-1.5 flex-wrap max-w-[200px]">
         {u.name || "—"}
         {u.deleted_at && <Badge className="bg-destructive/20 text-destructive text-[10px]">deleted</Badge>}
         {!u.deleted_at && u.deletion_scheduled_at && <Badge className="bg-amber-500/20 text-amber-400 text-[10px]">deleting</Badge>}
       </span>
     ) },
-    { key: "email", header: "Email", sortable: true, hideBelow: "md" },
+    { key: "email", header: "Email", sortable: true, hideBelow: "md", minWidth: 170, className: "max-w-[200px] truncate" },
     { key: "phone", header: "Phone", hideBelow: "lg", render: (u) => u.phone || "—" },
     { key: "role", header: "Role", sortable: true, render: (u) => <Badge variant="outline" className="border-border text-xs capitalize">{u.role}</Badge> },
     { key: "wallet_balance", header: "Balance", align: "right", sortable: true, render: (u) => <span className="font-semibold text-primary">₹{u.wallet_balance}</span> },
@@ -1099,62 +1099,56 @@ const AdminFeatures = () => {
             {u.is_active ? "active" : "blocked"}
           </Badge>
     ) },
-    { key: "actions", header: "Actions", align: "center", className: "whitespace-nowrap", render: (u) => (
-      <div className="flex gap-1 justify-center flex-wrap" onClick={(e) => e.stopPropagation()}>
-        <Button size="sm" variant="outline" onClick={() => openUserDetail(u.id)} className="h-7 text-xs border-border" title="View details">
+    { key: "actions", header: "Actions", align: "center", className: "whitespace-nowrap", width: 110, minWidth: 110, render: (u) => (
+      <div className="flex gap-1 justify-center items-center" onClick={(e) => e.stopPropagation()}>
+        <Button size="sm" variant="outline" onClick={() => openUserDetail(u.id)} className="h-7 w-7 p-0 border-border" title="View details">
           <Eye className="w-3 h-3" />
-        </Button>
-        <Button size="sm" variant="outline" onClick={() => openWalletDialog(u, "add_fund")} className="h-7 text-xs border-green-500/50 text-green-400 hover:bg-green-500/10" title="Add funds">
-          <PlusCircle className="w-3 h-3" />
-        </Button>
-        <Button size="sm" variant="outline" onClick={() => openWalletDialog(u, "remove_fund")} className="h-7 text-xs border-orange-500/50 text-orange-400 hover:bg-orange-500/10" title="Remove funds">
-          <MinusCircle className="w-3 h-3" />
-        </Button>
-        <Button size="sm" variant="outline" onClick={() => openWalletDialog(u, "bonus")} className="h-7 text-xs border-primary/50 text-primary hover:bg-primary/10" title="Give bonus">
-          <Sparkles className="w-3 h-3" />
         </Button>
         <Button
           size="sm" variant="outline"
           onClick={() => toggleUser(u.id)}
-          className={`h-7 text-xs ${u.is_active ? "border-destructive text-destructive hover:bg-destructive/10" : "border-green-500 text-green-400 hover:bg-green-500/10"}`}
+          className={`h-7 w-7 p-0 ${u.is_active ? "border-destructive text-destructive hover:bg-destructive/10" : "border-green-500 text-green-400 hover:bg-green-500/10"}`}
           title={u.is_active ? "Block user" : "Activate user"}
         >
           {u.is_active ? <Ban className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />}
         </Button>
-        {u.role !== "admin" && !u.deleted_at && (
-          u.deletion_requested_at ? (
-            <Button
-              size="sm" variant="outline"
-              onClick={() => cancelUserDeletion(u)}
-              className="h-7 text-xs border-green-500/60 text-green-400 hover:bg-green-500/10"
-              title={`Deletion scheduled${u.deletion_scheduled_at ? ` for ${new Date(u.deletion_scheduled_at).toLocaleDateString()}` : ""} — click to restore`}
-            >
-              <CheckCircle className="w-3 h-3" /> Restore
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="sm" variant="outline" className="h-7 w-7 p-0 border-border" title="More actions">
+              <MoreVertical className="w-3 h-3" />
             </Button>
-          ) : (
-            <>
-              <Button
-                size="sm" variant="outline"
-                onClick={() => deleteUserAccount(u, "schedule")}
-                className="h-7 text-xs border-destructive/60 text-destructive hover:bg-destructive/10"
-                title="Schedule deletion (30-day grace)"
-              >
-                <Trash2 className="w-3 h-3" />
-              </Button>
-              <Button
-                size="sm" variant="outline"
-                onClick={() => deleteUserAccount(u, "immediate")}
-                className="h-7 text-xs border-destructive text-destructive hover:bg-destructive/20"
-                title="Delete now (permanent)"
-              >
-                <Trash2 className="w-3 h-3" /> Now
-              </Button>
-            </>
-          )
-        )}
-        {u.deleted_at && (
-          <Badge className="bg-destructive/20 text-destructive text-[10px]">deleted</Badge>
-        )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="bg-card border-border">
+            <DropdownMenuItem onClick={() => openWalletDialog(u, "add_fund")} className="text-green-400 focus:text-green-400">
+              <PlusCircle className="w-3.5 h-3.5 mr-2" /> Add funds
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => openWalletDialog(u, "remove_fund")} className="text-orange-400 focus:text-orange-400">
+              <MinusCircle className="w-3.5 h-3.5 mr-2" /> Remove funds
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => openWalletDialog(u, "bonus")} className="text-primary focus:text-primary">
+              <Sparkles className="w-3.5 h-3.5 mr-2" /> Give bonus
+            </DropdownMenuItem>
+            {u.role !== "admin" && !u.deleted_at && (
+              <>
+                <DropdownMenuSeparator />
+                {u.deletion_requested_at ? (
+                  <DropdownMenuItem onClick={() => cancelUserDeletion(u)} className="text-green-400 focus:text-green-400">
+                    <CheckCircle className="w-3.5 h-3.5 mr-2" /> Restore account
+                  </DropdownMenuItem>
+                ) : (
+                  <>
+                    <DropdownMenuItem onClick={() => deleteUserAccount(u, "schedule")} className="text-destructive focus:text-destructive">
+                      <Trash2 className="w-3.5 h-3.5 mr-2" /> Schedule deletion
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => deleteUserAccount(u, "immediate")} className="text-destructive focus:text-destructive">
+                      <Trash2 className="w-3.5 h-3.5 mr-2" /> Delete now
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     ) },
   ];
