@@ -16,7 +16,7 @@ import CommandPalette from "@/components/layout/CommandPalette";
 interface NavItem { to: string; label: string; icon: typeof LayoutDashboard; }
 interface NavGroup { heading?: string; items: NavItem[]; }
 
-const NAV: NavGroup[] = [
+export const NAV: NavGroup[] = [
   { items: [{ to: "/admin", label: "Dashboard", icon: LayoutDashboard }] },
   { heading: "PEOPLE", items: [
     { to: "/admin/users", label: "Users", icon: Users },
@@ -59,6 +59,13 @@ const NAV: NavGroup[] = [
   ]},
 ];
 
+// Restrictable pages for the Role Permissions page's "Page Access" checklist
+// — every page except Dashboard, which every admin can always reach as a
+// safe landing page regardless of scoping.
+export const PAGE_CATALOG: { heading: string; items: { to: string; label: string }[] }[] = NAV
+  .filter((g): g is NavGroup & { heading: string } => !!g.heading)
+  .map((g) => ({ heading: g.heading, items: g.items.map((it) => ({ to: it.to, label: it.label })) }));
+
 function crumb(pathname: string) {
   const seg = pathname.replace("/admin", "").split("/").filter(Boolean);
   return seg.length ? seg[seg.length - 1].replace(/-/g, " ") : "Overview";
@@ -72,6 +79,15 @@ export default function AdminShell({ children }: { children: ReactNode }) {
   const loc = useLocation();
   const width = collapsed ? 78 : 280;
 
+  // null allowedPages = every page visible (Super Admin default). A scoped
+  // admin only sees Dashboard + whatever pages they were granted.
+  const visibleNav = user?.allowedPages
+    ? NAV
+        .map((g) => ({ ...g, items: g.items.filter((it) => it.to === "/admin" || user.allowedPages!.includes(it.to)) }))
+        .filter((g) => g.items.length > 0)
+    : NAV;
+  const isUnrestricted = !user?.permissions && !user?.allowedPages;
+
   const Sidebar = (
     <div className="flex h-full flex-col">
       {/* Logo (pinned top) */}
@@ -82,7 +98,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
 
       {/* Nav (only this scrolls; invisible scrollbar) */}
       <nav className="no-scrollbar flex-1 overflow-y-auto px-3 py-1">
-        {NAV.map((g, gi) => (
+        {visibleNav.map((g, gi) => (
           <div key={gi}>
             {g.heading && !collapsed && <p className="px-3 pb-1.5 pt-3.5 text-[10px] font-bold tracking-[1.4px] text-muted-foreground/70">{g.heading}</p>}
             {g.heading && collapsed && gi > 0 && <div className="mx-auto my-2 h-px w-6 bg-border" />}
@@ -117,7 +133,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
           <div className="grid h-9 w-9 flex-none place-items-center rounded-full bg-gradient-to-br from-gold to-cosmic text-sm font-extrabold text-primary-foreground">
             {(user?.name || "A").slice(0, 1).toUpperCase()}
           </div>
-          {!collapsed && <div className="min-w-0"><b className="block truncate text-[13px] text-foreground">{user?.name || "Admin"}</b><span className="text-[11px] text-muted-foreground">Super Admin</span></div>}
+          {!collapsed && <div className="min-w-0"><b className="block truncate text-[13px] text-foreground">{user?.name || "Admin"}</b><span className="text-[11px] text-muted-foreground">{isUnrestricted ? "Super Admin" : "Admin"}</span></div>}
         </div>
         <button
           onClick={logout}

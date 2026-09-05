@@ -71,6 +71,13 @@ class User(Base):
     # restricts that admin account to only those actions. Meaningless for
     # role != "admin".
     permissions = Column(Text, nullable=True)
+    # Sub-admin PAGE (sidebar/route) scoping — independent of `permissions`
+    # above. NULL/empty = every page visible (Super Admin default). A
+    # non-empty JSON array of admin-panel route paths (e.g. "/admin/wallet")
+    # restricts the react_admin sidebar + routing to just those pages.
+    # Enforced client-side only (react_admin); `permissions` remains the
+    # backend-enforced control over what actions can actually be performed.
+    allowed_pages = Column(Text, nullable=True)
     preferred_language = Column(String(20), nullable=True)  # canonical i18n code (hindi, tamil, …)
     # Internationalization — region drives language mode + currency, NOT any
     # astrology logic. "IN" | "INTL"; country_code is ISO alpha-2 (US, FR, …).

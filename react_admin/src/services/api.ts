@@ -665,12 +665,18 @@ export async function adminListAdmins() {
   return request(`/admin/admins`);
 }
 
-export async function adminCreateAdmin(data: { email: string; password: string; name?: string; permissions?: string[] | null }) {
+export async function adminCreateAdmin(data: {
+  email: string; password: string; name?: string;
+  permissions?: string[] | null; allowed_pages?: string[] | null;
+}) {
   return request(`/admin/admins`, { method: "POST", body: JSON.stringify(data) });
 }
 
-export async function adminUpdateAdminPermissions(adminId: string, permissions: string[] | null) {
-  return request(`/admin/admins/${adminId}/permissions`, { method: "PATCH", body: JSON.stringify({ permissions }) });
+export async function adminUpdateAdminPermissions(adminId: string, permissions: string[] | null, allowedPages: string[] | null) {
+  return request(`/admin/admins/${adminId}/permissions`, {
+    method: "PATCH",
+    body: JSON.stringify({ permissions, allowed_pages: allowedPages }),
+  });
 }
 
 // ── Astrologer self-service (for astrologer dashboard) ──────────

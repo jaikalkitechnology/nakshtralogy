@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -36,9 +36,17 @@ import RolePermissions from "./pages/admin/RolePermissions";
 const queryClient = new QueryClient();
 
 function RequireAdmin({ children }: { children: JSX.Element }) {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
+  const location = useLocation();
   if (loading) return <div className="grid min-h-screen place-items-center bg-background text-primary">Loading…</div>;
   if (!isAuthenticated) return <Navigate to="/auth" replace />;
+  // Page-level scoping for a restricted sub-admin (independent of the
+  // action-level `permissions` they hold) — redirect away from any page not
+  // in their allowed list. Dashboard is always reachable as a safe landing
+  // page regardless of scoping.
+  if (user?.allowedPages && location.pathname !== "/admin" && !user.allowedPages.includes(location.pathname)) {
+    return <Navigate to="/admin" replace />;
+  }
   return children;
 }
 
