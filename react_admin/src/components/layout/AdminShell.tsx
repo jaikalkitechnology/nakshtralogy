@@ -1,15 +1,17 @@
-import { useState, type ReactNode, type CSSProperties } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { useState, useEffect, useRef, type ReactNode, type CSSProperties } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Users, Star, MessageSquare, ShieldCheck, Wallet, CreditCard,
   Gift, Receipt, TrendingUp, Server, Code2, Bell, BarChart3, Settings, LogOut,
   Search, Sun, Moon, RefreshCw, Plus, PanelLeftClose, PanelLeft, Menu, MessagesSquare,
   ScrollText, LifeBuoy, Lock, KeyRound, Image as ImageIcon, Bot, Mail, ShieldAlert, Ticket, Banknote, Crown,
+  UserCog, Inbox,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/theme/ThemeProvider";
 import { useAuth } from "@/contexts/AuthContext";
+import { adminDashboardSummary } from "@/services/api";
 import StarField from "@/components/StarField";
 import CommandPalette from "@/components/layout/CommandPalette";
 
@@ -71,13 +73,65 @@ function crumb(pathname: string) {
   return seg.length ? seg[seg.length - 1].replace(/-/g, " ") : "Overview";
 }
 
+// Where each notification "kind" (from GET /admin/dashboard/summary) sends
+// the admin when clicked, and which icon represents it.
+const NOTIF_META: Record<string, { to: string; icon: typeof Bell }> = {
+  astrologer_application: { to: "/admin/astrologers", icon: UserCog },
+  withdrawal: { to: "/admin/withdrawals", icon: Banknote },
+  support_ticket: { to: "/admin/support-tickets", icon: LifeBuoy },
+};
+
+// Compact "x min ago" from an ISO/`str(datetime)` timestamp (UTC).
+function timeAgo(ts?: string | null): string {
+  if (!ts) return "";
+  const t = Date.parse(ts.replace(" ", "T") + (/[zZ]|[+-]\d\d:?\d\d$/.test(ts) ? "" : "Z"));
+  if (isNaN(t)) return "";
+  const secs = Math.max(0, Math.floor((Date.now() - t) / 1000));
+  if (secs < 60) return "just now";
+  const mins = Math.floor(secs / 60);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
+}
+
 export default function AdminShell({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, toggle } = useTheme();
   const { user, logout } = useAuth();
   const loc = useLocation();
+  const navigate = useNavigate();
   const width = collapsed ? 78 : 280;
+
+  // Real admin alerts (pending astrologer applications, withdrawal
+  // requests, support tickets) — same source as the Dashboard's "Alerts"
+  // panel, so the bell badge and this panel never disagree with it.
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const notifRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let alive = true;
+    adminDashboardSummary()
+      .then((r) => { if (alive) setNotifications((r?.data ?? r)?.notifications ?? []); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
+
+  useEffect(() => {
+    if (!notifOpen) return;
+    const onOutside = (e: MouseEvent) => {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) setNotifOpen(false);
+    };
+    const onEscape = (e: KeyboardEvent) => { if (e.key === "Escape") setNotifOpen(false); };
+    document.addEventListener("mousedown", onOutside);
+    document.addEventListener("keydown", onEscape);
+    return () => {
+      document.removeEventListener("mousedown", onOutside);
+      document.removeEventListener("keydown", onEscape);
+    };
+  }, [notifOpen]);
 
   // null allowedPages = every page visible (Super Admin default). A scoped
   // admin only sees Dashboard + whatever pages they were granted.
@@ -206,11 +260,47 @@ export default function AdminShell({ children }: { children: ReactNode }) {
                 <Search className="h-[17px] w-[17px]" />
               </HeaderIcon>
             </div>
-            <HeaderIcon dot title="Notifications"><Bell className="h-[17px] w-[17px]" /></HeaderIcon>
-            <HeaderIcon title="Messages"><MessagesSquare className="h-[17px] w-[17px]" /></HeaderIcon>
+            <div ref={notifRef} className="relative">
+              <HeaderIcon dot={notifications.length > 0} title="Notifications" onClick={() => setNotifOpen((v) => !v)}>
+                <Bell className="h-[17px] w-[17px]" />
+              </HeaderIcon>
+              {notifOpen && (
+                <div className="absolute right-0 top-11 z-30 w-80 max-w-[90vw] overflow-hidden rounded-xl border border-border/70 bg-card shadow-xl">
+                  <div className="border-b border-border/60 px-3.5 py-2.5 text-[12.5px] font-bold text-foreground">Notifications</div>
+                  <div className="max-h-80 overflow-y-auto">
+                    {notifications.length === 0 ? (
+                      <div className="flex flex-col items-center gap-1.5 py-8 text-muted-foreground">
+                        <Inbox className="h-5 w-5" />
+                        <p className="text-[12px]">Nothing needs attention.</p>
+                      </div>
+                    ) : (
+                      notifications.map((n, i) => {
+                        const meta = NOTIF_META[n.kind] || { to: "/admin", icon: Bell };
+                        return (
+                          <button
+                            key={i}
+                            onClick={() => { setNotifOpen(false); navigate(meta.to); }}
+                            className="flex w-full items-start gap-2.5 border-b border-border/40 px-3.5 py-2.5 text-left last:border-0 hover:bg-muted/40"
+                          >
+                            <div className="mt-0.5 grid h-8 w-8 flex-none place-items-center rounded-lg bg-gold/10 text-gold">
+                              <meta.icon className="h-4 w-4" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-[12.5px] font-semibold text-foreground">{n.title}</p>
+                              <p className="truncate text-[11.5px] text-muted-foreground">{n.meta}</p>
+                            </div>
+                            <span className="flex-none whitespace-nowrap text-[10.5px] text-muted-foreground">{timeAgo(n.created_at)}</span>
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
             <HeaderIcon onClick={toggle} title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}>{theme === "dark" ? <Sun className="h-[17px] w-[17px]" /> : <Moon className="h-[17px] w-[17px]" />}</HeaderIcon>
             <HeaderIcon title="Refresh page data" onClick={() => window.location.reload()}><RefreshCw className="h-[17px] w-[17px]" /></HeaderIcon>
-            <span className="hidden rounded-full border border-border/70 bg-gold/8 px-3 py-1.5 text-[11px] font-bold text-gold sm:inline">SUPER ADMIN</span>
+            <span className="hidden rounded-full border border-border/70 bg-gold/8 px-3 py-1.5 text-[11px] font-bold text-gold sm:inline">{isUnrestricted ? "SUPER ADMIN" : "ADMIN"}</span>
             <button title="Quick create" className="lift press flex items-center gap-1.5 rounded-xl bg-gradient-to-br from-gold to-gold-light px-3.5 py-2 text-[13px] font-extrabold text-primary-foreground shadow-[0_6px_18px_hsl(var(--gold)/0.3)]">
               <Plus className="h-[15px] w-[15px]" /><span className="hidden sm:inline">Create</span>
             </button>
