@@ -39,17 +39,22 @@ KYC:
 
 import os
 import uuid
+import json
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional, List
 from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Body, UploadFile, File
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 from sqlalchemy import func as sqlfunc, text as sqltext
 from pydantic import BaseModel, EmailStr, Field
 
 from app.core.database import get_db
-from app.core.dependencies import require_role, resolve_user_lang, get_lang_user
+from app.core.dependencies import (
+    require_role, resolve_user_lang, get_lang_user,
+    require_permission, require_super_admin, admin_permissions,
+)
+from app.services.audit_log import log_action
 from app.core.security import (
     verify_password, create_access_token, create_refresh_token,
 )
@@ -64,6 +69,7 @@ from app.models.model import (
     LiveStreamViewer, LiveStreamQuestion, LiveStreamGift,
     LiveStreamSuperChat, LiveChatMessage, SessionReview,
     WithdrawalRequest, SupportTicket, ContactMessage, AgoraConfig,
+    AuditLog,
 )
 
 router = APIRouter()
@@ -771,7 +777,7 @@ def edit_user(
 @router.patch("/users/{user_id}/toggle")
 def toggle_user(
     user_id: str,
-    current_user: User = Depends(require_role("admin")),
+    current_user: User = Depends(require_permission("manage_users")),
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
 ):
@@ -780,6 +786,8 @@ def toggle_user(
         raise HTTPException(status_code=404, detail=t("err.user_not_found", lang))
     user.is_active = not user.is_active
     db.commit()
+    log_action(db, current_user, "user.block" if not user.is_active else "user.unblock",
+               "user", user.id, user.email or user.name)
     return {"id": user.id, "is_active": user.is_active}
 
 
@@ -788,7 +796,7 @@ def toggle_user(
 def admin_delete_user(
     user_id: str,
     mode: str = "schedule",   # schedule (30-day grace) | immediate (purge now)
-    current_user: User = Depends(require_role("admin")),
+    current_user: User = Depends(require_permission("manage_users")),
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
 ):
@@ -805,13 +813,15 @@ def admin_delete_user(
     if getattr(user, "deleted_at", None):
         raise HTTPException(status_code=400, detail="Account is already deleted")
     res = ad.request_deletion(db, user, immediate=(mode == "immediate"))
+    log_action(db, current_user, "user.delete_immediate" if mode == "immediate" else "user.delete_schedule",
+               "user", user.id, user.email or user.name)
     return {"id": user.id, "role": user.role, **res}
 
 
 @router.post("/users/{user_id}/delete/cancel")
 def admin_cancel_delete(
     user_id: str,
-    current_user: User = Depends(require_role("admin")),
+    current_user: User = Depends(require_permission("manage_users")),
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
 ):
@@ -821,6 +831,7 @@ def admin_cancel_delete(
         raise HTTPException(status_code=404, detail=t("err.user_not_found", lang))
     if not ad.cancel_deletion(db, user):
         raise HTTPException(status_code=400, detail="Account can no longer be restored")
+    log_action(db, current_user, "user.delete_cancel", "user", user.id, user.email or user.name)
     return {"id": user.id, "status": "active"}
 
 
@@ -1071,7 +1082,7 @@ def edit_astrologer(
 @router.patch("/astrologers/{profile_id}/approve")
 def approve_astrologer(
     profile_id: str,
-    current_user: User = Depends(require_role("admin")),
+    current_user: User = Depends(require_permission("manage_astrologers")),
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
 ):
@@ -1086,6 +1097,7 @@ def approve_astrologer(
     if user:
         user.profile_approved = True
     db.commit()
+    log_action(db, current_user, "astrologer.approve", "astrologer", profile.id, profile.display_name)
 
     # Notify astrologer: push + email + in-app.
     notify = {"push": False, "email": False, "in_app": False}
@@ -1109,7 +1121,7 @@ def approve_astrologer(
 def reject_astrologer(
     profile_id: str,
     req: AstrologerRejectRequest,
-    current_user: User = Depends(require_role("admin")),
+    current_user: User = Depends(require_permission("manage_astrologers")),
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
 ):
@@ -1136,6 +1148,8 @@ def reject_astrologer(
             latest_kyc.status = "rejected"
             latest_kyc.rejection_reason = req.reason
     db.commit()
+    log_action(db, current_user, "astrologer.reject", "astrologer", profile.id, profile.display_name,
+               detail=req.reason)
 
     notify = {"push": False, "email": False, "in_app": False}
     if user:
@@ -1157,7 +1171,7 @@ def reject_astrologer(
 @router.patch("/astrologers/{profile_id}/block")
 def block_astrologer(
     profile_id: str,
-    current_user: User = Depends(require_role("admin")),
+    current_user: User = Depends(require_permission("manage_astrologers")),
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
 ):
@@ -1169,6 +1183,8 @@ def block_astrologer(
         user.is_active = not user.is_active
     profile.is_online = False
     db.commit()
+    log_action(db, current_user, "astrologer.block" if user and not user.is_active else "astrologer.unblock",
+               "astrologer", profile.id, profile.display_name)
 
     if user and (user.fcm_token or user.fcm_token_web):
         if user.is_active:
@@ -1196,7 +1212,7 @@ def block_astrologer(
 def update_commission(
     profile_id: str,
     commission_pct: float = Query(..., ge=0, le=100),
-    current_user: User = Depends(require_role("admin")),
+    current_user: User = Depends(require_permission("manage_astrologers")),
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
 ):
@@ -1205,6 +1221,8 @@ def update_commission(
         raise HTTPException(status_code=404, detail=t("err.profile_not_found", lang))
     profile.commission_pct = Decimal(str(commission_pct))
     db.commit()
+    log_action(db, current_user, "astrologer.commission_update", "astrologer", profile.id, profile.display_name,
+               detail=f"commission_pct={commission_pct}")
     return {"id": profile.id, "commission_pct": float(profile.commission_pct)}
 
 
@@ -1359,7 +1377,7 @@ def list_transactions(
 def adjust_wallet(
     user_id: str,
     req: WalletAdjustRequest,
-    current_user: User = Depends(require_role("admin")),
+    current_user: User = Depends(require_permission("manage_wallet")),
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
 ):
@@ -1408,6 +1426,8 @@ def adjust_wallet(
     )
     db.add(txn)
     db.commit()
+    log_action(db, current_user, f"wallet.{req.action}", "user", user.id, user.email or user.name,
+               detail=f"amount={amount}; reason={req.reason}")
     action_label_key = {
         "add_fund": "label.wallet_action.add_fund",
         "remove_fund": "label.wallet_action.remove_fund",
@@ -1487,7 +1507,7 @@ def get_kyc_detail(
 @router.patch("/kyc/{kyc_id}/approve")
 def approve_kyc(
     kyc_id: str,
-    current_user: User = Depends(require_role("admin")),
+    current_user: User = Depends(require_permission("manage_kyc")),
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
 ):
@@ -1503,6 +1523,8 @@ def approve_kyc(
         user.is_verified = True
         user.profile_approved = True
     db.commit()
+    log_action(db, current_user, "kyc.approve", "kyc", kyc.id, user.email if user else None,
+               detail=f"doc_type={kyc.doc_type}")
 
     notify = {"push": False, "email": False, "in_app": False}
     if user:
@@ -1526,7 +1548,7 @@ def approve_kyc(
 def reject_kyc(
     kyc_id: str,
     req: KycRejectRequest,
-    current_user: User = Depends(require_role("admin")),
+    current_user: User = Depends(require_permission("manage_kyc")),
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
 ):
@@ -1538,6 +1560,7 @@ def reject_kyc(
     kyc.reviewed_by = current_user.id
     kyc.reviewed_at = datetime.utcnow()
     db.commit()
+    log_action(db, current_user, "kyc.reject", "kyc", kyc.id, None, detail=req.reason)
 
     user = db.query(User).filter(User.id == kyc.user_id).first()
     notify = {"push": False, "email": False, "in_app": False}
@@ -3174,3 +3197,322 @@ def admin_action_withdrawal(
     return {"id": w.id, "status": w.status,
             "amount": float(w.amount), "tds_amount": float(w.tds_amount or 0),
             "net_amount": float(w.net_amount) if w.net_amount is not None else float(w.amount)}
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  CONSULTATIONS — admin list view
+# ══════════════════════════════════════════════════════════════════════
+
+@router.get("/consultations")
+def list_consultations(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=200),
+    status_filter: Optional[str] = Query(None, alias="status"),
+    session_type: Optional[str] = None,
+    search: Optional[str] = None,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    AstroUser = aliased(User)
+    q = (
+        db.query(Consultation, User, AstrologerProfile, AstroUser)
+        .join(User, Consultation.user_id == User.id)
+        .join(AstrologerProfile, Consultation.astrologer_id == AstrologerProfile.id)
+        .join(AstroUser, AstrologerProfile.user_id == AstroUser.id)
+    )
+    if status_filter and status_filter != "all":
+        q = q.filter(Consultation.status == status_filter)
+    if session_type and session_type != "all":
+        q = q.filter(Consultation.session_type == session_type)
+    if search:
+        like = f"%{search}%"
+        q = q.filter(
+            (User.name.like(like)) | (User.email.like(like)) |
+            (AstrologerProfile.display_name.like(like)) | (AstroUser.email.like(like))
+        )
+    total = q.count()
+    rows = q.order_by(Consultation.created_at.desc()).offset(skip).limit(limit).all()
+    return {
+        "total": total,
+        "consultations": [
+            {
+                "id": c.id,
+                "user_id": u.id, "user_name": u.name, "user_email": u.email,
+                "astrologer_id": ap.id, "astrologer_name": ap.display_name, "astrologer_email": au.email,
+                "session_type": c.session_type,
+                "status": c.status,
+                "scheduled_at": str(c.scheduled_at) if c.scheduled_at else None,
+                "started_at": str(c.started_at) if c.started_at else None,
+                "ended_at": str(c.ended_at) if c.ended_at else None,
+                "duration_min": c.duration_min,
+                "total_amount": float(c.total_amount or 0),
+                "astrologer_earning": float(c.astrologer_earning or 0),
+                "platform_commission": float(c.platform_commission or 0),
+                "cancel_reason": c.cancel_reason,
+                "cancelled_by": c.cancelled_by,
+                "created_at": str(c.created_at) if c.created_at else None,
+            }
+            for c, u, ap, au in rows
+        ],
+    }
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  ANALYTICS — growth/volume trends + leaderboard beyond the dashboard's
+#  revenue chart (GET /dashboard/revenue above already covers revenue).
+# ══════════════════════════════════════════════════════════════════════
+
+def _trend_buckets(rng: str):
+    """Same bucketing shape as _revenue_buckets (above), reusable for any
+    per-period count rather than a wallet-txn sum."""
+    now = datetime.utcnow()
+    rng = (rng or "month").lower()
+    if rng == "today":
+        start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        labels = [f"{h}h" for h in range(0, 24, 2)]
+        key = lambda dt: min(11, dt.hour // 2)
+    elif rng == "week":
+        start = (now - timedelta(days=6)).replace(hour=0, minute=0, second=0, microsecond=0)
+        days = [(start + timedelta(days=i)) for i in range(7)]
+        labels = [d.strftime("%a") for d in days]
+        key = lambda dt: min(6, (dt.date() - start.date()).days)
+    elif rng == "year":
+        start = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+        labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        key = lambda dt: min(11, dt.month - 1)
+    else:  # month → last 30 days, daily
+        start = (now - timedelta(days=29)).replace(hour=0, minute=0, second=0, microsecond=0)
+        days = [(start + timedelta(days=i)) for i in range(30)]
+        labels = [d.strftime("%d") for d in days]
+        key = lambda dt: min(29, (dt.date() - start.date()).days)
+    return start, labels, key
+
+
+@router.get("/analytics/overview")
+def analytics_overview(
+    range: str = Query("month", pattern=r"^(today|week|month|year)$"),
+    current_user: User = Depends(require_permission("view_analytics")),
+    db: Session = Depends(get_db),
+):
+    """Deeper-dive analytics: user/astrologer signup growth, consultation
+    volume over the selected range, plus all-time status/type distributions
+    and a top-astrologers leaderboard."""
+    start, labels, key = _trend_buckets(range)
+    n = len(labels)
+
+    new_users = [0] * n
+    new_astrologers = [0] * n
+    for created_at, role in db.query(User.created_at, User.role).filter(User.created_at >= start).all():
+        if not created_at:
+            continue
+        try:
+            idx = key(created_at)
+        except Exception:
+            continue
+        if 0 <= idx < n:
+            if role == "astrologer":
+                new_astrologers[idx] += 1
+            elif role == "user":
+                new_users[idx] += 1
+    user_growth = [{"d": labels[i], "users": new_users[i], "astrologers": new_astrologers[i]} for i in range(n)]
+
+    volume = [0] * n
+    for (created_at,) in db.query(Consultation.created_at).filter(Consultation.created_at >= start).all():
+        if not created_at:
+            continue
+        try:
+            idx = key(created_at)
+        except Exception:
+            continue
+        if 0 <= idx < n:
+            volume[idx] += 1
+    consultation_volume = [{"d": labels[i], "count": volume[i]} for i in range(n)]
+
+    status_rows = db.query(Consultation.status, sqlfunc.count(Consultation.id)).group_by(Consultation.status).all()
+    consultation_status = {(s or "unknown"): c for s, c in status_rows}
+
+    type_rows = db.query(Consultation.session_type, sqlfunc.count(Consultation.id)).group_by(Consultation.session_type).all()
+    consultation_type = {(t or "unknown"): c for t, c in type_rows}
+
+    top_astrologers = (
+        db.query(AstrologerProfile, User)
+        .join(User, AstrologerProfile.user_id == User.id)
+        .filter(User.deleted_at.is_(None))
+        .order_by(AstrologerProfile.total_consultations.desc())
+        .limit(5)
+        .all()
+    )
+
+    return {
+        "range": range,
+        "user_growth": user_growth,
+        "consultation_volume": consultation_volume,
+        "consultation_status": consultation_status,
+        "consultation_type": consultation_type,
+        "top_astrologers": [
+            {
+                "id": ap.id, "display_name": ap.display_name, "email": u.email,
+                "rating": float(ap.rating or 0),
+                "total_consultations": ap.total_consultations or 0,
+                "total_minutes": ap.total_minutes or 0,
+            }
+            for ap, u in top_astrologers
+        ],
+    }
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  AUDIT LOGS
+# ══════════════════════════════════════════════════════════════════════
+
+@router.get("/audit-logs")
+def list_audit_logs(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=200),
+    action: Optional[str] = None,
+    target_type: Optional[str] = None,
+    admin_email: Optional[str] = None,
+    current_user: User = Depends(require_permission("view_audit_logs")),
+    db: Session = Depends(get_db),
+):
+    q = db.query(AuditLog)
+    if action:
+        q = q.filter(AuditLog.action == action)
+    if target_type:
+        q = q.filter(AuditLog.target_type == target_type)
+    if admin_email:
+        q = q.filter(AuditLog.admin_email.like(f"%{admin_email}%"))
+    total = q.count()
+    rows = q.order_by(AuditLog.created_at.desc()).offset(skip).limit(limit).all()
+    return {
+        "total": total,
+        "logs": [
+            {
+                "id": a.id, "admin_id": a.admin_id, "admin_email": a.admin_email,
+                "action": a.action, "target_type": a.target_type, "target_id": a.target_id,
+                "target_label": a.target_label, "detail": a.detail,
+                "created_at": str(a.created_at) if a.created_at else None,
+            }
+            for a in rows
+        ],
+    }
+
+
+@router.get("/audit-logs/actions")
+def list_audit_actions(
+    current_user: User = Depends(require_permission("view_audit_logs")),
+    db: Session = Depends(get_db),
+):
+    """Distinct action names logged so far, to populate the filter dropdown."""
+    rows = db.query(AuditLog.action).distinct().order_by(AuditLog.action).all()
+    return {"actions": [r[0] for r in rows]}
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  ROLE PERMISSIONS — sub-admin accounts
+#  User.permissions is NULL for every admin created before this feature —
+#  they keep unrestricted ("Super Admin") access. Only a newly-created or
+#  explicitly-scoped admin is limited to their granted permission keys.
+#  Enforcement (require_permission) is wired into a representative set of
+#  sensitive write endpoints (wallet, KYC, astrologer approval, user
+#  actions) below and where noted elsewhere in this file — extend the same
+#  pattern to further endpoints as needed.
+# ══════════════════════════════════════════════════════════════════════
+
+ADMIN_PERMISSIONS = [
+    {"key": "manage_users", "label": "Manage Users", "description": "Block/unblock, delete, wallet actions on end users"},
+    {"key": "manage_astrologers", "label": "Manage Astrologers", "description": "Approve/reject, block, commission on astrologers"},
+    {"key": "manage_kyc", "label": "Manage KYC", "description": "Approve/reject KYC documents"},
+    {"key": "manage_wallet", "label": "Manage Wallet", "description": "Add/remove funds, bonuses"},
+    {"key": "manage_pricing", "label": "Manage Pricing & Gifts", "description": "Service pricing, gift catalog"},
+    {"key": "manage_content", "label": "Manage Content", "description": "Banners, FAQ, coupons, notifications"},
+    {"key": "manage_settings", "label": "Manage Settings", "description": "Platform settings, API/Agora config, developers"},
+    {"key": "view_analytics", "label": "View Analytics", "description": "Analytics page"},
+    {"key": "view_audit_logs", "label": "View Audit Logs", "description": "Admin action history"},
+]
+
+
+class UpdateAdminPermissionsRequest(BaseModel):
+    permissions: Optional[List[str]] = None  # None/[] = unrestricted (Super Admin)
+
+
+class CreateAdminRequest(BaseModel):
+    email: EmailStr
+    password: str
+    name: Optional[str] = None
+    permissions: Optional[List[str]] = None
+
+
+@router.get("/permissions/catalog")
+def get_permission_catalog(current_user: User = Depends(require_role("admin"))):
+    return {"permissions": ADMIN_PERMISSIONS}
+
+
+@router.get("/admins")
+def list_admins(
+    current_user: User = Depends(require_super_admin),
+    db: Session = Depends(get_db),
+):
+    rows = (
+        db.query(User)
+        .filter(User.role == "admin", User.deleted_at.is_(None))
+        .order_by(User.created_at.asc())
+        .all()
+    )
+    return {
+        "admins": [
+            {
+                "id": a.id, "email": a.email, "name": a.name,
+                "is_active": a.is_active,
+                "permissions": admin_permissions(a),  # None = unrestricted
+                "created_at": str(a.created_at) if a.created_at else None,
+                "is_self": a.id == current_user.id,
+            }
+            for a in rows
+        ],
+    }
+
+
+@router.post("/admins")
+def create_admin(
+    req: CreateAdminRequest,
+    current_user: User = Depends(require_super_admin),
+    db: Session = Depends(get_db),
+):
+    if db.query(User).filter(User.email == req.email).first():
+        raise HTTPException(status_code=400, detail="Email already registered")
+    from app.core.security import hash_password
+    admin = User(
+        email=req.email,
+        password_hash=hash_password(req.password),
+        name=req.name,
+        role="admin",
+        is_active=True,
+        is_verified=True,
+        permissions=json.dumps(req.permissions) if req.permissions else None,
+    )
+    db.add(admin)
+    db.commit()
+    db.refresh(admin)
+    log_action(db, current_user, "admin.create", "user", admin.id, admin.email,
+               detail=f"permissions={req.permissions or 'unrestricted'}")
+    return {"id": admin.id, "email": admin.email, "permissions": req.permissions}
+
+
+@router.patch("/admins/{admin_id}/permissions")
+def update_admin_permissions(
+    admin_id: str,
+    req: UpdateAdminPermissionsRequest,
+    current_user: User = Depends(require_super_admin),
+    db: Session = Depends(get_db),
+):
+    admin = db.query(User).filter(User.id == admin_id, User.role == "admin").first()
+    if not admin:
+        raise HTTPException(status_code=404, detail="Admin not found")
+    if admin.id == current_user.id:
+        raise HTTPException(status_code=400, detail="Cannot change your own permissions")
+    admin.permissions = json.dumps(req.permissions) if req.permissions else None
+    db.commit()
+    log_action(db, current_user, "admin.permissions_update", "user", admin.id, admin.email,
+               detail=f"permissions={req.permissions or 'unrestricted'}")
+    return {"id": admin.id, "permissions": req.permissions}
