@@ -1,5 +1,6 @@
 """FastAPI dependencies — auth, role checks."""
 
+import json
 from typing import Optional
 
 from fastapi import Depends, HTTPException, status, Query, Header
@@ -54,6 +55,41 @@ get_current_user_role = get_current_user  # alias
 require_user = require_role("user")
 require_astrologer = require_role("astrologer")
 require_admin = require_role("admin")
+
+
+def admin_permissions(user: User) -> Optional[list]:
+    """User.permissions is a JSON array of permission keys, or NULL/empty for
+    an unrestricted ("Super Admin") account — every admin created before the
+    Role Permissions feature existed. Returns None for unrestricted, else the
+    list of keys that admin is scoped to."""
+    if not getattr(user, "permissions", None):
+        return None
+    try:
+        parsed = json.loads(user.permissions)
+        return parsed if isinstance(parsed, list) else None
+    except Exception:
+        return None
+
+
+def require_permission(perm: str):
+    """Require role=admin AND (unrestricted, or explicitly granted `perm`)."""
+    def _check(current_user: User = Depends(get_current_user)):
+        if current_user.role != "admin":
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
+        perms = admin_permissions(current_user)
+        if perms is not None and perm not in perms:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Missing permission: {perm}")
+        return current_user
+    return _check
+
+
+def require_super_admin(current_user: User = Depends(get_current_user)):
+    """Unrestricted admin only — required to manage other admin accounts and
+    their permissions, so a scoped sub-admin can never grant themselves more
+    access."""
+    if current_user.role != "admin" or admin_permissions(current_user) is not None:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Super Admin access required")
+    return current_user
 
 
 def get_lang_user(

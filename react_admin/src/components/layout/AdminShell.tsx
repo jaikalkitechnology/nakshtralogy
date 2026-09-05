@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Users, Star, MessageSquare, ShieldCheck, Wallet, CreditCard,
   Gift, Receipt, TrendingUp, Server, Code2, Bell, BarChart3, Settings, LogOut,
   Search, Sun, Moon, RefreshCw, Plus, PanelLeftClose, PanelLeft, Menu, MessagesSquare,
-  FolderKanban, ScrollText, LifeBuoy, Lock, KeyRound, Image as ImageIcon, Bot, Mail, ShieldAlert, Ticket, Banknote, Crown,
+  ScrollText, LifeBuoy, Lock, KeyRound, Image as ImageIcon, Bot, Mail, ShieldAlert, Ticket, Banknote, Crown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/theme/ThemeProvider";
@@ -48,7 +48,6 @@ const NAV: NavGroup[] = [
     { to: "/admin/payment-gateways", label: "Payment Gateways", icon: CreditCard },
     { to: "/admin/payments", label: "Payments & Webhooks", icon: Receipt },
     { to: "/admin/withdrawals", label: "Astrologer Payouts", icon: Banknote },
-    { to: "/admin/content", label: "Content Management", icon: FolderKanban },
     { to: "/admin/audit-logs", label: "Audit Logs", icon: ScrollText },
     { to: "/admin/support-tickets", label: "Support Tickets", icon: LifeBuoy },
     { to: "/admin/queries", label: "Query Support", icon: Mail },

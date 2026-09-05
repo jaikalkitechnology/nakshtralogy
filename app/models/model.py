@@ -65,6 +65,12 @@ class User(Base):
     birth_tz = Column(String(50), nullable=True)
     moon_sign = Column(Integer, nullable=True)       # 0-11 cached for gochar
     role = Column(String(20), nullable=False, default="user")  # user | astrologer | admin
+    # Sub-admin permission scoping. NULL/empty = unrestricted ("Super Admin" —
+    # every current admin, before this feature existed, keeps full access).
+    # A non-empty JSON array of permission keys (see admin_router.ADMIN_PERMISSIONS)
+    # restricts that admin account to only those actions. Meaningless for
+    # role != "admin".
+    permissions = Column(Text, nullable=True)
     preferred_language = Column(String(20), nullable=True)  # canonical i18n code (hindi, tamil, …)
     # Internationalization — region drives language mode + currency, NOT any
     # astrology logic. "IN" | "INTL"; country_code is ISO alpha-2 (US, FR, …).
@@ -1813,3 +1819,21 @@ class UserSubscription(Base):
     __table_args__ = (
         Index("ix_usersub_user_status", "user_id", "status"),
     )
+
+
+class AuditLog(Base):
+    """Append-only trail of sensitive admin actions (approvals, blocks,
+    deletions, wallet adjustments, permission changes, ...), for the admin
+    panel's Audit Logs page. Written via app.services.audit_log.log_action —
+    never edited or deleted through the API."""
+    __tablename__ = "audit_logs"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    admin_id = Column(String(36), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    admin_email = Column(String(255), nullable=True)  # snapshot — survives admin deletion
+    action = Column(String(60), nullable=False, index=True)  # e.g. "astrologer.approve"
+    target_type = Column(String(40), nullable=True, index=True)  # e.g. "astrologer", "user"
+    target_id = Column(String(36), nullable=True, index=True)
+    target_label = Column(String(255), nullable=True)  # snapshot of name/email for display
+    detail = Column(Text, nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False, index=True)

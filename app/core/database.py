@@ -37,6 +37,8 @@ _DEV_COLUMN_MIGRATIONS = [
     ("api_keys", "monthly_quota", "INT"),
     # Web push (auth/web platform)
     ("users", "fcm_token_web", "TEXT"),
+    # Sub-admin role permissions (react_admin Role Permissions page)
+    ("users", "permissions", "TEXT"),
 ]
 
 

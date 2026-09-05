@@ -631,6 +631,48 @@ export async function adminRejectKyc(kycId: string, reason: string) {
   return request(`/admin/kyc/${kycId}/reject`, { method: "PATCH", body: JSON.stringify({ reason }) });
 }
 
+// ── Consultations ────────────────────────────────────────────────
+
+export async function adminListConsultations(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/admin/consultations?${qs}`);
+}
+
+// ── Analytics ────────────────────────────────────────────────────
+
+export async function adminAnalyticsOverview(range: "today" | "week" | "month" | "year" = "month") {
+  return request(`/admin/analytics/overview?range=${range}`);
+}
+
+// ── Audit Logs ───────────────────────────────────────────────────
+
+export async function adminListAuditLogs(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/admin/audit-logs?${qs}`);
+}
+
+export async function adminListAuditActions() {
+  return request(`/admin/audit-logs/actions`);
+}
+
+// ── Role Permissions (sub-admin accounts) ───────────────────────
+
+export async function adminGetPermissionCatalog() {
+  return request(`/admin/permissions/catalog`);
+}
+
+export async function adminListAdmins() {
+  return request(`/admin/admins`);
+}
+
+export async function adminCreateAdmin(data: { email: string; password: string; name?: string; permissions?: string[] | null }) {
+  return request(`/admin/admins`, { method: "POST", body: JSON.stringify(data) });
+}
+
+export async function adminUpdateAdminPermissions(adminId: string, permissions: string[] | null) {
+  return request(`/admin/admins/${adminId}/permissions`, { method: "PATCH", body: JSON.stringify({ permissions }) });
+}
+
 // ── Astrologer self-service (for astrologer dashboard) ──────────
 
 export async function fetchAstroMeKycStatus() {
