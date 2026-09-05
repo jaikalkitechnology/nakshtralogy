@@ -52,7 +52,7 @@ from pydantic import BaseModel, EmailStr, Field
 from app.core.database import get_db
 from app.core.dependencies import (
     require_role, resolve_user_lang, get_lang_user,
-    require_permission, require_super_admin, admin_permissions,
+    require_permission, require_super_admin, admin_permissions, admin_allowed_pages,
 )
 from app.services.audit_log import log_action
 from app.core.security import (
@@ -174,6 +174,9 @@ class AdminUserResponse(BaseModel):
     role: str
     is_active: bool
     wallet_balance: float = 0.0
+    # None = unrestricted ("Super Admin"). See admin_permissions/admin_allowed_pages.
+    permissions: Optional[List[str]] = None
+    allowed_pages: Optional[List[str]] = None
 
 
 class AdminTokenResponse(BaseModel):
@@ -216,6 +219,8 @@ def admin_login(req: AdminLoginRequest, db: Session = Depends(get_db), lang: str
             role=user.role,
             is_active=user.is_active,
             wallet_balance=float(wallet.balance) if wallet else 0.0,
+            permissions=admin_permissions(user),
+            allowed_pages=admin_allowed_pages(user),
         ),
     )
 
@@ -3434,6 +3439,7 @@ ADMIN_PERMISSIONS = [
 
 class UpdateAdminPermissionsRequest(BaseModel):
     permissions: Optional[List[str]] = None  # None/[] = unrestricted (Super Admin)
+    allowed_pages: Optional[List[str]] = None  # None/[] = every page visible
 
 
 class CreateAdminRequest(BaseModel):
@@ -3441,6 +3447,7 @@ class CreateAdminRequest(BaseModel):
     password: str
     name: Optional[str] = None
     permissions: Optional[List[str]] = None
+    allowed_pages: Optional[List[str]] = None
 
 
 @router.get("/permissions/catalog")
@@ -3465,6 +3472,7 @@ def list_admins(
                 "id": a.id, "email": a.email, "name": a.name,
                 "is_active": a.is_active,
                 "permissions": admin_permissions(a),  # None = unrestricted
+                "allowed_pages": admin_allowed_pages(a),  # None = every page visible
                 "created_at": str(a.created_at) if a.created_at else None,
                 "is_self": a.id == current_user.id,
             }
@@ -3489,14 +3497,18 @@ def create_admin(
         role="admin",
         is_active=True,
         is_verified=True,
-        permissions=json.dumps(req.permissions) if req.permissions else None,
+        # `is not None` (not a truthy check) — an explicitly empty [] means
+        # "no actions"/"Dashboard only", which must be stored as such, not
+        # silently collapsed into None (unrestricted).
+        permissions=json.dumps(req.permissions) if req.permissions is not None else None,
+        allowed_pages=json.dumps(req.allowed_pages) if req.allowed_pages is not None else None,
     )
     db.add(admin)
     db.commit()
     db.refresh(admin)
     log_action(db, current_user, "admin.create", "user", admin.id, admin.email,
-               detail=f"permissions={req.permissions or 'unrestricted'}")
-    return {"id": admin.id, "email": admin.email, "permissions": req.permissions}
+               detail=f"permissions={req.permissions or 'unrestricted'}; pages={req.allowed_pages or 'all'}")
+    return {"id": admin.id, "email": admin.email, "permissions": req.permissions, "allowed_pages": req.allowed_pages}
 
 
 @router.patch("/admins/{admin_id}/permissions")
@@ -3511,8 +3523,9 @@ def update_admin_permissions(
         raise HTTPException(status_code=404, detail="Admin not found")
     if admin.id == current_user.id:
         raise HTTPException(status_code=400, detail="Cannot change your own permissions")
-    admin.permissions = json.dumps(req.permissions) if req.permissions else None
+    admin.permissions = json.dumps(req.permissions) if req.permissions is not None else None
+    admin.allowed_pages = json.dumps(req.allowed_pages) if req.allowed_pages is not None else None
     db.commit()
     log_action(db, current_user, "admin.permissions_update", "user", admin.id, admin.email,
-               detail=f"permissions={req.permissions or 'unrestricted'}")
-    return {"id": admin.id, "permissions": req.permissions}
+               detail=f"permissions={req.permissions or 'unrestricted'}; pages={req.allowed_pages or 'all'}")
+    return {"id": admin.id, "permissions": req.permissions, "allowed_pages": req.allowed_pages}

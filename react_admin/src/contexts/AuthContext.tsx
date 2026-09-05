@@ -10,6 +10,9 @@ interface AuthUser {
   role: UserRole;
   avatar?: string;
   walletBalance: number;
+  // null = unrestricted ("Super Admin"). See react_admin's Role Permissions page.
+  permissions: string[] | null;
+  allowedPages: string[] | null;
 }
 
 interface AuthContextType {
@@ -36,6 +39,8 @@ function mapUser(data: any): AuthUser {
     role: "admin",
     avatar: data.avatar_url,
     walletBalance: data.wallet_balance || 0,
+    permissions: data.permissions ?? null,
+    allowedPages: data.allowed_pages ?? null,
   };
 }
 

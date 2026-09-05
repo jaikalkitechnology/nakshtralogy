@@ -8,6 +8,7 @@ import {
 import {
   CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandShortcut,
 } from "@/components/ui/command";
+import { useAuth } from "@/contexts/AuthContext";
 
 const DESTINATIONS = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, group: "Navigate" },
@@ -40,6 +41,10 @@ const GROUPS = ["Navigate", "People", "Finance", "Platform"];
 export default function CommandPalette() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const destinations = user?.allowedPages
+    ? DESTINATIONS.filter((d) => d.to === "/admin" || user.allowedPages!.includes(d.to))
+    : DESTINATIONS;
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -69,7 +74,7 @@ export default function CommandPalette() {
         <CommandEmpty>No results found.</CommandEmpty>
         {GROUPS.map((group) => (
           <CommandGroup key={group} heading={group}>
-            {DESTINATIONS.filter((d) => d.group === group).map((d) => (
+            {destinations.filter((d) => d.group === group).map((d) => (
               <CommandItem key={d.to} value={d.label} onSelect={() => go(d.to)}>
                 <d.icon className="mr-2 h-4 w-4" />
                 <span>{d.label}</span>

@@ -39,6 +39,7 @@ _DEV_COLUMN_MIGRATIONS = [
     ("users", "fcm_token_web", "TEXT"),
     # Sub-admin role permissions (react_admin Role Permissions page)
     ("users", "permissions", "TEXT"),
+    ("users", "allowed_pages", "TEXT"),
 ]
 
 

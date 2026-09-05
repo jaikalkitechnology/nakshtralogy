@@ -71,6 +71,19 @@ def admin_permissions(user: User) -> Optional[list]:
         return None
 
 
+def admin_allowed_pages(user: User) -> Optional[list]:
+    """User.allowed_pages is a JSON array of react_admin route paths, or
+    NULL/empty for every page visible. Purely a UI/routing scope — separate
+    from `permissions`, which is what's actually enforced on the backend."""
+    if not getattr(user, "allowed_pages", None):
+        return None
+    try:
+        parsed = json.loads(user.allowed_pages)
+        return parsed if isinstance(parsed, list) else None
+    except Exception:
+        return None
+
+
 def require_permission(perm: str):
     """Require role=admin AND (unrestricted, or explicitly granted `perm`)."""
     def _check(current_user: User = Depends(get_current_user)):
@@ -84,10 +97,14 @@ def require_permission(perm: str):
 
 
 def require_super_admin(current_user: User = Depends(get_current_user)):
-    """Unrestricted admin only — required to manage other admin accounts and
-    their permissions, so a scoped sub-admin can never grant themselves more
-    access."""
-    if current_user.role != "admin" or admin_permissions(current_user) is not None:
+    """Fully unrestricted admin only (no scoped permissions AND no scoped
+    pages) — required to manage other admin accounts and their access, so a
+    scoped sub-admin can never grant themselves more."""
+    if (
+        current_user.role != "admin"
+        or admin_permissions(current_user) is not None
+        or admin_allowed_pages(current_user) is not None
+    ):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Super Admin access required")
     return current_user
 
