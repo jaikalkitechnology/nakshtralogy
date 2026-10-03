@@ -23,6 +23,7 @@ interface ReviewRow {
   comment: string | null;
   is_visible: boolean;
   created_at: string | null;
+  updated_at: string | null;
   session_type: string | null;
 }
 
@@ -122,7 +123,15 @@ export default function Reviews() {
         {r.is_visible ? "Visible" : "Blocked"}
       </Badge>
     ) },
-    { key: "created_at", header: "Date", hideBelow: "md", render: (r) => r.created_at?.slice(0, 16) || "—" },
+    { key: "updated_at", header: "Date", hideBelow: "md", sortable: true, render: (r) => {
+      const edited = !!r.updated_at && r.updated_at !== r.created_at;
+      return (
+        <div>
+          <p>{(edited ? r.updated_at : r.created_at)?.slice(0, 16) || "—"}</p>
+          {edited && <p className="text-xs text-muted-foreground">edited</p>}
+        </div>
+      );
+    } },
     { key: "actions", header: "", align: "right", render: (r) => (
       <div className="flex items-center justify-end gap-1">
         <Button

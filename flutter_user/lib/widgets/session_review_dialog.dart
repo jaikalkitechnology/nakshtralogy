@@ -116,7 +116,7 @@ class _SessionReviewDialogState extends State<_SessionReviewDialog> {
       title: Column(mainAxisSize: MainAxisSize.min, children: [
         const Text('⭐', style: TextStyle(fontSize: 34)),
         const SizedBox(height: 6),
-        Text(_isEditing ? 'Update your rating' : 'Rate your session',
+        Text(_isEditing ? 'Edit Review' : 'Write a Review',
             style: const TextStyle(color: AppColors.primary, fontSize: 18, fontWeight: FontWeight.w700)),
         const SizedBox(height: 2),
         Text('How was your consultation with $who?',

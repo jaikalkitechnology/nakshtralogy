@@ -915,14 +915,18 @@ def list_public_reviews(
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang),
 ):
-    """Public: list visible reviews for an astrologer, newest first.
+    """Public: list visible reviews for an astrologer, latest
+    updated/created first — editing an older review bumps it back to the
+    top, same as a brand-new one.
 
     Reviews can live in either `Review` (legacy, consultation-based) or
     `SessionReview` (chat/voice/video session reviews — the one the app
     actually writes to today, via POST /comm/review after a completed
     session). Both are merged here so this list matches the aggregate
     rating/total_reviews on the profile, which is computed the same way —
-    see app.services.review_service.recompute_astrologer_rating.
+    see app.services.review_service.recompute_astrologer_rating. `Review`
+    has no `updated_at` (dead table, never edited in practice), so its
+    `created_at` doubles as the sort key for those rows.
 
     Each sub-query only needs its own top (skip + limit) rows (already
     sorted newest-first) to produce a correct merged page — the global
@@ -947,7 +951,7 @@ def list_public_reviews(
         db.query(SessionReview, UserModel)
         .join(UserModel, SessionReview.user_id == UserModel.id)
         .filter(SessionReview.astrologer_id == astrologer_id, SessionReview.is_visible == True)
-        .order_by(SessionReview.created_at.desc())
+        .order_by(SessionReview.updated_at.desc())
         .limit(fetch_n)
         .all()
     )
@@ -959,13 +963,17 @@ def list_public_reviews(
             "rating": r.rating,
             "comment": r.comment,
             "created_at": r.created_at,
+            "updated_at": getattr(r, "updated_at", None),
+            "_sort_ts": getattr(r, "updated_at", None) or r.created_at,
         }
         for r, u in (consult_rows + session_rows)
     ]
-    merged.sort(key=lambda item: item["created_at"] or datetime.min, reverse=True)
+    merged.sort(key=lambda item: item["_sort_ts"] or datetime.min, reverse=True)
     page = merged[skip: skip + limit]
     for item in page:
+        item.pop("_sort_ts", None)
         item["created_at"] = str(item["created_at"]) if item["created_at"] else None
+        item["updated_at"] = str(item["updated_at"]) if item["updated_at"] else None
 
     total = (
         db.query(Review).filter(Review.astrologer_id == astrologer_id, Review.is_visible == True).count()

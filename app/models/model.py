@@ -554,10 +554,19 @@ class Review(Base):
 
 
 class SessionReview(Base):
-    """User's rating + review for a completed communication session
-    (chat / voice call / video call). Separate from the consultation-based
-    `Review` so live paid sessions can be reviewed without a consultation row.
-    One review per session (enforced by the unique (session_type, session_id))."""
+    """User's rating + review for an astrologer, written after a completed
+    communication session (chat / voice call / video call). Separate from
+    the consultation-based `Review` so live paid sessions can be reviewed
+    without a consultation row.
+
+    One review per (user, astrologer) — NOT one per session: a second
+    completed session with the same astrologer updates this same row
+    (session_type/session_id are re-pointed to the latest session, rating/
+    comment/updated_at refresh) rather than creating a second review. See
+    app/routers/communication_router.py:create_session_review. The
+    (session_type, session_id) unique index predates that and is now
+    structurally redundant (every session_id is already unique) but is
+    left in place — harmless, nothing depends on removing it."""
     __tablename__ = "session_reviews"
 
     id = Column(String(36), primary_key=True, default=new_uuid)
@@ -569,6 +578,7 @@ class SessionReview(Base):
     comment = Column(Text, nullable=True)
     is_visible = Column(Boolean, default=True)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 
     __table_args__ = (
         Index("ix_session_review_unique", "session_type", "session_id", unique=True),
