@@ -127,7 +127,7 @@
   "applicationCategory": "LifestyleApplication",
   "description": "Free Vedic Kundli, AI-powered birth-chart reports across 16 life dimensions, daily horoscope, Kundli Milan, and live chat/call/video consultation with certified astrologers.",
   "url": "https://app.nakshatralogy.com/",
-  "installUrl": "https://play.google.com/store/apps/details?id=com.nakshtralogy.user",
+  "installUrl": "https://play.google.com/store/apps/details?id=com.nakshtralogy.app",
   "aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": "4.7",
@@ -148,7 +148,7 @@
   "applicationCategory": "BusinessApplication",
   "description": "The astrologer app and web console — manage client charts, run live chat/voice/video consultations, track real-time earnings, and request instant payouts.",
   "url": "https://astro.nakshatralogy.com/",
-  "installUrl": "https://play.google.com/store/apps/details?id=com.nakshtralogy.astrologer",
+  "installUrl": "https://play.google.com/store/apps/details?id=com.nakshtralogy.astro",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
   "publisher": { "@id": "https://nakshatralogy.com/#organization" }
 }
@@ -632,6 +632,8 @@
   .store-badge .sb-small { font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--smoke); line-height: 1.1; }
   .store-badge .sb-big { font-size: 15px; font-weight: 600; color: var(--ivory); line-height: 1.15; }
   .store-badge .sb-soon { position: absolute; top: -9px; right: -8px; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--midnight); background: var(--gold); border-radius: 999px; padding: 2px 7px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  .store-badge-live { cursor: pointer; opacity: 1; text-decoration: none; transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease; }
+  .store-badge-live:hover { border-color: var(--gold); background: var(--surface-3, var(--surface-2)); transform: translateY(-2px); }
 
   .final { text-align: center; }
   .final-inner { background: radial-gradient(120% 120% at 50% 0%, rgba(232,181,71,0.14), transparent 60%), linear-gradient(160deg, rgba(31,36,89,0.5), rgba(16,16,46,0.6)); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(40px, 6vw, 72px) 24px; }
@@ -1190,7 +1192,7 @@
     <div class="container">
       <div class="section-head">
         <h2 class="section-title" id="apps-title">Get the <em>apps</em></h2>
-        <p class="section-sub">Nakshatralogy on your phone — for seekers and for astrologers. Mobile apps are on the way; use the web app today.</p>
+        <p class="section-sub">Nakshatralogy on your phone — for seekers and for astrologers. Android is live now; iOS is on the way.</p>
       </div>
       <div class="apps-grid">
         <!-- User app -->
@@ -1204,11 +1206,10 @@
               <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2 1.6-3 1.7-3-.9-1.4-2.4-1.5-2.9-1.6-1.2-.1-2.4.7-3 .7-.6 0-1.6-.7-2.6-.7-1.3 0-2.6.8-3.2 2-.1.3-.7 2.6.4 4.7.5 1 1.1 2.1 1.9 2.1s1-.6 2-.6 1.2.6 2 .6 1.4-1 1.9-2c.6-1.1.8-2.1.9-2.2-.1 0-1.8-.7-1.8-2.7zM14.6 6.7c.5-.6.8-1.4.7-2.2-.7 0-1.5.5-2 1.1-.4.5-.8 1.3-.7 2.1.8 0 1.5-.4 2-1z"/></svg>
               <span style="text-align:left"><span class="sb-small">Download on the</span><br/><span class="sb-big">App Store</span></span>
             </span>
-            <span class="store-badge" role="img" aria-label="Nakshatralogy User App on Google Play — coming soon">
-              <span class="sb-soon">Coming soon</span>
+            <a class="store-badge store-badge-live" href="https://play.google.com/store/apps/details?id=com.nakshtralogy.app&amp;pcampaignid=web_share" target="_blank" rel="noopener" aria-label="Get Nakshatralogy User App on Google Play">
               <svg width="20" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="#34A853" d="M3.6 21.4 13 12 3.6 2.6c-.3.2-.5.6-.5 1.1v16.6c0 .5.2.9.5 1.1z" opacity=".9"/><path fill="#4285F4" d="M13 12 3.6 21.4c.3.2.8.2 1.3-.1L16 14.8 13 12z"/><path fill="#FBBC05" d="M13 12l3-2.8L4.9 2.7c-.5-.3-1-.3-1.3-.1L13 12z"/><path fill="#EA4335" d="M16 14.8l3.9-2.2c.7-.4.7-1.4 0-1.8L16 9.2 13 12l3 2.8z"/></svg>
               <span style="text-align:left"><span class="sb-small">Get it on</span><br/><span class="sb-big">Google Play</span></span>
-            </span>
+            </a>
           </div>
         </div>
         <!-- Astrologer app -->
@@ -1222,11 +1223,10 @@
               <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2 1.6-3 1.7-3-.9-1.4-2.4-1.5-2.9-1.6-1.2-.1-2.4.7-3 .7-.6 0-1.6-.7-2.6-.7-1.3 0-2.6.8-3.2 2-.1.3-.7 2.6.4 4.7.5 1 1.1 2.1 1.9 2.1s1-.6 2-.6 1.2.6 2 .6 1.4-1 1.9-2c.6-1.1.8-2.1.9-2.2-.1 0-1.8-.7-1.8-2.7zM14.6 6.7c.5-.6.8-1.4.7-2.2-.7 0-1.5.5-2 1.1-.4.5-.8 1.3-.7 2.1.8 0 1.5-.4 2-1z"/></svg>
               <span style="text-align:left"><span class="sb-small">Download on the</span><br/><span class="sb-big">App Store</span></span>
             </span>
-            <span class="store-badge" role="img" aria-label="Nakshatralogy Astrologer App on Google Play — coming soon">
-              <span class="sb-soon">Coming soon</span>
+            <a class="store-badge store-badge-live" href="https://play.google.com/store/apps/details?id=com.nakshtralogy.astro&amp;pcampaignid=web_share" target="_blank" rel="noopener" aria-label="Get Nakshatralogy Astrologer App on Google Play">
               <svg width="20" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="#34A853" d="M3.6 21.4 13 12 3.6 2.6c-.3.2-.5.6-.5 1.1v16.6c0 .5.2.9.5 1.1z" opacity=".9"/><path fill="#4285F4" d="M13 12 3.6 21.4c.3.2.8.2 1.3-.1L16 14.8 13 12z"/><path fill="#FBBC05" d="M13 12l3-2.8L4.9 2.7c-.5-.3-1-.3-1.3-.1L13 12z"/><path fill="#EA4335" d="M16 14.8l3.9-2.2c.7-.4.7-1.4 0-1.8L16 9.2 13 12l3 2.8z"/></svg>
               <span style="text-align:left"><span class="sb-small">Get it on</span><br/><span class="sb-big">Google Play</span></span>
-            </span>
+            </a>
           </div>
         </div>
       </div>
@@ -1277,7 +1277,7 @@
           <div class="footer-col-title">For Astrologers</div>
           <ul class="footer-links">
             <li><a href="https://astro.nakshatralogy.com" rel="noopener">Join as Astrologer ↗</a></li>
-            <li><a href="https://play.google.com/store/apps/details?id=com.nakshtralogy.astrologer" rel="noopener">Astrologer App ↗</a></li>
+            <li><a href="https://play.google.com/store/apps/details?id=com.nakshtralogy.astro&amp;pcampaignid=web_share" rel="noopener" target="_blank">Astrologer App ↗</a></li>
             <li><a href="https://astro.nakshatralogy.com" rel="noopener">Astrologer Login ↗</a></li>
           </ul>
         </div>
