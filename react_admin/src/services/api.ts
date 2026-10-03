@@ -638,6 +638,18 @@ export async function adminListConsultations(params: Record<string, any> = {}) {
   return request(`/admin/consultations?${qs}`);
 }
 
+// ── Kundli / Report Data Submissions ────────────────────────────
+
+export async function adminListKundliSubmissions(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/admin/kundli-submissions?${qs}`);
+}
+
+export async function adminGetKundliSubmissionDetail(userId: string, params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/admin/kundli-submissions/${userId}?${qs}`);
+}
+
 // ── Analytics ────────────────────────────────────────────────────
 
 export async function adminAnalyticsOverview(range: "today" | "week" | "month" | "year" = "month") {

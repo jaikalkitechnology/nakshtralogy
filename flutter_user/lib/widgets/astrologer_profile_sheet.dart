@@ -328,10 +328,26 @@ class _AstrologerProfileSheet extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
-                    // Reviews
-                    Text(
-                      l.astroReviews(reviews.length),
-                      style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                    // Reviews — header uses the server-side total, not just
+                    // what's loaded so far, so it stays correct once more
+                    // pages are fetched via "See More".
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          l.astroReviews(state.reviewsTotal),
+                          style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                        ),
+                        if (reviews.isNotEmpty)
+                          Row(mainAxisSize: MainAxisSize.min, children: [
+                            const Icon(Icons.star, size: 12, color: AppColors.primary),
+                            const SizedBox(width: 3),
+                            Text(
+                              rating.toStringAsFixed(1),
+                              style: const TextStyle(color: AppColors.textPrimary, fontSize: 11, fontWeight: FontWeight.w600),
+                            ),
+                          ]),
+                      ],
                     ),
                     const SizedBox(height: 6),
                     if (reviews.isEmpty)
@@ -400,6 +416,22 @@ class _AstrologerProfileSheet extends StatelessWidget {
                           ],
                         ),
                       )),
+                    if (state.reviewsHasMore) ...[
+                      const SizedBox(height: 4),
+                      Center(
+                        child: TextButton(
+                          onPressed: state.reviewsLoadingMore
+                              ? null
+                              : () => context.read<AstrologerBloc>().add(AstrologerMoreReviewsRequested(a['id'] as String)),
+                          child: state.reviewsLoadingMore
+                              ? const SizedBox(
+                                  width: 16, height: 16,
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
+                                )
+                              : Text('See More', style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w600)),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 20),
 
                     // Action buttons

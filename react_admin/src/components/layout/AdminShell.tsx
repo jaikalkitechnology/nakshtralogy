@@ -6,7 +6,7 @@ import {
   Gift, Receipt, TrendingUp, Server, Code2, Bell, BarChart3, Settings, LogOut,
   Search, Sun, Moon, RefreshCw, Plus, PanelLeftClose, PanelLeft, Menu, MessagesSquare,
   ScrollText, LifeBuoy, Lock, KeyRound, Image as ImageIcon, Bot, Mail, ShieldAlert, Ticket, Banknote, Crown,
-  UserCog, Inbox, Construction,
+  UserCog, Inbox, Construction, FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/theme/ThemeProvider";
@@ -24,6 +24,7 @@ export const NAV: NavGroup[] = [
     { to: "/admin/users", label: "Users", icon: Users },
     { to: "/admin/astrologers", label: "Astrologers", icon: Star },
     { to: "/admin/consultations", label: "Consultations", icon: MessageSquare },
+    { to: "/admin/kundli-data", label: "Kundli Data", icon: FileText },
     { to: "/admin/reviews", label: "Reviews", icon: Star },
     { to: "/admin/kyc", label: "KYC Verification", icon: ShieldCheck },
   ]},

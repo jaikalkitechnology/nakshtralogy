@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Users, Star, MessageSquare, ShieldCheck, Wallet, CreditCard,
   Gift, Receipt, TrendingUp, Server, Code2, Bell, BarChart3, Settings,
-  ScrollText, LifeBuoy, Lock, KeyRound, Construction,
+  ScrollText, LifeBuoy, Lock, KeyRound, Construction, FileText,
 } from "lucide-react";
 import {
   CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandShortcut,
@@ -15,6 +15,7 @@ const DESTINATIONS = [
   { to: "/admin/users", label: "Users", icon: Users, group: "People" },
   { to: "/admin/astrologers", label: "Astrologers", icon: Star, group: "People" },
   { to: "/admin/consultations", label: "Consultations", icon: MessageSquare, group: "People" },
+  { to: "/admin/kundli-data", label: "Kundli Data", icon: FileText, group: "People" },
   { to: "/admin/reviews", label: "Reviews", icon: Star, group: "People" },
   { to: "/admin/kyc", label: "KYC Verification", icon: ShieldCheck, group: "People" },
   { to: "/admin/wallet", label: "Wallet", icon: Wallet, group: "Finance" },

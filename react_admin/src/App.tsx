@@ -29,6 +29,8 @@ import Payments from "./pages/admin/Payments";
 import Withdrawals from "./pages/admin/Withdrawals";
 import Subscriptions from "./pages/admin/Subscriptions";
 import Consultations from "./pages/admin/Consultations";
+import KundliData from "./pages/admin/KundliData";
+import Reviews from "./pages/admin/Reviews";
 import Analytics from "./pages/admin/Analytics";
 import AuditLogs from "./pages/admin/AuditLogs";
 import RolePermissions from "./pages/admin/RolePermissions";
@@ -97,6 +99,8 @@ const App = () => (
               <Route path="/admin/notifications" element={<RequireAdmin><AdminShell><NotificationsManager /></AdminShell></RequireAdmin>} />
               <Route path="/admin/system" element={<RequireAdmin><AdminShell><SystemMaintenance /></AdminShell></RequireAdmin>} />
               <Route path="/admin/consultations" element={<RequireAdmin><AdminShell><Consultations /></AdminShell></RequireAdmin>} />
+              <Route path="/admin/kundli-data" element={<RequireAdmin><AdminShell><KundliData /></AdminShell></RequireAdmin>} />
+              <Route path="/admin/reviews" element={<RequireAdmin><AdminShell><Reviews /></AdminShell></RequireAdmin>} />
               <Route path="/admin/analytics" element={<RequireAdmin><AdminShell><Analytics /></AdminShell></RequireAdmin>} />
               <Route path="/admin/audit-logs" element={<RequireAdmin><AdminShell><AuditLogs /></AdminShell></RequireAdmin>} />
               <Route path="/admin/role-permissions" element={<RequireAdmin><AdminShell><RolePermissions /></AdminShell></RequireAdmin>} />

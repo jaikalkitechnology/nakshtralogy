@@ -9,6 +9,8 @@ class AstrologerState extends Equatable {
   final bool detailLoading;
   final Map<String, dynamic>? detail;
   final List<dynamic> detailReviews;
+  final int reviewsTotal;
+  final bool reviewsLoadingMore;
 
   const AstrologerState({
     this.loading = false,
@@ -19,7 +21,11 @@ class AstrologerState extends Equatable {
     this.detailLoading = false,
     this.detail,
     this.detailReviews = const [],
+    this.reviewsTotal = 0,
+    this.reviewsLoadingMore = false,
   });
+
+  bool get reviewsHasMore => detailReviews.length < reviewsTotal;
 
   AstrologerState copyWith({
     bool? loading,
@@ -30,6 +36,8 @@ class AstrologerState extends Equatable {
     bool? detailLoading,
     Map<String, dynamic>? detail,
     List<dynamic>? detailReviews,
+    int? reviewsTotal,
+    bool? reviewsLoadingMore,
     bool clearDetail = false,
     bool clearError = false,
   }) {
@@ -42,9 +50,14 @@ class AstrologerState extends Equatable {
       detailLoading: detailLoading ?? this.detailLoading,
       detail: clearDetail ? null : (detail ?? this.detail),
       detailReviews: detailReviews ?? this.detailReviews,
+      reviewsTotal: reviewsTotal ?? this.reviewsTotal,
+      reviewsLoadingMore: reviewsLoadingMore ?? this.reviewsLoadingMore,
     );
   }
 
   @override
-  List<Object?> get props => [loading, list, saved, savedIds, error, detailLoading, detail, detailReviews];
+  List<Object?> get props => [
+        loading, list, saved, savedIds, error, detailLoading, detail,
+        detailReviews, reviewsTotal, reviewsLoadingMore,
+      ];
 }

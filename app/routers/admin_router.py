@@ -63,7 +63,7 @@ from app.services.fcm_service import notify_generic, send_push
 from app.models.model import (
     User, Wallet, WalletTransaction, AstrologerProfile,
     CallSession, ChatSession, LiveStream, ServiceOrder,
-    KycDocument, RefreshToken, Review, Consultation,
+    KycDocument, RefreshToken, Review, Consultation, Chart,
     PlatformSetting, SubscriptionPlan, ApiProduct,
     Notification, NotificationCampaign,
     LiveStreamViewer, LiveStreamQuestion, LiveStreamGift,
@@ -1591,6 +1591,19 @@ def reject_kyc(
 #  REVIEWS & RATINGS — List, Edit, Toggle Visibility, Delete
 # ══════════════════════════════════════════════════════════════════════
 
+def _parse_review_id(composite_id: str, lang: str):
+    """GET /admin/reviews tags each row's `id` as "review:<uuid>" or
+    "session:<uuid>" so the moderation actions below know which table a
+    given review actually lives in. Any other admin caller passing a bare
+    id (from before this merge) correctly 404s rather than guessing."""
+    if ":" not in composite_id:
+        raise HTTPException(status_code=404, detail=t("err.review_not_found", lang))
+    source, raw_id = composite_id.split(":", 1)
+    if source not in ("review", "session"):
+        raise HTTPException(status_code=404, detail=t("err.review_not_found", lang))
+    return source, raw_id
+
+
 @router.get("/reviews")
 def list_reviews(
     skip: int = Query(0, ge=0),
@@ -1606,66 +1619,58 @@ def list_reviews(
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
 ):
-    """
-    List reviews with admin filters. Joins user (reviewer) and
-    astrologer profile for display.
-    """
-    q = db.query(Review, User, AstrologerProfile).join(
-        User, Review.user_id == User.id
-    ).join(
-        AstrologerProfile, Review.astrologer_id == AstrologerProfile.id
-    )
+    """Every review across BOTH the legacy consultation-based `Review`
+    table and the live session-based `SessionReview` table (chat/voice/
+    video — the one the app actually writes to via POST /comm/review).
+    Earlier, this only read `Review`, which nothing creates, so the admin
+    panel's review moderation was silently looking at an empty table while
+    real reviews accumulated unseen in SessionReview.
 
-    if astrologer_id:
-        q = q.filter(Review.astrologer_id == astrologer_id)
-    if user_id:
-        q = q.filter(Review.user_id == user_id)
-    if rating:
-        q = q.filter(Review.rating == rating)
-    if visibility == "visible":
-        q = q.filter(Review.is_visible == True)
-    elif visibility == "hidden":
-        q = q.filter(Review.is_visible == False)
-    if search:
-        like = f"%{search}%"
-        q = q.filter(
-            (User.name.like(like)) |
-            (AstrologerProfile.display_name.like(like)) |
-            (Review.comment.like(like))
+    Each item's `id` is a composite "review:<uuid>" / "session:<uuid>" tag
+    — see _parse_review_id — so toggle-visibility/delete below know which
+    table to act on without a second lookup."""
+    def _apply_filters(q, model):
+        if astrologer_id:
+            q = q.filter(model.astrologer_id == astrologer_id)
+        if user_id:
+            q = q.filter(model.user_id == user_id)
+        if rating:
+            q = q.filter(model.rating == rating)
+        if visibility == "visible":
+            q = q.filter(model.is_visible == True)
+        elif visibility == "hidden":
+            q = q.filter(model.is_visible == False)
+        if search:
+            like = f"%{search}%"
+            q = q.filter(
+                (User.name.like(like)) |
+                (AstrologerProfile.display_name.like(like)) |
+                (model.comment.like(like))
+            )
+        if date_from:
+            try:
+                q = q.filter(model.created_at >= datetime.strptime(date_from, "%Y-%m-%d"))
+            except ValueError:
+                raise HTTPException(status_code=400, detail=t("err.date_from_format", lang))
+        if date_to:
+            try:
+                dt_to = datetime.strptime(date_to, "%Y-%m-%d").replace(hour=23, minute=59, second=59)
+                q = q.filter(model.created_at <= dt_to)
+            except ValueError:
+                raise HTTPException(status_code=400, detail=t("err.date_to_format", lang))
+        return q
+
+    def _rows(model, id_prefix, extra_fields_fn):
+        q = db.query(model, User, AstrologerProfile).join(
+            User, model.user_id == User.id
+        ).join(
+            AstrologerProfile, model.astrologer_id == AstrologerProfile.id
         )
-    if date_from:
-        try:
-            q = q.filter(Review.created_at >= datetime.strptime(date_from, "%Y-%m-%d"))
-        except ValueError:
-            raise HTTPException(status_code=400, detail=t("err.date_from_format", lang))
-    if date_to:
-        try:
-            dt_to = datetime.strptime(date_to, "%Y-%m-%d").replace(hour=23, minute=59, second=59)
-            q = q.filter(Review.created_at <= dt_to)
-        except ValueError:
-            raise HTTPException(status_code=400, detail=t("err.date_to_format", lang))
-
-    total = q.count()
-
-    # rating distribution across filtered set
-    all_rows = q.all()
-    distribution = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-    sum_rating = 0
-    for r, _, _ in all_rows:
-        distribution[r.rating] = distribution.get(r.rating, 0) + 1
-        sum_rating += r.rating
-    avg_rating = round(sum_rating / len(all_rows), 2) if all_rows else 0.0
-
-    rows = q.order_by(Review.created_at.desc()).offset(skip).limit(limit).all()
-
-    return {
-        "total": total,
-        "average_rating": avg_rating,
-        "distribution": distribution,
-        "reviews": [
+        q = _apply_filters(q, model)
+        return [
             {
-                "id": r.id,
-                "consultation_id": r.consultation_id,
+                "id": f"{id_prefix}:{r.id}",
+                "source": id_prefix,
                 "user_id": u.id,
                 "user_name": u.name,
                 "user_email": u.email,
@@ -1675,10 +1680,35 @@ def list_reviews(
                 "rating": r.rating,
                 "comment": r.comment,
                 "is_visible": r.is_visible,
-                "created_at": str(r.created_at) if r.created_at else None,
+                "created_at": r.created_at,
+                **extra_fields_fn(r),
             }
-            for r, u, p in rows
-        ],
+            for r, u, p in q.all()
+        ]
+
+    combined = (
+        _rows(Review, "review", lambda r: {"session_type": None})
+        + _rows(SessionReview, "session", lambda r: {"session_type": r.session_type})
+    )
+    combined.sort(key=lambda item: item["created_at"] or datetime.min, reverse=True)
+
+    total = len(combined)
+    distribution = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    sum_rating = 0
+    for item in combined:
+        distribution[item["rating"]] = distribution.get(item["rating"], 0) + 1
+        sum_rating += item["rating"]
+    avg_rating = round(sum_rating / total, 2) if total else 0.0
+
+    page = combined[skip: skip + limit]
+    for item in page:
+        item["created_at"] = str(item["created_at"]) if item["created_at"] else None
+
+    return {
+        "total": total,
+        "average_rating": avg_rating,
+        "distribution": distribution,
+        "reviews": page,
     }
 
 
@@ -1743,14 +1773,21 @@ def toggle_review_visibility(
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
 ):
-    review = db.query(Review).filter(Review.id == review_id).first()
+    """Block/unblock a review from public view — the astrologer's profile
+    (both apps) and aggregate rating/count immediately stop counting it
+    once hidden, and resume once unhidden, since every public reviews
+    endpoint and recompute_astrologer_rating already filter on
+    is_visible. `review_id` is the composite id from GET /admin/reviews."""
+    source, raw_id = _parse_review_id(review_id, lang)
+    model = Review if source == "review" else SessionReview
+    review = db.query(model).filter(model.id == raw_id).first()
     if not review:
         raise HTTPException(status_code=404, detail=t("err.review_not_found", lang))
     review.is_visible = not review.is_visible
     db.flush()
     _recompute_astrologer_rating(db, review.astrologer_id)
     db.commit()
-    return {"id": review.id, "is_visible": review.is_visible}
+    return {"id": review_id, "is_visible": review.is_visible}
 
 
 @router.delete("/reviews/{review_id}")
@@ -1760,7 +1797,9 @@ def delete_review(
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
 ):
-    review = db.query(Review).filter(Review.id == review_id).first()
+    source, raw_id = _parse_review_id(review_id, lang)
+    model = Review if source == "review" else SessionReview
+    review = db.query(model).filter(model.id == raw_id).first()
     if not review:
         raise HTTPException(status_code=404, detail=t("err.review_not_found", lang))
     astrologer_id = review.astrologer_id
@@ -3260,6 +3299,100 @@ def list_consultations(
                 "created_at": str(c.created_at) if c.created_at else None,
             }
             for c, u, ap, au in rows
+        ],
+    }
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  KUNDLI / REPORT DATA TRACKING — how many birth-chart data records each
+#  account has submitted for Kundli/report generation. One Chart row =
+#  one person's birth data submitted (self, family, friend, other) —
+#  NOT the same as how many users exist, since one account can submit
+#  many charts (e.g. generating Kundlis for 20 different people).
+# ══════════════════════════════════════════════════════════════════════
+
+@router.get("/kundli-submissions")
+def list_kundli_submissions(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=200),
+    role: Optional[str] = Query(None),  # "user" | "astrologer" | omitted = both
+    search: Optional[str] = None,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Per-account summary: one row per user/astrologer who has submitted at
+    least one chart, with their total submitted-data count and most recent
+    submission. Accounts with zero charts never appear here (this tracks
+    data submitted, not the account list — see /admin/users for that)."""
+    q = (
+        db.query(
+            User.id, User.name, User.email, User.role,
+            sqlfunc.count(Chart.id).label("chart_count"),
+            sqlfunc.max(Chart.created_at).label("latest_at"),
+        )
+        .join(Chart, Chart.user_id == User.id)
+        .filter(User.deleted_at.is_(None))
+    )
+    if role in ("user", "astrologer"):
+        q = q.filter(User.role == role)
+    if search:
+        like = f"%{search}%"
+        q = q.filter((User.name.like(like)) | (User.email.like(like)))
+    q = q.group_by(User.id, User.name, User.email, User.role)
+    total = q.count()
+    rows = q.order_by(sqlfunc.count(Chart.id).desc(), sqlfunc.max(Chart.created_at).desc()).offset(skip).limit(limit).all()
+    return {
+        "total": total,
+        "submissions": [
+            {
+                "user_id": r.id,
+                "user_name": r.name,
+                "user_email": r.email,
+                "role": r.role,
+                "chart_count": int(r.chart_count),
+                "latest_at": str(r.latest_at) if r.latest_at else None,
+            }
+            for r in rows
+        ],
+    }
+
+
+@router.get("/kundli-submissions/{user_id}")
+def kundli_submission_detail(
+    user_id: str,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=200),
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """The individual chart/Kundli data records one account has submitted —
+    the drill-down behind a row in GET /kundli-submissions."""
+    u = db.query(User).filter(User.id == user_id).first()
+    if not u:
+        raise HTTPException(status_code=404, detail=t("err.user_not_found", lang))
+    q = db.query(Chart).filter(Chart.user_id == user_id)
+    total = q.count()
+    rows = q.order_by(Chart.created_at.desc()).offset(skip).limit(limit).all()
+    return {
+        "user_id": u.id,
+        "user_name": u.name,
+        "user_email": u.email,
+        "role": u.role,
+        "total": total,
+        "charts": [
+            {
+                "id": c.id,
+                "name": c.name,
+                "gender": c.gender,
+                "dob": c.dob,
+                "tob": c.tob,
+                "place": c.place,
+                "category": c.category,
+                "is_primary": c.is_primary,
+                "created_at": str(c.created_at) if c.created_at else None,
+            }
+            for c in rows
         ],
     }
 

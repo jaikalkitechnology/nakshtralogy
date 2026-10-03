@@ -34,3 +34,13 @@ class AstrologerDetailRequested extends AstrologerEvent {
 }
 
 class AstrologerDetailCleared extends AstrologerEvent {}
+
+/// Load the next page of reviews for the currently-open astrologer detail
+/// (appends to AstrologerState.detailReviews). Dispatched by the "See More"
+/// button on the astrologer profile sheet.
+class AstrologerMoreReviewsRequested extends AstrologerEvent {
+  final String astrologerId;
+  const AstrologerMoreReviewsRequested(this.astrologerId);
+  @override
+  List<Object?> get props => [astrologerId];
+}
