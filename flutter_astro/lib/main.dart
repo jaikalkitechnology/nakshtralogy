@@ -9,6 +9,7 @@ import 'l10n/gen/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'theme/app_theme.dart';
 import 'services/api_service.dart';
+import 'services/app_update_service.dart';
 import 'services/fcm_service.dart';
 import 'services/web_push_service.dart';
 import 'bloc/auth/auth_bloc.dart';
@@ -110,6 +111,11 @@ class _NakshatralogyAstroAppState extends State<NakshatralogyAstroApp> {
   void initState() {
     super.initState();
     if (!kIsWeb) _initDeepLinks();
+    // Android: prompt to update if a newer Play Store release is live.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = navigatorKey.currentContext;
+      if (ctx != null) AppUpdateService.instance.checkForUpdate(ctx);
+    });
   }
 
   Future<void> _initDeepLinks() async {

@@ -37,6 +37,8 @@ dependencies:
   # the device's normal screen-timeout dims/locks the astrologer's screen
   # mid-session, which on most devices also suspends the camera preview.
   wakelock_plus: ^1.2.8
+  # Google Play In-App Update — prompts to update when a newer version is live.
+  in_app_update: ^4.2.5
 
 dev_dependencies:
   flutter_test:
