@@ -1,15 +1,12 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
-import '../services/api_service.dart';
+import '../services/maintenance_service.dart';
 
-/// Wraps the app's normal content. On mount (and periodically / on app
-/// resume) it polls the admin-controlled maintenance toggle
-/// (`GET /config/maintenance?role=astrologer`, no auth needed). While
-/// maintenance is on, the whole app shows a "We'll be back shortly" page
-/// instead of [child] — including for an astrologer who was already logged
-/// in and mid-session.
+/// Wraps the app's normal content. Listens to [MaintenanceService] (checked
+/// on app launch, app resume, and every bottom-nav tab switch — see
+/// HomeScreen) and swaps the whole UI to [MaintenanceScreen] whenever
+/// maintenance mode is on, including for an astrologer already logged in
+/// mid-session. No background timer or socket — see MaintenanceService.
 class MaintenanceGate extends StatefulWidget {
   final Widget child;
   const MaintenanceGate({super.key, required this.child});
@@ -19,55 +16,42 @@ class MaintenanceGate extends StatefulWidget {
 }
 
 class _MaintenanceGateState extends State<MaintenanceGate> with WidgetsBindingObserver {
-  bool? _underMaintenance; // null = still checking (first load)
-  String _message = "We'll be back shortly.";
-  Timer? _timer;
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _check();
-    // Catches maintenance turning on while the app is already open, without
-    // needing the user to background/resume it.
-    _timer = Timer.periodic(const Duration(minutes: 2), (_) => _check());
+    MaintenanceService.instance.addListener(_onChange);
+    MaintenanceService.instance.check(); // app launch
+  }
+
+  void _onChange() {
+    if (mounted) setState(() {});
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) _check();
-  }
-
-  Future<void> _check() async {
-    try {
-      final res = await ApiService().fetchMaintenanceStatus();
-      if (!mounted) return;
-      final msg = res['message'];
-      setState(() {
-        _underMaintenance = res['enabled'] == true;
-        if (msg is String && msg.trim().isNotEmpty) _message = msg;
-      });
-    } catch (_) {
-      // Network/backend hiccup: never block the app on a failed check.
-      if (!mounted) return;
-      setState(() => _underMaintenance ??= false);
-    }
+    // "Opening the app again" also covers resuming from background.
+    if (state == AppLifecycleState.resumed) MaintenanceService.instance.check();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _timer?.cancel();
+    MaintenanceService.instance.removeListener(_onChange);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_underMaintenance == null) {
+    final enabled = MaintenanceService.instance.enabled;
+    if (enabled == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    if (_underMaintenance == true) {
-      return MaintenanceScreen(message: _message, onRetry: _check);
+    if (enabled == true) {
+      return MaintenanceScreen(
+        message: MaintenanceService.instance.message,
+        onRetry: () => MaintenanceService.instance.check(),
+      );
     }
     return widget.child;
   }

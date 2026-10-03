@@ -26,6 +26,7 @@ import '../communication/live_viewer_screen.dart';
 import '../communication/call_screen.dart';
 import '../communication/chat_screen.dart';
 import '../../services/api_service.dart';
+import '../../services/maintenance_service.dart';
 import '../charts/my_charts_screen.dart';
 import '../specialist/specialist_list_screen.dart';
 
@@ -198,7 +199,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         borderRadius: BorderRadius.circular(10),
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
-          onTap: () => setState(() => _currentIndex = index),
+          onTap: () {
+            setState(() => _currentIndex = index);
+            MaintenanceService.instance.check();
+          },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
@@ -395,7 +399,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 final items = _navItems(context);
                 return Expanded(
                   child: InkWell(
-                    onTap: () => setState(() => _currentIndex = i),
+                    onTap: () {
+                      setState(() => _currentIndex = i);
+                      MaintenanceService.instance.check();
+                    },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: Column(
