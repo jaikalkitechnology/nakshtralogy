@@ -1045,6 +1045,25 @@ class ApiService {
     return [];
   }
 
+  /// The current user's existing review for this session, if any — lets the
+  /// review dialog pre-fill instead of risking a duplicate. Returns null on
+  /// any error AND when there's simply no review yet (the endpoint's success
+  /// body is JSON `null` in that case, so this can't use the usual
+  /// `{...jsonDecode(body)}` spread pattern — spreading null throws).
+  Future<Map<String, dynamic>?> fetchExistingSessionReview(String sessionType, String sessionId) async {
+    try {
+      final resp = await http.get(
+        Uri.parse('${ApiConstants.commBase}/review/for-session/$sessionType/$sessionId'),
+        headers: _headers,
+      );
+      if (resp.statusCode != 200) return null;
+      final body = jsonDecode(resp.body);
+      return body is Map<String, dynamic> ? body : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
   // ── Calls ─────────────────────────────────────────────────────────
 
   Future<Map<String, dynamic>> initiateCall(String astrologerProfileId, String callType, {String? couponCode}) async {
