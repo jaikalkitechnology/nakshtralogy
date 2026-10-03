@@ -63,7 +63,7 @@ from app.services.fcm_service import notify_generic, send_push
 from app.models.model import (
     User, Wallet, WalletTransaction, AstrologerProfile,
     CallSession, ChatSession, LiveStream, ServiceOrder,
-    KycDocument, RefreshToken, Review, Consultation,
+    KycDocument, RefreshToken, Review, Consultation, Chart,
     PlatformSetting, SubscriptionPlan, ApiProduct,
     Notification, NotificationCampaign,
     LiveStreamViewer, LiveStreamQuestion, LiveStreamGift,
@@ -3260,6 +3260,100 @@ def list_consultations(
                 "created_at": str(c.created_at) if c.created_at else None,
             }
             for c, u, ap, au in rows
+        ],
+    }
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  KUNDLI / REPORT DATA TRACKING — how many birth-chart data records each
+#  account has submitted for Kundli/report generation. One Chart row =
+#  one person's birth data submitted (self, family, friend, other) —
+#  NOT the same as how many users exist, since one account can submit
+#  many charts (e.g. generating Kundlis for 20 different people).
+# ══════════════════════════════════════════════════════════════════════
+
+@router.get("/kundli-submissions")
+def list_kundli_submissions(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=200),
+    role: Optional[str] = Query(None),  # "user" | "astrologer" | omitted = both
+    search: Optional[str] = None,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Per-account summary: one row per user/astrologer who has submitted at
+    least one chart, with their total submitted-data count and most recent
+    submission. Accounts with zero charts never appear here (this tracks
+    data submitted, not the account list — see /admin/users for that)."""
+    q = (
+        db.query(
+            User.id, User.name, User.email, User.role,
+            sqlfunc.count(Chart.id).label("chart_count"),
+            sqlfunc.max(Chart.created_at).label("latest_at"),
+        )
+        .join(Chart, Chart.user_id == User.id)
+        .filter(User.deleted_at.is_(None))
+    )
+    if role in ("user", "astrologer"):
+        q = q.filter(User.role == role)
+    if search:
+        like = f"%{search}%"
+        q = q.filter((User.name.like(like)) | (User.email.like(like)))
+    q = q.group_by(User.id, User.name, User.email, User.role)
+    total = q.count()
+    rows = q.order_by(sqlfunc.count(Chart.id).desc(), sqlfunc.max(Chart.created_at).desc()).offset(skip).limit(limit).all()
+    return {
+        "total": total,
+        "submissions": [
+            {
+                "user_id": r.id,
+                "user_name": r.name,
+                "user_email": r.email,
+                "role": r.role,
+                "chart_count": int(r.chart_count),
+                "latest_at": str(r.latest_at) if r.latest_at else None,
+            }
+            for r in rows
+        ],
+    }
+
+
+@router.get("/kundli-submissions/{user_id}")
+def kundli_submission_detail(
+    user_id: str,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=200),
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """The individual chart/Kundli data records one account has submitted —
+    the drill-down behind a row in GET /kundli-submissions."""
+    u = db.query(User).filter(User.id == user_id).first()
+    if not u:
+        raise HTTPException(status_code=404, detail=t("err.user_not_found", lang))
+    q = db.query(Chart).filter(Chart.user_id == user_id)
+    total = q.count()
+    rows = q.order_by(Chart.created_at.desc()).offset(skip).limit(limit).all()
+    return {
+        "user_id": u.id,
+        "user_name": u.name,
+        "user_email": u.email,
+        "role": u.role,
+        "total": total,
+        "charts": [
+            {
+                "id": c.id,
+                "name": c.name,
+                "gender": c.gender,
+                "dob": c.dob,
+                "tob": c.tob,
+                "place": c.place,
+                "category": c.category,
+                "is_primary": c.is_primary,
+                "created_at": str(c.created_at) if c.created_at else None,
+            }
+            for c in rows
         ],
     }
 
