@@ -23,6 +23,7 @@ import '../notifications/notification_hub_screen.dart';
 import '../coupons/my_coupons_screen.dart';
 import '../kyc/payout_kyc_screen.dart';
 import '../profile/edit_profile_screen.dart';
+import '../profile/my_reviews_screen.dart';
 import '../../utils/astro_labels.dart';
 
 class ProfileTab extends StatefulWidget {
@@ -98,6 +99,18 @@ class _ProfileTabState extends State<ProfileTab> {
     ));
   }
 
+  void _openMyReviews(Map<String, dynamic> profile) {
+    final id = profile['id']?.toString();
+    if (id == null || id.isEmpty) return;
+    Navigator.push(context, MaterialPageRoute(
+      builder: (_) => MyReviewsScreen(
+        astrologerProfileId: id,
+        initialRating: (profile['rating'] as num?)?.toDouble() ?? 0,
+        initialTotalReviews: (profile['total_reviews'] as num?)?.toInt() ?? 0,
+      ),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
@@ -163,11 +176,20 @@ class _ProfileTabState extends State<ProfileTab> {
                   Text(bio, maxLines: 3, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13), textAlign: TextAlign.center),
                 ],
                 const SizedBox(height: 10),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  const Icon(Icons.star, color: Colors.amber, size: 18),
-                  const SizedBox(width: 4),
-                  Text('${(rating as num).toStringAsFixed(1)} ($totalReviews ${l.reviews})', style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
-                ]),
+                InkWell(
+                  borderRadius: BorderRadius.circular(8),
+                  onTap: () => _openMyReviews(profile),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      const Icon(Icons.star, color: Colors.amber, size: 18),
+                      const SizedBox(width: 4),
+                      Text('${(rating as num).toStringAsFixed(1)} ($totalReviews ${l.reviews})', style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+                      const SizedBox(width: 2),
+                      const Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 16),
+                    ]),
+                  ),
+                ),
                 const SizedBox(height: 14),
                 ElevatedButton.icon(
                   onPressed: () => _openEditProfile(me),
@@ -277,6 +299,27 @@ class _ProfileTabState extends State<ProfileTab> {
                   const Icon(Icons.local_offer_outlined, color: AppColors.gold, size: 22),
                   const SizedBox(width: 12),
                   Expanded(child: Text(AstroLabels.of(context, 'myOffers'), style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600))),
+                  const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
+                ]),
+              ),
+            ),
+
+            // ── My Reviews (ratings + feedback from clients) ──
+            InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () => _openMyReviews(profile),
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppColors.gold.withOpacity(0.15)),
+                ),
+                child: Row(children: [
+                  const Icon(Icons.rate_review_outlined, color: AppColors.gold, size: 22),
+                  const SizedBox(width: 12),
+                  Expanded(child: Text(AstroLabels.of(context, 'myReviews'), style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600))),
                   const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
                 ]),
               ),

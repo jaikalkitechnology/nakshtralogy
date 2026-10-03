@@ -699,6 +699,20 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  // ── Reviews ───────────────────────────────────────────────
+
+  /// Reviews users left after a completed chat/voice/video session with this
+  /// astrologer (newest first). Public endpoint, called here with the
+  /// astrologer's own profile id ([astrologerProfileId] — `profile['id']`
+  /// from GET /astrologer/me, NOT the user id) so an astrologer can see what
+  /// was said about them. Returns {total, rating, total_reviews, reviews}.
+  Future<Map<String, dynamic>> getMyReviews(String astrologerProfileId, {int skip = 0, int limit = 20}) async {
+    final uri = Uri.parse('${ApiConstants.astrologerBase}/$astrologerProfileId/reviews')
+        .replace(queryParameters: {'skip': '$skip', 'limit': '$limit'});
+    final resp = await _authGet(uri);
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   // ── Profile (user-level + astrologer-level updates) ─────────
 
   Future<Map<String, dynamic>> updateMeFields(Map<String, dynamic> fields) async {

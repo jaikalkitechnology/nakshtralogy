@@ -856,9 +856,9 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
-  Future<Map<String, dynamic>> fetchAstrologerReviews(String id, {int limit = 10}) async {
+  Future<Map<String, dynamic>> fetchAstrologerReviews(String id, {int skip = 0, int limit = 10}) async {
     final resp = await http.get(
-      Uri.parse('${ApiConstants.astrologerBase}/$id/reviews?limit=$limit'),
+      Uri.parse('${ApiConstants.astrologerBase}/$id/reviews?skip=$skip&limit=$limit'),
       headers: _headers,
     );
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
