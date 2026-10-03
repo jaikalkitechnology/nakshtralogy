@@ -17,6 +17,7 @@ import '../../bloc/kyc/kyc_state.dart';
 import '../../bloc/dashboard/dashboard_bloc.dart';
 import '../../bloc/dashboard/dashboard_event.dart';
 import '../../services/api_service.dart';
+import '../../services/maintenance_service.dart';
 import '../../services/realtime_service.dart';
 import '../auth/login_screen.dart';
 import '../kyc/kyc_submit_screen.dart';
@@ -501,7 +502,10 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(10),
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
-          onTap: () => setState(() => _currentIndex = index),
+          onTap: () {
+            setState(() => _currentIndex = index);
+            MaintenanceService.instance.check();
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
             child: Row(mainAxisSize: MainAxisSize.min, children: [
@@ -524,7 +528,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final selected = _currentIndex == index;
     return Expanded(
       child: InkWell(
-        onTap: () => setState(() => _currentIndex = index),
+        onTap: () {
+          setState(() => _currentIndex = index);
+          MaintenanceService.instance.check();
+        },
         child: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: [
           Icon(icon, size: 23, color: selected ? AppColors.gold : AppColors.smoke),
           const SizedBox(height: 3),
