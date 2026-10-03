@@ -322,6 +322,18 @@ class ApiService {
     return null;
   }
 
+  /// Public, unauthenticated check of the admin-controlled maintenance toggle
+  /// (react_admin → Maintenance Mode page). Returns {enabled, message}.
+  Future<Map<String, dynamic>> fetchMaintenanceStatus() async {
+    final uri = Uri.parse('${ApiConstants.baseUrl}/config/maintenance')
+        .replace(queryParameters: {'role': ApiConstants.authRole});
+    final resp = await http.get(uri, headers: {'Accept-Language': _langCode});
+    if (resp.statusCode != 200) {
+      throw Exception('maintenance check failed: ${resp.statusCode}');
+    }
+    return jsonDecode(resp.body) as Map<String, dynamic>;
+  }
+
   /// Native-friendly verification: exchange a Google `id_token` for app tokens
   /// via the shared `/google/verify` endpoint. Returns
   /// `{statusCode, token?, refresh?, is_new_user?, user?, detail?}`.

@@ -26,6 +26,7 @@ import 'screens/auth/login_screen.dart';
 import 'screens/auth/google_profile_completion_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/permission_screen.dart';
+import 'widgets/maintenance_gate.dart';
 
 /// Whether to show the permission screen on first launch.
 bool _showPermissions = false;
@@ -229,7 +230,9 @@ class _NakshatralogyUserAppState extends State<NakshatralogyUserApp> {
         locale: _locale,
         supportedLocales: AppLocalizations.supportedLocales,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
-        home: _showPermissions ? const _PermissionGate() : const _AuthGate(),
+        home: MaintenanceGate(
+          child: _showPermissions ? const _PermissionGate() : const _AuthGate(),
+        ),
       ),
     );
   }

@@ -6,7 +6,7 @@ import {
   Gift, Receipt, TrendingUp, Server, Code2, Bell, BarChart3, Settings, LogOut,
   Search, Sun, Moon, RefreshCw, Plus, PanelLeftClose, PanelLeft, Menu, MessagesSquare,
   ScrollText, LifeBuoy, Lock, KeyRound, Image as ImageIcon, Bot, Mail, ShieldAlert, Ticket, Banknote, Crown,
-  UserCog, Inbox,
+  UserCog, Inbox, Construction,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/theme/ThemeProvider";
@@ -56,6 +56,7 @@ export const NAV: NavGroup[] = [
     { to: "/admin/chat-guard", label: "Chat Guard", icon: ShieldAlert },
     { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
     { to: "/admin/role-permissions", label: "Role Permissions", icon: Lock },
+    { to: "/admin/app-maintenance", label: "Maintenance Mode", icon: Construction },
     { to: "/admin/system", label: "System & Maintenance", icon: Server },
     { to: "/admin/settings", label: "Settings", icon: Settings },
   ]},
