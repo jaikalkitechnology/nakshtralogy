@@ -35,6 +35,8 @@ dependencies:
   local_auth: ^2.3.0
   # International paid digital goods → store IAP tiers (App Store / Google Play).
   in_app_purchase: ^3.2.0
+  # Google Play In-App Update — prompts to update when a newer version is live.
+  in_app_update: ^4.2.5
 
 dev_dependencies:
   flutter_test:

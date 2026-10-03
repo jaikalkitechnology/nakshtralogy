@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'theme/app_theme.dart';
 import 'services/api_service.dart';
 import 'services/app_mode.dart';
+import 'services/app_update_service.dart';
 import 'services/fcm_service.dart';
 import 'services/web_push_service.dart';
 import 'services/url_cleaner_stub.dart' if (dart.library.html) 'services/url_cleaner_web.dart';
@@ -144,6 +145,11 @@ class _NakshatralogyUserAppState extends State<NakshatralogyUserApp> {
     // `nakshatralogy://auth/callback?token=&refresh=` deep link. Receive it and
     // adopt the session — same web OAuth client as the web app, no SHA-1 needed.
     if (!kIsWeb) _initDeepLinks();
+    // Android: prompt to update if a newer Play Store release is live.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = navigatorKey.currentContext;
+      if (ctx != null) AppUpdateService.instance.checkForUpdate(ctx);
+    });
   }
 
   Future<void> _initDeepLinks() async {
