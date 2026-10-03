@@ -25,6 +25,7 @@ from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, status, Header
 from fastapi.responses import FileResponse
+from sqlalchemy import and_, case, exists, func
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -114,6 +115,46 @@ def _offers_for_profiles(db, profile_ids):
                 "first_time_only": bool(c.first_time_only),
             })
     return {pid: v[1] for pid, v in best.items()}
+
+
+def _priority_score_expr():
+    """Composite "show the best astrologers first" ranking score (SQL
+    expression, higher = better), used to order `GET /list`. Combines:
+      - rating (30%)              — direct 0-5 average, scaled to 0-1
+      - consultation volume (25%) — total_consultations, diminishing returns
+      - review volume (20%)       — total_reviews, diminishing returns
+      - price (15%)               — rate_per_min_chat, lower is better
+      - active offer (10%)        — has a live astrologer-funded Coupon
+    Consultation/review counts use a saturating x/(x+k) curve instead of a
+    plain count or a dynamic max-normalization, so one outlier profile
+    can't dominate the ranking and the score stays stable as new
+    astrologers join. Weights are tunable constants, not persisted config.
+    """
+    from app.models.model import Coupon
+
+    total_consultations = func.coalesce(AstrologerProfile.total_consultations, 0)
+    total_reviews = func.coalesce(AstrologerProfile.total_reviews, 0)
+    rating = func.coalesce(AstrologerProfile.rating, 0)
+    rate = func.coalesce(AstrologerProfile.rate_per_min_chat, 0)
+
+    rating_score = rating / 5.0
+    consultations_score = total_consultations / (total_consultations + 50.0)
+    reviews_score = total_reviews / (total_reviews + 20.0)
+    rate_score = 50.0 / (rate + 50.0)  # 0 (free) → 1.0; higher rate → lower score
+    has_active_offer = exists().where(and_(
+        Coupon.owner_type == "astrologer",
+        Coupon.owner_id == AstrologerProfile.id,
+        Coupon.status == "active",
+    ))
+    offer_score = case((has_active_offer, 1.0), else_=0.0)
+
+    return (
+        0.30 * rating_score
+        + 0.25 * consultations_score
+        + 0.20 * reviews_score
+        + 0.15 * rate_score
+        + 0.10 * offer_score
+    )
 
 
 def _build_profile_response(profile: AstrologerProfile) -> AstrologerProfileResponse:
@@ -806,11 +847,13 @@ def list_astrologers(
     if language:
         q = q.filter(AstrologerProfile.languages.op("LIKE")(f'%"{language}"%'))
 
+    priority_score = _priority_score_expr()
     profiles = (
         q.order_by(
             AstrologerProfile.is_online.desc(),  # online first
             AstrologerProfile.is_busy.asc(),     # available before busy
-            AstrologerProfile.rating.desc(),     # then highest rated
+            priority_score.desc(),               # consultations, rate, offers, rating — see _priority_score_expr
+            AstrologerProfile.rating.desc(),     # tiebreaker
         )
         .offset(skip).limit(limit).all()
     )
