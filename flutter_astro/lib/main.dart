@@ -24,6 +24,7 @@ import 'bloc/astro_profile/astro_profile_bloc.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/permission_screen.dart';
+import 'widgets/maintenance_gate.dart';
 
 bool _showPermissions = false;
 Locale? _savedLocale;
@@ -204,7 +205,9 @@ class _NakshatralogyAstroAppState extends State<NakshatralogyAstroApp> {
         locale: _locale,
         supportedLocales: AppLocalizations.supportedLocales,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
-        home: _showPermissions ? const _PermissionGate() : const _AuthGate(),
+        home: MaintenanceGate(
+          child: _showPermissions ? const _PermissionGate() : const _AuthGate(),
+        ),
       ),
     );
   }

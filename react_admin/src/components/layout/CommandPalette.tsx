@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Users, Star, MessageSquare, ShieldCheck, Wallet, CreditCard,
   Gift, Receipt, TrendingUp, Server, Code2, Bell, BarChart3, Settings,
-  ScrollText, LifeBuoy, Lock, KeyRound,
+  ScrollText, LifeBuoy, Lock, KeyRound, Construction,
 } from "lucide-react";
 import {
   CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandShortcut,
@@ -32,6 +32,7 @@ const DESTINATIONS = [
   { to: "/admin/support-tickets", label: "Support Tickets", icon: LifeBuoy, group: "Platform" },
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3, group: "Platform" },
   { to: "/admin/role-permissions", label: "Role Permissions", icon: Lock, group: "Platform" },
+  { to: "/admin/app-maintenance", label: "Maintenance Mode", icon: Construction, group: "Platform" },
   { to: "/admin/settings", label: "Settings", icon: Settings, group: "Platform" },
 ];
 

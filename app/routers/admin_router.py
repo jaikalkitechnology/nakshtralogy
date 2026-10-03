@@ -1794,6 +1794,22 @@ def delete_review(
 
 # Settings schema definition — defines what keys belong to each category
 SETTINGS_SCHEMA = {
+    "maintenance_user": {
+        "label": "Maintenance Mode — User App",
+        "description": "Blocks the user app behind a 'We'll be back shortly' screen",
+        "keys": [
+            {"key": "enabled", "label": "Enabled (true/false)", "secret": False},
+            {"key": "message", "label": "Message shown to users", "secret": False},
+        ],
+    },
+    "maintenance_astro": {
+        "label": "Maintenance Mode — Astrologer App",
+        "description": "Blocks the astrologer app behind a 'We'll be back shortly' screen",
+        "keys": [
+            {"key": "enabled", "label": "Enabled (true/false)", "secret": False},
+            {"key": "message", "label": "Message shown to astrologers", "secret": False},
+        ],
+    },
     "google_auth_user": {
         "label": "Google OAuth — User App",
         "description": "Google Sign-In credentials for the user Flutter app",
@@ -2033,6 +2049,9 @@ def upsert_category_settings(
             ))
         updated += 1
     db.commit()
+    if category in ("maintenance_user", "maintenance_astro"):
+        log_action(db, current_user, "maintenance.update", "platform_setting", category,
+                   category, detail=str(req.settings))
     return {"category": category, "updated_fields": updated, "message": t("msg.settings_saved", lang, count=updated)}
 
 

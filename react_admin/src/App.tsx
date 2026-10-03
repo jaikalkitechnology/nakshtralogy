@@ -32,6 +32,7 @@ import Consultations from "./pages/admin/Consultations";
 import Analytics from "./pages/admin/Analytics";
 import AuditLogs from "./pages/admin/AuditLogs";
 import RolePermissions from "./pages/admin/RolePermissions";
+import Maintenance from "./pages/admin/Maintenance";
 
 const queryClient = new QueryClient();
 
@@ -99,6 +100,7 @@ const App = () => (
               <Route path="/admin/analytics" element={<RequireAdmin><AdminShell><Analytics /></AdminShell></RequireAdmin>} />
               <Route path="/admin/audit-logs" element={<RequireAdmin><AdminShell><AuditLogs /></AdminShell></RequireAdmin>} />
               <Route path="/admin/role-permissions" element={<RequireAdmin><AdminShell><RolePermissions /></AdminShell></RequireAdmin>} />
+              <Route path="/admin/app-maintenance" element={<RequireAdmin><AdminShell><Maintenance /></AdminShell></RequireAdmin>} />
               <Route path="/admin/*" element={<RequireAdmin><AdminShell><ComingSoon /></AdminShell></RequireAdmin>} />
               <Route path="*" element={<NotFound />} />
             </Routes>

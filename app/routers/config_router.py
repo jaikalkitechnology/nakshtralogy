@@ -34,6 +34,32 @@ _ROLE_TO_CATEGORY = {
     "astrologer": "webpush_astro",
 }
 
+_MAINTENANCE_CATEGORY = {
+    "user": "maintenance_user",
+    "astrologer": "maintenance_astro",
+}
+_DEFAULT_MAINTENANCE_MESSAGE = "We'll be back shortly."
+
+
+@router.get("/maintenance")
+def get_maintenance_status(
+    role: str = Query("user", description="user | astrologer"),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
+):
+    """Public maintenance-mode check, polled by both Flutter apps (web + Android)
+    before/while showing the app. No auth — the whole point is that even a
+    logged-out device must be able to see this."""
+    if role not in _MAINTENANCE_CATEGORY:
+        raise HTTPException(status_code=400, detail=t("err.invalid_role", lang))
+    rows = db.query(PlatformSetting).filter(
+        PlatformSetting.category == _MAINTENANCE_CATEGORY[role]
+    ).all()
+    stored = {r.key: r.value for r in rows}
+    enabled = (stored.get("enabled") or "").strip().lower() in ("true", "1", "yes")
+    message = (stored.get("message") or "").strip() or _DEFAULT_MAINTENANCE_MESSAGE
+    return {"role": role, "enabled": enabled, "message": message}
+
 
 @router.get("/webpush")
 def get_webpush_config(
