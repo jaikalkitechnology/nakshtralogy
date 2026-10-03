@@ -25,6 +25,7 @@ from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, status, Header
 from fastapi.responses import FileResponse
+from sqlalchemy import and_, case, exists, func
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -114,6 +115,46 @@ def _offers_for_profiles(db, profile_ids):
                 "first_time_only": bool(c.first_time_only),
             })
     return {pid: v[1] for pid, v in best.items()}
+
+
+def _priority_score_expr():
+    """Composite "show the best astrologers first" ranking score (SQL
+    expression, higher = better), used to order `GET /list`. Combines:
+      - rating (30%)              — direct 0-5 average, scaled to 0-1
+      - consultation volume (25%) — total_consultations, diminishing returns
+      - review volume (20%)       — total_reviews, diminishing returns
+      - price (15%)               — rate_per_min_chat, lower is better
+      - active offer (10%)        — has a live astrologer-funded Coupon
+    Consultation/review counts use a saturating x/(x+k) curve instead of a
+    plain count or a dynamic max-normalization, so one outlier profile
+    can't dominate the ranking and the score stays stable as new
+    astrologers join. Weights are tunable constants, not persisted config.
+    """
+    from app.models.model import Coupon
+
+    total_consultations = func.coalesce(AstrologerProfile.total_consultations, 0)
+    total_reviews = func.coalesce(AstrologerProfile.total_reviews, 0)
+    rating = func.coalesce(AstrologerProfile.rating, 0)
+    rate = func.coalesce(AstrologerProfile.rate_per_min_chat, 0)
+
+    rating_score = rating / 5.0
+    consultations_score = total_consultations / (total_consultations + 50.0)
+    reviews_score = total_reviews / (total_reviews + 20.0)
+    rate_score = 50.0 / (rate + 50.0)  # 0 (free) → 1.0; higher rate → lower score
+    has_active_offer = exists().where(and_(
+        Coupon.owner_type == "astrologer",
+        Coupon.owner_id == AstrologerProfile.id,
+        Coupon.status == "active",
+    ))
+    offer_score = case((has_active_offer, 1.0), else_=0.0)
+
+    return (
+        0.30 * rating_score
+        + 0.25 * consultations_score
+        + 0.20 * reviews_score
+        + 0.15 * rate_score
+        + 0.10 * offer_score
+    )
 
 
 def _build_profile_response(profile: AstrologerProfile) -> AstrologerProfileResponse:
@@ -806,11 +847,13 @@ def list_astrologers(
     if language:
         q = q.filter(AstrologerProfile.languages.op("LIKE")(f'%"{language}"%'))
 
+    priority_score = _priority_score_expr()
     profiles = (
         q.order_by(
             AstrologerProfile.is_online.desc(),  # online first
             AstrologerProfile.is_busy.asc(),     # available before busy
-            AstrologerProfile.rating.desc(),     # then highest rated
+            priority_score.desc(),               # consultations, rate, offers, rating — see _priority_score_expr
+            AstrologerProfile.rating.desc(),     # tiebreaker
         )
         .offset(skip).limit(limit).all()
     )
@@ -872,35 +915,67 @@ def list_public_reviews(
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang),
 ):
-    """Public: list visible reviews for an astrologer (newest first)."""
-    from app.models.model import Review, User as UserModel
+    """Public: list visible reviews for an astrologer, newest first.
+
+    Reviews can live in either `Review` (legacy, consultation-based) or
+    `SessionReview` (chat/voice/video session reviews — the one the app
+    actually writes to today, via POST /comm/review after a completed
+    session). Both are merged here so this list matches the aggregate
+    rating/total_reviews on the profile, which is computed the same way —
+    see app.services.review_service.recompute_astrologer_rating.
+
+    Each sub-query only needs its own top (skip + limit) rows (already
+    sorted newest-first) to produce a correct merged page — the global
+    top-N can never reach past rank N in either individual sorted source.
+    """
+    from app.models.model import Review, SessionReview, User as UserModel
 
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == astrologer_id).first()
     if not profile:
         raise HTTPException(status_code=404, detail=t("err.astrologer_not_found", lang))
 
-    q = db.query(Review, UserModel).join(
-        UserModel, Review.user_id == UserModel.id,
-    ).filter(
-        Review.astrologer_id == astrologer_id,
-        Review.is_visible == True,
+    fetch_n = skip + limit
+    consult_rows = (
+        db.query(Review, UserModel)
+        .join(UserModel, Review.user_id == UserModel.id)
+        .filter(Review.astrologer_id == astrologer_id, Review.is_visible == True)
+        .order_by(Review.created_at.desc())
+        .limit(fetch_n)
+        .all()
     )
-    total = q.count()
-    rows = q.order_by(Review.created_at.desc()).offset(skip).limit(limit).all()
+    session_rows = (
+        db.query(SessionReview, UserModel)
+        .join(UserModel, SessionReview.user_id == UserModel.id)
+        .filter(SessionReview.astrologer_id == astrologer_id, SessionReview.is_visible == True)
+        .order_by(SessionReview.created_at.desc())
+        .limit(fetch_n)
+        .all()
+    )
+    merged = [
+        {
+            "id": r.id,
+            "user_name": u.name or t("label.anonymous", lang),
+            "user_avatar": u.avatar_url,
+            "rating": r.rating,
+            "comment": r.comment,
+            "created_at": r.created_at,
+        }
+        for r, u in (consult_rows + session_rows)
+    ]
+    merged.sort(key=lambda item: item["created_at"] or datetime.min, reverse=True)
+    page = merged[skip: skip + limit]
+    for item in page:
+        item["created_at"] = str(item["created_at"]) if item["created_at"] else None
+
+    total = (
+        db.query(Review).filter(Review.astrologer_id == astrologer_id, Review.is_visible == True).count()
+        + db.query(SessionReview).filter(SessionReview.astrologer_id == astrologer_id, SessionReview.is_visible == True).count()
+    )
     return {
         "total": total,
         "rating": float(profile.rating or 0),
-        "reviews": [
-            {
-                "id": r.id,
-                "user_name": u.name or t("label.anonymous", lang),
-                "user_avatar": u.avatar_url,
-                "rating": r.rating,
-                "comment": r.comment,
-                "created_at": str(r.created_at) if r.created_at else None,
-            }
-            for r, u in rows
-        ],
+        "total_reviews": profile.total_reviews or 0,
+        "reviews": page,
     }
 
 

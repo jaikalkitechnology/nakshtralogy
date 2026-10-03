@@ -71,6 +71,7 @@ from app.models.model import (
     WithdrawalRequest, SupportTicket, ContactMessage, AgoraConfig,
     AuditLog,
 )
+from app.services.review_service import recompute_astrologer_rating as _recompute_astrologer_rating
 
 router = APIRouter()
 
@@ -1709,24 +1710,6 @@ def get_review(
         "is_visible": r.is_visible,
         "created_at": str(r.created_at) if r.created_at else None,
     }
-
-
-def _recompute_astrologer_rating(db: Session, astrologer_id: str) -> None:
-    """Recalculate astrologer's aggregate rating from visible reviews."""
-    profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == astrologer_id).first()
-    if not profile:
-        return
-    visible_reviews = db.query(Review).filter(
-        Review.astrologer_id == astrologer_id,
-        Review.is_visible == True,
-    ).all()
-    if visible_reviews:
-        avg = sum(r.rating for r in visible_reviews) / len(visible_reviews)
-        profile.rating = Decimal(str(round(avg, 2)))
-        profile.total_reviews = len(visible_reviews)
-    else:
-        profile.rating = Decimal("0.00")
-        profile.total_reviews = 0
 
 
 @router.put("/reviews/{review_id}")

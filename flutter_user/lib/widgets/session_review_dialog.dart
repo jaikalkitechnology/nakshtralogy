@@ -57,21 +57,24 @@ class _SessionReviewDialogState extends State<_SessionReviewDialog> {
   Future<void> _submit() async {
     if (_rating == 0 || _submitting) return;
     setState(() => _submitting = true);
+    Map<String, dynamic>? result;
     try {
-      await ApiService().submitSessionReview(
+      result = await ApiService().submitSessionReview(
         sessionType: widget.sessionType,
         sessionId: widget.sessionId,
         rating: _rating,
         comment: _commentCtrl.text.trim(),
       );
     } catch (_) {}
-    if (mounted) {
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Thanks for your feedback!'),
-        backgroundColor: AppColors.success,
-      ));
-    }
+    if (!mounted) return;
+    Navigator.pop(context);
+    final ok = (result?['statusCode'] as int?) == 200;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(ok
+          ? 'Thanks for your feedback!'
+          : (result?['detail']?.toString() ?? 'Could not submit your review. Please try again.')),
+      backgroundColor: ok ? AppColors.success : AppColors.error,
+    ));
   }
 
   @override
