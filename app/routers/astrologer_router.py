@@ -915,35 +915,67 @@ def list_public_reviews(
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang),
 ):
-    """Public: list visible reviews for an astrologer (newest first)."""
-    from app.models.model import Review, User as UserModel
+    """Public: list visible reviews for an astrologer, newest first.
+
+    Reviews can live in either `Review` (legacy, consultation-based) or
+    `SessionReview` (chat/voice/video session reviews — the one the app
+    actually writes to today, via POST /comm/review after a completed
+    session). Both are merged here so this list matches the aggregate
+    rating/total_reviews on the profile, which is computed the same way —
+    see app.services.review_service.recompute_astrologer_rating.
+
+    Each sub-query only needs its own top (skip + limit) rows (already
+    sorted newest-first) to produce a correct merged page — the global
+    top-N can never reach past rank N in either individual sorted source.
+    """
+    from app.models.model import Review, SessionReview, User as UserModel
 
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == astrologer_id).first()
     if not profile:
         raise HTTPException(status_code=404, detail=t("err.astrologer_not_found", lang))
 
-    q = db.query(Review, UserModel).join(
-        UserModel, Review.user_id == UserModel.id,
-    ).filter(
-        Review.astrologer_id == astrologer_id,
-        Review.is_visible == True,
+    fetch_n = skip + limit
+    consult_rows = (
+        db.query(Review, UserModel)
+        .join(UserModel, Review.user_id == UserModel.id)
+        .filter(Review.astrologer_id == astrologer_id, Review.is_visible == True)
+        .order_by(Review.created_at.desc())
+        .limit(fetch_n)
+        .all()
     )
-    total = q.count()
-    rows = q.order_by(Review.created_at.desc()).offset(skip).limit(limit).all()
+    session_rows = (
+        db.query(SessionReview, UserModel)
+        .join(UserModel, SessionReview.user_id == UserModel.id)
+        .filter(SessionReview.astrologer_id == astrologer_id, SessionReview.is_visible == True)
+        .order_by(SessionReview.created_at.desc())
+        .limit(fetch_n)
+        .all()
+    )
+    merged = [
+        {
+            "id": r.id,
+            "user_name": u.name or t("label.anonymous", lang),
+            "user_avatar": u.avatar_url,
+            "rating": r.rating,
+            "comment": r.comment,
+            "created_at": r.created_at,
+        }
+        for r, u in (consult_rows + session_rows)
+    ]
+    merged.sort(key=lambda item: item["created_at"] or datetime.min, reverse=True)
+    page = merged[skip: skip + limit]
+    for item in page:
+        item["created_at"] = str(item["created_at"]) if item["created_at"] else None
+
+    total = (
+        db.query(Review).filter(Review.astrologer_id == astrologer_id, Review.is_visible == True).count()
+        + db.query(SessionReview).filter(SessionReview.astrologer_id == astrologer_id, SessionReview.is_visible == True).count()
+    )
     return {
         "total": total,
         "rating": float(profile.rating or 0),
-        "reviews": [
-            {
-                "id": r.id,
-                "user_name": u.name or t("label.anonymous", lang),
-                "user_avatar": u.avatar_url,
-                "rating": r.rating,
-                "comment": r.comment,
-                "created_at": str(r.created_at) if r.created_at else None,
-            }
-            for r, u in rows
-        ],
+        "total_reviews": profile.total_reviews or 0,
+        "reviews": page,
     }
 
 

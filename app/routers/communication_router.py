@@ -60,7 +60,6 @@ from app.models.model import (
     LiveStreamQuestion, LiveStreamGift, GiftPricing,
     ChatSession, LiveChatMessage, LiveStreamSuperChat, SessionReview,
 )
-from sqlalchemy import func as _sql_func
 from app.services.fcm_service import notify_chat_request, notify_chat_accepted, send_push, push_to_user
 from app.routers.notification_router import save_notification
 from app.routers.ws_astrologer import push_to_astrologer
@@ -2289,8 +2288,11 @@ def download_chat_file(
 #  SESSION REVIEWS & RATINGS (chat / voice / video)
 # ══════════════════════════════════════════════════════════════════════
 
-_COMPLETED_CHAT_STATUSES = ("completed", "expired")
-_COMPLETED_CALL_STATUSES = ("completed",)
+from app.services.review_service import (
+    COMPLETED_CHAT_STATUSES as _COMPLETED_CHAT_STATUSES,
+    COMPLETED_CALL_STATUSES as _COMPLETED_CALL_STATUSES,
+    recompute_astrologer_rating as _recompute_astrologer_rating,
+)
 
 
 def _resolve_review_session(db: Session, session_type: str, session_id: str, user_id: str):
@@ -2313,26 +2315,6 @@ def _resolve_review_session(db: Session, session_type: str, session_id: str, use
     return (s.astrologer_profile_id, s.ended_at, s.status in _COMPLETED_CALL_STATUSES)
 
 
-def _recompute_astrologer_rating(db: Session, astrologer_id: str):
-    """Refresh AstrologerProfile.rating + total_reviews from BOTH the
-    consultation-based Review table and the session-based SessionReview table."""
-    from app.models.model import Review as _Review
-    r_sum, r_cnt = db.query(
-        _sql_func.coalesce(_sql_func.sum(_Review.rating), 0),
-        _sql_func.count(_Review.id),
-    ).filter(_Review.astrologer_id == astrologer_id, _Review.is_visible == True).first()
-    s_sum, s_cnt = db.query(
-        _sql_func.coalesce(_sql_func.sum(SessionReview.rating), 0),
-        _sql_func.count(SessionReview.id),
-    ).filter(SessionReview.astrologer_id == astrologer_id, SessionReview.is_visible == True).first()
-    total = int(r_cnt or 0) + int(s_cnt or 0)
-    avg = (float(r_sum or 0) + float(s_sum or 0)) / total if total else 0.0
-    profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == astrologer_id).first()
-    if profile:
-        profile.rating = Decimal(str(round(avg, 2)))
-        profile.total_reviews = total
-
-
 @router.post("/review", response_model=SessionReviewResponse)
 def create_session_review(
     req: SessionReviewRequest,
@@ -2346,6 +2328,8 @@ def create_session_review(
     if not resolved:
         raise HTTPException(status_code=404, detail=t("err.not_found", lang))
     astrologer_id, _ended, _completed = resolved
+    if not _completed:
+        raise HTTPException(status_code=400, detail=t("err.session_not_completed", lang))
 
     existing = db.query(SessionReview).filter(
         SessionReview.session_type == req.session_type,
