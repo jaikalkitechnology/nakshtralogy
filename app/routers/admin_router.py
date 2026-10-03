@@ -1686,11 +1686,15 @@ def list_reviews(
             for r, u, p in q.all()
         ]
 
+    # Review has no updated_at (dead table, never edited in practice) — its
+    # created_at doubles as the sort key for those rows. SessionReview rows
+    # sort by updated_at so an edited review moves back to the top, same as
+    # the public astrologer profile list.
     combined = (
-        _rows(Review, "review", lambda r: {"session_type": None})
-        + _rows(SessionReview, "session", lambda r: {"session_type": r.session_type})
+        _rows(Review, "review", lambda r: {"session_type": None, "updated_at": None})
+        + _rows(SessionReview, "session", lambda r: {"session_type": r.session_type, "updated_at": r.updated_at})
     )
-    combined.sort(key=lambda item: item["created_at"] or datetime.min, reverse=True)
+    combined.sort(key=lambda item: item["updated_at"] or item["created_at"] or datetime.min, reverse=True)
 
     total = len(combined)
     distribution = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
@@ -1703,6 +1707,7 @@ def list_reviews(
     page = combined[skip: skip + limit]
     for item in page:
         item["created_at"] = str(item["created_at"]) if item["created_at"] else None
+        item["updated_at"] = str(item["updated_at"]) if item["updated_at"] else None
 
     return {
         "total": total,

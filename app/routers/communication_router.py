@@ -2322,8 +2322,13 @@ def create_session_review(
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
 ):
-    """User rates + reviews an astrologer after a chat / voice / video session.
-    One review per session; the astrologer's aggregate rating is refreshed."""
+    """User rates + reviews an astrologer after a chat / voice / video
+    session. One review per (user, astrologer) — NOT one per session: if
+    this user already reviewed this astrologer (from any earlier session),
+    that same row is updated (re-pointed to this session, rating/comment/
+    updated_at refreshed) instead of creating a second review, so a later
+    consultation with an already-reviewed astrologer edits the existing
+    review rather than piling up duplicates."""
     resolved = _resolve_review_session(db, req.session_type, req.session_id, current_user.id)
     if not resolved:
         raise HTTPException(status_code=404, detail=t("err.not_found", lang))
@@ -2332,13 +2337,12 @@ def create_session_review(
         raise HTTPException(status_code=400, detail=t("err.session_not_completed", lang))
 
     existing = db.query(SessionReview).filter(
-        SessionReview.session_type == req.session_type,
-        SessionReview.session_id == req.session_id,
-    ).first()
+        SessionReview.user_id == current_user.id,
+        SessionReview.astrologer_id == astrologer_id,
+    ).order_by(SessionReview.updated_at.desc()).first()
     if existing:
-        # allow editing one's own review rather than erroring
-        if existing.user_id != current_user.id:
-            raise HTTPException(status_code=403, detail=t("err.forbidden", lang))
+        existing.session_type = req.session_type
+        existing.session_id = req.session_id
         existing.rating = req.rating
         existing.comment = (req.comment or "").strip() or None
         db.flush()
@@ -2360,7 +2364,8 @@ def create_session_review(
     return SessionReviewResponse(
         id=rv.id, session_type=rv.session_type, session_id=rv.session_id,
         user_id=rv.user_id, astrologer_id=rv.astrologer_id, rating=rv.rating,
-        comment=rv.comment, reviewer_name=current_user.name, created_at=rv.created_at,
+        comment=rv.comment, reviewer_name=current_user.name,
+        created_at=rv.created_at, updated_at=rv.updated_at,
     )
 
 
@@ -2371,19 +2376,27 @@ def get_session_review(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """The current user's existing review for a session, if any (so the app can
-    pre-fill the edit form)."""
+    """The current user's existing review for the astrologer behind this
+    session, if any — NOT scoped to this exact session, since a user
+    reviews an astrologer once, not once per session. This is what lets
+    the review dialog pre-fill and switch to "Edit Review" mode even when
+    opened after a brand-new session with an astrologer the user already
+    reviewed before."""
+    resolved = _resolve_review_session(db, session_type, session_id, current_user.id)
+    if not resolved:
+        return None
+    astrologer_id, _ended, _completed = resolved
     rv = db.query(SessionReview).filter(
-        SessionReview.session_type == session_type,
-        SessionReview.session_id == session_id,
         SessionReview.user_id == current_user.id,
-    ).first()
+        SessionReview.astrologer_id == astrologer_id,
+    ).order_by(SessionReview.updated_at.desc()).first()
     if not rv:
         return None
     return SessionReviewResponse(
         id=rv.id, session_type=rv.session_type, session_id=rv.session_id,
         user_id=rv.user_id, astrologer_id=rv.astrologer_id, rating=rv.rating,
-        comment=rv.comment, reviewer_name=current_user.name, created_at=rv.created_at,
+        comment=rv.comment, reviewer_name=current_user.name,
+        created_at=rv.created_at, updated_at=rv.updated_at,
     )
 
 
@@ -2393,9 +2406,12 @@ def pending_reviews(
     db: Session = Depends(get_db),
 ):
     """Completed sessions this user hasn't reviewed yet — powers the app's
-    post-session review prompt."""
-    reviewed = {
-        (r.session_type, r.session_id)
+    post-session review prompt. "Reviewed" means this astrologer, not this
+    exact session: once a user reviews an astrologer, further completed
+    sessions with that same astrologer are never "pending" again (they'd
+    edit the existing review instead, not file a new one)."""
+    reviewed_astrologer_ids = {
+        r.astrologer_id
         for r in db.query(SessionReview).filter(SessionReview.user_id == current_user.id).all()
     }
     out = []
@@ -2407,7 +2423,7 @@ def pending_reviews(
         ChatSession.status.in_(_COMPLETED_CHAT_STATUSES),
     ).order_by(ChatSession.ended_at.desc()).limit(20).all()
     for s, p in chats:
-        if ("chat", s.id) in reviewed:
+        if s.astrologer_id in reviewed_astrologer_ids:
             continue
         out.append(PendingReviewResponse(
             session_type="chat", session_id=s.id, astrologer_id=s.astrologer_id,
@@ -2421,7 +2437,7 @@ def pending_reviews(
         CallSession.status.in_(_COMPLETED_CALL_STATUSES),
     ).order_by(CallSession.ended_at.desc()).limit(20).all()
     for s, p in calls:
-        if (s.call_type, s.id) in reviewed:
+        if s.astrologer_profile_id in reviewed_astrologer_ids:
             continue
         out.append(PendingReviewResponse(
             session_type=s.call_type, session_id=s.id, astrologer_id=s.astrologer_profile_id,
@@ -2436,18 +2452,21 @@ def astrologer_reviews(
     limit: int = 30,
     db: Session = Depends(get_db),
 ):
-    """Public: visible reviews for an astrologer (session-based)."""
+    """Public: visible reviews for an astrologer (session-based), latest
+    updated/created first — editing an older review bumps it back to the
+    top, same as a brand-new one."""
     limit = max(1, min(limit, 100))
     rows = db.query(SessionReview, User).outerjoin(
         User, SessionReview.user_id == User.id
     ).filter(
         SessionReview.astrologer_id == profile_id,
         SessionReview.is_visible == True,
-    ).order_by(SessionReview.created_at.desc()).limit(limit).all()
+    ).order_by(SessionReview.updated_at.desc()).limit(limit).all()
     return [
         SessionReviewResponse(
             id=r.id, session_type=r.session_type, session_id=r.session_id,
             user_id=r.user_id, astrologer_id=r.astrologer_id, rating=r.rating,
-            comment=r.comment, reviewer_name=(u.name if u else None), created_at=r.created_at,
+            comment=r.comment, reviewer_name=(u.name if u else None),
+            created_at=r.created_at, updated_at=r.updated_at,
         ) for r, u in rows
     ]
