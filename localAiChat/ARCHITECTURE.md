@@ -10,6 +10,20 @@ reproduced here as the canonical reference for the `localAiChat` tracker.
 Model names/tags and VRAM/latency numbers are illustrative — benchmark on
 the actual GPU before locking production config (see §17).
 
+> **⚠️ Read `localAiChat/STATUS.md` before treating this as a from-scratch
+> plan.** This doc was uploaded assuming no AI chat existed yet — a full,
+> working, production-wired one already did (`app/agent/`, `app/routers/
+> ws_agent.py`, multi-provider LLM with local Ollama already the default,
+> a working Flutter chat screen). The design principles below (engines =
+> source of truth, LLM = interpreter, don't dump full history, cache
+> aggressively, 20-language support) are still the right targets — but
+> the concrete implementation sketch in §11–§14 (a standalone
+> `nakshatralogy_ai/` service, a from-scratch DB schema) describes a
+> different system than what's actually there. STATUS.md tracks the real
+> gap: bridging the chat to the 19 specialist report engines (done this
+> session) and forecast, multi-chart engines, full language coverage,
+> and persisted/semantic memory.
+
 ---
 
 ## 1. Architecture decision

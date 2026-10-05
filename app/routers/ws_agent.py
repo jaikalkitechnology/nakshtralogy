@@ -3,7 +3,15 @@ WebSocket Agent Chat — multi-LLM streaming with rich kundli context.
 
 Flow:
 1. Client connects: ws://host/ws/agent/chat?token=<jwt>
-2. Client sends: {"chart_id", "query", "provider", "language", "domain"}
+2. Client sends: {"chart_id", "query", "provider", "language", "domain", "engine"}
+   `engine` is optional — an explicit specialist topic key (one of
+   app.agent.specialist_bridge.CHAT_ENGINE_KEYS, or "daily_forecast") set
+   by an "Ask AI" entry point on that specific report screen. When set (or
+   when the intent-detected `domain` maps to one), the matching specialist
+   engine's own analysis is pulled into the prompt context alongside the
+   usual generic kundli facts — see _build_chart_context. Omit it for a
+   general, unscoped question ("one for all"); the generic context alone
+   already covers that case.
 3. Server sends probability: {"type": "prob", "data": {...}}
 4. Server streams tokens: {"type": "token", "text": "..."}
 5. Server sends done: {"type": "done"}
@@ -25,6 +33,7 @@ from app.models.model import User, Chart, AgentLog
 from app.kundli import engine as nk_engine
 from app.kundli.helper import NakshtraEngine
 from app.agent.engine import NakshtraAgent
+from app.agent.specialist_bridge import resolve_chat_engine, get_specialist_summary, get_forecast_summary
 from app.agent.llm_service import (
     build_system_prompt,
     build_rich_prompt,
@@ -118,7 +127,7 @@ def _get_chart_data(chart: Chart) -> dict:
     return result
 
 
-def _build_chart_context(data: dict, result: dict) -> dict:
+def _build_chart_context(data: dict, result: dict, chart: Chart = None, explicit_engine: str = None) -> dict:
     """Build rich context from chart data for the LLM prompt."""
     pdata = data["_pdata"]
     birth_jd = data["birth_jd"]
@@ -251,6 +260,27 @@ def _build_chart_context(data: dict, result: dict) -> dict:
     except Exception:
         pass
 
+    # ⭐️ SPECIALIST REPORT — when a specific topic is selected (explicitly
+    # by the client, e.g. an "Ask AI" button on a report screen, or implied
+    # by the intent-detected domain), ground the answer in that engine's
+    # own analysis instead of just the generic facts above. No-op (and no
+    # extra engine call) for an unscoped "ask anything" question.
+    engine_key = resolve_chat_engine(explicit_engine, domain_key)
+    if engine_key and chart is not None:
+        try:
+            if engine_key == "daily_forecast":
+                specialist = get_forecast_summary(
+                    pdata, birth_jd, chart.name, chart.dob, chart.tob, chart.place,
+                )
+            else:
+                specialist = get_specialist_summary(
+                    engine_key, pdata, birth_jd, chart.name, chart.gender or "M",
+                )
+            if specialist:
+                ctx["specialist_report"] = specialist
+        except Exception as e:
+            logger.warning("specialist_report injection failed (%s): %s", engine_key, e)
+
     return ctx
 
 
@@ -296,6 +326,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
             chart_id = req.get("chart_id")
             query = req.get("query", "").strip()
             domain = req.get("domain")
+            explicit_engine = req.get("engine")
             language = req.get("language", "english")
             provider_key = req.get("provider", "ollama-3b")
 
@@ -350,7 +381,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
 
                 # Build rich kundli context + session memory
                 t1 = time.time()
-                chart_context = _build_chart_context(data, result)
+                chart_context = _build_chart_context(data, result, chart=chart, explicit_engine=explicit_engine)
 
                 # ⭐️ TEMPLATE-FIRST ROUTING — check templates before LLM
                 template_text = None
