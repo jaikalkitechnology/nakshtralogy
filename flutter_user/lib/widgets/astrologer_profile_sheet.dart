@@ -349,6 +349,8 @@ class _AstrologerProfileSheet extends StatelessWidget {
                           ]),
                       ],
                     ),
+                    const SizedBox(height: 10),
+                    if (state.reviewsTotal > 0) _ratingDistribution(state.reviewsDistribution),
                     const SizedBox(height: 6),
                     if (reviews.isEmpty)
                       Container(
@@ -469,6 +471,62 @@ class _AstrologerProfileSheet extends StatelessWidget {
             ],
           );
         },
+      ),
+    );
+  }
+
+  // Hardcoded label (not l.*): adding one new ARB key means touching all 23
+  // locale source + generated files for a single string — not worth it here,
+  // matching the same call made for "See More" below.
+  Widget _ratingDistribution(Map<String, dynamic> distribution) {
+    final counts = {for (final star in [1, 2, 3, 4, 5]) star: (distribution['$star'] as num?)?.toInt() ?? 0};
+    final maxCount = counts.values.fold(1, (m, c) => c > m ? c : m);
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Rating Distribution', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+          const SizedBox(height: 10),
+          for (final star in [5, 4, 3, 2, 1])
+            Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 22,
+                    child: Text('$star★', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: counts[star]! / maxCount,
+                        minHeight: 6,
+                        backgroundColor: AppColors.background,
+                        valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    width: 20,
+                    child: Text('${counts[star]}',
+                        textAlign: TextAlign.right,
+                        style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                  ),
+                ],
+              ),
+            ),
+        ],
       ),
     );
   }
