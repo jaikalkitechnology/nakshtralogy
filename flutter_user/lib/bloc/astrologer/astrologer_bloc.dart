@@ -6,13 +6,19 @@ import 'astrologer_state.dart';
 class AstrologerBloc extends Bloc<AstrologerEvent, AstrologerState> {
   final ApiService _api = ApiService();
 
+  /// Reviews page size on the astrologer profile sheet — kept deliberately
+  /// small (the rating distribution chart is the headline, not a long
+  /// list) and used for both the initial load and each "See More" tap.
+  static const int reviewsPageSize = 2;
+
   AstrologerBloc() : super(const AstrologerState()) {
     on<AstrologerLoadRequested>(_onLoad);
     on<AstrologerSavedLoadRequested>(_onSavedLoad);
     on<AstrologerToggleSave>(_onToggleSave);
     on<AstrologerDetailRequested>(_onDetail);
     on<AstrologerDetailCleared>((e, emit) => emit(state.copyWith(
-      clearDetail: true, detailReviews: const [], reviewsTotal: 0, reviewsLoadingMore: false,
+      clearDetail: true, detailReviews: const [], reviewsTotal: 0,
+      reviewsLoadingMore: false, reviewsDistribution: const {},
     )));
     on<AstrologerMoreReviewsRequested>(_onMoreReviews);
   }
@@ -59,16 +65,20 @@ class AstrologerBloc extends Bloc<AstrologerEvent, AstrologerState> {
   Future<void> _onDetail(AstrologerDetailRequested event, Emitter<AstrologerState> emit) async {
     emit(state.copyWith(
       detailLoading: true, clearDetail: true, detailReviews: const [],
-      reviewsTotal: 0, reviewsLoadingMore: false,
+      reviewsTotal: 0, reviewsLoadingMore: false, reviewsDistribution: const {},
     ));
     try {
       final detailRes = await _api.fetchAstrologerDetail(event.astrologerId);
-      final reviewsRes = await _api.fetchAstrologerReviews(event.astrologerId, limit: 10);
+      final reviewsRes = await _api.fetchAstrologerReviews(event.astrologerId, limit: reviewsPageSize);
       final reviews = (reviewsRes['reviews'] as List?) ?? const [];
       final total = (reviewsRes['total'] as num?)?.toInt() ?? reviews.length;
+      final distribution = (reviewsRes['distribution'] as Map?)?.cast<String, dynamic>() ?? const {};
       if (detailRes['statusCode'] == 200) {
         final detail = Map<String, dynamic>.from(detailRes)..remove('statusCode');
-        emit(state.copyWith(detailLoading: false, detail: detail, detailReviews: reviews, reviewsTotal: total));
+        emit(state.copyWith(
+          detailLoading: false, detail: detail, detailReviews: reviews,
+          reviewsTotal: total, reviewsDistribution: distribution,
+        ));
       } else {
         emit(state.copyWith(detailLoading: false, error: 'Failed to load profile'));
       }
@@ -87,7 +97,7 @@ class AstrologerBloc extends Bloc<AstrologerEvent, AstrologerState> {
     emit(state.copyWith(reviewsLoadingMore: true));
     try {
       final reviewsRes = await _api.fetchAstrologerReviews(
-        event.astrologerId, skip: state.detailReviews.length, limit: 10,
+        event.astrologerId, skip: state.detailReviews.length, limit: reviewsPageSize,
       );
       final more = (reviewsRes['reviews'] as List?) ?? const [];
       final total = (reviewsRes['total'] as num?)?.toInt() ?? state.reviewsTotal;

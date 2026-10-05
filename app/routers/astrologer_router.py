@@ -979,10 +979,25 @@ def list_public_reviews(
         db.query(Review).filter(Review.astrologer_id == astrologer_id, Review.is_visible == True).count()
         + db.query(SessionReview).filter(SessionReview.astrologer_id == astrologer_id, SessionReview.is_visible == True).count()
     )
+
+    def _rating_counts(model):
+        rows = (
+            db.query(model.rating, func.count(model.id))
+            .filter(model.astrologer_id == astrologer_id, model.is_visible == True)
+            .group_by(model.rating)
+            .all()
+        )
+        return {int(r): int(c) for r, c in rows}
+
+    _review_counts = _rating_counts(Review)
+    _session_counts = _rating_counts(SessionReview)
+    distribution = {str(i): _review_counts.get(i, 0) + _session_counts.get(i, 0) for i in range(1, 6)}
+
     return {
         "total": total,
         "rating": float(profile.rating or 0),
         "total_reviews": profile.total_reviews or 0,
+        "distribution": distribution,
         "reviews": page,
     }
 

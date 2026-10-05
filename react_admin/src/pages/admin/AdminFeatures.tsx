@@ -142,7 +142,7 @@ import {
   adminBlockAstrologer, adminSetCommission, adminAstrologerDetail, adminSendNotification,
   adminListKyc, adminApproveKyc, adminRejectKyc,
   adminListTransactions,
-  adminListReviews, adminEditReview, adminToggleReviewVisibility, adminDeleteReview,
+  adminListReviews, adminToggleReviewVisibility, adminDeleteReview,
   adminListSettings, adminGetCategorySettings, adminUpsertSettings, adminUploadFcmFile,
   resolveAvatarUrl, adminUploadUserAvatar, adminUploadAstrologerAvatar,
   type WalletAction,
@@ -352,13 +352,6 @@ const AdminFeatures = () => {
   const [reviewsSearch, setReviewsSearch] = useState("");
   const [reviewsDateFrom, setReviewsDateFrom] = useState("");
   const [reviewsDateTo, setReviewsDateTo] = useState("");
-
-  const [reviewEditDialog, setReviewEditDialog] = useState<{ open: boolean; review: any }>({
-    open: false, review: null,
-  });
-  const [reviewEditForm, setReviewEditForm] = useState<any>({
-    rating: 5, comment: "", is_visible: true,
-  });
 
   // ── Pricing Management state ─────────────────────────────────────
   const PRICING_PAGE_SIZE = 10;
@@ -1057,30 +1050,6 @@ const AdminFeatures = () => {
   };
 
   // ── Review handlers ──────────────────────────────────────────────
-  const openReviewEdit = (r: any) => {
-    setReviewEditForm({
-      rating: r.rating,
-      comment: r.comment || "",
-      is_visible: r.is_visible,
-    });
-    setReviewEditDialog({ open: true, review: r });
-  };
-  const submitReviewEdit = async () => {
-    if (!reviewEditDialog.review) return;
-    const rating = Number(reviewEditForm.rating);
-    if (!rating || rating < 1 || rating > 5) {
-      alert("Rating must be between 1 and 5"); return;
-    }
-    const payload: any = {
-      rating,
-      comment: reviewEditForm.comment || null,
-      is_visible: !!reviewEditForm.is_visible,
-    };
-    const { ok, data } = await adminEditReview(reviewEditDialog.review.id, payload);
-    if (!ok) { alert(data.detail || "Save failed"); return; }
-    setReviewEditDialog({ open: false, review: null });
-    fetchData();
-  };
   const toggleReviewVisibility = async (r: any) => {
     const { ok, data } = await adminToggleReviewVisibility(r.id);
     if (!ok) { alert(data.detail || "Toggle failed"); return; }
@@ -2359,14 +2328,6 @@ const AdminFeatures = () => {
                         <div className="flex flex-col gap-1">
                           <Button
                             size="sm" variant="outline"
-                            className="h-7 w-7 p-0 border-primary text-primary hover:bg-primary/10"
-                            onClick={() => openReviewEdit(r)}
-                            title="Edit"
-                          >
-                            <Pencil className="w-3 h-3" />
-                          </Button>
-                          <Button
-                            size="sm" variant="outline"
                             className={`h-7 w-7 p-0 ${r.is_visible ? "border-muted-foreground text-muted-foreground hover:bg-muted/20" : "border-green-500 text-green-400 hover:bg-green-500/10"}`}
                             onClick={() => toggleReviewVisibility(r)}
                             title={r.is_visible ? "Hide review" : "Show review"}
@@ -2410,67 +2371,6 @@ const AdminFeatures = () => {
                 )}
               </div>
             )}
-
-            {/* ══════ Review Edit Dialog ══════ */}
-            <Dialog open={reviewEditDialog.open} onOpenChange={(v) => !v && setReviewEditDialog({ open: false, review: null })}>
-              <DialogContent className="bg-card border-border">
-                <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2">
-                    <Pencil className="w-5 h-5 text-primary" /> Edit Review
-                  </DialogTitle>
-                </DialogHeader>
-                {reviewEditDialog.review && (
-                  <div className="space-y-3 py-2">
-                    <div className="bg-muted/40 rounded-lg p-3 border border-border text-xs">
-                      <p className="text-foreground font-medium">{reviewEditDialog.review.user_name}</p>
-                      <p className="text-muted-foreground">→ 🔮 {reviewEditDialog.review.astrologer_name}</p>
-                      <p className="text-muted-foreground mt-1">{reviewEditDialog.review.created_at?.slice(0, 16)}</p>
-                    </div>
-                    <div>
-                      <Label className="text-foreground/80 text-xs">Rating</Label>
-                      <div className="flex items-center gap-2 mt-2">
-                        {[1, 2, 3, 4, 5].map((i) => (
-                          <button
-                            key={i}
-                            type="button"
-                            onClick={() => setReviewEditForm({ ...reviewEditForm, rating: i })}
-                            className="transition-transform hover:scale-110"
-                          >
-                            <Star
-                              className={`w-8 h-8 ${i <= reviewEditForm.rating ? "text-primary fill-primary" : "text-muted-foreground"}`}
-                            />
-                          </button>
-                        ))}
-                        <span className="text-sm text-muted-foreground ml-2">{reviewEditForm.rating} / 5</span>
-                      </div>
-                    </div>
-                    <div>
-                      <Label className="text-foreground/80 text-xs">Comment</Label>
-                      <Textarea
-                        value={reviewEditForm.comment}
-                        onChange={(e) => setReviewEditForm({ ...reviewEditForm, comment: e.target.value })}
-                        placeholder="Review text..."
-                        className="bg-muted border-border mt-1 min-h-[100px]"
-                      />
-                    </div>
-                    <label className="flex items-center gap-2 text-xs text-foreground cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={reviewEditForm.is_visible}
-                        onChange={(e) => setReviewEditForm({ ...reviewEditForm, is_visible: e.target.checked })}
-                      />
-                      Visible to users (counts toward astrologer rating)
-                    </label>
-                  </div>
-                )}
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setReviewEditDialog({ open: false, review: null })}>Cancel</Button>
-                  <Button onClick={submitReviewEdit} className="gradient-gold text-primary-foreground">
-                    Save Changes
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
 
             {/* ══════ Astrologer Wallet Dialog ══════ */}
             <Dialog open={astroWalletDialog.open} onOpenChange={(v) => !v && closeAstroWalletDialog()}>
