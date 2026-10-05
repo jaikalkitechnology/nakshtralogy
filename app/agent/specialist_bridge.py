@@ -1,0 +1,170 @@
+"""
+Specialist-engine bridge for the AI chat.
+
+The chat (app/agent/engine.py DOMAINS + app/routers/ws_agent.py) already
+builds rich context from the generic kundli facts (shadbala, dasha,
+yogas/doshas, ashtakavarga, life_areas, ...) and scores a 12-domain
+"probability" lens. That's a reasonable default for an unscoped question
+("one for all"), but it's lighter than what the actual report screens show
+for a specific topic — the 19 specialist engines in app.specialists (plus
+the daily forecast engine) each return a much richer, topic-specific
+structured analysis.
+
+This module lets the chat pull a SPECIFIC specialist's analysis into the
+prompt context on request (an explicit `engine` key in the WS message, set
+by an "Ask AI" entry point on that engine's report screen) — grounding the
+chat's answer in the exact same numbers the user sees on the report,
+instead of just the generic probability score. It does NOT replace the
+generic context; ws_agent.py adds this on top when an engine is selected.
+
+Multi-chart engines (kundli_milan, relationship, child_probability,
+love_compatibility, karma_linkage) are intentionally NOT wired here — they
+need a second chart and a different request shape than the single-
+chart_id WS protocol supports today. See localAiChat/STATUS.md.
+"""
+
+import logging
+from typing import Optional
+
+from app.specialists import SPECIALISTS
+
+logger = logging.getLogger("nakshtra_agent.specialist_bridge")
+
+# app.agent.engine.DOMAINS key -> app.specialists.SPECIALISTS key, for the
+# 12 domains that have a direct specialist-engine counterpart. Used to
+# auto-attach the matching specialist's analysis when the chat's own
+# intent-detected domain already points at one of these topics, even if
+# the client didn't explicitly pass `engine`.
+DOMAIN_TO_SPECIALIST = {
+    "career_job": "career",
+    "business_startup": "business",
+    "education_career": "education",
+    "money_wealth": "wealth",
+    "debt_recovery": "debt_recovery",
+    "love_relationship": "love",
+    "marriage_family": "marriage",
+    "health_wellness": "health",
+    "mental_stress": "mental_stress",
+    "property_assets": "property",
+    "legal_dispute": "legal",
+    "life_path_luck": "life_path",
+}
+
+# Single-chart specialist keys the chat can discuss directly via an
+# explicit `engine` selection, even though they have no probability-domain
+# entry (DOMAINS has no house/planet-weight config for these — adding one
+# would mean inventing astrological weightings, which this bridge
+# deliberately does not do; it only reads engines that already exist).
+EXTRA_CHAT_ENGINES = {"character", "past_life"}
+
+CHAT_ENGINE_KEYS = set(DOMAIN_TO_SPECIALIST.values()) | EXTRA_CHAT_ENGINES
+
+# Fields every specialist's analyze() output carries that are about the
+# ENGINE, not the person — never useful to the LLM as "facts about you".
+_SKIP_FIELD_SUFFIXES = ("_disclaimer",)
+_SKIP_FIELDS = {"version"}
+
+
+def _compact(result: dict, max_str_len: int = 220, max_list_items: int = 6, max_fields: int = 35) -> dict:
+    """Engine-agnostic compaction of a specialist's analyze() output.
+
+    These engines return mostly-numeric/short-categorical JSON (0-100
+    scores, short category strings, small lists of {name, score} for
+    active yogas/doshas) rather than prose — confirmed against real
+    engine output (career/character/marriage/... all tested directly).
+    This keeps short scalars and small simple lists/dicts as-is and drops
+    large nested blobs (raw chart dumps, long multi-paragraph sections)
+    that would spend the LLM's context budget on sub-component math it
+    doesn't need to quote.
+
+    Deliberately engine-agnostic (no per-engine field allowlist): hand-
+    curating field names per engine without having verified each one's
+    actual schema would risk silently guessing wrong and dropping real
+    data. This errs toward including more short/simple fields instead —
+    capped at `max_fields` (some engines return 100+ top-level fields,
+    confirmed by direct testing; the architecture doc's whole token budget
+    for the astrology-engine payload is ~3K tokens, so one specialist
+    can't eat it alone). Dict insertion order is preserved from the
+    engine's own return statement, and every engine checked puts its
+    headline overall/summary scores first and progressively finer-grained
+    breakdowns after — so truncating at the cap keeps the most decision-
+    relevant fields, not an arbitrary subset.
+    """
+    out = {}
+    for k, v in result.items():
+        if len(out) >= max_fields:
+            break
+        if k in _SKIP_FIELDS or any(k.endswith(s) for s in _SKIP_FIELD_SUFFIXES):
+            continue
+        if isinstance(v, bool) or isinstance(v, (int, float)):
+            out[k] = v
+        elif isinstance(v, str):
+            if v and len(v) <= max_str_len:
+                out[k] = v
+        elif isinstance(v, list) and 0 < len(v) <= max_list_items:
+            if all(
+                isinstance(it, (str, int, float))
+                or (isinstance(it, dict) and len(it) <= 6)
+                for it in v
+            ):
+                out[k] = v
+    return out
+
+
+def get_specialist_summary(
+    specialist_key: str, pdata: dict, birth_jd: float, name: str, gender: str = "M",
+) -> Optional[dict]:
+    """Run one single-chart specialist engine and return a compact summary,
+    or None if the key isn't a wireable single-chart specialist or the
+    engine call fails (never lets a specialist error break the chat turn —
+    the generic context still carries the conversation)."""
+    entry = SPECIALISTS.get(specialist_key)
+    if not entry:
+        return None
+    engine = entry["engine"]
+    try:
+        if specialist_key == "marriage":
+            result = engine.analyze(pdata, birth_jd, name=name, gender=gender)
+        else:
+            result = engine.analyze(pdata, birth_jd, name=name)
+    except Exception as e:
+        logger.warning("specialist_bridge: %s.analyze() failed: %s", specialist_key, e)
+        return None
+    return {
+        "topic": specialist_key,
+        "label": entry["label"],
+        "summary": _compact(result),
+    }
+
+
+def get_forecast_summary(pdata: dict, birth_jd: float, name: str, dob: str, tob: str, place: str) -> Optional[dict]:
+    """Today's personalized daily-probability forecast, compacted the same
+    way as a specialist summary. Not in app.specialists (it's a standalone
+    engine module, same pattern as app/routers/forecast_router.py)."""
+    try:
+        from all_engine.all_specialist_engine.daily_probability_forecast_specialist import (
+            daily_probability_forecast_specialist_engine,
+        )
+        result = daily_probability_forecast_specialist_engine.analyze(
+            pdata, birth_jd, chart_metadata={"name": name, "dob": dob, "tob": tob, "place": place},
+        )
+    except Exception as e:
+        logger.warning("specialist_bridge: daily forecast failed: %s", e)
+        return None
+    return {"topic": "daily_forecast", "label": "Today's Forecast", "summary": _compact(result)}
+
+
+def resolve_chat_engine(explicit_engine: Optional[str], domain_key: Optional[str]) -> Optional[str]:
+    """What specialist (if any) this chat turn should pull in: an explicit
+    client-selected `engine` wins; otherwise fall back to whatever the
+    intent-detected `domain` maps to. Returns None for an unscoped/general
+    question — ws_agent.py's existing generic context already covers that
+    case well, so no specialist call is made (keeps the "ask anything"
+    path fast and avoids running engines the question didn't ask about)."""
+    if explicit_engine == "daily_forecast":
+        return "daily_forecast"
+    if explicit_engine in CHAT_ENGINE_KEYS:
+        return explicit_engine
+    if domain_key and domain_key in DOMAIN_TO_SPECIALIST:
+        return DOMAIN_TO_SPECIALIST[domain_key]
+    return None

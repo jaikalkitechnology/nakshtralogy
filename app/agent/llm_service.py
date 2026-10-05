@@ -583,17 +583,24 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None) -> s
     if aspects:
         graha = aspects.get("graha_drishti", {})
         lagna_asp = aspects.get("lagna_aspects_received", {})
-        # Show only strong aspects (>=50%) to avoid bloat
+        # Each target is {"house": int, "type": "full"|"special", "strength":
+        # "strong"|"medium"|...} — NOT a numeric percent (pre-existing bug
+        # here compared these dicts to an int and crashed on every chart
+        # with any aspects, i.e. nearly all of them). Show only full/strong
+        # aspects to avoid bloat, same intent as the original >=50% filter.
+        def _is_strong(aspect: dict) -> bool:
+            return aspect.get("type") == "full" or aspect.get("strength") == "strong"
+
         asp_lines = []
         for planet, targets in graha.items():
-            strong_asp = [f"{t}({v}%)" for t, v in targets.items() if v >= 50]
+            strong_asp = [f"{t}(H{a.get('house','?')},{a.get('strength','')})" for t, a in targets.items() if _is_strong(a)]
             if strong_asp:
                 asp_lines.append(f"  {planet} aspects: {', '.join(strong_asp[:4])}")
         if asp_lines:
-            parts.append("\nGRAHA DRISHTI (key aspects, ≥50%):")
+            parts.append("\nGRAHA DRISHTI (key aspects — full/strong only):")
             parts.extend(asp_lines[:6])  # cap to 6 planets
         if lagna_asp:
-            lagna_parts = [f"{p}({v}%)" for p, v in lagna_asp.items() if v >= 50]
+            lagna_parts = [f"{p}(H{a.get('house','?')},{a.get('strength','')})" for p, a in lagna_asp.items() if _is_strong(a)]
             if lagna_parts:
                 parts.append(f"  Lagna (self) aspected by: {', '.join(lagna_parts)}")
 
@@ -645,6 +652,26 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None) -> s
             pdiv = divs[p]
             row = f"  {p:10} | " + " | ".join(f"{pdiv.get(d,'--'):4}" for d in relevant_dcharts)
             parts.append(row)
+
+    # ⭐️ SPECIALIST REPORT — the actual report-screen analysis for the
+    # selected topic (see app/agent/specialist_bridge.py), when one was
+    # pulled in. Ground the answer in these exact numbers rather than
+    # re-deriving a rougher estimate from the generic facts above.
+    specialist = chart_context.get("specialist_report")
+    if specialist:
+        parts.append(f"\n{specialist.get('label', specialist.get('topic', 'SPECIALIST'))} REPORT (use these as the authoritative numbers for this topic):")
+        for k, v in specialist.get("summary", {}).items():
+            label = k.replace("_", " ").title()
+            if isinstance(v, list):
+                if v and isinstance(v[0], dict):
+                    items = "; ".join(
+                        ", ".join(f"{ik}={iv}" for ik, iv in it.items()) for it in v
+                    )
+                else:
+                    items = ", ".join(str(x) for x in v)
+                parts.append(f"  {label}: {items}")
+            else:
+                parts.append(f"  {label}: {v}")
 
     # ⭐️ REMEDY LIBRARY — verified mantras/gems (prevents LLM hallucination)
     key_planets = chart_context.get("domain_planets", ["Sun", "Moon", "Saturn"])

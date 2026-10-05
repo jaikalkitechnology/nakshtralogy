@@ -1,143 +1,147 @@
-# Nakshatralogy Local AI Chat — Status Tracker
+# Nakshatralogy AI Chat — Status Tracker
 
-**Goal:** Offline, self-hosted AI chat for Nakshatralogy — a local LLM
-(Ollama + Qwen 8B-class instruct) that *interprets* facts computed by the
-existing 19 astrology engines, holds session + long-term memory per user,
-and answers in 20 languages. The engines stay the sole source of
-astrology truth; the LLM never calculates chart data itself.
+**⚠️ CORRECTED 2026-10-05 — the original version of this doc was wrong.**
+It was written from `ARCHITECTURE.md` alone, assuming a blank slate. A
+full, working, production-wired AI chat system already existed in the
+repo before this tracker was created — `app/agent/`, `app/routers/
+ws_agent.py`, `app/routers/ai_agent_router.py`, `app/ai_config/`, and a
+working Flutter chat screen. See **"What already existed"** below before
+reading anything else here. Don't repeat this mistake: before picking up
+any task below, grep first.
 
-**Source spec:** `localAiChat/ARCHITECTURE.md` (full design doc, uploaded
-2026-10-03). Model tags, VRAM figures and tokens/sec are illustrative —
-benchmark on the real GPU before locking production config.
+**Goal now:** extend the *existing* chat system to ground its answers in
+the actual 19 specialist report engines (not just the lighter 12-domain
+probability score it used before) and the daily forecast — "one for all"
+(a general, unscoped question) already works via the existing generic
+astrology context and needed no new code.
 
 **Branch:** `claude/multi-language-support-agents-g6p93h`
-**Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
-**Verify:** backend — py_compile + isolated logic tests (no live GPU/Ollama
-host reachable from the dev sandbox); infra/VM steps are manual/ops work,
-not something a coding session can execute or verify.
-
-**Summary:** 0 / 25 tasks DONE · **NOT STARTED.**
+**Legend:** `PENDING` · `IN-PROGRESS` · `DONE (date)` · `BLOCKED (reason)`
+**Verify:** backend — py_compile + direct end-to-end calls against the
+real engines with a real test chart (no live GPU/Ollama reachable from
+this dev sandbox, so LLM output itself isn't verified, only everything up
+to and including the prompt handed to it).
 
 ---
 
-## Locked decisions (from the architecture doc)
+## What already existed (read this first)
 
-- **Engines = source of truth, LLM = interpreter.** The 19 astrology
-  engines keep computing deterministic facts (kundli, dasha, gochar,
-  yogas/doshas, life-areas); nothing about them changes. The LLM turns
-  those facts + the user's question + relevant history into a
-  conversational answer — it never invents planetary positions, dates, or
-  chart values.
-- **Runtime:** Ollama, local/private (`OLLAMA_HOST=127.0.0.1:11434`,
-  never exposed directly — only through the FastAPI service).
-- **Model:** Qwen3 8B-class instruct, 4-bit quantized, to start; a 14B
-  tier is a later option if 32 GB+ RAM is available. Exact tag TBD at
-  deploy time (benchmark first).
-- **VM target:** 10 GB VRAM NVIDIA GPU (min 8 GB), 32 GB RAM (min 16 GB),
-  8 vCPU (min 4), 100–150 GB NVMe/SSD (min 60 GB), Ubuntu 22.04+ LTS.
-- **Context policy:** 16K+ token context window; never dump full lifetime
-  chat history into a request — retrieve only recent turns + semantically
-  relevant history + saved user memory + the current astrology snapshot.
-- **Languages:** 20 total — 10 Indian (Hindi, English, Bengali, Marathi,
-  Telugu, Tamil, Gujarati, Kannada, Malayalam, Punjabi) + 10 international
-  (Spanish, French, German, Portuguese, Italian, Arabic, Russian,
-  Japanese, Korean, Chinese). Benchmarked per-language, not assumed
-  uniform.
-- **Performance rule:** route each question to only the relevant engine(s)
-  — never run all 19 per question. Cache chart snapshots and embeddings.
+- **`app/agent/engine.py`** — `DOMAINS`: 12 probability-scored chat
+  domains (career_job, business_startup, education_career, money_wealth,
+  debt_recovery, love_relationship, marriage_family, health_wellness,
+  mental_stress, property_assets, legal_dispute, life_path_luck), each
+  with house/planet weights + relevant yogas/doshas + EN/HI/Hinglish
+  keywords. `detect_intent()` classifies a query (domain, sub-domain,
+  time-frame, question-type, urgency, sentiment, depth, language,
+  confidence) via regex — no LLM call needed. `compute_domain_probability()`
+  scores 0–100 from bhava strength + shadbala + yogas + doshas + today's
+  gochar — all from the real kundli engine, nothing invented.
+- **`app/agent/llm_service.py`** — multi-provider LLM client: local
+  **Ollama is already wired and the default** (`ollama-3b` → `qwen2.5:3b`),
+  alongside Gemini, 8 Groq models, OpenRouter, 3 Sarvam tiers — all via
+  raw `httpx`, no SDK deps. `detect_language()` covers 10 Indian scripts +
+  Hinglish + English (not yet the 10 international languages
+  `ARCHITECTURE.md` lists). `build_rich_prompt()` is the real context
+  builder: planets+Shadbala, bhava, both dasha systems with cross-
+  agreement, dasha-activation, gochar, ashtakavarga, graha drishti,
+  chakra health, Sade Sati/Dhaiya, domain-relevant divisional charts, a
+  curated remedy library (anti-hallucination — the LLM may only cite
+  remedies from this list) and classical citations.
+- **`app/routers/ws_agent.py`** — the actual chat endpoint:
+  `ws://.../ws/agent/chat?token=<jwt>`. Per-turn flow: auth → chart
+  ownership check → `NakshtraAgent.query()` (fast probability frame sent
+  immediately) → template-first short-circuit (`app/ai_config/
+  question_matcher.py` — skips the LLM entirely on a confident curated-
+  question match) → Redis-backed session memory (last 3 turns, 1-week
+  TTL, in-memory fallback) → streamed LLM response → `AgentLog` row
+  persisted per turn.
+- **`app/routers/ai_agent_router.py`** — admin publish/pricing layer over
+  the 12 domains (this is the real backend behind react_admin's
+  `AiAgentsManager.tsx` / `/admin/ai-agents` — not a separate feature).
+- **`app/ai_config/`** — DB-driven override layer (`AiLanguage`,
+  `AiDomainConfig`, `AiAgentSetting`, `AiEngine` tables) with graceful
+  fallback to the hardcoded Python dicts.
+- **`flutter_user/lib/screens/ai/ai_specialist_chat_screen.dart`** — a
+  working chat UI already wired to the WS endpoint (provider/chart/
+  language pickers, streaming, follow-up chips). The original STATUS.md's
+  "no Flutter chat UI exists" claim was wrong.
+- **Not built before this session:** any bridge from the chat to the
+  **19 specialist report engines** (`app/specialists/SPECIALISTS`, 16
+  single/multi-chart engines + 3 ad-hoc multi-chart ones in
+  `specialist_router.py` = 19) or to the forecast engine. The chat only
+  ever used the lighter 12-domain probability lens — asking it about
+  "my career" got a shallower answer than the actual Career report screen
+  gives, even though both ultimately read the same birth chart.
 
-## Phase 1 — VM & Ollama infrastructure (ops, not code)
-
-| # | Task | Status |
-|---|------|--------|
-| 1.1 | Provision/resize target VM: 10 GB NVIDIA GPU, 32 GB RAM, 8 vCPU, 100+ GB NVMe/SSD, Ubuntu 22.04/24.04 LTS | PENDING |
-| 1.2 | Install current stable NVIDIA driver + CUDA; verify with `nvidia-smi` | PENDING |
-| 1.3 | Install Ollama; pull the selected Qwen3 8B-class instruct (Q4) tag; benchmark VRAM use, latency, tokens/sec on the real GPU before locking the tag | PENDING |
-| 1.4 | Lock `OLLAMA_HOST=127.0.0.1:11434` (private, never public); tune context length / `keep_alive` / temperature (~0.4–0.7) / `num_predict` from the benchmark results | PENDING |
-
-## Phase 2 — Data layer (additive schema, existing engines untouched)
-
-| # | Task | Status |
-|---|------|--------|
-| 2.1 | Add `ai_sessions`, `ai_messages`, `ai_memory`, `ai_message_embeddings`, `ai_astrology_snapshots`, `ai_message_engine_map`, `ai_feedback` tables (new models in `app/models/model.py`, additive — no change to any existing table) | PENDING |
-| 2.2 | Indexes: `(user_id, session_id, created_at)`, `(user_id, topic, created_at)`, `(user_id, message_id)` | PENDING |
-| 2.3 | Stand up the vector/semantic index (`message_id, user_id, session_id, embedding, topic, language, engine_names, created_at`) — decide the vector store (MySQL-adjacent vector layer vs. a dedicated vector DB) before building retrieval | PENDING |
-
-## Phase 3 — Astrology context bridge
-
-| # | Task | Status |
-|---|------|--------|
-| 3.1 | `astrology_context` service: converts outputs of the existing 19 engines into compact structured JSON facts for the LLM prompt — read-only consumer of the engines, changes nothing about them | PENDING |
-| 3.2 | Intent/topic detector: classify each question so only the relevant engine(s) run, not all 19 | PENDING |
-| 3.3 | Cache stable chart calculations / astrology snapshots so repeat questions on the same chart don't recompute | PENDING |
-
-## Phase 4 — Memory retrieval
+## Phase 1 — Specialist-engine bridge (THIS SESSION)
 
 | # | Task | Status |
 |---|------|--------|
-| 4.1 | Recent-session-turns retrieval | PENDING |
-| 4.2 | Semantic retrieval over message embeddings; cache embeddings, never re-embed an unchanged message | PENDING |
-| 4.3 | User-memory loader (saved preferences/facts per user) | PENDING |
-| 4.4 | Context builder: assemble question + astrology snapshot + relevant history + recent turns + user memory + language + response-format instructions within the token budget (~3K engine payload, ~1–4K history, ~1K system, 16K+ total window) | PENDING |
+| 1.1 | `app/agent/specialist_bridge.py` — maps the chat's domain/engine selection to one of the 19 specialist engines, runs it, compacts its output (short scalars/categorical strings/small lists only, capped at 35 fields — these engines return 50–160 top-level fields, confirmed by direct testing, more than the ~3K-token astrology payload budget in `ARCHITECTURE.md` §4 can absorb per section) | DONE (2026-10-05) |
+| 1.2 | Wire it into `ws_agent.py`'s `_build_chart_context()` — new optional `"engine"` field in the WS request (explicit topic selection from an "Ask AI" button on a report screen); falls back to the intent-detected `domain`'s mapped specialist when `engine` is omitted; stays a no-op (no extra engine call) for a fully general question | DONE (2026-10-05) |
+| 1.3 | Render the specialist's summary into the LLM prompt (`build_rich_prompt()` — new "<Topic> REPORT (use these as the authoritative numbers for this topic)" section) | DONE (2026-10-05) |
+| 1.4 | Daily forecast as a chattable topic (`"engine": "daily_forecast"` → `daily_probability_forecast_specialist_engine`, same compaction) | DONE (2026-10-05) |
+| 1.5 | End-to-end verification against a real computed chart (not mocks): all 14 single-chart topics (career, business, education, wealth, debt_recovery, love, marriage [gender-aware call path], health, mental_stress, property, legal, life_path, character, past_life) + daily forecast all run and produce non-empty, correctly-shaped summaries; explicit `engine` overrides the detected `domain`; general/no-engine path makes no extra engine call | DONE (2026-10-05) |
+| 1.6 | **Bug found and fixed along the way**: `build_rich_prompt()`'s GRAHA DRISHTI section compared `aspect_matrix` target dicts (`{"house", "type", "strength"}`) against a numeric threshold (`v >= 50`) — a pre-existing `TypeError` that crashed prompt-building (hence the whole chat turn) for any chart with a graha-drishti aspect present, which is nearly every chart. Not caused by this session's changes (the crash was in code above where the new specialist-report section was added); fixed to use the real `type`/`strength` fields instead of an int comparison that was never valid against this data shape | DONE (2026-10-05) |
 
-## Phase 5 — FastAPI AI service
+## Phase 2 — Multi-chart engines (NOT done — explicitly deferred)
 
-| # | Task | Status |
-|---|------|--------|
-| 5.1 | Scaffold `nakshatralogy_ai/` service (or an `app/routers/ai_chat_router.py` + `app/services/ai/*` layout inside the existing backend — decide placement before starting) per the layout in `ARCHITECTURE.md` §11 | PENDING |
-| 5.2 | Implement `POST /api/ai/chat` — the full 12-step request flow in `ARCHITECTURE.md` §12 (auth → session → intent → engines → history → memory → context → Ollama → validate → save → return) | PENDING |
-| 5.3 | Streaming responses for perceived latency | PENDING |
-| 5.4 | Response validation / hallucination guard — flag or reject chart-specific claims not grounded in the supplied astrology facts | PENDING |
-| 5.5 | Persist every answer with the full metadata envelope from `ARCHITECTURE.md` §6 (session_id, message_id, question, answer, language, topics, engines_used, chart_version, astrology_snapshot_id, important_claims, created_at) | PENDING |
-
-## Phase 6 — Multilingual layer
-
-| # | Task | Status |
-|---|------|--------|
-| 6.1 | `language_service`: generate a structured internal interpretation first, then render the final answer in the requested language | PENDING |
-| 6.2 | Wire all 20 target languages into the prompt/rendering layer | PENDING |
-| 6.3 | Per-language benchmarking pass — do not assume uniform quality across all 20 | PENDING |
-
-## Phase 7 — Ops, monitoring, rollout
+5 of the 19 specialist engines need a **second chart**, not just a second
+topic: `kundli_milan`, `relationship`, `child_probability`,
+`love_compatibility`, `karma_linkage`. The current WS protocol only takes
+one `chart_id` per turn. Wiring these in means either extending the
+message shape (`chart_id_2` / a list) or a separate "compare two charts"
+chat mode — a real UX decision, not something to bolt on silently.
 
 | # | Task | Status |
 |---|------|--------|
-| 7.1 | Log model latency, prompt tokens, output tokens, GPU memory, and retrieval results per request | PENDING |
-| 7.2 | Load-test with real Nakshatralogy sessions before production rollout | PENDING |
-| 7.3 | Define the scale-up trigger (GPU utilization / queue time / tokens-per-sec / avg prompt size) and the upgrade path (second inference VM vs. larger GPU/model tier) before context size is ever increased to handle load | PENDING |
+| 2.1 | Decide the multi-chart chat UX (second chart picker in the existing screen vs. a dedicated "Compatibility Chat" entry point) | PENDING |
+| 2.2 | Extend the WS protocol + `specialist_bridge.py` for 2-chart engines | PENDING |
+
+## Phase 3 — Flutter UI entry points
+
+`ai_specialist_chat_screen.dart` already lets the user pick a chart,
+provider, and language, and the domain is detected from the free-text
+question — but there's no UI affordance yet to pass the new explicit
+`engine` field (e.g. an "Ask AI about this" button on the Career/Wealth/
+Marriage/... report screens, or on the Forecast screen, that opens the
+chat pre-scoped to that topic).
+
+| # | Task | Status |
+|---|------|--------|
+| 3.1 | "Ask AI about this report" entry point on each of the 14 single-chart specialist report screens + the forecast screen, passing `engine` into the WS request | PENDING |
+| 3.2 | Same for flutter_astro, if astrologers should get this too (not yet decided — astrologers today mostly consult, they don't typically chat with an AI about their own client's chart the same way a user does) | PENDING |
+
+## Phase 4 — Everything else `ARCHITECTURE.md` describes that still isn't built
+
+Carried over from the original tracker, re-verified still accurate after
+discovering the existing system:
+
+| # | Task | Status |
+|---|------|--------|
+| 4.1 | Persisted long-term memory / semantic retrieval — today: Redis, last 3 turns, no embeddings, no vector store of any kind in `requirements.txt` | PENDING |
+| 4.2 | Full 20-language coverage — today: 10 Indian scripts + Hinglish + English; the 10 non-Indian international languages (`ARCHITECTURE.md` §7) aren't in `_LANGUAGE_INSTRUCTIONS`/`AiLanguage` yet | PENDING |
+| 4.3 | Response validation / hallucination guard beyond the remedy-library citation constraint already in place | PENDING |
+| 4.4 | Ollama-only lock-down — today Ollama is one of 14 interchangeable providers (local + several paid APIs). `ARCHITECTURE.md` assumes Ollama-only; whether to actually restrict to it is a product/cost decision, not something to change unilaterally | BLOCKED (needs a product decision) |
+| 4.5 | VM provisioning / driver / Ollama install on the real GPU box — see `localAiChat/OLLAMA_SETUP.md`. Ops work on real hardware; can't be done or verified from a coding sandbox | PENDING |
 
 ---
 
 ## Notes
 
-- This doc is **backend + infra only** — it says nothing about the Flutter
-  chat UI (flutter_user / flutter_astro) or an admin panel view for AI
-  usage. That's a real gap: once Phase 5 lands, a client screen and likely
-  an admin "AI Chat" monitoring tab (cost, usage, flagged answers) would
-  need their own design pass — not assumed or started here.
-- Phase 1 (VM provisioning, driver/Ollama install, GPU benchmarking) is
-  **ops work on real hardware** — it cannot be done or verified from a
-  coding session/sandbox. A coding session can start meaningfully at
-  Phase 2 once a target VM exists, or can build Phases 2–6 against a
-  placeholder/mocked Ollama endpoint ahead of the VM being ready, then
-  swap in the real host.
-- No code has been written for this feature yet. This tracker and
-  `ARCHITECTURE.md` are the starting point for whoever (or whichever
-  agent) picks this up next.
-
-## Open decisions before implementation starts
-
-- Where does the new service live: a standalone `nakshatralogy_ai/`
-  deployment (as sketched in the doc) calling back into the existing
-  backend for engine results, or a module inside the existing FastAPI app
-  (`app/routers/ai_chat_router.py`) that calls the engines in-process?
-  The doc sketches the standalone layout but doesn't mandate it — the
-  in-process option avoids a second service/auth boundary and is likely
-  simpler given the engines already live in `app/kundli/` and friends.
-- Vector store choice for the semantic memory index (§5, §14) — the doc
-  says "MySQL + vector layer" without naming a specific product; needs a
-  decision (e.g. a MySQL-compatible vector extension vs. a separate
-  vector DB) before Phase 2.3 / Phase 4.2 can start.
-- Which existing chat UI (if any) this surfaces through, or whether it's
-  a new "Ask AI" entry point distinct from the existing live
-  chat/call/video consultation flows with human astrologers.
+- `app/agent/specialist_bridge.py` is deliberately **engine-agnostic** in
+  its compaction (no per-engine field allowlist) rather than hand-curating
+  which fields matter for each of the 14 engines — doing that without
+  having verified every engine's exact schema would risk silently
+  guessing wrong and dropping real signal. If a specific engine's chat
+  answers read as missing something important, that's the place to add a
+  curated field list for that one engine, now that its real shape is
+  known (checked directly, see Phase 1.5).
+- The specialist report is **additive** to the existing generic context,
+  not a replacement — `_build_chart_context()` still builds the same
+  shadbala/dasha/yogas/doshas/life-areas facts as before; the specialist
+  summary is one more section layered on top when a topic is selected.
+- `ARCHITECTURE.md`'s standalone-service sketch (`nakshatralogy_ai/`) was
+  never built and — now that the real system is in-process inside the
+  existing FastAPI app — probably shouldn't be; extending what's there is
+  far less risky than migrating to a second service/auth boundary.
