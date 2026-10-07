@@ -149,6 +149,14 @@ class ApiService {
     return resp;
   }
 
+  Future<http.Response> _authPatch(Uri url, {Object? body}) async {
+    var resp = await http.patch(url, headers: _headers, body: body);
+    if (resp.statusCode == 401 && await _tryRefresh()) {
+      resp = await http.patch(url, headers: _headers, body: body);
+    }
+    return resp;
+  }
+
   // ── Auth ─────────────────────────────────────────────────────
 
   Future<Map<String, dynamic>> signup({
@@ -1282,6 +1290,56 @@ class ApiService {
     } finally {
       client.close();
     }
+  }
+
+  // ── Chat sessions (ChatGPT-style "New Chat" + resume-an-old-chat) ──
+
+  Future<List<dynamic>> listAgentChats({String? chartId}) async {
+    final q = chartId != null ? '?chart_id=$chartId' : '';
+    final resp = await _authGet(Uri.parse('${ApiConstants.agentBase}/chats$q'));
+    if (resp.statusCode == 200) {
+      final decoded = jsonDecode(resp.body);
+      if (decoded is List) return decoded;
+    }
+    return [];
+  }
+
+  Future<Map<String, dynamic>?> createAgentChat({
+    required String chartId,
+    String? engineKey,
+    String? language,
+    String? title,
+  }) async {
+    final resp = await _authPost(
+      Uri.parse('${ApiConstants.agentBase}/chats'),
+      body: jsonEncode({
+        'chart_id': chartId,
+        if (engineKey != null) 'engine_key': engineKey,
+        if (language != null) 'language': language,
+        if (title != null) 'title': title,
+      }),
+    );
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as Map<String, dynamic>;
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>?> getAgentChat(String chatId) async {
+    final resp = await _authGet(Uri.parse('${ApiConstants.agentBase}/chats/$chatId'));
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as Map<String, dynamic>;
+    return null;
+  }
+
+  Future<bool> renameAgentChat(String chatId, String title) async {
+    final resp = await _authPatch(
+      Uri.parse('${ApiConstants.agentBase}/chats/$chatId'),
+      body: jsonEncode({'title': title}),
+    );
+    return resp.statusCode == 200;
+  }
+
+  Future<bool> deleteAgentChat(String chatId) async {
+    final resp = await _authDelete(Uri.parse('${ApiConstants.agentBase}/chats/$chatId'));
+    return resp.statusCode == 200;
   }
 
   Future<Map<String, dynamic>> getKundliFull(String chartId, {int dashaLevels = 2}) =>

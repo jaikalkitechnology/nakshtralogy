@@ -5,18 +5,34 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import '../../utils/constants.dart';
+import '../../utils/ai_topics.dart';
 import '../../l10n/gen/app_localizations.dart';
 
 class AiSpecialistChatScreen extends StatefulWidget {
-  final String domainKey;
-  final String label;
-  final String emoji;
+  /// Resume an existing chat (from the chat list / history). When set,
+  /// chartId/domainKey/engineKey/label/emoji are ignored — they're loaded
+  /// from the saved chat instead.
+  final String? chatId;
+  /// Legacy entry point (the 12-domain home-tab grid, a report screen's
+  /// "Ask AI" button): one of the probability domains.
+  final String? domainKey;
+  /// New entry point: an explicit specialist/engine topic key, or null for
+  /// a general/unscoped chat.
+  final String? engineKey;
+  /// Preselect a chart, skipping the chart picker (e.g. opened from a
+  /// report screen that already has a chart in context).
+  final String? chartId;
+  final String? label;
+  final String? emoji;
 
   const AiSpecialistChatScreen({
     super.key,
-    required this.domainKey,
-    required this.label,
-    required this.emoji,
+    this.chatId,
+    this.domainKey,
+    this.engineKey,
+    this.chartId,
+    this.label,
+    this.emoji,
   });
 
   @override
@@ -29,13 +45,17 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   final _scrollCtrl = ScrollController();
   final List<Map<String, dynamic>> _messages = [];
 
+  late AiTopic _topic;
+  String get _topicLabel => widget.label ?? _topic.label;
+  String get _topicEmoji => widget.emoji ?? _topic.emoji;
+
   List<dynamic> _charts = [];
-  List<dynamic> _providers = [];
   List<dynamic> _dbLanguages = [];  // loaded from DB via API
   String? _selectedChartId;
   String? _selectedChartName;
-  String _selectedProvider = 'ollama-3b';
+  String? _chatId;
   bool _loadingCharts = true;
+  bool _resuming = false;
   bool _sending = false;
   String _language = 'auto';  // auto-detect by default
   String? _detectedLanguage;    // last detected language from server
@@ -45,46 +65,61 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   WebSocketChannel? _ws;
   bool _wsConnected = false;
 
-  static const _providerIcons = {
-    'ollama-3b': Icons.flash_on,
-    'gemini': Icons.auto_awesome,
-    'groq-llama-3.1-8b': Icons.bolt,
-    'groq-llama-3.3-70b': Icons.bolt,
-    'groq-llama-4-scout': Icons.bolt,
-    'groq-qwen-32b': Icons.bolt,
-    'groq-gpt-oss-20b': Icons.bolt,
-    'groq-gpt-oss-120b': Icons.bolt,
-    'groq-compound': Icons.bolt,
-    'groq-compound-mini': Icons.bolt,
-    'openrouter': Icons.hub,
-    'sarvam-m': Icons.translate,
-    'sarvam-30b': Icons.translate,
-    'sarvam-105b': Icons.translate,
-  };
-
-  static const _providerShortNames = {
-    'ollama-3b': 'Qwen 3B',
-    'gemini': 'Gemini',
-    'groq-llama-3.1-8b': 'Llama 8B',
-    'groq-llama-3.3-70b': 'Llama 70B',
-    'groq-llama-4-scout': 'Scout',
-    'groq-qwen-32b': 'Qwen 32B',
-    'groq-gpt-oss-20b': 'GPT 20B',
-    'groq-gpt-oss-120b': 'GPT 120B',
-    'groq-compound': 'Compound',
-    'groq-compound-mini': 'Comp Mini',
-    'openrouter': 'Router',
-    'sarvam-m': 'Sarvam M',
-    'sarvam-30b': 'Sarvam 30B',
-    'sarvam-105b': 'Sarvam 105B',
-  };
-
   @override
   void initState() {
     super.initState();
-    _loadCharts();
-    _loadProviders();
+    _chatId = widget.chatId;
+    _topic = widget.engineKey != null
+        ? topicForEngineKey(widget.engineKey)
+        : topicForDomainKey(widget.domainKey);
     _loadLanguages();
+    if (widget.chatId != null) {
+      _resumeChat(widget.chatId!);
+    } else {
+      _loadCharts();
+    }
+  }
+
+  /// The specialist/engine key sent to the backend for a NEW chat — an
+  /// explicit engineKey wins; otherwise a legacy domainKey maps through to
+  /// its specialist (see kDomainToSpecialist); null for a general chat.
+  String? get _engineKeyForNewChat =>
+      widget.engineKey ?? (widget.domainKey != null ? kDomainToSpecialist[widget.domainKey] : null);
+
+  Future<void> _resumeChat(String chatId) async {
+    setState(() => _resuming = true);
+    final chats = _api.getMyCharts(limit: 50); // kick off in parallel
+    final chat = await _api.getAgentChat(chatId);
+    _charts = await chats;
+    if (chat == null) {
+      if (mounted) {
+        setState(() => _resuming = false);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Chat not found')));
+        Navigator.of(context).maybePop();
+      }
+      return;
+    }
+    _topic = topicForEngineKey(chat['engine_key']?.toString());
+    _selectedChartId = chat['chart_id']?.toString();
+    final chartMatch = _charts.cast<Map?>().firstWhere(
+          (c) => c?['id']?.toString() == _selectedChartId,
+          orElse: () => null,
+        );
+    _selectedChartName = chartMatch?['name']?.toString() ?? 'Chart';
+    final msgs = (chat['messages'] as List?) ?? [];
+    for (final m in msgs) {
+      final map = m as Map;
+      _messages.add({
+        'role': map['role'] == 'assistant' ? 'bot' : 'user',
+        'text': map['content']?.toString() ?? '',
+        'message_id': map['message_id']?.toString(),
+        'feedback': 0,
+      });
+    }
+    setState(() { _loadingCharts = false; _resuming = false; });
+    _connectWs();
+    _loadSuggestedQuestions();
+    _scrollToBottom();
   }
 
   Future<void> _loadLanguages() async {
@@ -95,27 +130,30 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   }
 
   Future<void> _loadSuggestedQuestions() async {
-    if (widget.domainKey == null) return;
+    final domainKey = _topic.domainKey;
+    if (domainKey == null) return;
     try {
       final langCode = _language == 'auto' ? 'english' : _language;
-      final qs = await _api.getAiQuestions(widget.domainKey!, lang: langCode);
+      final qs = await _api.getAiQuestions(domainKey, lang: langCode);
       if (mounted && qs.isNotEmpty) setState(() => _suggestedQuestions = qs);
     } catch (_) {}
   }
 
   Future<void> _loadCharts() async {
     _charts = await _api.getMyCharts(limit: 50);
-    if (mounted) setState(() => _loadingCharts = false);
-  }
-
-  Future<void> _loadProviders() async {
-    _providers = await _api.getAgentProviders();
-    if (_providers.isEmpty) {
-      _providers = [
-        {'key': 'ollama-3b', 'label': 'Qwen 3B (Offline)', 'model': 'qwen2.5:3b', 'available': true},
-      ];
+    if (widget.chartId != null) {
+      final match = _charts.cast<Map?>().firstWhere(
+            (c) => c?['id']?.toString() == widget.chartId,
+            orElse: () => null,
+          );
+      if (match != null) {
+        // Stay on the spinner (not the chart list) while auto-selecting.
+        await _selectChart(match.cast<String, dynamic>());
+        if (mounted) setState(() => _loadingCharts = false);
+        return;
+      }
     }
-    if (mounted) setState(() {});
+    if (mounted) setState(() => _loadingCharts = false);
   }
 
   @override
@@ -156,6 +194,8 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     if (type == 'prob') {
       final d = msg['data'] as Map<String, dynamic>? ?? {};
       final detected = d['detected_language']?.toString();
+      final serverChatId = d['chat_id']?.toString();
+      if (serverChatId != null && serverChatId.isNotEmpty) _chatId = serverChatId;
       setState(() {
         if (detected != null && detected.isNotEmpty) {
           _detectedLanguage = detected;
@@ -167,7 +207,6 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           'probability': (d['probability'] as num?)?.toDouble(),
           'band': d['band']?.toString(),
           'message_id': d['message_id']?.toString(),
-          'provider': d['provider']?.toString(),
           'domain': d['domain']?.toString(),
           'feedback': 0,  // 0 = none, +1 = up, -1 = down
         });
@@ -209,14 +248,32 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     }
   }
 
-  void _selectChart(Map<String, dynamic> chart) {
+  Future<void> _selectChart(Map<String, dynamic> chart) async {
+    final chartId = chart['id']?.toString();
+    if (chartId == null) return;
+    final created = await _api.createAgentChat(
+      chartId: chartId,
+      engineKey: _engineKeyForNewChat,
+      language: _language == 'auto' ? null : _language,
+    );
+    if (created == null || created['id'] == null) {
+      if (mounted) {
+        final detail = (created?['detail'] ?? '').toString();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(detail.isNotEmpty ? detail : 'Could not start this chat'),
+          backgroundColor: AppColors.error,
+        ));
+      }
+      return;
+    }
     setState(() {
-      _selectedChartId = chart['id']?.toString();
+      _selectedChartId = chartId;
       _selectedChartName = chart['name']?.toString() ?? 'Chart';
+      _chatId = created['id']?.toString();
     });
     _connectWs();
     _loadSuggestedQuestions();
-    _addBotMessage('${widget.emoji} Welcome! I\'m your **${widget.label}**.\n\nAnalyzing the birth chart of **$_selectedChartName**.\n\nAsk me anything about ${widget.label.toLowerCase()}!');
+    _addBotMessage('$_topicEmoji Welcome! I\'m your **$_topicLabel** assistant.\n\nAnalyzing the birth chart of **$_selectedChartName**.\n\nAsk me anything about ${_topicLabel.toLowerCase()}!');
   }
 
   void _stopGeneration() {
@@ -258,16 +315,17 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     if (_wsConnected && _ws != null) {
       _ws!.sink.add(jsonEncode({
         'chart_id': _selectedChartId,
+        'chat_id': _chatId,
         'query': text,
-        'domain': widget.domainKey,
+        'domain': _topic.domainKey,
+        'engine': _topic.engineKey,
         'language': _language,
-        'provider': _selectedProvider,
       }));
     } else {
       try {
         final resp = await _api.agentChat(
           chartId: _selectedChartId!, query: text,
-          domain: widget.domainKey, language: _language,
+          domain: _topic.domainKey, language: _language,
         );
         if (resp['statusCode'] == 200) {
           _addBotMessage(resp['message']?.toString() ?? AppLocalizations.of(context)!.aiNoResponse,
@@ -304,7 +362,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
       messageId: messageId,
       rating: rating,
       chartId: _selectedChartId,
-      provider: msg['provider']?.toString(),
+      provider: 'ollama',
       domain: msg['domain']?.toString(),
       language: _detectedLanguage ?? _language,
       query: userQuery,
@@ -338,13 +396,19 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
+    if (_resuming) {
+      return Scaffold(
+        backgroundColor: AppColors.cosmicVoid,
+        body: const Center(child: CircularProgressIndicator(color: AppColors.gold)),
+      );
+    }
     return Scaffold(
       backgroundColor: AppColors.cosmicVoid,
       appBar: AppBar(
         title: Row(mainAxisSize: MainAxisSize.min, children: [
-          Text(widget.emoji, style: const TextStyle(fontSize: 22)),
+          Text(_topicEmoji, style: const TextStyle(fontSize: 22)),
           const SizedBox(width: 8),
-          Flexible(child: Text(widget.label, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w700), overflow: TextOverflow.ellipsis)),
+          Flexible(child: Text(_topicLabel, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w700), overflow: TextOverflow.ellipsis)),
         ]),
         actions: [
           PopupMenuButton<String>(
@@ -402,7 +466,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
       Padding(
         padding: const EdgeInsets.all(16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('${widget.emoji} ${widget.label}', style: const TextStyle(color: AppColors.gold, fontSize: 18, fontWeight: FontWeight.w700)),
+          Text('$_topicEmoji $_topicLabel', style: const TextStyle(color: AppColors.gold, fontSize: 18, fontWeight: FontWeight.w700)),
           const SizedBox(height: 6),
           Text(l.aiSelectChartBegin, style: const TextStyle(color: AppColors.smoke, fontSize: 12)),
         ]),
@@ -457,11 +521,6 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           const Icon(Icons.auto_awesome, size: 12, color: AppColors.gold),
           const SizedBox(width: 6),
           Text(l.aiAnalyzingName(_selectedChartName ?? ''), style: const TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
-          const Spacer(),
-          GestureDetector(
-            onTap: () { _ws?.sink.close(); _wsConnected = false; setState(() { _selectedChartId = null; _selectedChartName = null; _messages.clear(); }); },
-            child: Text(l.aiChange, style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
-          ),
         ]),
       ),
       // Messages
@@ -487,12 +546,11 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
       if (_messages.length <= 1) _suggestions(),
       // LLM-generated follow-up chips (after each bot reply)
       if (_followupSuggestions.isNotEmpty && !_sending) _followupChips(),
-      // Input bar with provider selector
       _inputBar(),
     ]);
   }
 
-  // ── Provider Selector + Input ───────────────────────────────────────
+  // ── Input ─────────────────────────────────────────────────────────
 
   Widget _inputBar() {
     final l = AppLocalizations.of(context)!;
@@ -505,39 +563,6 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
       child: SafeArea(
         top: false,
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          // Provider chips row
-          SizedBox(
-            height: 32,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: _providers.where((p) => p['available'] == true).map<Widget>((p) {
-                final key = p['key']?.toString() ?? '';
-                final shortName = _providerShortNames[key] ?? (p['label']?.toString() ?? key).split(' ').first;
-                final selected = key == _selectedProvider;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 6),
-                  child: GestureDetector(
-                    onTap: _sending ? null : () => setState(() => _selectedProvider = key),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: selected ? AppColors.gold.withOpacity(0.2) : Colors.white.withOpacity(0.04),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: selected ? AppColors.gold : AppColors.smoke.withOpacity(0.3)),
-                      ),
-                      child: Row(mainAxisSize: MainAxisSize.min, children: [
-                        Icon(_providerIcons[key] ?? Icons.smart_toy, size: 13, color: selected ? AppColors.gold : AppColors.smoke),
-                        const SizedBox(width: 4),
-                        Text(shortName, style: TextStyle(color: selected ? AppColors.gold : AppColors.smoke, fontSize: 10, fontWeight: selected ? FontWeight.w700 : FontWeight.w500)),
-                      ]),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-          const SizedBox(height: 6),
           // Text input + send
           Row(children: [
             Expanded(
@@ -613,7 +638,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
         'legal_dispute': ['Will I win the case?', 'Court matter kab suljhega?', 'Settle or fight?', 'Property dispute result?'],
         'life_path_luck': ['Is Rajyog in my chart?', 'Bhagya kab chamkega?', 'My life purpose?', 'Lucky period ahead?'],
       };
-      chips = samples[widget.domainKey] ?? ['What does my chart say?', 'Future predictions', 'Best remedies for me?'];
+      chips = samples[_topic.domainKey] ?? ['What does my chart say?', 'Future predictions', 'Best remedies for me?'];
     }
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),

@@ -18,6 +18,7 @@ import '../../bloc/service/service_state.dart';
 import '../../widgets/astrologer_profile_sheet.dart';
 import '../rashi/rashi_list_screen.dart';
 import '../ai/ai_specialist_chat_screen.dart';
+import '../ai/ai_chat_list_screen.dart';
 import '../../utils/home_labels.dart';
 import '../specialist/specialist_list_screen.dart';
 import '../specialist/specialist_chart_picker.dart';
@@ -159,6 +160,10 @@ class _HomeTabState extends State<HomeTab> {
           // Quick actions
           _quickActions(l),
 
+          // AI Chat — premium ChatGPT-style assistant (new chat + history)
+          const SizedBox(height: 16),
+          _aiChatEntryCard(),
+
           // AI Specialists
           const SizedBox(height: 16),
           _sectionHeader(l.chatWithAISpecialist, l.tapToStart),
@@ -291,6 +296,43 @@ class _HomeTabState extends State<HomeTab> {
         const Spacer(),
         Text(trailing, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
       ]),
+    );
+  }
+
+  Widget _aiChatEntryCard() {
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AiChatListScreen())),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft, end: Alignment.bottomRight,
+            colors: [AppColors.indigo.withOpacity(0.5), AppColors.nebula],
+          ),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: AppColors.gold.withOpacity(0.25)),
+        ),
+        child: Row(children: [
+          Container(
+            width: 46, height: 46,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(colors: [AppColors.gold, AppColors.saffron]),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Center(child: Icon(Icons.auto_awesome, color: AppColors.midnight, size: 24)),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text('AI Chat', style: TextStyle(color: AppColors.ivory, fontSize: 15, fontWeight: FontWeight.w700)),
+              const SizedBox(height: 2),
+              const Text('New chat or pick up where you left off', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+            ]),
+          ),
+          const Icon(Icons.arrow_forward_ios, color: AppColors.gold, size: 14),
+        ]),
+      ),
     );
   }
 

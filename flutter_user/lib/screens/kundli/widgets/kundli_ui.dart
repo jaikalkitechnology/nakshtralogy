@@ -361,12 +361,17 @@ class _KFadeInState extends State<KFadeIn> with SingleTickerProviderStateMixin {
 /// report's domain (career, wealth, marriage, …) instead of copying to an
 /// external assistant. Presentation only — navigation to an existing screen.
 class ReportAiChatCta extends StatelessWidget {
-  final String domainKey;
+  /// One of the 12 probability domains (career_job, marriage_family, ...).
+  /// Leave null and pass [engineKey] instead for a topic with no domain
+  /// counterpart (character, past_life, daily_forecast).
+  final String? domainKey;
+  final String? engineKey;
   final String label;
   final String emoji;
   const ReportAiChatCta({
     super.key,
-    required this.domainKey,
+    this.domainKey,
+    this.engineKey,
     required this.label,
     required this.emoji,
   });
@@ -376,7 +381,7 @@ class ReportAiChatCta extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
         builder: (_) => AiSpecialistChatScreen(
-          domainKey: domainKey, label: label, emoji: emoji),
+          domainKey: domainKey, engineKey: engineKey, label: label, emoji: emoji),
       )),
       child: Container(
         width: double.infinity,

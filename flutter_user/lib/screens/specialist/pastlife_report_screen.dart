@@ -675,7 +675,7 @@ class _PastLifeReportState extends State<PastLifeReportScreen> {
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
       ReportPdfButton(path: 'report/past_life/${widget.chartId}', filename: 'report-${widget.chartName}'),
       const SizedBox(height: 10),
-      ReportAiChatCta(domainKey: 'life_path_luck', label: 'Life Path & Luck', emoji: '🌟'),
+      ReportAiChatCta(engineKey: 'past_life', label: 'Past Life & Karma', emoji: '🔮'),
       const SizedBox(height: 14),
       Row(children: [
         _aiBtn('ChatGPT', '🤖', () => _launchAi(_data!, 'chatgpt')),
