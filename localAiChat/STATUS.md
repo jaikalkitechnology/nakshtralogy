@@ -9,11 +9,14 @@ working Flutter chat screen. See **"What already existed"** below before
 reading anything else here. Don't repeat this mistake: before picking up
 any task below, grep first.
 
-**Goal now:** extend the *existing* chat system to ground its answers in
-the actual 19 specialist report engines (not just the lighter 12-domain
-probability score it used before) and the daily forecast — "one for all"
-(a general, unscoped question) already works via the existing generic
-astrology context and needed no new code.
+**Goal (Phase 1, done):** ground the chat's answers in the actual 19
+specialist report engines (not just the lighter 12-domain probability score
+it used before) and the daily forecast.
+
+**Goal (Phase 5, done):** lock the chat to Ollama (`qwen3:8b`) only —
+removing every other AI provider from the backend and app — and rebuild the
+UI as ChatGPT-style: "New Chat", resumable history saved to the database
+(no more Redis/in-memory session memory). See Phase 5 below.
 
 **Branch:** `claude/multi-language-support-agents-g6p93h`
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (date)` · `BLOCKED (reason)`
@@ -39,7 +42,9 @@ to and including the prompt handed to it).
 - **`app/agent/llm_service.py`** — multi-provider LLM client: local
   **Ollama is already wired and the default** (`ollama-3b` → `qwen2.5:3b`),
   alongside Gemini, 8 Groq models, OpenRouter, 3 Sarvam tiers — all via
-  raw `httpx`, no SDK deps. `detect_language()` covers 10 Indian scripts +
+  raw `httpx`, no SDK deps. **(Historical — as of Phase 5 below, 2026-10-07,
+  this is Ollama/`qwen3:8b`-only; every other provider was removed.)**
+  `detect_language()` covers 10 Indian scripts +
   Hinglish + English (not yet the 10 international languages
   `ARCHITECTURE.md` lists). `build_rich_prompt()` is the real context
   builder: planets+Shadbala, bhava, both dasha systems with cross-
@@ -54,7 +59,8 @@ to and including the prompt handed to it).
   question_matcher.py` — skips the LLM entirely on a confident curated-
   question match) → Redis-backed session memory (last 3 turns, 1-week
   TTL, in-memory fallback) → streamed LLM response → `AgentLog` row
-  persisted per turn.
+  persisted per turn. **(Historical — as of Phase 5 below, session memory
+  is DB-backed via `AIChat`/`AIChatMessage`, not Redis.)**
 - **`app/routers/ai_agent_router.py`** — admin publish/pricing layer over
   the 12 domains (this is the real backend behind react_admin's
   `AiAgentsManager.tsx` / `/admin/ai-agents` — not a separate feature).
@@ -122,8 +128,40 @@ discovering the existing system:
 | 4.1 | Persisted long-term memory / semantic retrieval — today: Redis, last 3 turns, no embeddings, no vector store of any kind in `requirements.txt` | PENDING |
 | 4.2 | Full 20-language coverage — today: 10 Indian scripts + Hinglish + English; the 10 non-Indian international languages (`ARCHITECTURE.md` §7) aren't in `_LANGUAGE_INSTRUCTIONS`/`AiLanguage` yet | PENDING |
 | 4.3 | Response validation / hallucination guard beyond the remedy-library citation constraint already in place | PENDING |
-| 4.4 | Ollama-only lock-down — today Ollama is one of 14 interchangeable providers (local + several paid APIs). `ARCHITECTURE.md` assumes Ollama-only; whether to actually restrict to it is a product/cost decision, not something to change unilaterally | BLOCKED (needs a product decision) |
+| 4.4 | Ollama-only lock-down | DONE (2026-10-07) — see Phase 5 |
 | 4.5 | VM provisioning / driver / Ollama install on the real GPU box — see `localAiChat/OLLAMA_SETUP.md`. Ops work on real hardware; can't be done or verified from a coding sandbox | PENDING |
+
+## Phase 5 — Ollama-only lock-down + ChatGPT-style session history (2026-10-07)
+
+Product decision made (user, this session): Ollama (`qwen3:8b`) only,
+everywhere — no other AI API in the backend or the app — plus a premium
+ChatGPT-style UI (new chat, resumable history saved to the DB). flutter_astro
+stays out of scope (astrologers have their own tools).
+
+| # | Task | Status |
+|---|------|--------|
+| 5.1 | `llm_service.py` — `PROVIDERS` trimmed to a single Ollama entry (`qwen3:8b`); `_stream_gemini`/`_stream_sarvam`/`_stream_openai` removed; `stream_provider()` simplified | DONE |
+| 5.2 | `config.py` — `OLLAMA_MODEL` defaults to `qwen3:8b`; dropped the hardcoded `GEMINI_API_KEY`/`SARVAM_API_KEY`/`DEEPSEEK_API_KEY` secrets (dead now). `GROQ_API_KEY`/`OPENROUTER_API_KEY` kept (still used by the unrelated `_llm_translate_backend.py` free-text localization fallback) but lost their hardcoded default values | DONE |
+| 5.3 | Durable chat history: repurposed the existing-but-unwired `AIChat`/`AIChatMessage` tables (found already in `model.py`, never connected to `ws_agent.py`) as the single source of truth, replacing Redis/in-memory session memory entirely. Added `engine_key`/`language` to `AIChat`, `language`/`message_id` to `AIChatMessage` | DONE |
+| 5.4 | `agent_router.py` — chat-session CRUD: `GET/POST /agent/chats`, `GET/PATCH/DELETE /agent/chats/{id}`, with admin-publish-aware access gating (`_check_engine_access`) on the selected topic | DONE |
+| 5.5 | Admin "AI Chat Agents" publish/pricing now also covers `character`/`past_life`/`daily_forecast` (no `AiDomainConfig` row previously existed for these) — seeded as `draft` via `seed_chat_agent_settings()`, so **an admin must publish them before they're selectable in the app** | DONE |
+| 5.6 | Flutter: new `AiChatListScreen` (`flutter_user/lib/screens/ai/ai_chat_list_screen.dart`) — "New Chat" + resumable history list, topic + chart picker, reuses the existing wallet/IAP paid-unlock flow | DONE |
+| 5.7 | Flutter: `ai_specialist_chat_screen.dart` redesigned — provider picker removed (Ollama is the only one); added `chatId` (resume) / `chartId`+`engineKey` (preselect) params; every entry point (new list screen, 12-domain home-tab grid, report "Ask AI" buttons) now creates a real `AIChat` row before connecting the WS | DONE |
+| 5.8 | Fixed `character`/`past_life` report screens' "Ask AI" CTA, which mapped to the wrong domain (`life_path_luck` — the only thing available before this phase) — now uses the real `character`/`past_life` engine topics | DONE |
+| 5.9 | Found and fixed two more pre-existing bugs while rewiring `ws_agent.py`: `_save_session` was called with the wrong signature on the template-hit path (would `TypeError` every time), and an undefined `detected_domain` was referenced on that same path | DONE |
+
+Two pre-existing bugs found and fixed along the way (not caused by this
+phase, surfaced while rewiring `ws_agent.py` — see 5.9): a `_save_session`
+call with the wrong signature and an undefined `detected_domain` reference,
+both on the template-hit response path (would have crashed every turn that
+hit a curated template answer).
+
+Still open after this phase:
+- Multi-chart engines (Phase 2) — unchanged, still deferred.
+- International language expansion (4.2) — unchanged, still pending.
+- flutter_astro — explicitly out of scope for this feature.
+- No rename-chat UI yet (the API exists — `PATCH /agent/chats/{id}` /
+  `ApiService.renameAgentChat` — just not wired to a button).
 
 ---
 
