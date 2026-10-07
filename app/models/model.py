@@ -714,6 +714,11 @@ class NotificationCampaign(Base):
 
 # ─────────────────────────────────────────────────────────────────────
 #  10. AI CHAT / AI INSIGHTS
+#
+#  AIChat/AIChatMessage are the durable, user-browsable ChatGPT-style chat
+#  history — "New Chat" + resume-an-old-chat — backing ws_agent.py's
+#  per-turn conversation. The DB is the single source of truth for
+#  history (no Redis session memory).
 # ─────────────────────────────────────────────────────────────────────
 
 class AIChat(Base):
@@ -723,7 +728,12 @@ class AIChat(Base):
     user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     chart_id = Column(String(36), ForeignKey("charts.id", ondelete="SET NULL"), nullable=True)
     title = Column(String(255), nullable=True)
-    model_used = Column(String(50), default="claude-sonnet-4-6")
+    # Specialist topic this chat is scoped to (career, past_life,
+    # daily_forecast, ...) — one of app.agent.specialist_bridge.CHAT_ENGINE_KEYS
+    # plus "daily_forecast", or NULL for a general/unscoped chat.
+    engine_key = Column(String(40), nullable=True, index=True)
+    language = Column(String(20), nullable=True)
+    model_used = Column(String(50), default="qwen3:8b")
     total_tokens = Column(Integer, default=0)
     cost_inr = Column(Numeric(10, 4), default=0.00)
     is_active = Column(Boolean, default=True)
@@ -731,7 +741,14 @@ class AIChat(Base):
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 
     user = relationship("User", back_populates="ai_chats")
-    messages = relationship("AIChatMessage", back_populates="chat", cascade="all, delete-orphan")
+    messages = relationship(
+        "AIChatMessage", back_populates="chat",
+        cascade="all, delete-orphan", order_by="AIChatMessage.created_at",
+    )
+
+    __table_args__ = (
+        Index("ix_aichat_user_updated", "user_id", "updated_at"),
+    )
 
 
 class AIChatMessage(Base):
@@ -741,6 +758,10 @@ class AIChatMessage(Base):
     chat_id = Column(String(36), ForeignKey("ai_chats.id", ondelete="CASCADE"), nullable=False)
     role = Column(String(20), nullable=False)
     content = Column(Text, nullable=False)
+    language = Column(String(20), nullable=True)
+    # Shared with AgentLog/AgentFeedback's message_id for an assistant turn,
+    # so a 👍/👎 or the debug log can be traced back to this exact message.
+    message_id = Column(String(36), nullable=True, index=True)
     tokens_used = Column(Integer, default=0)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
@@ -1140,7 +1161,7 @@ class AgentFeedback(Base):
     chart_id = Column(String(36), nullable=True, index=True)
     message_id = Column(String(36), nullable=False, index=True)  # client-supplied per-response ID
     rating = Column(Integer, nullable=False)   # +1 = up, -1 = down
-    provider = Column(String(40), nullable=True)  # ollama-3b | groq | gemini | ...
+    provider = Column(String(40), nullable=True)  # "ollama" (the only provider now)
     domain = Column(String(40), nullable=True)    # career_job | marriage_family | ...
     language = Column(String(20), nullable=True)
     query = Column(Text, nullable=True)

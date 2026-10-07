@@ -22,14 +22,14 @@ import logging
 import time
 import io
 import contextlib
-from datetime import date
+from datetime import date, datetime
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 from jose import jwt, JWTError
 
 from app.core.config import settings
 from app.core.database import SessionLocal
-from app.models.model import User, Chart, AgentLog
+from app.models.model import User, Chart, AgentLog, AIChat, AIChatMessage
 from app.kundli import engine as nk_engine
 from app.kundli.helper import NakshtraEngine
 from app.agent.engine import NakshtraAgent
@@ -50,51 +50,48 @@ _nk = NakshtraEngine()
 _chart_cache: dict = {}
 _CACHE_MAX = 30
 
-# Session memory: keyed by (user_id, chart_id) → last 3 Q&A pairs
-# Each entry: [{"q": "user query", "a": "LLM response summary"}, ...]
-# Persisted to Redis when available; falls back to in-memory dict.
-_sessions: dict = {}
-_SESSION_MAX_TURNS = 3
-_SESSION_TTL_SEC = 60 * 60 * 24 * 7   # 1 week
-
-_redis = None
-try:
-    import redis as _redis_lib  # sync client is fine — operations are tiny
-    _redis = _redis_lib.from_url(settings.REDIS_URL, decode_responses=True, socket_timeout=2)
-    _redis.ping()
-    logger.info("Redis connected — session memory will persist across restarts")
-except Exception as _e:
-    _redis = None
-    logger.info("Redis unavailable (%s) — using in-memory session store", _e)
+# Chat/session memory lives in the DB (AIChat/AIChatMessage) — the single
+# source of truth for a user's durable, resumable chat history. No Redis,
+# no in-memory fallback: every turn reads/writes the real table.
+_SESSION_MAX_TURNS = 3  # prior Q&A pairs injected as chat-completion history
 
 
-def _session_key_str(user_id: str, chart_id: str) -> str:
-    return f"agent:session:{user_id}:{chart_id}"
+def _get_or_create_chat(db, user_id: str, chat_id: str, chart_id: str, engine_key: str, language: str) -> AIChat:
+    """Resolve the AIChat this turn belongs to. A client-supplied `chat_id`
+    (from "New Chat" / resuming a past chat in the chat list) must already
+    exist and belong to this user. If omitted, a new chat is created on the
+    fly — keeps older/other entry points (e.g. a report screen's "Ask AI"
+    button that hasn't been updated to create a chat first) working."""
+    if chat_id:
+        chat = db.query(AIChat).filter(AIChat.id == chat_id, AIChat.user_id == user_id).first()
+        if chat:
+            return chat
+    chat = AIChat(user_id=user_id, chart_id=chart_id, engine_key=engine_key, language=language)
+    db.add(chat)
+    db.flush()
+    return chat
 
 
-def _load_session(user_id: str, chart_id: str) -> list:
-    if _redis:
-        try:
-            raw = _redis.get(_session_key_str(user_id, chart_id))
-            if raw:
-                return json.loads(raw)
-        except Exception as e:
-            logger.debug("Redis read failed: %s", e)
-    return _sessions.get((user_id, chart_id), [])
+def _load_history(chat: AIChat, max_turns: int = _SESSION_MAX_TURNS) -> list:
+    """Last `max_turns` Q&A pairs, oldest-first, for chat-completion history."""
+    msgs = chat.messages[-(max_turns * 2):]
+    out = []
+    pending_q = None
+    for m in msgs:
+        if m.role == "user":
+            pending_q = m.content
+        elif m.role == "assistant" and pending_q is not None:
+            out.append({"q": pending_q, "a": m.content})
+            pending_q = None
+    return out
 
 
-def _save_session(user_id: str, chart_id: str, history: list) -> None:
-    if _redis:
-        try:
-            _redis.setex(
-                _session_key_str(user_id, chart_id),
-                _SESSION_TTL_SEC,
-                json.dumps(history),
-            )
-            return
-        except Exception as e:
-            logger.debug("Redis write failed: %s", e)
-    _sessions[(user_id, chart_id)] = history
+def _append_message(db, chat: AIChat, role: str, content: str, language: str = None, message_id: str = None) -> None:
+    db.add(AIChatMessage(chat_id=chat.id, role=role, content=content, language=language, message_id=message_id))
+    if role == "user" and not chat.title:
+        chat.title = (content[:60] + "…") if len(content) > 60 else content
+    chat.updated_at = datetime.utcnow()
+    db.commit()
 
 
 def _auth_ws(token: str):
@@ -328,7 +325,8 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
             domain = req.get("domain")
             explicit_engine = req.get("engine")
             language = req.get("language", "english")
-            provider_key = req.get("provider", "ollama-3b")
+            provider_key = req.get("provider", "ollama")
+            chat_id = req.get("chat_id")
 
             if not chart_id or not query:
                 await _send({"type": "error", "text": "chart_id and query required"})
@@ -344,6 +342,8 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     await _send({"type": "error", "text": "Not authorized"})
                     continue
 
+                chat = _get_or_create_chat(db, user.id, chat_id, chart_id, explicit_engine, language)
+
                 t0 = time.time()
                 data = _get_chart_data(chart)
                 pdata = data["_pdata"]
@@ -358,6 +358,9 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 if language == "auto" or not language:
                     effective_lang = detect_language(query)
 
+                # Persist the user's turn now that we know its detected language
+                _append_message(db, chat, "user", query, language=effective_lang)
+
                 # Unique message_id so the user's 👍/👎 feedback can reference this response
                 import uuid as _uuid
                 message_id = str(_uuid.uuid4())
@@ -365,6 +368,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 await _send({
                     "type": "prob",
                     "data": {
+                        "chat_id": chat.id,
                         "message_id": message_id,
                         "domain": result["domain"],
                         "label": result["label"],
@@ -415,8 +419,8 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     log_error = None
                     log_http = None
 
-                    # Save session + log
-                    _save_session(user.id, chart_id, query, template_text)
+                    # Save turn to chat history + write the debug log
+                    _append_message(db, chat, "assistant", template_text, language=effective_lang, message_id=message_id)
                     try:
                         log_db = SessionLocal()
                         try:
@@ -424,7 +428,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             intent_json_str = json.dumps(intent_obj, ensure_ascii=False)[:2000]
                             log_entry = AgentLog(
                                 user_id=user.id, chart_id=chart_id, message_id=message_id,
-                                provider="template", domain=detected_domain, language=effective_lang,
+                                provider="template", domain=(result.get("domain") or domain), language=effective_lang,
                                 raw_query=query[:2000],
                                 query=query[:500], intent_json=intent_json_str,
                                 matched_question_id=match_info.get("question_id") if match_info else None,
@@ -506,8 +510,8 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 logger.info("=" * 80)
                 logger.info("")
 
-                # Inject previous conversation as chat history (Redis-backed)
-                history = _load_session(user.id, chart_id)
+                # Inject previous conversation as chat history (DB-backed)
+                history = _load_history(chat)
 
                 messages = [{
                     "role": "system",
@@ -515,7 +519,10 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 }]
                 for turn in history:
                     messages.append({"role": "user", "content": turn["q"]})
-                    messages.append({"role": "assistant", "content": turn["a"]})
+                    # Full answers are kept in the DB for the chat-history UI;
+                    # truncate here so old long answers don't crowd out the
+                    # current question's context budget (num_ctx is small).
+                    messages.append({"role": "assistant", "content": turn["a"][:500]})
                 messages.append({"role": "user", "content": user_prompt})
 
                 logger.info("Context built in %.2fs, %d history turns, streaming via %s", time.time() - t1, len(history), provider_key)
@@ -614,10 +621,11 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 if followups:
                     await _send({"type": "followups", "items": followups[:3]})
 
-                # Store Q&A in session memory (keep last 3 turns per chart)
+                # Persist the assistant's turn in full (the chat-history UI needs
+                # the complete answer, not the truncated snippet used for LLM
+                # context injection elsewhere)
                 if main_answer:
-                    history.append({"q": query, "a": main_answer[:500]})
-                    _save_session(user.id, chart_id, history[-_SESSION_MAX_TURNS:])
+                    _append_message(db, chat, "assistant", main_answer, language=effective_lang, message_id=message_id)
 
                 await _send({"type": "done"})
 
