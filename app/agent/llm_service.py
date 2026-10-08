@@ -283,13 +283,19 @@ RESPONSE STYLE: {spec['style']}
 
 RULES:
 - {lang_instruction}
-- BE SHORT. 3-5 sentences for most questions, never more than 7. One or two chart
-  references beat a wall of facts — pick the most relevant and build around that.
-- Plain prose only — no markdown (no **bold**, no # headings, no bullet lists).
-- Reference SPECIFIC planets, houses, signs, nakshatra, yogas, doshas, AND Shadbala strength from the data provided
+- Talk like a warm, knowledgeable friend explaining this to someone who knows nothing about
+  astrology — not like a textbook. If you mention a planet, house, yoga, or dosha, briefly say
+  what it means in plain words (e.g. "Mangal Dosh, a Mars placement that can cause friction in
+  relationships") instead of assuming the reader already knows the term.
+- BE SHORT. 3-5 sentences for most questions, never more than 7. Pick the ONE chart detail that
+  best explains the answer and build around that — don't list multiple technical facts in a row.
+- Plain prose only — no markdown (no **bold**, no # headings, no bullet lists, no numbering).
+- Write ONLY the answer itself. Never include instruction labels, step numbers, or any text
+  that isn't a natural part of your reply to the user.
 - Use the probability score naturally in the response — don't just quote it
-- Interpret Shadbala values: >80 = strong, 60-80 = good, 40-60 = moderate, <40 = weak
-- Give 1-2 practical remedies from: traditional mantras (e.g. Gayatri, Mahamrityunjaya), gemstones, fasting days, charity, color therapy
+- Interpret Shadbala values in plain terms: >80 strong, 60-80 good, 40-60 moderate, <40 weak
+- Give at most 1 practical remedy, named simply, from: traditional mantras (e.g. Gayatri,
+  Mahamrityunjaya), gemstones, fasting days, charity, color therapy
 - Never promise exact dates or guaranteed outcomes — speak in terms of favorable windows
 - Be empathetic even for challenging readings — every chart has strengths
 - If the question is NOT related to astrology/life/career/health/relationships/spirituality, politely redirect and suggest 3 astrology questions based on the user's chart data."""
@@ -743,14 +749,14 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None) -> s
     health_disclaimer = ""
     if domain == "health_wellness" or sub_domain in ("disease", "surgery", "chronic", "recovery"):
         health_disclaimer = (
-            "\n4. MANDATORY: end with 'Please consult a qualified doctor — astrology complements, "
+            " End with: 'Please consult a qualified doctor — astrology complements, "
             "never replaces, medical advice.'"
         )
     # Mental-health mandatory disclaimer
     mental_disclaimer = ""
     if domain == "mental_stress" or sub_domain in ("depression", "anxiety"):
         mental_disclaimer = (
-            "\n4. MANDATORY: end with 'If these feelings persist, please reach out to a qualified "
+            " End with: 'If these feelings persist, please reach out to a qualified "
             "mental-health professional — astrology supports, never replaces, clinical care.'"
         )
 
@@ -758,28 +764,27 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None) -> s
     skip_followups = (response_depth == "brief" and urgency == "crisis")
     followup_rule = (
         "" if skip_followups else
-        "\n3. After your analysis, on a NEW LINE output EXACTLY this marker: ---FOLLOWUPS---\n"
-        "4. Then list EXACTLY 3 short follow-up questions the user might ask next,\n"
-        "   each on its own line, each under 60 chars, relevant to this chart's data.\n"
-        "   Format: Q: What does my 10th house say about authority?"
+        " After your answer, on a new line write exactly ---FOLLOWUPS--- and then exactly 3 short "
+        "follow-up questions the user might ask next (each on its own line, under 60 chars, relevant "
+        "to this chart, formatted as 'Q: ...')."
     )
 
+    # Deliberately NOT a numbered/bulleted list — qwen3:8b was observed echoing a
+    # leading "0." straight into its reply when these instructions were numbered.
+    # Plain prose instructions avoid giving it a list pattern to continue.
     parts.append(
-        f'\nRESPONSE FORMAT (strict — the app shows this as plain chat text, not rendered markdown):\n'
-        f'0. Re-read the question now: "{query}". Your reply must answer THIS, specifically — not a\n'
-        f'   general chart reading. If the question asks about one topic (e.g. career), do not drift\n'
-        f'   into unrelated areas (e.g. marriage) just because the data above covers them.\n'
-        f"1. SHORT AND CLEAR IS THE #1 PRIORITY. {length_rule} Pick the ONE or TWO most\n"
-        f"   relevant chart facts and build around those — do not try to cover everything above.\n"
-        f"   Never repeat the same point twice in different words.\n"
-        f"2. Plain prose only — NO markdown. Do not use **bold**, # headings, bullet points,\n"
-        f"   or numbered lists. Write normal sentences and paragraphs, like a person speaking.\n"
-        f"3. For any remedy you mention, use ONLY entries from the REMEDY LIBRARY above.\n"
-        f"   Never invent mantras, gemstone names, or rituals. If a remedy isn't in the library, skip it."
-        f"{health_disclaimer}{mental_disclaimer}"
-        f"{followup_rule}\n"
-        f"6. If the question is NOT astrology-related, politely redirect in 1-2 sentences "
-        f"{'(skip follow-ups due to crisis urgency).' if skip_followups else 'AND still provide 3 Q: follow-ups from the chart.'}"
+        f'\nFINAL INSTRUCTIONS (for you only — never copy any part of this block, its labels, or '
+        f'numbers into your reply; write nothing but the natural answer itself):\n'
+        f'Answer this exact question now: "{query}". Stay only on this topic — do not drift into other '
+        f'areas of life just because the data above mentions them. {length_rule} Pick the ONE chart '
+        f'detail that best explains your answer, and explain it in warm, plain language a complete '
+        f'beginner would understand — do not just name technical terms, briefly say what they mean. '
+        f'Never repeat the same point twice. Use plain prose only — no markdown, no bullet points, no '
+        f'numbered lists. For any remedy you mention, use ONLY entries from the REMEDY LIBRARY above; '
+        f'never invent mantras, gemstone names, or rituals, and leave remedies out entirely if none in '
+        f'the library fit.{health_disclaimer}{mental_disclaimer}{followup_rule} If the question is not '
+        f'astrology-related, politely redirect in 1-2 sentences'
+        f'{" (skip follow-ups due to crisis urgency)." if skip_followups else " and still give 3 follow-up questions from the chart."}'
     )
     return "\n".join(parts)
 
