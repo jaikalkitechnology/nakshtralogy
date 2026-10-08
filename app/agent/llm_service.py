@@ -300,11 +300,13 @@ def build_system_prompt(language: str = "english", domain: str = None, user: dic
             f"- Key planets: {spec['key_planets']}\n"
             f"- Key yogas to check: {spec['key_yogas']}\n"
             f"- Key doshas to check: {spec['key_doshas']}\n"
-            f"If a question is outside this domain (e.g. this is the career agent and they ask about love, "
-            f"or vice versa), do NOT guess or give an answer about that other topic — politely say you're not "
-            f"the right agent for this and name the one who is (e.g. \"I'm not the right agent for this — "
-            f"please ask the Love & Relationship agent.\"), picking the correct one from the other 18 topics "
-            f"listed above. Keep that redirect short, natural, and helpful — one sentence, no lecture."
+            f"First confirm the question is actually outside THIS domain ({spec['role']}) — if it is not, "
+            f"just answer it normally, never redirect. If it genuinely is outside this domain, do NOT guess "
+            f"or give an answer about that other topic — say in one short natural sentence that you're not "
+            f"the right agent for this and name whichever of the OTHER 18 topics listed above actually fits "
+            f"the question (e.g. \"I'm not the right agent for this — please ask the <correct topic> agent,\" "
+            f"replacing <correct topic> with the real one — never output the literal word \"<correct topic>\", "
+            f"and never name {spec['role']} itself, since that is the one you already are)."
         )
     else:
         topic_framing = (
@@ -849,11 +851,12 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
 
     if topic_locked:
         topic_rule = (
-            'Only answer this if it is actually about this chat\'s assigned domain. If it is outside that '
-            'domain (e.g. this is the career agent and the question is about love, or vice versa), do not '
-            'guess or give an unrelated answer — politely say you are not the right agent for this and name '
-            'the correct one of the other 18 topics, short and natural (e.g. "I\'m not the right agent for '
-            'this — please ask the Love & Relationship agent."). '
+            'First confirm: is this question actually outside the topic stated at the top of this prompt '
+            '(the one you were assigned to)? If it is NOT — if it fits your own assigned topic, even loosely '
+            '— just answer it normally; never redirect to yourself or claim you are "not the right agent" for '
+            'your own topic. Only if it genuinely belongs to a DIFFERENT one of the other 18 topics, say so in '
+            'one short natural sentence and name that correct topic (never your own, never a placeholder word '
+            '— the real topic name). '
         )
     else:
         topic_rule = ''
