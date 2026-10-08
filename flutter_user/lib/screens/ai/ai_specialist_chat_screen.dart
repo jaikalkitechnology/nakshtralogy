@@ -684,18 +684,21 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           spacing: 6, runSpacing: 6,
           children: _followupSuggestions.map((q) => GestureDetector(
             onTap: _sending ? null : () { _msgCtrl.text = q; _sendMessage(); },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [AppColors.gold.withOpacity(0.15), AppColors.saffron.withOpacity(0.1)]),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.gold.withOpacity(0.35)),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 32),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [AppColors.gold.withOpacity(0.15), AppColors.saffron.withOpacity(0.1)]),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.gold.withOpacity(0.35)),
+                ),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  Flexible(child: Text(q, style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w500))),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.north_east, size: 10, color: AppColors.gold),
+                ]),
               ),
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                Text(q, style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w500)),
-                const SizedBox(width: 4),
-                const Icon(Icons.north_east, size: 10, color: AppColors.gold),
-              ]),
             ),
           )).toList(),
         ),
