@@ -6,6 +6,7 @@ external LLM API.
 
 import json
 import logging
+import re
 import time
 
 from app.agent.remedies import format_remedies_for_prompt
@@ -216,6 +217,48 @@ def detect_language(text: str, default: str = "english") -> str:
     if words & _HINGLISH_MARKERS:
         return "hinglish"
     return "english"
+
+
+_LANGUAGE_NAME_TO_CODE = {
+    "english": "english",
+    "hindi": "hindi",
+    "hinglish": "hinglish",
+    "bengali": "bengali", "bangla": "bengali",
+    "tamil": "tamil",
+    "telugu": "telugu",
+    "kannada": "kannada",
+    "malayalam": "malayalam",
+    "gujarati": "gujarati",
+    "marathi": "marathi",
+    "punjabi": "punjabi",
+    "odia": "odia", "oriya": "odia",
+}
+_LANG_NAMES_RX_PART = "|".join(_LANGUAGE_NAME_TO_CODE.keys())
+# An explicit in-message request to answer in a specific language — "give
+# me in hindi", "answer in tamil", "reply in english please", "hindi mein
+# batao" — distinct from the UI language dropdown: this is the user
+# saying it directly in the chat, for Ollama paths since the dropdown
+# defaults to auto-detect-from-script, which can't tell "please switch to
+# Hindi" (typed in English) from an ordinary English question.
+_LANG_REQUEST_RX = re.compile(
+    rf"\b(?:in|reply\s*in|respond\s*in|answer\s*in|tell\s*me\s*in|speak\s*in|say\s*(?:it\s*)?in|"
+    rf"switch\s*to|change\s*to|use)\s*({_LANG_NAMES_RX_PART})\b"
+    rf"|\b({_LANG_NAMES_RX_PART})\s*(?:mein|me|bhasha|language)\s*(?:bata|bolo|batao|kaho|likho|de|do)?",
+    re.IGNORECASE,
+)
+
+
+def detect_explicit_language_request(query: str) -> Optional[str]:
+    """A language the user explicitly asked for IN the message itself
+    (e.g. "give me in hindi"), as opposed to detect_language()'s passive
+    script-based guess. Returns None if no such request is found."""
+    if not query:
+        return None
+    m = _LANG_REQUEST_RX.search(query)
+    if not m:
+        return None
+    name = (m.group(1) or m.group(2) or "").lower()
+    return _LANGUAGE_NAME_TO_CODE.get(name)
 
 
 _LANGUAGE_INSTRUCTIONS = {

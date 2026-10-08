@@ -41,6 +41,7 @@ from app.agent.llm_service import (
     stream_provider,
     _fallback_response,
     detect_language,
+    detect_explicit_language_request,
 )
 
 logger = logging.getLogger("ws_agent")
@@ -523,7 +524,11 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # keyboard-mashing, or a question probing for internal
                 # implementation details / coding help (checked first — a
                 # deterministic refusal, not reliant on the LLM obeying).
-                smalltalk_lang = language
+                # An explicit in-message request ("give me in hindi", "tamil
+                # mein batao") always wins — even over an explicit dropdown
+                # selection — since it's the most recent, most specific
+                # signal for this one turn.
+                smalltalk_lang = detect_explicit_language_request(query) or language
                 if smalltalk_lang in ("auto", "", None):
                     smalltalk_lang = detect_language(query)
                 if _META_PROBE_RE.search(query):
@@ -567,9 +572,11 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 result = _agent.query(query, pdata, birth_jd, domain_override=domain, user_language=ui_lang)
                 logger.info("Probability in %.2fs: %s %.0f%%", time.time() - t0, result["domain"], result["probability"])
 
-                # Auto-detect language up front so we can include it in prob frame
-                effective_lang = language
-                if language == "auto" or not language:
+                # An explicit in-message request ("give me in hindi") wins
+                # over the dropdown selection; otherwise auto-detect from
+                # the query's own script/markers when no language is set.
+                effective_lang = detect_explicit_language_request(query) or language
+                if effective_lang == "auto" or not effective_lang:
                     effective_lang = detect_language(query)
 
                 # Persist the user's turn now that we know its detected language
