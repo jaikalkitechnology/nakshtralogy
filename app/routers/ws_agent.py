@@ -19,6 +19,7 @@ Flow:
 
 import json
 import logging
+import re
 import time
 import io
 import contextlib
@@ -46,6 +47,36 @@ logger = logging.getLogger("ws_agent")
 router = APIRouter()
 _agent = NakshtraAgent()
 _nk = NakshtraEngine()
+
+# Small talk — greetings, thanks, "ok", etc. — never worth a full chart
+# computation + specialist report + LLM call. Without this short-circuit,
+# a topic-scoped chat (e.g. "Health & Wellness") injects that specialist's
+# entire report into EVERY turn in the conversation, so even a bare "hi"
+# was drowning the model in chart data and it would just analyze the
+# chart instead of greeting back. Matched only when the ENTIRE message
+# (after stripping punctuation) is one of these — never a substring match,
+# so a real question that happens to start with "hi" isn't caught.
+_SMALLTALK_PHRASES = {
+    "hi", "hii", "hiii", "hiiii", "hey", "heyy", "heyyy", "hello", "helo", "hlo",
+    "namaste", "namaskar", "yo", "sup",
+    "good morning", "good afternoon", "good evening", "good night", "gm", "gn",
+    "thanks", "thank you", "thanks a lot", "thank u", "thx", "ty", "thankyou",
+    "ok", "okay", "k", "kk", "cool", "nice", "great", "good", "fine",
+    "bye", "goodbye", "see you", "cya", "tc",
+    "how are you", "how r u", "hows it going", "whats up", "what's up", "wassup",
+}
+
+
+def _smalltalk_reply(query: str) -> str | None:
+    cleaned = re.sub(r"[^\w\s]", "", query.strip().lower())
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    if cleaned not in _SMALLTALK_PHRASES:
+        return None
+    if cleaned in ("thanks", "thank you", "thanks a lot", "thank u", "thx", "ty", "thankyou"):
+        return "You're welcome! Let me know if you have any other questions about your chart."
+    if cleaned in ("bye", "goodbye", "see you", "cya", "tc"):
+        return "Take care! Come back anytime you want to talk about your chart."
+    return "Hi! I can help with anything about your chart — career, relationships, health, timing, remedies, you name it. What would you like to know?"
 
 _chart_cache: dict = {}
 _CACHE_MAX = 30
@@ -343,6 +374,37 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     continue
 
                 chat = _get_or_create_chat(db, user.id, chat_id, chart_id, explicit_engine, language)
+
+                # ⭐️ SMALL TALK SHORT-CIRCUIT — skip chart computation, the
+                # specialist report, and the LLM call entirely for a bare
+                # greeting/thanks/etc.
+                smalltalk_text = _smalltalk_reply(query)
+                if smalltalk_text is not None:
+                    smalltalk_lang = language
+                    if smalltalk_lang in ("auto", "", None):
+                        smalltalk_lang = detect_language(query)
+                    import uuid as _uuid
+                    smalltalk_message_id = str(_uuid.uuid4())
+                    _append_message(db, chat, "user", query, language=smalltalk_lang)
+                    await _send({
+                        "type": "prob",
+                        "data": {
+                            "chat_id": chat.id,
+                            "message_id": smalltalk_message_id,
+                            "probability": None,
+                            "band": None,
+                            "domain": None,
+                            "breakdown": {},
+                            "active_yogas": [],
+                            "active_doshas": [],
+                            "detected_language": smalltalk_lang,
+                            "provider": provider_key,
+                        },
+                    })
+                    await _send({"type": "token", "text": smalltalk_text})
+                    await _send({"type": "done"})
+                    _append_message(db, chat, "assistant", smalltalk_text, language=smalltalk_lang, message_id=smalltalk_message_id)
+                    continue
 
                 t0 = time.time()
                 data = _get_chart_data(chart)
