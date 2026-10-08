@@ -806,6 +806,13 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                     "model": provider["model"],
                     "messages": messages,
                     "stream": True,
+                    # qwen3 is a hybrid thinking/non-thinking model — without this,
+                    # Ollama streams its chain-of-thought in a separate "thinking"
+                    # field while "content" stays empty, so nothing reaches the
+                    # client until (if ever) the model finishes thinking within
+                    # num_predict. We want fast, direct answers here, not an
+                    # exposed reasoning trace.
+                    "think": False,
                     "options": {
                         "temperature": 0.7,
                         "num_ctx": 2048,  # Reduced from 4096 for faster response
@@ -886,6 +893,7 @@ async def generate_llm_response(
                         )},
                     ],
                     "stream": False,
+                    "think": False,
                     "options": {"temperature": 0.7, "num_predict": 400, "num_ctx": 2048},
                 },
             )
@@ -901,7 +909,7 @@ async def warmup_llm():
         import httpx
         logger.info("Warming up Ollama %s ...", OLLAMA_MODEL)
         async with httpx.AsyncClient(timeout=httpx.Timeout(connect=5.0, read=300.0, write=10.0, pool=5.0)) as client:
-            resp = await client.post(f"{OLLAMA_URL}/api/chat", json={"model": OLLAMA_MODEL, "messages": [{"role": "user", "content": "Hello"}], "stream": False, "options": {"num_predict": 4}})
+            resp = await client.post(f"{OLLAMA_URL}/api/chat", json={"model": OLLAMA_MODEL, "messages": [{"role": "user", "content": "Hello"}], "stream": False, "think": False, "options": {"num_predict": 4}})
             logger.info("Ollama warmup: %s", "OK" if resp.status_code == 200 else f"failed {resp.status_code}")
     except Exception as e:
         logger.warning("Ollama warmup error: %s", e)
