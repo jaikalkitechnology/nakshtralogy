@@ -550,7 +550,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     logger.info("QUESTION MATCH (no template) score=%.2f → sharpened sub=%s qtype=%s",
                                 match_info["score"], match_info.get("sub_domain"), match_info.get("question_type"))
 
-                user_prompt = build_rich_prompt(query, chart_context, intent=result.get("intent"))
+                user_prompt = build_rich_prompt(query, chart_context, intent=result.get("intent"), topic_locked=bool(chat.engine_key))
 
                 # Personalize system prompt with chart holder's details + detected domain
                 chart_holder = {
@@ -602,9 +602,17 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # Inject previous conversation as chat history (DB-backed)
                 history = _load_history(chat)
 
+                # This chat was deliberately started on one topic (e.g. "Career &
+                # Job") iff it has an engine_key — in that case every message
+                # stays scoped to it, even if the wording sounds like another
+                # life area. A "General — Ask Anything" chat (engine_key=None)
+                # stays free to answer whatever the question actually is.
                 messages = [{
                     "role": "system",
-                    "content": build_system_prompt(effective_lang, domain=detected_domain, user=chart_holder, query=query),
+                    "content": build_system_prompt(
+                        effective_lang, domain=detected_domain, user=chart_holder, query=query,
+                        topic_locked=bool(chat.engine_key),
+                    ),
                 }]
                 for turn in history:
                     messages.append({"role": "user", "content": turn["q"]})

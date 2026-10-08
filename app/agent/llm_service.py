@@ -234,7 +234,7 @@ _LANGUAGE_INSTRUCTIONS = {
 }
 
 
-def build_system_prompt(language: str = "english", domain: str = None, user: dict = None, query: str = None) -> str:
+def build_system_prompt(language: str = "english", domain: str = None, user: dict = None, query: str = None, topic_locked: bool = False) -> str:
     # Auto-detect if requested or unsupported language
     if language == "auto" and query:
         language = detect_language(query)
@@ -271,6 +271,30 @@ def build_system_prompt(language: str = "english", domain: str = None, user: dic
         if bits:
             user_intro = " ".join(bits) + ". Address them by their first name once naturally in the response.\n\n"
 
+    if topic_locked:
+        topic_framing = (
+            f"{user_intro}The user deliberately opened this chat as a {spec['role']}, and EVERY message in it "
+            f"stays scoped to that topic:\n"
+            f"- Houses: {spec['focus']}\n"
+            f"- Key planets: {spec['key_planets']}\n"
+            f"- Key yogas to check: {spec['key_yogas']}\n"
+            f"- Key doshas to check: {spec['key_doshas']}\n"
+            f"This is a locked topic, not a suggestion — even if the user's wording sounds like a different "
+            f"life area (e.g. they mention love, money, health), interpret it through THIS topic's lens where "
+            f"there's any reasonable reading, or if it's truly unrelated, briefly say this chat is for "
+            f"{spec['role'].lower()} questions and they can start a new chat for that other topic. Never "
+            f"actually answer a different topic here, no matter what words the user uses."
+        )
+    else:
+        topic_framing = (
+            f"{user_intro}Right now the conversation is leaning toward: a {spec['role']}, focused on:\n"
+            f"- Houses: {spec['focus']}\n"
+            f"- Key planets: {spec['key_planets']}\n"
+            f"- Key yogas to check: {spec['key_yogas']}\n"
+            f"- Key doshas to check: {spec['key_doshas']}\n"
+            f"This is a hint, not a cage — if the actual question is about something else, answer that instead."
+        )
+
     return f"""You are Nakshtralogy's AI astrologer — you have all 19 of the app's specialist readings
 available to you (career, business, education, wealth, debt, love, marriage, health, mental
 health, property, legal, life path, character, past life, kundli milan, relationship, child
@@ -278,12 +302,7 @@ probability, love compatibility, karma linkage), trained in classical Vedic astr
 + Jaimini). Draw on whichever of these are actually relevant to what the user asks — a question
 can touch one topic or several; don't force it into a single box.
 
-{user_intro}Right now the conversation is leaning toward: a {spec['role']}, focused on:
-- Houses: {spec['focus']}
-- Key planets: {spec['key_planets']}
-- Key yogas to check: {spec['key_yogas']}
-- Key doshas to check: {spec['key_doshas']}
-This is a hint, not a cage — if the actual question is about something else, answer that instead.
+{topic_framing}
 
 RESPONSE STYLE: {spec['style']}
 
@@ -315,11 +334,16 @@ RULES:
 - If the question is NOT related to astrology/life/career/health/relationships/spirituality, politely redirect and suggest 3 astrology questions based on the user's chart data."""
 
 
-def build_rich_prompt(query: str, chart_context: dict, intent: dict = None) -> str:
+def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topic_locked: bool = False) -> str:
     """Build a detailed prompt with full kundli context including Shadbala.
 
     intent: 8-section intent dict from detect_intent() — if present, drives
     response format (urgency, sentiment, depth, sub_domain).
+    topic_locked: True when the chat was deliberately started on one topic
+    (has an engine_key) — the final instructions then forbid drifting to a
+    different life area even if the question's own wording suggests one.
+    False for a "General — Ask Anything" chat, which should stay free to
+    answer whatever the question is actually about.
     """
     intent = intent or chart_context.get("intent") or {}
     parts = [
@@ -783,6 +807,17 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None) -> s
         "to this chart, formatted as 'Q: ...')."
     )
 
+    if topic_locked:
+        topic_rule = (
+            'This chat is locked to its chosen topic — do not drift to a different life area no '
+            'matter what the question\'s own wording suggests (e.g. a career chat stays about career '
+            'even if the user writes "love" or "money"); if the question is genuinely about a '
+            'different topic, briefly say this chat is for the current topic and they can start a new '
+            'chat for that one. '
+        )
+    else:
+        topic_rule = ''
+
     # Deliberately NOT a numbered/bulleted list — qwen3:8b was observed echoing a
     # leading "0." straight into its reply when these instructions were numbered.
     # Plain prose instructions avoid giving it a list pattern to continue.
@@ -791,8 +826,7 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None) -> s
         f'numbers into your reply; write nothing but the natural answer itself):\n'
         f'Answer this exact question now: "{query}". If you genuinely cannot tell what is being asked '
         f'(unclear, incomplete, random text, or gibberish), do not guess or invent a chart-based answer — '
-        f'just ask, in one short friendly sentence, for them to rephrase. Otherwise stay only on this '
-        f'topic — do not drift into other areas of life just because the data above mentions them. '
+        f'just ask, in one short friendly sentence, for them to rephrase. {topic_rule}'
         f'Use the chart data above only where '
         f'it is actually relevant to this question; if the question does not need it (general '
         f'knowledge, small talk, anything not about the chart), just answer it directly and briefly '
