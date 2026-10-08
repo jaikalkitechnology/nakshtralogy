@@ -569,19 +569,28 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # the LLM obeying or coping with a content-free "question").
                 smalltalk_lang = resolved_lang
                 bare_lang_switch = detect_bare_language_switch(query)
+                smalltalk_routing = None
                 if bare_lang_switch:
                     smalltalk_text = _LANG_SWITCH_ACK.get(bare_lang_switch, _LANG_SWITCH_ACK["english"])
+                    smalltalk_routing = "lang_switch_ack"
                 elif _META_PROBE_RE.search(query):
                     smalltalk_text = _META_PROBE_REPLY
+                    smalltalk_routing = "meta_probe_refused"
                 else:
                     smalltalk_text = _smalltalk_reply(query, smalltalk_lang)
-                    if smalltalk_text is None and _looks_gibberish(query):
+                    if smalltalk_text is not None:
+                        smalltalk_routing = "smalltalk"
+                    elif _looks_gibberish(query):
                         smalltalk_text = _CLARIFY_REPLY.get(smalltalk_lang, _CLARIFY_REPLY["english"])
-                    if smalltalk_text is None:
+                        smalltalk_routing = "gibberish_clarify"
+                    else:
                         smalltalk_text = _off_topic_redirect(query, chat.engine_key)
+                        if smalltalk_text is not None:
+                            smalltalk_routing = "off_topic_redirect"
                 if smalltalk_text is not None:
                     import uuid as _uuid
                     smalltalk_message_id = str(_uuid.uuid4())
+                    smalltalk_t0 = time.time()
                     _append_message(db, chat, "user", query, language=smalltalk_lang)
                     await _send({
                         "type": "prob",
@@ -601,6 +610,24 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     await _send({"type": "token", "text": smalltalk_text})
                     await _send({"type": "done"})
                     _append_message(db, chat, "assistant", smalltalk_text, language=smalltalk_lang, message_id=smalltalk_message_id)
+                    try:
+                        log_db = SessionLocal()
+                        try:
+                            log_db.add(AgentLog(
+                                user_id=user.id, chart_id=chart_id, message_id=smalltalk_message_id,
+                                provider=smalltalk_routing, domain=domain, language=smalltalk_lang,
+                                raw_query=query[:2000], query=query[:500],
+                                routing=smalltalk_routing,
+                                response_text=smalltalk_text[:5000],
+                                status="success", response_tokens=1,
+                                latency_ms=int((time.time() - smalltalk_t0) * 1000),
+                                prompt_chars=len(query),
+                            ))
+                            log_db.commit()
+                        finally:
+                            log_db.close()
+                    except Exception as le:
+                        logger.error("Short-circuit log write failed: %s", le)
                     continue
 
                 t0 = time.time()
