@@ -102,6 +102,32 @@ def _looks_gibberish(query: str) -> bool:
 
 _CLARIFY_REPLY = "I didn't quite catch that — could you ask your question again, a little more clearly?"
 
+# Deterministic defense-in-depth against prompts probing for internal
+# details (model/provider, system prompt, architecture, code, prompt-
+# injection attempts like "ignore previous instructions") or asking for
+# coding help. The LLM is ALSO instructed to refuse these (see
+# build_system_prompt/build_rich_prompt), but an 8B open model is not a
+# reliable enough barrier on its own against an adversarial user — this
+# regex match fires before any chart data or chat history ever reaches
+# the model, so there's nothing for a jailbreak attempt to extract.
+_META_PROBE_RE = re.compile(
+    r"\b("
+    r"system\s*prompt|internal\s*prompt|your\s*prompt|"
+    r"what\s*(model|llm|ai\s*model)\s*(are\s*you|is\s*this|do\s*you\s*use|powers\s*you)|"
+    r"which\s*(model|llm)\s*(are\s*you|is\s*this|do\s*you\s*use)|"
+    r"are\s*you\s*(chatgpt|gpt-?\d|gemini|claude|llama|qwen|an?\s*ai\s*model)|"
+    r"ignore\s*(the\s*|all\s*)?(previous|above|prior)\s*instructions?|"
+    r"your\s*(source\s*code|architecture|database|api\s*key|tech\s*stack|backend|codebase)|"
+    r"how\s*(were|was)\s*you\s*(built|trained|made|coded|programmed)|"
+    r"what\s*(language|framework|stack)\s*(are\s*you|is\s*this)\s*(written|built|made|coded)\s*in|"
+    r"show\s*me\s*your\s*(prompt|code|instructions|system)|"
+    r"reveal\s*your\s*(prompt|instructions|system)|"
+    r"write\s*(me\s*)?(a\s*|some\s*)?(code|python|javascript|a\s*function|a\s*script)"
+    r")\b",
+    re.IGNORECASE,
+)
+_META_PROBE_REPLY = "Sorry, I don't have an answer for that."
+
 _chart_cache: dict = {}
 _CACHE_MAX = 30
 
@@ -399,13 +425,18 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
 
                 chat = _get_or_create_chat(db, user.id, chat_id, chart_id, explicit_engine, language)
 
-                # ⭐️ SMALL TALK / GIBBERISH SHORT-CIRCUIT — skip chart
-                # computation, the specialist report, and the LLM call
-                # entirely for a bare greeting/thanks/etc. or obvious
-                # keyboard-mashing.
-                smalltalk_text = _smalltalk_reply(query)
-                if smalltalk_text is None and _looks_gibberish(query):
-                    smalltalk_text = _CLARIFY_REPLY
+                # ⭐️ SMALL TALK / GIBBERISH / META-PROBE SHORT-CIRCUIT — skip
+                # chart computation, the specialist report, and the LLM call
+                # entirely for a bare greeting/thanks/etc., obvious
+                # keyboard-mashing, or a question probing for internal
+                # implementation details / coding help (checked first — a
+                # deterministic refusal, not reliant on the LLM obeying).
+                if _META_PROBE_RE.search(query):
+                    smalltalk_text = _META_PROBE_REPLY
+                else:
+                    smalltalk_text = _smalltalk_reply(query)
+                    if smalltalk_text is None and _looks_gibberish(query):
+                        smalltalk_text = _CLARIFY_REPLY
                 if smalltalk_text is not None:
                     smalltalk_lang = language
                     if smalltalk_lang in ("auto", "", None):
