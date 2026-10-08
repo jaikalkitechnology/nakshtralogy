@@ -239,14 +239,22 @@ def build_system_prompt(language: str = "english", domain: str = None, user: dic
     if language == "auto" and query:
         language = detect_language(query)
 
-    # Try DB cache first, fallback to hardcoded
+    # Try DB cache first, fallback to hardcoded. `ai_cache.is_loaded` only
+    # means "the DB query didn't raise" — it stays True even when the table
+    # is empty (e.g. the one-time `seed_ai_config.py` script was never run),
+    # in which case ai_cache's own internal default (plain English / a
+    # blank generic specialist) would silently override every language or
+    # domain selection. Check each table actually HAS this specific code
+    # before trusting it, not just that the cache loaded.
     try:
         from app.ai_config import ai_cache
-        if ai_cache.is_loaded:
+        if ai_cache.is_loaded and ai_cache.get_language(language):
             lang_instruction = ai_cache.get_language_instruction(language)
-            spec = ai_cache.get_domain_specialist(domain or "life_path_luck")
         else:
             lang_instruction = _LANGUAGE_INSTRUCTIONS.get(language, _LANGUAGE_INSTRUCTIONS["english"])
+        if ai_cache.is_loaded and ai_cache.get_domain(domain or "life_path_luck"):
+            spec = ai_cache.get_domain_specialist(domain or "life_path_luck")
+        else:
             spec = DOMAIN_SPECIALISTS.get(domain or "life_path_luck", DOMAIN_SPECIALISTS["life_path_luck"])
     except Exception:
         lang_instruction = _LANGUAGE_INSTRUCTIONS.get(language, _LANGUAGE_INSTRUCTIONS["english"])
