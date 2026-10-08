@@ -813,6 +813,17 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                     },
                 },
             ) as stream:
+                if stream.status_code != 200:
+                    body = await stream.aread()
+                    err_text = body.decode("utf-8", errors="replace")[:300]
+                    logger.error("Ollama HTTP %d (model=%s): %s", stream.status_code, provider.get("model"), err_text)
+                    err = f"⚠️ Ollama error (HTTP {stream.status_code}): {err_text[:200]}"
+                    await _send({"type": "token", "text": err})
+                    if token_collector is not None:
+                        token_collector.append(err)
+                    return
+
+                got_any = False
                 async for line in stream.aiter_lines():
                     if not line.strip():
                         continue
@@ -820,8 +831,17 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                         chunk = json.loads(line)
                     except json.JSONDecodeError:
                         continue
+                    if "error" in chunk:
+                        err_msg = chunk["error"] if isinstance(chunk["error"], str) else str(chunk["error"])
+                        logger.error("Ollama stream error (model=%s): %s", provider.get("model"), err_msg)
+                        err = f"⚠️ Ollama: {err_msg[:300]}"
+                        await _send({"type": "token", "text": err})
+                        if token_collector is not None:
+                            token_collector.append(err)
+                        return
                     text = chunk.get("message", {}).get("content", "")
                     if text:
+                        got_any = True
                         ok = await _send({"type": "token", "text": text})
                         if ok is False:
                             logger.info("Client disconnected mid-stream (ollama)")
@@ -830,6 +850,12 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                             token_collector.append(text)
                     if chunk.get("done"):
                         break
+                if not got_any and (token_collector is None or not token_collector):
+                    logger.warning("Ollama stream ended with no content (model=%s)", provider.get("model"))
+                    err = "⚠️ Ollama returned an empty response. Check the backend logs and that the model is pulled (`ollama list`)."
+                    await _send({"type": "token", "text": err})
+                    if token_collector is not None:
+                        token_collector.append(err)
     except Exception as e:
         logger.warning("Ollama stream failed (%s): %s", provider.get("model"), e)
         await _send({"type": "token", "text": f"⚠️ Ollama offline: {e}"})
