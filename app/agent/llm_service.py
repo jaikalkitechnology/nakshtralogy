@@ -1,6 +1,7 @@
 """
-Multi-LLM Service — supports Ollama (offline), Gemini, Groq, OpenRouter, DeepSeek.
-Each provider streams via OpenAI-compatible API or native API.
+LLM Service — local Ollama only (qwen3:8b). All cloud providers (Gemini,
+Groq, OpenRouter, Sarvam) have been removed; this app never calls an
+external LLM API.
 """
 
 import json
@@ -38,103 +39,12 @@ OLLAMA_URL = settings.OLLAMA_URL.rstrip("/")
 OLLAMA_MODEL = settings.OLLAMA_MODEL
 
 PROVIDERS = {
-    "ollama-3b": {
-        "label": "Qwen 3B (Offline)",
+    "ollama": {
+        "label": "Qwen3 8B (Offline)",
         "url": f"{OLLAMA_URL}/api/chat",
-        "model": "qwen2.5:3b",
+        "model": OLLAMA_MODEL,
         "api_key": "",
         "type": "ollama",
-    },
-    "gemini": {
-        "label": "Gemini 2.5 Flash Lite",
-        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:streamGenerateContent?alt=sse",
-        "model": "gemini-2.5-flash-lite",
-        "api_key": "AIzaSyCKZnHsQTPlPjWEjoKmxwINc2YDzwL0uWo",
-        "type": "gemini",
-    },
-    "groq-llama-3.1-8b": {
-        "label": "Llama 3.1 8B (Groq)",
-        "url": "https://api.groq.com/openai/v1/chat/completions",
-        "model": "llama-3.1-8b-instant",
-        "api_key": settings.GROQ_API_KEY,
-        "type": "openai",
-    },
-    "groq-llama-3.3-70b": {
-        "label": "Llama 3.3 70B (Groq)",
-        "url": "https://api.groq.com/openai/v1/chat/completions",
-        "model": "llama-3.3-70b-versatile",
-        "api_key": settings.GROQ_API_KEY,
-        "type": "openai",
-    },
-    "groq-llama-4-scout": {
-        "label": "Llama 4 Scout (Groq)",
-        "url": "https://api.groq.com/openai/v1/chat/completions",
-        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
-        "api_key": settings.GROQ_API_KEY,
-        "type": "openai",
-    },
-    "groq-qwen-32b": {
-        "label": "Qwen 3 32B (Groq)",
-        "url": "https://api.groq.com/openai/v1/chat/completions",
-        "model": "qwen/qwen3-32b",
-        "api_key": settings.GROQ_API_KEY,
-        "type": "openai",
-    },
-    "groq-gpt-oss-20b": {
-        "label": "GPT-OSS 20B (Groq)",
-        "url": "https://api.groq.com/openai/v1/chat/completions",
-        "model": "openai/gpt-oss-20b",
-        "api_key": settings.GROQ_API_KEY,
-        "type": "openai",
-    },
-    "groq-gpt-oss-120b": {
-        "label": "GPT-OSS 120B (Groq)",
-        "url": "https://api.groq.com/openai/v1/chat/completions",
-        "model": "openai/gpt-oss-120b",
-        "api_key": settings.GROQ_API_KEY,
-        "type": "openai",
-    },
-    "groq-compound": {
-        "label": "Compound AI (Groq)",
-        "url": "https://api.groq.com/openai/v1/chat/completions",
-        "model": "groq/compound",
-        "api_key": settings.GROQ_API_KEY,
-        "type": "openai",
-    },
-    "groq-compound-mini": {
-        "label": "Compound Mini (Groq)",
-        "url": "https://api.groq.com/openai/v1/chat/completions",
-        "model": "groq/compound-mini",
-        "api_key": settings.GROQ_API_KEY,
-        "type": "openai",
-    },
-    "openrouter": {
-        "label": "OpenRouter (Llama 70B)",
-        "url": "https://openrouter.ai/api/v1/chat/completions",
-        "model": "meta-llama/llama-3.3-70b-instruct",
-        "api_key": settings.OPENROUTER_API_KEY,
-        "type": "openai",
-    },
-    "sarvam-m": {
-        "label": "Sarvam M (Indic)",
-        "url": "https://api.sarvam.ai/v1/chat/completions",
-        "model": "sarvam-m",
-        "api_key": settings.SARVAM_API_KEY,
-        "type": "sarvam",
-    },
-    "sarvam-30b": {
-        "label": "Sarvam 30B (Indic)",
-        "url": "https://api.sarvam.ai/v1/chat/completions",
-        "model": "sarvam-30b",
-        "api_key": settings.SARVAM_API_KEY,
-        "type": "sarvam",
-    },
-    "sarvam-105b": {
-        "label": "Sarvam 105B (Indic)",
-        "url": "https://api.sarvam.ai/v1/chat/completions",
-        "model": "sarvam-105b",
-        "api_key": settings.SARVAM_API_KEY,
-        "type": "sarvam",
     },
 }
 
@@ -142,14 +52,11 @@ PROVIDERS = {
 def get_available_providers() -> list:
     out = []
     for key, p in PROVIDERS.items():
-        # Ollama providers are always "available" if the key starts with "ollama"
-        # External providers require an API key
-        available = key.startswith("ollama") or bool(p["api_key"])
         out.append({
             "key": key,
             "label": p["label"],
             "model": p["model"],
-            "available": available,
+            "available": True,
         })
     return out
 
@@ -881,20 +788,8 @@ async def stream_provider(
         except Exception:
             return False
 
-    provider = PROVIDERS.get(provider_key)
-    if not provider:
-        await _safe_send({"type": "token", "text": "Unknown provider."})
-        return
-
-    ptype = provider.get("type")
-    if ptype == "ollama":
-        await _stream_ollama(provider, messages, websocket, token_collector, _safe_send)
-    elif ptype == "gemini":
-        await _stream_gemini(provider, messages, websocket, token_collector, _safe_send)
-    elif ptype == "sarvam":
-        await _stream_sarvam(provider, messages, websocket, token_collector, _safe_send)
-    else:
-        await _stream_openai(provider, messages, websocket, token_collector, _safe_send)
+    provider = PROVIDERS.get(provider_key) or PROVIDERS["ollama"]
+    await _stream_ollama(provider, messages, websocket, token_collector, _safe_send)
 
 
 async def _stream_ollama(provider: dict, messages: list, websocket, token_collector: list = None, _safe_send=None) -> None:
@@ -938,263 +833,6 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
     except Exception as e:
         logger.warning("Ollama stream failed (%s): %s", provider.get("model"), e)
         await _send({"type": "token", "text": f"⚠️ Ollama offline: {e}"})
-
-
-async def _stream_gemini(provider: dict, messages: list, websocket, token_collector: list = None, _safe_send=None) -> None:
-    """Stream from Gemini native API with SSE (alt=sse)."""
-    import httpx
-    _send = _safe_send or (lambda d: websocket.send_json(d))
-    if not provider["api_key"]:
-        err = f"⚠️ {provider['label']} API key not configured."
-        await _send({"type": "token", "text": err})
-        if token_collector is not None:
-            token_collector.append(err)
-        return
-
-    url = f"{provider['url']}&key={provider['api_key']}"
-
-    system_text = ""
-    gemini_contents = []
-    for msg in messages:
-        role = msg.get("role")
-        content = msg.get("content", "")
-        if role == "system":
-            system_text = content
-        else:
-            gemini_contents.append({
-                "role": "user" if role == "user" else "model",
-                "parts": [{"text": content}],
-            })
-
-    payload = {
-        "contents": gemini_contents,
-        "generationConfig": {
-            "temperature": 0.7,
-            "maxOutputTokens": 1000,
-        },
-    }
-    if system_text:
-        payload["systemInstruction"] = {"parts": [{"text": system_text}]}
-
-    try:
-        async with httpx.AsyncClient(
-            timeout=httpx.Timeout(connect=10.0, read=120.0, write=10.0, pool=5.0)
-        ) as client:
-            async with client.stream("POST", url, json=payload) as stream:
-                if stream.status_code != 200:
-                    body = await stream.aread()
-                    err_text = body.decode("utf-8", errors="replace")[:300]
-                    logger.error("Gemini HTTP %d: %s", stream.status_code, err_text)
-                    err = f"⚠️ Gemini error (HTTP {stream.status_code}): {err_text[:150]}"
-                    await _send({"type": "token", "text": err})
-                    if token_collector is not None:
-                        token_collector.append(err)
-                    return
-
-                async for line in stream.aiter_lines():
-                    line = line.strip()
-                    if not line or line.startswith("event:"):
-                        continue
-                    if line.startswith("data: "):
-                        line = line[6:]
-                    elif line.startswith("data:"):
-                        line = line[5:]
-                    else:
-                        continue
-                    try:
-                        chunk = json.loads(line)
-                    except json.JSONDecodeError:
-                        continue
-
-                    if "error" in chunk:
-                        err_msg = chunk["error"].get("message", str(chunk["error"])) if isinstance(chunk["error"], dict) else str(chunk["error"])
-                        logger.error("Gemini stream error: %s", err_msg)
-                        err = f"⚠️ Gemini: {err_msg[:200]}"
-                        await _send({"type": "token", "text": err})
-                        if token_collector is not None:
-                            token_collector.append(err)
-                        return
-
-                    for cand in chunk.get("candidates", []):
-                        for part in cand.get("content", {}).get("parts", []):
-                            text = part.get("text", "")
-                            if text:
-                                ok = await _send({"type": "token", "text": text})
-                                if ok is False:
-                                    return
-                                if token_collector is not None:
-                                    token_collector.append(text)
-    except Exception as e:
-        logger.warning("Gemini stream failed: %s", e)
-        err = f"⚠️ Gemini error: {e}"
-        await _send({"type": "token", "text": err})
-        if token_collector is not None:
-            token_collector.append(err)
-
-
-async def _stream_sarvam(provider: dict, messages: list, websocket, token_collector: list = None, _safe_send=None) -> None:
-    """Stream from Sarvam AI — OpenAI-compatible but uses api-subscription-key header."""
-    import httpx
-    _send = _safe_send or (lambda d: websocket.send_json(d))
-    try:
-        headers = {
-            "Content-Type": "application/json",
-            "api-subscription-key": provider["api_key"],
-        }
-        body = {
-            "model": provider["model"],
-            "messages": messages,
-            "stream": True,
-            "temperature": 0.7,
-            "max_tokens": 500,
-        }
-        async with httpx.AsyncClient(
-            timeout=httpx.Timeout(connect=10.0, read=120.0, write=10.0, pool=5.0)
-        ) as client:
-            async with client.stream("POST", provider["url"], headers=headers, json=body) as stream:
-                async for line in stream.aiter_lines():
-                    line = line.strip()
-                    if not line or line == "data: [DONE]":
-                        continue
-                    if line.startswith("data: "):
-                        line = line[6:]
-                    try:
-                        chunk = json.loads(line)
-                    except json.JSONDecodeError:
-                        continue
-                    delta = chunk.get("choices", [{}])[0].get("delta", {})
-                    text = delta.get("content", "")
-                    if text:
-                        ok = await _send({"type": "token", "text": text})
-                        if ok is False:
-                            logger.info("Client disconnected mid-stream (sarvam)")
-                            return
-                        if token_collector is not None:
-                            token_collector.append(text)
-    except Exception as e:
-        logger.warning("Sarvam stream failed (%s): %s", provider.get("model"), e)
-        err = f"⚠️ Sarvam error: {e}"
-        await _send({"type": "token", "text": err})
-        if token_collector is not None:
-            token_collector.append(err)
-
-
-async def _stream_openai(provider: dict, messages: list, websocket, token_collector: list = None, _safe_send=None) -> None:
-    import httpx
-    _send = _safe_send or (lambda d: websocket.send_json(d))
-    if not provider["api_key"]:
-        err = f"⚠️ {provider['label']} API key not configured."
-        await _send({"type": "token", "text": err})
-        if token_collector is not None:
-            token_collector.append(err)
-        return
-
-    url = provider["url"]
-    headers = {
-        "Authorization": f"Bearer {provider['api_key']}",
-        "Content-Type": "application/json",
-    }
-    if provider["url"].startswith("https://openrouter.ai"):
-        headers["HTTP-Referer"] = "https://nakshtralogy.com"
-        headers["X-Title"] = "Nakshtralogy"
-
-    # Truncate messages if total chars exceed provider limits
-    # Groq models have aggressive idle timeouts with large prompts
-    total_chars = sum(len(m.get("content", "")) for m in messages)
-    is_groq = "groq.com" in provider.get("url", "")
-    max_user = 4000 if is_groq else 6000
-    max_system = 3000 if is_groq else 4000
-    threshold = 8000 if is_groq else 12000
-
-    send_messages = messages
-    if total_chars > threshold:
-        send_messages = []
-        for m in messages:
-            content = m.get("content", "")
-            if m.get("role") == "user" and len(content) > max_user:
-                content = content[:max_user] + "\n...[truncated for model context limit]"
-            elif m.get("role") == "system" and len(content) > max_system:
-                content = content[:max_system] + "\n...[truncated]"
-            send_messages.append({**m, "content": content})
-
-    payload = {
-        "model": provider["model"],
-        "messages": send_messages,
-        "stream": True,
-        "temperature": 0.7,
-        "max_tokens": 500,
-    }
-
-    try:
-        async with httpx.AsyncClient(
-            timeout=httpx.Timeout(connect=10.0, read=None, write=10.0, pool=5.0)
-        ) as client:
-            async with client.stream(
-                "POST", url, headers=headers, json=payload,
-            ) as stream:
-                if stream.status_code != 200:
-                    body = await stream.aread()
-                    err_text = body.decode("utf-8", errors="replace")[:300]
-                    logger.error("%s HTTP %d: %s", provider["label"], stream.status_code, err_text)
-                    err = f"⚠️ {provider['label']} error (HTTP {stream.status_code}): {err_text[:150]}"
-                    await _send({"type": "token", "text": err})
-                    if token_collector is not None:
-                        token_collector.append(err)
-                    return
-
-                async for line in stream.aiter_lines():
-                    line = line.strip()
-                    if not line or line == "data: [DONE]":
-                        continue
-                    if line.startswith("data: "):
-                        line = line[6:]
-                    try:
-                        chunk = json.loads(line)
-                    except json.JSONDecodeError:
-                        continue
-                    # Handle error responses embedded in stream
-                    if "error" in chunk:
-                        err_msg = chunk["error"].get("message", str(chunk["error"])) if isinstance(chunk["error"], dict) else str(chunk["error"])
-                        logger.error("%s stream error: %s", provider["label"], err_msg)
-                        # Groq idle timeout — model took too long between tokens
-                        if "idle timeout" in err_msg.lower() or "partial response" in err_msg.lower():
-                            if token_collector and len(token_collector) > 0:
-                                logger.info("Groq idle timeout after %d tokens — sending partial", len(token_collector))
-                                return
-                            err = f"⚠️ Model was too slow to respond. Try a smaller model (Llama 8B) or rephrase your question shorter."
-                        else:
-                            err = f"⚠️ {provider['label']}: {err_msg[:200]}"
-                        await _send({"type": "token", "text": err})
-                        if token_collector is not None:
-                            token_collector.append(err)
-                        return
-                    delta = chunk.get("choices", [{}])[0].get("delta", {})
-                    text = delta.get("content", "")
-                    if text:
-                        ok = await _send({"type": "token", "text": text})
-                        if ok is False:
-                            logger.info("Client disconnected mid-stream (%s)", provider["label"])
-                            return
-                        if token_collector is not None:
-                            token_collector.append(text)
-    except httpx.ConnectError as e:
-        logger.error("%s connection refused: %s", provider["label"], e)
-        err = f"⚠️ {provider['label']}: Cannot connect — check API key and network."
-        await _send({"type": "token", "text": err})
-        if token_collector is not None:
-            token_collector.append(err)
-    except httpx.ReadTimeout as e:
-        logger.error("%s read timeout: %s", provider["label"], e)
-        err = f"⚠️ {provider['label']}: Response timed out. Try again."
-        await _send({"type": "token", "text": err})
-        if token_collector is not None:
-            token_collector.append(err)
-    except Exception as e:
-        logger.warning("%s stream failed: %s", provider["label"], e)
-        err = f"⚠️ {provider['label']} error: {e}"
-        await _send({"type": "token", "text": err})
-        if token_collector is not None:
-            token_collector.append(err)
 
 
 # Legacy non-streaming function for REST fallback

@@ -35,6 +35,47 @@ from app.ai_config import ai_cache
 router = APIRouter()
 
 
+# ─── chat-only topics (no AiDomainConfig counterpart) ─────────────────
+# character, past_life and daily_forecast are chattable (see
+# app.agent.specialist_bridge.EXTRA_CHAT_ENGINES) but have no entry in the
+# 12-domain probability system, so ai_cache.get_all_domains() never lists
+# them. Admin publish/pricing control still applies via AiAgentSetting,
+# keyed directly by these same keys (see specialist_bridge.
+# setting_key_for_chat_engine) — merged into both listings below so the
+# "AI Chat Agents" admin screen can publish/price them too.
+
+def _extra_chat_topics() -> List[dict]:
+    from app.specialists import SPECIALISTS
+    out = []
+    for key in ("character", "past_life"):
+        meta = SPECIALISTS.get(key)
+        if meta:
+            out.append({
+                "key": key, "label": meta["label"], "emoji": meta.get("emoji"), "icon_name": meta.get("icon"),
+                # Unlike the 12 domains (default "published" when unconfigured,
+                # long-standing behavior), these start hidden even if the
+                # one-time seed (seed_chat_agent_settings) hasn't run yet.
+                "_default_status": "draft",
+            })
+    out.append({
+        "key": "daily_forecast", "label": "Today's Forecast", "emoji": "🔮", "icon_name": "auto_awesome",
+        "_default_status": "draft",
+    })
+    return out
+
+
+def _find_topic(key: str) -> Optional[dict]:
+    """A chat topic by key — one of the 12 AiDomainConfig domains, or one
+    of the chat-only extras (character/past_life/daily_forecast)."""
+    d = ai_cache.get_domain(key)
+    if d:
+        return d
+    for extra in _extra_chat_topics():
+        if extra["key"] == key:
+            return extra
+    return None
+
+
 # ─── helpers ─────────────────────────────────────────────────────────
 
 def _setting(db: Session, key: str) -> Optional[AiAgentSetting]:
@@ -78,12 +119,16 @@ def _session_pricing(db: Session, region: str, s: Optional[AiAgentSetting]) -> d
     }
 
 
-def _visible_to(user: User, s: Optional[AiAgentSetting]) -> bool:
-    """A domain with no setting defaults to published (visible)."""
-    if not s or s.status == "published":
+def _visible_to(user: User, s: Optional[AiAgentSetting], default_status: str = "published") -> bool:
+    """A topic with no AiAgentSetting row falls back to `default_status`
+    (the 12 long-standing domains default to published; chat-only topics
+    like character/past_life/daily_forecast default to draft — see
+    _extra_chat_topics)."""
+    status = s.status if s else default_status
+    if status == "published":
         return True
-    if s.status == "testing":
-        return user.id in (s.test_user_ids or [])
+    if status == "testing":
+        return user.id in (s.test_user_ids or []) if s else False
     return False  # draft
 
 
@@ -95,13 +140,14 @@ def _is_unlocked(db: Session, user_id: str, key: str) -> bool:
 
 def _agent_view(db: Session, user: User, d: dict, s: Optional[AiAgentSetting],
                 region: str) -> dict:
+    default_status = d.get("_default_status", "published")
     is_paid = bool(s and s.is_paid)
     price = float(s.price or 0) if s else 0.0
     unlocked = (not is_paid) or _is_unlocked(db, user.id, d["key"])
     return {
         "key": d["key"], "label": d["label"], "emoji": d.get("emoji"),
         "icon_name": d.get("icon_name"),
-        "status": (s.status if s else "published"),
+        "status": (s.status if s else default_status),
         "is_paid": is_paid, "price": price, "unlocked": unlocked,
         "free_intro": (s.free_intro if s else None),
         # Region-aware session view (USD/IAP for INTL, ₹/wallet for IN).
@@ -126,9 +172,9 @@ def my_agents(
         device_country=x_device_country,
     )
     out = []
-    for d in ai_cache.get_all_domains():
+    for d in ai_cache.get_all_domains() + _extra_chat_topics():
         s = _setting(db, d["key"])
-        if _visible_to(current_user, s):
+        if _visible_to(current_user, s, d.get("_default_status", "published")):
             out.append(_agent_view(db, current_user, d, s, sess))
     return {"items": out}
 
@@ -142,11 +188,11 @@ def agent_access(
     region: Optional[str] = None,
     x_device_country: Optional[str] = Header(None),
 ):
-    d = ai_cache.get_domain(key)
+    d = _find_topic(key)
     if not d:
         raise HTTPException(status_code=404, detail="Agent not found")
     s = _setting(db, key)
-    if not _visible_to(current_user, s):
+    if not _visible_to(current_user, s, d.get("_default_status", "published")):
         raise HTTPException(status_code=403, detail="This agent is not available")
     is_paid = bool(s and s.is_paid)
     unlocked = (not is_paid) or _is_unlocked(db, current_user.id, key)
@@ -174,11 +220,11 @@ def unlock_agent(
     International users must use the store IAP path (POST .../iap/verify) — the
     ₹ wallet is India-only and cannot be recharged from an international session
     (store policy). Reject them here so the client routes to IAP instead."""
-    d = ai_cache.get_domain(key)
+    d = _find_topic(key)
     if not d:
         raise HTTPException(status_code=404, detail="Agent not found")
     s = _setting(db, key)
-    if not _visible_to(current_user, s):
+    if not _visible_to(current_user, s, d.get("_default_status", "published")):
         raise HTTPException(status_code=403, detail="This agent is not available")
     if not (s and s.is_paid):
         return {"status": "ok", "unlocked": True, "charged": 0}
@@ -242,11 +288,11 @@ def verify_agent_iap(
     unlock; no double grant). Never debits the ₹ wallet."""
     from app.services.iap_verify import verify_receipt
 
-    d = ai_cache.get_domain(key)
+    d = _find_topic(key)
     if not d:
         raise HTTPException(status_code=404, detail="Agent not found")
     s = _setting(db, key)
-    if not _visible_to(current_user, s):
+    if not _visible_to(current_user, s, d.get("_default_status", "published")):
         raise HTTPException(status_code=403, detail="This agent is not available")
     if not (s and s.is_paid):
         return {"status": "ok", "unlocked": True, "charged": 0}
@@ -308,10 +354,10 @@ def admin_list_agents(
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
 ):
-    """Every engine domain merged with its admin setting."""
+    """Every engine domain + chat-only topic merged with its admin setting."""
     settings = {s.domain_key: s for s in db.query(AiAgentSetting).all()}
     out = []
-    for d in ai_cache.get_all_domains():
+    for d in ai_cache.get_all_domains() + _extra_chat_topics():
         s = settings.get(d["key"])
         # resolve tester ids → emails for display
         testers = []
@@ -320,7 +366,7 @@ def admin_list_agents(
                 testers.append({"id": u.id, "email": u.email, "name": u.name})
         out.append({
             "key": d["key"], "label": d["label"], "emoji": d.get("emoji"),
-            "status": (s.status if s else "published"),
+            "status": (s.status if s else d.get("_default_status", "published")),
             "is_paid": bool(s and s.is_paid),
             "price": float(s.price or 0) if s else 0.0,
             "price_usd": (float(s.price_usd) if (s and s.price_usd is not None) else None),
@@ -340,12 +386,12 @@ def admin_update_agent(
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
 ):
-    d = ai_cache.get_domain(key)
+    d = _find_topic(key)
     if not d:
         raise HTTPException(status_code=404, detail="Agent not found")
     s = _setting(db, key)
     if not s:
-        s = AiAgentSetting(domain_key=key)
+        s = AiAgentSetting(domain_key=key, status=d.get("_default_status", "published"))
         db.add(s)
 
     if req.status is not None:

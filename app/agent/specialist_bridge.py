@@ -154,6 +154,25 @@ def get_forecast_summary(pdata: dict, birth_jd: float, name: str, dob: str, tob:
     return {"topic": "daily_forecast", "label": "Today's Forecast", "summary": _compact(result)}
 
 
+def setting_key_for_chat_engine(engine_key: Optional[str]) -> Optional[str]:
+    """The AiAgentSetting.domain_key (admin publish/pricing control) that
+    gates a given chat topic. A domain-mapped specialist (e.g. "career")
+    reuses its matching domain's existing row ("career_job") — same topic,
+    just a different key namespace. "character", "past_life" and
+    "daily_forecast" have no domain counterpart, so they're gated by their
+    own key directly (AiAgentSetting.domain_key is a plain string, reusable
+    for any topic key, not an FK). Returns None for an unscoped/general
+    chat — nothing to gate."""
+    if not engine_key:
+        return None
+    for domain_key, spec_key in DOMAIN_TO_SPECIALIST.items():
+        if spec_key == engine_key:
+            return domain_key
+    if engine_key in EXTRA_CHAT_ENGINES or engine_key == "daily_forecast":
+        return engine_key
+    return None
+
+
 def resolve_chat_engine(explicit_engine: Optional[str], domain_key: Optional[str]) -> Optional[str]:
     """What specialist (if any) this chat turn should pull in: an explicit
     client-selected `engine` wins; otherwise fall back to whatever the

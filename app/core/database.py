@@ -40,6 +40,11 @@ _DEV_COLUMN_MIGRATIONS = [
     # Sub-admin role permissions (react_admin Role Permissions page)
     ("users", "permissions", "TEXT"),
     ("users", "allowed_pages", "TEXT"),
+    # AI chat — ChatGPT-style session history (localAiChat)
+    ("ai_chats", "engine_key", "VARCHAR(40)"),
+    ("ai_chats", "language", "VARCHAR(20)"),
+    ("ai_chat_messages", "language", "VARCHAR(20)"),
+    ("ai_chat_messages", "message_id", "VARCHAR(36)"),
 ]
 
 

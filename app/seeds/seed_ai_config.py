@@ -7,7 +7,7 @@ Run: python -m app.seeds.seed_ai_config
 
 import logging
 from app.core.database import SessionLocal
-from app.models.model import AiLanguage, AiDomainConfig, AiEngine
+from app.models.model import AiLanguage, AiDomainConfig, AiEngine, AiAgentSetting
 
 logger = logging.getLogger("seed_ai_config")
 
@@ -255,6 +255,21 @@ def seed_engines(db):
     logger.info("Seeded %d engines", len(SPECIALISTS))
 
 
+def seed_chat_agent_settings(db):
+    """AiAgentSetting rows for the chat topics that have no AiDomainConfig
+    counterpart — character, past_life, daily_forecast (the 12 domains
+    already get a row on first admin edit; see app/routers/ai_agent_router.py
+    admin_update_agent). Seeded as status="draft" so none of these go live
+    in the chat UI until an admin explicitly publishes them. Only INSERTs a
+    row if missing — never touches one an admin has already configured."""
+    for key in ("character", "past_life", "daily_forecast"):
+        existing = db.query(AiAgentSetting).filter(AiAgentSetting.domain_key == key).first()
+        if not existing:
+            db.add(AiAgentSetting(domain_key=key, status="draft"))
+    db.commit()
+    logger.info("Seeded draft AiAgentSetting rows for chat-only topics (character, past_life, daily_forecast)")
+
+
 def run():
     logging.basicConfig(level=logging.INFO)
     db = SessionLocal()
@@ -262,6 +277,7 @@ def run():
         seed_languages(db)
         seed_domains(db)
         seed_engines(db)
+        seed_chat_agent_settings(db)
         logger.info("AI config seed complete")
     finally:
         db.close()

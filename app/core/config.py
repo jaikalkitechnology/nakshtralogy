@@ -41,16 +41,15 @@ class Settings:
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "525600"))
     REFRESH_TOKEN_EXPIRE_DAYS: int = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "365"))
 
-    # Local LLM via Ollama (AI Agent)
+    # Local LLM via Ollama (AI Agent chat) — the only LLM the chat feature uses.
     OLLAMA_URL: str = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434")
-    OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
+    OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "qwen3:8b")
 
-    # Cloud LLM API Keys
-    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "AIzaSyBMu7cPo2FKzimGViEhP3hl0JoHFN2DyTw")
-    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "sk-or-v1-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")
-    OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "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")
-    SARVAM_API_KEY: str = os.getenv("SARVAM_API_KEY", "sk_q55qrb36_OUYtekZUouTkH03QKQ5iE2OC")
-    DEEPSEEK_API_KEY: str = os.getenv("DEEPSEEK_API_KEY", "sk-427b160ab48c4e00aeebe8abe24d8aa9")
+    # Cloud LLM API keys — NOT used by the AI chat (Ollama-only, see above).
+    # Still used by app/services/_llm_translate_backend.py (report free-text
+    # localization, a separate feature) as a speed fallback ahead of Ollama.
+    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
+    OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
 
     # Google OAuth
     GOOGLE_CLIENT_ID: str = os.getenv("GOOGLE_CLIENT_ID", "")

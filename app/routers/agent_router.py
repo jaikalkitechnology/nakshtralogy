@@ -17,10 +17,11 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
-from app.models.model import Chart, User, AgentLog
+from app.models.model import Chart, User, AgentLog, AIChat, AIChatMessage
 from app.kundli import engine as nk_engine
 from app.agent.engine import NakshtraAgent, DOMAINS, detect_intent
 from app.agent.llm_service import generate_llm_response, get_available_providers
+from app.agent.specialist_bridge import CHAT_ENGINE_KEYS, setting_key_for_chat_engine
 
 logger = logging.getLogger("agent_router")
 router = APIRouter()
@@ -73,6 +74,177 @@ def submit_feedback(
     db.add(fb)
     db.commit()
     return {"status": "ok", "id": fb.id}
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  CHAT SESSIONS — ChatGPT-style "New Chat" + resume-an-old-chat.
+#  Durable history backing ws_agent.py's per-turn conversation; the DB
+#  is the single source of truth (no Redis session memory).
+# ═══════════════════════════════════════════════════════════════════
+
+_VALID_ENGINE_KEYS = CHAT_ENGINE_KEYS | {"daily_forecast"}
+
+
+def _check_engine_access(db: Session, user: User, engine_key: Optional[str]) -> None:
+    """Enforce the admin publish/pricing control (AiAgentSetting) on the
+    topic a new chat is being scoped to — draft topics 404 for non-testers,
+    unpublished-but-paid topics require an existing unlock. Mirrors the
+    visibility/unlock checks in ai_agent_router.py. A general (engine_key=
+    None) chat is never gated."""
+    setting_key = setting_key_for_chat_engine(engine_key)
+    if not setting_key:
+        return
+    from app.models.model import AiAgentSetting, AiAgentUnlock
+    s = db.query(AiAgentSetting).filter(AiAgentSetting.domain_key == setting_key).first()
+    # Chat-only topics (character/past_life/daily_forecast) default to draft
+    # when unconfigured; domain-mapped topics (career, marriage, ...) default
+    # to published, matching the long-standing AI Chat Agents admin screen.
+    default_status = "draft" if setting_key in ("character", "past_life", "daily_forecast") else "published"
+    status = s.status if s else default_status
+    if status == "published":
+        visible = True
+    elif status == "testing":
+        visible = bool(s) and user.id in (s.test_user_ids or [])
+    else:
+        visible = False
+    if not visible:
+        raise HTTPException(403, "This AI topic is not available yet")
+    if s and s.is_paid:
+        unlocked = db.query(AiAgentUnlock).filter(
+            AiAgentUnlock.user_id == user.id, AiAgentUnlock.domain_key == setting_key,
+        ).first() is not None
+        if not unlocked:
+            raise HTTPException(402, "Unlock this AI topic first")
+
+
+class CreateChatRequest(BaseModel):
+    chart_id: str = Field(..., description="Birth chart this chat is about")
+    engine_key: Optional[str] = Field(None, description="Specialist topic key, or omit for a general chat")
+    language: Optional[str] = Field(None)
+    title: Optional[str] = Field(None, max_length=255)
+
+
+class RenameChatRequest(BaseModel):
+    title: str = Field(..., min_length=1, max_length=255)
+
+
+def _chat_summary(chat: AIChat) -> dict:
+    last = chat.messages[-1] if chat.messages else None
+    return {
+        "id": chat.id,
+        "chart_id": chat.chart_id,
+        "engine_key": chat.engine_key,
+        "title": chat.title or "New Chat",
+        "language": chat.language,
+        "created_at": str(chat.created_at) if chat.created_at else None,
+        "updated_at": str(chat.updated_at) if chat.updated_at else None,
+        "last_message_preview": (last.content[:120] if last else None),
+        "message_count": len(chat.messages),
+    }
+
+
+@router.get("/chats")
+def list_chats(
+    chart_id: Optional[str] = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """List the current user's chat sessions, most recently active first."""
+    q = db.query(AIChat).filter(AIChat.user_id == current_user.id, AIChat.is_active == True)  # noqa: E712
+    if chart_id:
+        q = q.filter(AIChat.chart_id == chart_id)
+    chats = q.order_by(AIChat.updated_at.desc()).limit(200).all()
+    return [_chat_summary(c) for c in chats]
+
+
+@router.post("/chats")
+def create_chat(
+    req: CreateChatRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Start a new chat ("New Chat" button)."""
+    chart = db.query(Chart).filter(Chart.id == req.chart_id).first()
+    if not chart:
+        raise HTTPException(404, "Chart not found")
+    if chart.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
+        raise HTTPException(403, "Not authorized")
+    if req.engine_key and req.engine_key not in _VALID_ENGINE_KEYS:
+        raise HTTPException(400, f"Unknown engine_key: {req.engine_key}")
+    _check_engine_access(db, current_user, req.engine_key)
+
+    chat = AIChat(
+        user_id=current_user.id,
+        chart_id=req.chart_id,
+        engine_key=req.engine_key,
+        language=req.language,
+        title=req.title,
+    )
+    db.add(chat)
+    db.commit()
+    db.refresh(chat)
+    return _chat_summary(chat)
+
+
+@router.get("/chats/{chat_id}")
+def get_chat(
+    chat_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Fetch a chat's full message history (resume an old chat)."""
+    chat = db.query(AIChat).filter(AIChat.id == chat_id).first()
+    if not chat:
+        raise HTTPException(404, "Chat not found")
+    if chat.user_id != current_user.id and current_user.role not in ("admin",):
+        raise HTTPException(403, "Not authorized")
+    return {
+        **_chat_summary(chat),
+        "messages": [
+            {
+                "id": m.id,
+                "role": m.role,
+                "content": m.content,
+                "language": m.language,
+                "message_id": m.message_id,
+                "created_at": str(m.created_at) if m.created_at else None,
+            }
+            for m in chat.messages
+        ],
+    }
+
+
+@router.patch("/chats/{chat_id}")
+def rename_chat(
+    chat_id: str,
+    req: RenameChatRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    chat = db.query(AIChat).filter(AIChat.id == chat_id).first()
+    if not chat:
+        raise HTTPException(404, "Chat not found")
+    if chat.user_id != current_user.id:
+        raise HTTPException(403, "Not authorized")
+    chat.title = req.title
+    db.commit()
+    return {"status": "ok"}
+
+
+@router.delete("/chats/{chat_id}")
+def delete_chat(
+    chat_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    chat = db.query(AIChat).filter(AIChat.id == chat_id).first()
+    if not chat:
+        raise HTTPException(404, "Chat not found")
+    if chat.user_id != current_user.id:
+        raise HTTPException(403, "Not authorized")
+    db.delete(chat)
+    db.commit()
+    return {"status": "deleted"}
 
 
 class AgentChatRequest(BaseModel):
