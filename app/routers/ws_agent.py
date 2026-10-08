@@ -67,16 +67,63 @@ _SMALLTALK_PHRASES = {
 }
 
 
-def _smalltalk_reply(query: str) -> str | None:
+# Localized canned replies — keyed by the same language codes used
+# throughout the app (see app/agent/llm_service.py _LANGUAGE_INSTRUCTIONS).
+# "english" is also the fallback for any code not listed here.
+_GREETING_REPLY = {
+    "english": "Hi! I can help with anything about your chart — career, relationships, health, timing, remedies, you name it. What would you like to know?",
+    "hindi": "नमस्ते! मैं आपकी कुंडली से जुड़े किसी भी सवाल में मदद कर सकता हूँ — करियर, रिश्ते, सेहत, समय, उपाय, कुछ भी पूछिए। आप क्या जानना चाहेंगे?",
+    "hinglish": "Hi! Main aapki kundli se judi kisi bhi cheez mein help kar sakta hoon — career, relationships, health, timing, remedies, kuch bhi. Aap kya jaanna chahenge?",
+    "bengali": "নমস্কার! আমি আপনার কুষ্ঠির যেকোনো বিষয়ে সাহায্য করতে পারি — কর্মজীবন, সম্পর্ক, স্বাস্থ্য, সময়, প্রতিকার, যা খুশি। আপনি কী জানতে চান?",
+    "tamil": "வணக்கம்! உங்கள் ஜாதகம் தொடர்பான எதையும் பற்றி நான் உதவ முடியும் — தொழில், உறவுகள், ஆரோக்கியம், காலம், பரிகாரங்கள். நீங்கள் என்ன தெரிந்துகொள்ள விரும்புகிறீர்கள்?",
+    "telugu": "నమస్కారం! మీ జాతకానికి సంబంధించిన దేనిలోనైనా నేను సహాయం చేయగలను — కెరీర్, సంబంధాలు, ఆరోగ్యం, సమయం, పరిహారాలు. మీరు ఏమి తెలుసుకోవాలనుకుంటున్నారు?",
+    "kannada": "ನಮಸ್ಕಾರ! ನಿಮ್ಮ ಜಾತಕಕ್ಕೆ ಸಂಬಂಧಿಸಿದ ಯಾವುದರಲ್ಲಾದರೂ ನಾನು ಸಹಾಯ ಮಾಡಬಲ್ಲೆ — ವೃತ್ತಿ, ಸಂಬಂಧಗಳು, ಆರೋಗ್ಯ, ಸಮಯ, ಪರಿಹಾರಗಳು. ನೀವು ಏನು ತಿಳಿದುಕೊಳ್ಳಲು ಬಯಸುತ್ತೀರಿ?",
+    "malayalam": "നമസ്കാരം! നിങ്ങളുടെ ജാതകവുമായി ബന്ധപ്പെട്ട എന്തിനും ഞാൻ സഹായിക്കാം — കരിയർ, ബന്ധങ്ങൾ, ആരോഗ്യം, സമയം, പരിഹാരങ്ങൾ. നിങ്ങൾക്ക് എന്താണ് അറിയേണ്ടത്?",
+    "gujarati": "નમસ્તે! હું તમારી કુંડળી સાથે જોડાયેલ કોઈપણ બાબતમાં મદદ કરી શકું છું — કારકિર્દી, સંબંધો, આરોગ્ય, સમય, ઉપાયો. તમે શું જાણવા માંગો છો?",
+    "marathi": "नमस्कार! मी तुमच्या कुंडलीशी संबंधित कोणत्याही गोष्टीत मदत करू शकतो — करिअर, नाती, आरोग्य, वेळ, उपाय. तुम्हाला काय जाणून घ्यायचे आहे?",
+    "punjabi": "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਮੈਂ ਤੁਹਾਡੀ ਕੁੰਡਲੀ ਨਾਲ ਜੁੜੀ ਕਿਸੇ ਵੀ ਚੀਜ਼ ਵਿੱਚ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ — ਕਰੀਅਰ, ਰਿਸ਼ਤੇ, ਸਿਹਤ, ਸਮਾਂ, ਉਪਾਅ। ਤੁਸੀਂ ਕੀ ਜਾਣਨਾ ਚਾਹੁੰਦੇ ਹੋ?",
+    "odia": "ନମସ୍କାର! ମୁଁ ଆପଣଙ୍କ କୁଣ୍ଡଳୀ ସହିତ ଜଡ଼ିତ ଯେକୌଣସି ବିଷୟରେ ସାହାଯ୍ୟ କରିପାରିବି — କ୍ୟାରିୟର, ସମ୍ପର୍କ, ସ୍ୱାସ୍ଥ୍ୟ, ସମୟ, ଉପଚାର। ଆପଣ କଣ ଜାଣିବାକୁ ଚାହାଁନ୍ତି?",
+}
+_THANKS_REPLY = {
+    "english": "You're welcome! Let me know if you have any other questions about your chart.",
+    "hindi": "आपका स्वागत है! अगर कुंडली से जुड़ा कोई और सवाल हो तो बेझिझक पूछिए।",
+    "hinglish": "Welcome! Agar kundli se related koi aur sawaal ho toh zaroor poochiye.",
+    "bengali": "স্বাগতম! কুষ্ঠি নিয়ে আরও কোনো প্রশ্ন থাকলে জিজ্ঞাসা করতে পারেন।",
+    "tamil": "வரவேற்கிறேன்! ஜாதகம் பற்றி வேறு ஏதேனும் கேள்வி இருந்தால் கேளுங்கள்.",
+    "telugu": "స్వాగతం! జాతకం గురించి మరేదైనా ప్రశ్న ఉంటే అడగండి.",
+    "kannada": "ಸ್ವಾಗತ! ಜಾತಕದ ಬಗ್ಗೆ ಬೇರೆ ಪ್ರಶ್ನೆ ಇದ್ದರೆ ಕೇಳಿ.",
+    "malayalam": "സ്വാഗതം! ജാതകത്തെക്കുറിച്ച് മറ്റെന്തെങ്കിലും ചോദ്യമുണ്ടെങ്കിൽ ചോദിക്കൂ.",
+    "gujarati": "સ્વાગત છે! કુંડળી વિશે બીજો કોઈ પ્રશ્ન હોય તો પૂછો.",
+    "marathi": "स्वागत आहे! कुंडलीबद्दल आणखी काही प्रश्न असल्यास विचारा.",
+    "punjabi": "ਜੀ ਆਇਆਂ ਨੂੰ! ਕੁੰਡਲੀ ਬਾਰੇ ਕੋਈ ਹੋਰ ਸਵਾਲ ਹੋਵੇ ਤਾਂ ਪੁੱਛੋ।",
+    "odia": "ସ୍ୱାଗତ! କୁଣ୍ଡଳୀ ବିଷୟରେ ଆଉ କିଛି ପ୍ରଶ୍ନ ଥିଲେ ପଚାରନ୍ତୁ।",
+}
+_BYE_REPLY = {
+    "english": "Take care! Come back anytime you want to talk about your chart.",
+    "hindi": "ख्याल रखिए! जब भी कुंडली के बारे में बात करनी हो, वापस आइए।",
+    "hinglish": "Take care! Jab bhi kundli ke baare mein baat karni ho, wapas aa jaiyega.",
+    "bengali": "নিজের যত্ন নিন! কুষ্ঠি নিয়ে কথা বলতে চাইলে যেকোনো সময় আসুন।",
+    "tamil": "கவனமாக இருங்கள்! ஜாதகம் பற்றி பேச விரும்பினால் எப்போது வேண்டுமானாலும் வாருங்கள்.",
+    "telugu": "జాగ్రత్త! జాతకం గురించి మాట్లాడాలనిపించినప్పుడు మళ్ళీ రండి.",
+    "kannada": "ಕಾಳಜಿ ವಹಿಸಿ! ಜಾತಕದ ಬಗ್ಗೆ ಮಾತನಾಡಲು ಬಯಸಿದಾಗ ಮತ್ತೆ ಬನ್ನಿ.",
+    "malayalam": "ശ്രദ്ധിക്കുക! ജാതകത്തെക്കുറിച്ച് സംസാരിക്കണമെന്ന് തോന്നുമ്പോൾ തിരികെ വരൂ.",
+    "gujarati": "ધ્યાન રાખજો! કુંડળી વિશે વાત કરવી હોય ત્યારે ફરી આવજો.",
+    "marathi": "काळजी घ्या! कुंडलीबद्दल बोलायचं असेल तेव्हा परत या.",
+    "punjabi": "ਆਪਣਾ ਖਿਆਲ ਰੱਖੋ! ਜਦੋਂ ਵੀ ਕੁੰਡਲੀ ਬਾਰੇ ਗੱਲ ਕਰਨੀ ਹੋਵੇ ਵਾਪਸ ਆਓ।",
+    "odia": "ଯତ୍ନ ନିଅନ୍ତୁ! କୁଣ୍ଡଳୀ ବିଷୟରେ କଥା ହେବାକୁ ଇଚ୍ଛା ହେଲେ ପୁଣି ଆସନ୍ତୁ।",
+}
+
+
+def _smalltalk_reply(query: str, language: str = "english") -> str | None:
     cleaned = re.sub(r"[^\w\s]", "", query.strip().lower())
     cleaned = re.sub(r"\s+", " ", cleaned).strip()
     if cleaned not in _SMALLTALK_PHRASES:
         return None
     if cleaned in ("thanks", "thank you", "thanks a lot", "thank u", "thx", "ty", "thankyou"):
-        return "You're welcome! Let me know if you have any other questions about your chart."
+        return _THANKS_REPLY.get(language, _THANKS_REPLY["english"])
     if cleaned in ("bye", "goodbye", "see you", "cya", "tc"):
-        return "Take care! Come back anytime you want to talk about your chart."
-    return "Hi! I can help with anything about your chart — career, relationships, health, timing, remedies, you name it. What would you like to know?"
+        return _BYE_REPLY.get(language, _BYE_REPLY["english"])
+    return _GREETING_REPLY.get(language, _GREETING_REPLY["english"])
 
 
 # Obvious keyboard-mashing / gibberish ("hdhdhdhdhdhd") — same problem as
@@ -100,7 +147,20 @@ def _looks_gibberish(query: str) -> bool:
     return (vowels / len(letters)) < 0.12
 
 
-_CLARIFY_REPLY = "I didn't quite catch that — could you ask your question again, a little more clearly?"
+_CLARIFY_REPLY = {
+    "english": "I didn't quite catch that — could you ask your question again, a little more clearly?",
+    "hindi": "मुझे ठीक से समझ नहीं आया — क्या आप अपना सवाल थोड़ा और साफ़ तरीके से दोबारा पूछ सकते हैं?",
+    "hinglish": "Mujhe samajh nahi aaya — kya aap apna sawaal thoda aur clearly dobara pooch sakte hain?",
+    "bengali": "ঠিক বুঝতে পারলাম না — আপনি কি প্রশ্নটা আরেকটু স্পষ্ট করে আবার জিজ্ঞাসা করতে পারেন?",
+    "tamil": "எனக்கு சரியாக புரியவில்லை — உங்கள் கேள்வியை இன்னும் தெளிவாக மீண்டும் கேட்க முடியுமா?",
+    "telugu": "నాకు సరిగ్గా అర్థం కాలేదు — మీ ప్రశ్నను మరింత స్పష్టంగా మళ్ళీ అడగగలరా?",
+    "kannada": "ನನಗೆ ಸರಿಯಾಗಿ ಅರ್ಥವಾಗಲಿಲ್ಲ — ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಇನ್ನಷ್ಟು ಸ್ಪಷ್ಟವಾಗಿ ಮತ್ತೆ ಕೇಳಬಹುದೇ?",
+    "malayalam": "എനിക്ക് കൃത്യമായി മനസ്സിലായില്ല — നിങ്ങളുടെ ചോദ്യം കുറച്ചുകൂടി വ്യക്തമായി വീണ്ടും ചോദിക്കാമോ?",
+    "gujarati": "મને બરાબર સમજાયું નહીં — શું તમે તમારો પ્રશ્ન થોડો વધુ સ્પષ્ટ રીતે ફરીથી પૂછી શકો છો?",
+    "marathi": "मला नीट समजलं नाही — तुम्ही तुमचा प्रश्न थोडा अधिक स्पष्टपणे पुन्हा विचारू शकता का?",
+    "punjabi": "ਮੈਨੂੰ ਠੀਕ ਤਰ੍ਹਾਂ ਸਮਝ ਨਹੀਂ ਆਇਆ — ਕੀ ਤੁਸੀਂ ਆਪਣਾ ਸਵਾਲ ਥੋੜ੍ਹਾ ਹੋਰ ਸਪੱਸ਼ਟ ਕਰਕੇ ਦੁਬਾਰਾ ਪੁੱਛ ਸਕਦੇ ਹੋ?",
+    "odia": "ମୁଁ ଠିକ୍ ଭାବରେ ବୁଝିପାରିଲି ନାହିଁ — ଆପଣ ଆପଣଙ୍କର ପ୍ରଶ୍ନକୁ ଟିକିଏ ଅଧିକ ସ୍ପଷ୍ଟ ଭାବରେ ପୁଣି ପଚାରିପାରିବେ କି?",
+}
 
 # Deterministic defense-in-depth against prompts probing for internal
 # details (model/provider, system prompt, architecture, code, prompt-
@@ -463,18 +523,18 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # keyboard-mashing, or a question probing for internal
                 # implementation details / coding help (checked first — a
                 # deterministic refusal, not reliant on the LLM obeying).
+                smalltalk_lang = language
+                if smalltalk_lang in ("auto", "", None):
+                    smalltalk_lang = detect_language(query)
                 if _META_PROBE_RE.search(query):
                     smalltalk_text = _META_PROBE_REPLY
                 else:
-                    smalltalk_text = _smalltalk_reply(query)
+                    smalltalk_text = _smalltalk_reply(query, smalltalk_lang)
                     if smalltalk_text is None and _looks_gibberish(query):
-                        smalltalk_text = _CLARIFY_REPLY
+                        smalltalk_text = _CLARIFY_REPLY.get(smalltalk_lang, _CLARIFY_REPLY["english"])
                     if smalltalk_text is None:
                         smalltalk_text = _off_topic_redirect(query, chat.engine_key)
                 if smalltalk_text is not None:
-                    smalltalk_lang = language
-                    if smalltalk_lang in ("auto", "", None):
-                        smalltalk_lang = detect_language(query)
                     import uuid as _uuid
                     smalltalk_message_id = str(_uuid.uuid4())
                     _append_message(db, chat, "user", query, language=smalltalk_lang)
