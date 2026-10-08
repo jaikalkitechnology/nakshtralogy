@@ -2,9 +2,28 @@ import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { MessageSquare, RefreshCw, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { MessageSquare, RefreshCw, X, ChevronLeft, ChevronRight, Download, Copy, Braces, AlignLeft } from "lucide-react";
 import { adminAgentLogs, adminAgentLogDetail } from "@/services/api";
 import { toast } from "sonner";
+
+function downloadJson(data: unknown, filename: string) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function copyJson(data: unknown) {
+  try {
+    await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+    toast.success("Copied JSON to clipboard");
+  } catch {
+    toast.error("Could not copy — your browser blocked clipboard access");
+  }
+}
 
 const DOMAINS = [
   { key: "", label: "All domains" },
@@ -110,7 +129,12 @@ export default function AiChatLogs() {
           <h1 className="text-2xl font-display text-gold-gradient flex items-center gap-2"><MessageSquare className="w-6 h-6 text-primary" /> AI Chat Logs</h1>
           <p className="text-sm text-muted-foreground">Every chat turn — question, detected intent, response, routing and status.</p>
         </div>
-        <Button variant="outline" size="sm" onClick={load} disabled={loading}><RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} /></Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => downloadJson(rows, `ai-chat-logs-${Date.now()}.json`)} disabled={rows.length === 0}>
+            <Download className="w-4 h-4 mr-1" /> Export JSON ({rows.length})
+          </Button>
+          <Button variant="outline" size="sm" onClick={load} disabled={loading}><RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} /></Button>
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
@@ -187,16 +211,37 @@ export default function AiChatLogs() {
 }
 
 function LogDetailModal({ data, loading, onClose }: { data: any; loading: boolean; onClose: () => void }) {
+  const [view, setView] = useState<"formatted" | "json">("formatted");
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
       <div className="w-full max-w-2xl max-h-[85vh] overflow-hidden rounded-2xl border border-border bg-card shadow-xl flex flex-col" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between border-b border-border p-4">
           <h3 className="font-display text-lg text-foreground">Chat turn detail</h3>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
+          <div className="flex items-center gap-1.5">
+            {!loading && data && (
+              <>
+                <div className="flex rounded-lg border border-border overflow-hidden mr-1">
+                  <button onClick={() => setView("formatted")}
+                    className={`flex items-center gap-1 px-2.5 py-1 text-xs ${view === "formatted" ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"}`}>
+                    <AlignLeft className="w-3.5 h-3.5" /> Formatted
+                  </button>
+                  <button onClick={() => setView("json")}
+                    className={`flex items-center gap-1 px-2.5 py-1 text-xs border-l border-border ${view === "json" ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"}`}>
+                    <Braces className="w-3.5 h-3.5" /> JSON
+                  </button>
+                </div>
+                <Button size="sm" variant="outline" onClick={() => copyJson(data)}><Copy className="w-3.5 h-3.5 mr-1" /> Copy</Button>
+                <Button size="sm" variant="outline" onClick={() => downloadJson(data, `ai-chat-log-${data.id}.json`)}><Download className="w-3.5 h-3.5" /></Button>
+              </>
+            )}
+            <button onClick={onClose} className="text-muted-foreground hover:text-foreground ml-1"><X className="w-5 h-5" /></button>
+          </div>
         </div>
         <div className="overflow-y-auto p-4 space-y-4 text-sm">
           {loading || !data ? (
             <p className="text-center text-muted-foreground py-8">Loading…</p>
+          ) : view === "json" ? (
+            <pre className="rounded-lg bg-muted/30 p-3 text-[11px] text-muted-foreground overflow-x-auto whitespace-pre-wrap">{JSON.stringify(data, null, 2)}</pre>
           ) : (
             <>
               <div className="flex flex-wrap gap-2 text-xs">
