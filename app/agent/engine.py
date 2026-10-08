@@ -537,6 +537,11 @@ def detect_intent(query: str, user_language: Optional[str] = None) -> dict:
         "response_depth": response_depth,
         "language_preference": language_preference,
         "confidence": confidence,
+        # Keyword-match confidence for `domain` specifically (as opposed to
+        # `confidence`, a blend across all 8 dimensions) — used by ws_agent.py
+        # to decide whether a topic-locked chat's question confidently belongs
+        # to a DIFFERENT domain and should be redirected deterministically.
+        "domain_confidence": domain_conf,
         "query": query,
     }
 

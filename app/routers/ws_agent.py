@@ -33,8 +33,8 @@ from app.core.database import SessionLocal
 from app.models.model import User, Chart, AgentLog, AIChat, AIChatMessage
 from app.kundli import engine as nk_engine
 from app.kundli.helper import NakshtraEngine
-from app.agent.engine import NakshtraAgent
-from app.agent.specialist_bridge import resolve_chat_engine, get_specialist_summary, get_forecast_summary
+from app.agent.engine import NakshtraAgent, DOMAINS, detect_intent
+from app.agent.specialist_bridge import resolve_chat_engine, get_specialist_summary, get_forecast_summary, DOMAIN_TO_SPECIALIST
 from app.agent.llm_service import (
     build_system_prompt,
     build_rich_prompt,
@@ -127,6 +127,38 @@ _META_PROBE_RE = re.compile(
     re.IGNORECASE,
 )
 _META_PROBE_REPLY = "Sorry, I don't have an answer for that."
+
+# Reverse of specialist_bridge.DOMAIN_TO_SPECIALIST (specialist key -> the
+# domain it was mapped from), used below to find a topic-locked chat's own
+# domain from its stored engine_key.
+_SPECIALIST_TO_DOMAIN = {v: k for k, v in DOMAIN_TO_SPECIALIST.items()}
+
+
+def _off_topic_redirect(query: str, chat_engine_key: str) -> str | None:
+    """For a topic-locked chat (character/past_life/daily_forecast have no
+    domain to compare against and are skipped), deterministically catch a
+    question that clearly belongs to a DIFFERENT domain and redirect by
+    name — this is the same keyword-based detect_intent() already trusted
+    elsewhere in the app (it's what computes the probability score itself),
+    reused here rather than relying solely on the LLM to honor the "stay on
+    topic" prompt rule, which an 8B model doesn't always do for a
+    well-formed question that's genuinely about another topic. Requires at
+    least one real keyword hit for the OTHER domain (domain_confidence >
+    15 — 15 is detect_intent()'s own "nothing matched" fallback value, not
+    a real detection) so an unmatched/ambiguous question is left alone
+    rather than redirected away from a legitimate answer."""
+    locked_domain = _SPECIALIST_TO_DOMAIN.get(chat_engine_key)
+    if not locked_domain:
+        return None
+    intent = detect_intent(query)
+    detected_domain = intent.get("domain")
+    if not detected_domain or detected_domain == locked_domain:
+        return None
+    if intent.get("domain_confidence", 0) <= 15:
+        return None
+    target_label = DOMAINS.get(detected_domain, {}).get("label", detected_domain)
+    return f"I'm not the right agent for this — please ask the {target_label} agent."
+
 
 _chart_cache: dict = {}
 _CACHE_MAX = 30
@@ -437,6 +469,8 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     smalltalk_text = _smalltalk_reply(query)
                     if smalltalk_text is None and _looks_gibberish(query):
                         smalltalk_text = _CLARIFY_REPLY
+                    if smalltalk_text is None:
+                        smalltalk_text = _off_topic_redirect(query, chat.engine_key)
                 if smalltalk_text is not None:
                     smalltalk_lang = language
                     if smalltalk_lang in ("auto", "", None):
