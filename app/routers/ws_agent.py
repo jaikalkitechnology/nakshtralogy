@@ -78,6 +78,30 @@ def _smalltalk_reply(query: str) -> str | None:
         return "Take care! Come back anytime you want to talk about your chart."
     return "Hi! I can help with anything about your chart — career, relationships, health, timing, remedies, you name it. What would you like to know?"
 
+
+# Obvious keyboard-mashing / gibberish ("hdhdhdhdhdhd") — same problem as
+# small talk: with a specialist report injected into every turn, the model
+# would confidently invent an unrelated reading instead of admitting it
+# didn't understand. Deliberately conservative (single word, no spaces,
+# length >= 6) so a real short query like "wealth" or "marriage timing"
+# is never caught — genuinely ambiguous-but-not-gibberish input is left to
+# the LLM, which now has its own "ask for clarification" instruction.
+def _looks_gibberish(query: str) -> bool:
+    q = query.strip()
+    if " " in q:
+        return False
+    letters = re.sub(r"[^a-zA-Z]", "", q)
+    if len(letters) < 6:
+        return False
+    distinct = len(set(letters.lower()))
+    if distinct <= 3:
+        return True
+    vowels = sum(1 for c in letters.lower() if c in "aeiou")
+    return (vowels / len(letters)) < 0.12
+
+
+_CLARIFY_REPLY = "I didn't quite catch that — could you ask your question again, a little more clearly?"
+
 _chart_cache: dict = {}
 _CACHE_MAX = 30
 
@@ -375,10 +399,13 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
 
                 chat = _get_or_create_chat(db, user.id, chat_id, chart_id, explicit_engine, language)
 
-                # ⭐️ SMALL TALK SHORT-CIRCUIT — skip chart computation, the
-                # specialist report, and the LLM call entirely for a bare
-                # greeting/thanks/etc.
+                # ⭐️ SMALL TALK / GIBBERISH SHORT-CIRCUIT — skip chart
+                # computation, the specialist report, and the LLM call
+                # entirely for a bare greeting/thanks/etc. or obvious
+                # keyboard-mashing.
                 smalltalk_text = _smalltalk_reply(query)
+                if smalltalk_text is None and _looks_gibberish(query):
+                    smalltalk_text = _CLARIFY_REPLY
                 if smalltalk_text is not None:
                     smalltalk_lang = language
                     if smalltalk_lang in ("auto", "", None):

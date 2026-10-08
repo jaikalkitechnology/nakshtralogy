@@ -302,6 +302,10 @@ RULES:
 - Plain prose only — no markdown (no **bold**, no # headings, no bullet lists, no numbering).
 - Write ONLY the answer itself. Never include instruction labels, step numbers, or any text
   that isn't a natural part of your reply to the user.
+- If the question is unclear, incomplete, random, or you genuinely cannot tell what the user is
+  asking (including gibberish or test text), do NOT guess and do NOT generate an answer about the
+  chart anyway. Instead, say so in one short, friendly sentence and ask them to rephrase — like a
+  real assistant would, not a chatbot that always has something to say.
 - Use the probability score naturally in the response — don't just quote it
 - Interpret Shadbala values in plain terms: >80 strong, 60-80 good, 40-60 moderate, <40 weak
 - Give at most 1 practical remedy, named simply, from: traditional mantras (e.g. Gayatri,
@@ -785,8 +789,11 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None) -> s
     parts.append(
         f'\nFINAL INSTRUCTIONS (for you only — never copy any part of this block, its labels, or '
         f'numbers into your reply; write nothing but the natural answer itself):\n'
-        f'Answer this exact question now: "{query}". Stay only on this topic — do not drift into other '
-        f'areas of life just because the data above mentions them. Use the chart data above only where '
+        f'Answer this exact question now: "{query}". If you genuinely cannot tell what is being asked '
+        f'(unclear, incomplete, random text, or gibberish), do not guess or invent a chart-based answer — '
+        f'just ask, in one short friendly sentence, for them to rephrase. Otherwise stay only on this '
+        f'topic — do not drift into other areas of life just because the data above mentions them. '
+        f'Use the chart data above only where '
         f'it is actually relevant to this question; if the question does not need it (general '
         f'knowledge, small talk, anything not about the chart), just answer it directly and briefly '
         f'like a knowledgeable friend would, with no forced astrology references. {length_rule} When '
