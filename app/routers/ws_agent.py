@@ -43,6 +43,7 @@ from app.agent.llm_service import (
     detect_language,
     detect_explicit_language_request,
     detect_bare_language_switch,
+    FOLLOWUPS_MARKER,
 )
 
 logger = logging.getLogger("ws_agent")
@@ -872,8 +873,8 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 full_response = "".join(collected_tokens)
                 followups = []
                 main_answer = full_response
-                if "---FOLLOWUPS---" in full_response:
-                    main_answer, tail = full_response.split("---FOLLOWUPS---", 1)
+                if FOLLOWUPS_MARKER in full_response:
+                    main_answer, tail = full_response.split(FOLLOWUPS_MARKER, 1)
                     for line in tail.strip().split("\n"):
                         line = line.strip().lstrip("-•* ").lstrip()
                         if line.upper().startswith("Q:"):
