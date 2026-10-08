@@ -615,7 +615,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     logger.info("QUESTION MATCH (no template) score=%.2f → sharpened sub=%s qtype=%s",
                                 match_info["score"], match_info.get("sub_domain"), match_info.get("question_type"))
 
-                user_prompt = build_rich_prompt(query, chart_context, intent=result.get("intent"), topic_locked=bool(chat.engine_key))
+                user_prompt = build_rich_prompt(query, chart_context, intent=result.get("intent"), topic_locked=bool(chat.engine_key), language=effective_lang)
 
                 # Personalize system prompt with chart holder's details + detected domain
                 chart_holder = {
