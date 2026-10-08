@@ -99,8 +99,16 @@ export default function AiChatLogs() {
     if (search) params.q = search;
     const r = await adminAgentLogs(params);
     if (r.ok) {
-      setRows(r.data?.items ?? []);
-      setTotal(r.data?.total ?? 0);
+      // Backend may still be running pre-pagination code that returns a
+      // bare array instead of {items, total} — handle both shapes so a
+      // version mismatch doesn't look like "no logs".
+      if (Array.isArray(r.data)) {
+        setRows(r.data);
+        setTotal(r.data.length);
+      } else {
+        setRows(r.data?.items ?? []);
+        setTotal(r.data?.total ?? 0);
+      }
     } else if (r.status === 404) {
       toast.error("Deploy the backend with AI chat logs");
     } else {
