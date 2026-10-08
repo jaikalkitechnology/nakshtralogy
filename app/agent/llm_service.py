@@ -302,7 +302,12 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None) -> s
     response format (urgency, sentiment, depth, sub_domain).
     """
     intent = intent or chart_context.get("intent") or {}
-    parts = [f'User asked: "{query}"', ""]
+    parts = [
+        f'The user\'s QUESTION — this is what you must answer, directly and specifically: "{query}"',
+        "Everything below is REFERENCE DATA about their birth chart. Use only the parts of it that are "
+        "actually relevant to answering the question above. Do not give a general chart reading or summary.",
+        "",
+    ]
 
     # Planet positions with Shadbala strength
     planets = chart_context.get("planets", {})
@@ -760,13 +765,15 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None) -> s
     )
 
     parts.append(
-        f"\nRESPONSE FORMAT (strict — the app shows this as plain chat text, not rendered markdown):\n"
-        f"0. SHORT AND CLEAR IS THE #1 PRIORITY. {length_rule} Pick the ONE or TWO most\n"
+        f'\nRESPONSE FORMAT (strict — the app shows this as plain chat text, not rendered markdown):\n'
+        f'0. Re-read the question now: "{query}". Your reply must answer THIS, specifically — not a\n'
+        f'   general chart reading. If the question asks about one topic (e.g. career), do not drift\n'
+        f'   into unrelated areas (e.g. marriage) just because the data above covers them.\n'
+        f"1. SHORT AND CLEAR IS THE #1 PRIORITY. {length_rule} Pick the ONE or TWO most\n"
         f"   relevant chart facts and build around those — do not try to cover everything above.\n"
         f"   Never repeat the same point twice in different words.\n"
-        f"1. Plain prose only — NO markdown. Do not use **bold**, # headings, bullet points,\n"
+        f"2. Plain prose only — NO markdown. Do not use **bold**, # headings, bullet points,\n"
         f"   or numbered lists. Write normal sentences and paragraphs, like a person speaking.\n"
-        f"2. Reference the specific chart data above, but only what's directly relevant to the question.\n"
         f"3. For any remedy you mention, use ONLY entries from the REMEDY LIBRARY above.\n"
         f"   Never invent mantras, gemstone names, or rituals. If a remedy isn't in the library, skip it."
         f"{health_disclaimer}{mental_disclaimer}"
