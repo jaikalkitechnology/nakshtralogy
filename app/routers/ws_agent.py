@@ -42,6 +42,7 @@ from app.agent.llm_service import (
     _fallback_response,
     detect_language,
     detect_explicit_language_request,
+    detect_bare_language_switch,
 )
 
 logger = logging.getLogger("ws_agent")
@@ -112,6 +113,23 @@ _BYE_REPLY = {
     "marathi": "काळजी घ्या! कुंडलीबद्दल बोलायचं असेल तेव्हा परत या.",
     "punjabi": "ਆਪਣਾ ਖਿਆਲ ਰੱਖੋ! ਜਦੋਂ ਵੀ ਕੁੰਡਲੀ ਬਾਰੇ ਗੱਲ ਕਰਨੀ ਹੋਵੇ ਵਾਪਸ ਆਓ।",
     "odia": "ଯତ୍ନ ନିଅନ୍ତୁ! କୁଣ୍ଡଳୀ ବିଷୟରେ କଥା ହେବାକୁ ଇଚ୍ଛା ହେଲେ ପୁଣି ଆସନ୍ତୁ।",
+}
+# Acknowledges a bare "give me in <language>" with no question attached —
+# sent in the TARGET language itself, and confirms the switch sticks for
+# the rest of this chat (see chat.language persistence below).
+_LANG_SWITCH_ACK = {
+    "english": "Sure, I'll reply in English from here on. What would you like to know?",
+    "hindi": "ठीक है, अब से मैं हिंदी में जवाब दूँगा। आप क्या जानना चाहेंगे?",
+    "hinglish": "Theek hai, ab se main Hinglish mein reply karunga. Aap kya jaanna chahenge?",
+    "bengali": "ঠিক আছে, এখন থেকে আমি বাংলায় উত্তর দেব। আপনি কী জানতে চান?",
+    "tamil": "சரி, இனிமேல் தமிழில் பதிலளிக்கிறேன். நீங்கள் என்ன தெரிந்துகொள்ள விரும்புகிறீர்கள்?",
+    "telugu": "సరే, ఇక నుంచి తెలుగులో సమాధానం ఇస్తాను. మీరు ఏమి తెలుసుకోవాలనుకుంటున్నారు?",
+    "kannada": "ಸರಿ, ಇನ್ನು ಮುಂದೆ ಕನ್ನಡದಲ್ಲಿ ಉತ್ತರಿಸುತ್ತೇನೆ. ನೀವು ಏನು ತಿಳಿದುಕೊಳ್ಳಲು ಬಯಸುತ್ತೀರಿ?",
+    "malayalam": "ശരി, ഇനി മുതൽ മലയാളത്തിൽ മറുപടി നൽകാം. നിങ്ങൾക്ക് എന്താണ് അറിയേണ്ടത്?",
+    "gujarati": "ભલે, હવેથી હું ગુજરાતીમાં જવાબ આપીશ. તમે શું જાણવા માંગો છો?",
+    "marathi": "ठीक आहे, आतापासून मी मराठीत उत्तर देईन. तुम्हाला काय जाणून घ्यायचे आहे?",
+    "punjabi": "ਠੀਕ ਹੈ, ਹੁਣ ਤੋਂ ਮੈਂ ਪੰਜਾਬੀ ਵਿੱਚ ਜਵਾਬ ਦੇਵਾਂਗਾ। ਤੁਸੀਂ ਕੀ ਜਾਣਨਾ ਚਾਹੁੰਦੇ ਹੋ?",
+    "odia": "ଠିକ୍ ଅଛି, ବର୍ତ୍ତମାନଠାରୁ ମୁଁ ଓଡ଼ିଆରେ ଉତ୍ତର ଦେବି। ଆପଣ କଣ ଜାଣିବାକୁ ଚାହାଁନ୍ତି?",
 }
 
 
@@ -518,20 +536,41 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
 
                 chat = _get_or_create_chat(db, user.id, chat_id, chart_id, explicit_engine, language)
 
-                # ⭐️ SMALL TALK / GIBBERISH / META-PROBE SHORT-CIRCUIT — skip
-                # chart computation, the specialist report, and the LLM call
-                # entirely for a bare greeting/thanks/etc., obvious
-                # keyboard-mashing, or a question probing for internal
-                # implementation details / coding help (checked first — a
-                # deterministic refusal, not reliant on the LLM obeying).
-                # An explicit in-message request ("give me in hindi", "tamil
-                # mein batao") always wins — even over an explicit dropdown
-                # selection — since it's the most recent, most specific
-                # signal for this one turn.
-                smalltalk_lang = detect_explicit_language_request(query) or language
-                if smalltalk_lang in ("auto", "", None):
-                    smalltalk_lang = detect_language(query)
-                if _META_PROBE_RE.search(query):
+                # Resolve this turn's language, with stickiness: an explicit
+                # in-message request ("give me in hindi") always wins and
+                # becomes the new sticky default; otherwise an explicit
+                # (non-auto) dropdown pick wins and also becomes sticky;
+                # otherwise fall back to whatever this chat was last set to
+                # (so a language choice persists across turns instead of
+                # reverting to auto-detect-from-script on the very next
+                # message); only a chat with no sticky language yet falls
+                # through to per-message auto-detection.
+                in_text_lang = detect_explicit_language_request(query)
+                if in_text_lang:
+                    resolved_lang = in_text_lang
+                elif language and language != "auto":
+                    resolved_lang = language
+                elif chat.language:
+                    resolved_lang = chat.language
+                else:
+                    resolved_lang = detect_language(query)
+                if resolved_lang and resolved_lang != "auto" and chat.language != resolved_lang:
+                    chat.language = resolved_lang
+                    db.commit()
+
+                # ⭐️ SMALL TALK / GIBBERISH / META-PROBE / BARE LANGUAGE-SWITCH
+                # SHORT-CIRCUIT — skip chart computation, the specialist
+                # report, and the LLM call entirely for a bare greeting/
+                # thanks/etc., obvious keyboard-mashing, a question probing
+                # for internal implementation details / coding help, or a
+                # standalone "give me in <language>" with no real question
+                # attached (checked first — deterministic, not reliant on
+                # the LLM obeying or coping with a content-free "question").
+                smalltalk_lang = resolved_lang
+                bare_lang_switch = detect_bare_language_switch(query)
+                if bare_lang_switch:
+                    smalltalk_text = _LANG_SWITCH_ACK.get(bare_lang_switch, _LANG_SWITCH_ACK["english"])
+                elif _META_PROBE_RE.search(query):
                     smalltalk_text = _META_PROBE_REPLY
                 else:
                     smalltalk_text = _smalltalk_reply(query, smalltalk_lang)
@@ -568,16 +607,11 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 pdata = data["_pdata"]
                 birth_jd = data["birth_jd"]
                 # Pass UI language (english/hindi/hinglish) — detect_intent ignores "auto"
-                ui_lang = language if language in ("english", "hindi", "hinglish") else None
+                ui_lang = resolved_lang if resolved_lang in ("english", "hindi", "hinglish") else None
                 result = _agent.query(query, pdata, birth_jd, domain_override=domain, user_language=ui_lang)
                 logger.info("Probability in %.2fs: %s %.0f%%", time.time() - t0, result["domain"], result["probability"])
 
-                # An explicit in-message request ("give me in hindi") wins
-                # over the dropdown selection; otherwise auto-detect from
-                # the query's own script/markers when no language is set.
-                effective_lang = detect_explicit_language_request(query) or language
-                if effective_lang == "auto" or not effective_lang:
-                    effective_lang = detect_language(query)
+                effective_lang = resolved_lang
 
                 # Persist the user's turn now that we know its detected language
                 _append_message(db, chat, "user", query, language=effective_lang)
