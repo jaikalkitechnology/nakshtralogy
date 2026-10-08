@@ -283,7 +283,9 @@ RESPONSE STYLE: {spec['style']}
 
 RULES:
 - {lang_instruction}
-- Keep responses focused (5-8 sentences for detailed queries, 3-5 for simple ones)
+- BE SHORT. 3-5 sentences for most questions, never more than 7. One or two chart
+  references beat a wall of facts — pick the most relevant and build around that.
+- Plain prose only — no markdown (no **bold**, no # headings, no bullet lists).
 - Reference SPECIFIC planets, houses, signs, nakshatra, yogas, doshas, AND Shadbala strength from the data provided
 - Use the probability score naturally in the response — don't just quote it
 - Interpret Shadbala values: >80 = strong, 60-80 = good, 40-60 = moderate, <40 = weak
@@ -726,11 +728,11 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None) -> s
 
     # Response depth — governs final length
     if response_depth == "brief":
-        length_rule = "Write 2-4 sentences ONLY. Skip the follow-ups section for crisis urgency."
+        length_rule = "Write 2-3 short sentences ONLY. Skip the follow-ups section for crisis urgency."
     elif response_depth == "detailed":
-        length_rule = "Write 8-12 sentences with full reasoning. Cover multiple chart factors."
+        length_rule = "Write 5-7 sentences. Cover at most 2-3 chart factors — do not try to mention everything."
     else:
-        length_rule = "Write 5-8 sentences — balanced analysis with 1-2 key chart references."
+        length_rule = "Write 3-5 sentences — the single most relevant chart reference, not a full report."
 
     # Health-domain mandatory disclaimer
     health_disclaimer = ""
@@ -758,13 +760,18 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None) -> s
     )
 
     parts.append(
-        f"\nRESPONSE FORMAT (strict):\n"
-        f"1. {length_rule} Reference the specific chart data above.\n"
-        f"2. For any remedy you mention, use ONLY entries from the REMEDY LIBRARY above.\n"
+        f"\nRESPONSE FORMAT (strict — the app shows this as plain chat text, not rendered markdown):\n"
+        f"0. SHORT AND CLEAR IS THE #1 PRIORITY. {length_rule} Pick the ONE or TWO most\n"
+        f"   relevant chart facts and build around those — do not try to cover everything above.\n"
+        f"   Never repeat the same point twice in different words.\n"
+        f"1. Plain prose only — NO markdown. Do not use **bold**, # headings, bullet points,\n"
+        f"   or numbered lists. Write normal sentences and paragraphs, like a person speaking.\n"
+        f"2. Reference the specific chart data above, but only what's directly relevant to the question.\n"
+        f"3. For any remedy you mention, use ONLY entries from the REMEDY LIBRARY above.\n"
         f"   Never invent mantras, gemstone names, or rituals. If a remedy isn't in the library, skip it."
         f"{health_disclaimer}{mental_disclaimer}"
         f"{followup_rule}\n"
-        f"5. If the question is NOT astrology-related, politely redirect "
+        f"6. If the question is NOT astrology-related, politely redirect in 1-2 sentences "
         f"{'(skip follow-ups due to crisis urgency).' if skip_followups else 'AND still provide 3 Q: follow-ups from the chart.'}"
     )
     return "\n".join(parts)
@@ -816,7 +823,7 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                     "options": {
                         "temperature": 0.7,
                         "num_ctx": 2048,  # Reduced from 4096 for faster response
-                        "num_predict": 400,  # Reduced from -1 (unlimited) to 400 tokens
+                        "num_predict": 300,  # Hard ceiling backing up the "be short" prompt rules
                     },
                 },
             ) as stream:
@@ -894,7 +901,7 @@ async def generate_llm_response(
                     ],
                     "stream": False,
                     "think": False,
-                    "options": {"temperature": 0.7, "num_predict": 400, "num_ctx": 2048},
+                    "options": {"temperature": 0.7, "num_predict": 300, "num_ctx": 2048},
                 },
             )
             if resp.status_code == 200:
