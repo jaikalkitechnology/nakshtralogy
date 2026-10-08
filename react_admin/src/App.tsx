@@ -21,6 +21,7 @@ import FaqManager from "./pages/admin/FaqManager";
 import SupportTickets from "./pages/admin/SupportTickets";
 import BannerManager from "./pages/admin/BannerManager";
 import AiAgentsManager from "./pages/admin/AiAgentsManager";
+import AiChatLogs from "./pages/admin/AiChatLogs";
 import ContactQueries from "./pages/admin/ContactQueries";
 import ChatGuard from "./pages/admin/ChatGuard";
 import CouponManager from "./pages/admin/CouponManager";
@@ -88,6 +89,7 @@ const App = () => (
               <Route path="/admin/support-tickets" element={<RequireAdmin><AdminShell><SupportTickets /></AdminShell></RequireAdmin>} />
               <Route path="/admin/banners" element={<RequireAdmin><AdminShell><BannerManager /></AdminShell></RequireAdmin>} />
               <Route path="/admin/ai-agents" element={<RequireAdmin><AdminShell><AiAgentsManager /></AdminShell></RequireAdmin>} />
+              <Route path="/admin/ai-chat-logs" element={<RequireAdmin><AdminShell><AiChatLogs /></AdminShell></RequireAdmin>} />
               <Route path="/admin/queries" element={<RequireAdmin><AdminShell><ContactQueries /></AdminShell></RequireAdmin>} />
               <Route path="/admin/chat-guard" element={<RequireAdmin><AdminShell><ChatGuard /></AdminShell></RequireAdmin>} />
               <Route path="/admin/coupons" element={<RequireAdmin><AdminShell><CouponManager /></AdminShell></RequireAdmin>} />

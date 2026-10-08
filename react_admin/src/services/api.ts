@@ -391,6 +391,17 @@ export async function adminLogsSessionReviews(params: Record<string, any> = {}) 
   return request(`/admin/logs/session-reviews${qs ? `?${qs}` : ""}`);
 }
 
+// ── AI Chat Logs (intent/response per turn — app/routers/agent_router.py) ──
+
+export async function adminAgentLogs(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/agent/logs${qs ? `?${qs}` : ""}`);
+}
+
+export async function adminAgentLogDetail(logId: string) {
+  return request(`/agent/logs/${logId}`);
+}
+
 // ── FAQ management ───────────────────────────────────────────────
 
 export async function adminFaqList(audience?: string, lang?: string) {
