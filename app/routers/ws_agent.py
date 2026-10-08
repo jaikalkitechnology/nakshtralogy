@@ -765,8 +765,13 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 log_status = "success"
                 log_error = None
                 log_http = None
+                # User explicitly asked for a long/detailed answer — give the
+                # model real room to write one instead of being cut off by the
+                # normal short-answer token budget (see engine.py
+                # _EXPLICIT_DETAIL_RX / llm_service.py's matching length_rule).
+                num_predict_override = 900 if (result.get("intent") or {}).get("response_depth") == "explicit_detailed" else None
                 try:
-                    await stream_provider(provider_key, messages, websocket, token_collector=collected_tokens)
+                    await stream_provider(provider_key, messages, websocket, token_collector=collected_tokens, num_predict=num_predict_override)
                     # Check if tokens contain error markers
                     joined = "".join(collected_tokens)
                     if joined.startswith("⚠️") and len(collected_tokens) <= 2:

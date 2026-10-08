@@ -820,6 +820,16 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
     # Response depth — governs final length
     if response_depth == "brief":
         length_rule = "Write 2-3 short sentences ONLY. Skip the follow-ups section for crisis urgency."
+    elif response_depth == "explicit_detailed":
+        # The user directly asked for a long/detailed answer ("in detail",
+        # "give me long details", "elaborate", ...) — honor that
+        # explicitly, overriding the usual "be short" default.
+        length_rule = (
+            "The user explicitly asked for a long, detailed answer — give them one. Write 10-15 sentences, "
+            "covering multiple relevant chart factors (not just one), with real depth and reasoning, not just "
+            "a longer restatement of a short answer. Still plain prose, still no markdown, still clear and "
+            "easy to follow — thorough, not padded or repetitive."
+        )
     elif response_depth == "detailed":
         length_rule = "Write 5-7 sentences. Cover at most 2-3 chart factors — do not try to mention everything."
     else:
@@ -841,7 +851,10 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
         )
 
     # Follow-ups — skip for brief/crisis
-    skip_followups = (response_depth == "brief" and urgency == "crisis")
+    # Keyed on urgency alone (not response_depth) — follow-up suggestion
+    # chips are inappropriate during a real crisis regardless of whether
+    # the user also asked for a long/detailed answer.
+    skip_followups = (urgency == "crisis")
     followup_rule = (
         "" if skip_followups else
         " After your answer, on a new line write exactly ---FOLLOWUPS--- and then exactly 3 short "
@@ -897,9 +910,15 @@ async def stream_provider(
     messages: list,
     websocket,
     token_collector: list = None,
+    num_predict: int = None,
 ) -> None:
     """Stream tokens from any provider to the WebSocket.
-    If token_collector is provided, appends each token text to it."""
+    If token_collector is provided, appends each token text to it.
+    num_predict overrides the default output-length cap — used when the
+    user explicitly asked for a long/detailed answer (see
+    engine.py's _EXPLICIT_DETAIL_RX / response_depth="explicit_detailed")
+    so the longer answer the prompt now asks for isn't cut off by the
+    normal short-answer token budget."""
     import httpx
 
     async def _safe_send(data: dict) -> bool:
@@ -911,10 +930,10 @@ async def stream_provider(
             return False
 
     provider = PROVIDERS.get(provider_key) or PROVIDERS["ollama"]
-    await _stream_ollama(provider, messages, websocket, token_collector, _safe_send)
+    await _stream_ollama(provider, messages, websocket, token_collector, _safe_send, num_predict)
 
 
-async def _stream_ollama(provider: dict, messages: list, websocket, token_collector: list = None, _safe_send=None) -> None:
+async def _stream_ollama(provider: dict, messages: list, websocket, token_collector: list = None, _safe_send=None, num_predict: int = None) -> None:
     import httpx
     _send = _safe_send or (lambda d: websocket.send_json(d))
     try:
@@ -937,8 +956,12 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                     "think": False,
                     "options": {
                         "temperature": 0.7,
-                        "num_ctx": 2048,  # Reduced from 4096 for faster response
-                        "num_predict": 300,  # Hard ceiling backing up the "be short" prompt rules
+                        # A longer requested answer needs more context headroom too —
+                        # the default 2048 is sized for the normal short-answer case
+                        # and may not leave enough room for a 10-15 sentence reply on
+                        # top of the (large) chart-context prompt.
+                        "num_ctx": 4096 if num_predict else 2048,
+                        "num_predict": num_predict or 300,  # Hard ceiling backing up the "be short" prompt rules
                     },
                 },
             ) as stream:
