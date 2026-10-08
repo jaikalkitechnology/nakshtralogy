@@ -385,6 +385,7 @@ def get_agent_logs(
                 "match_score": getattr(l, "match_score", None),
                 "routing": getattr(l, "routing", None),
                 "response_preview": (getattr(l, "response_text", None) or "")[:200],
+                "has_pipeline": bool(getattr(l, "pipeline_json", None)),
                 "status": l.status,
                 "error_message": l.error_message,
                 "response_tokens": l.response_tokens,
@@ -410,15 +411,25 @@ def get_agent_log_detail(
     if current_user.role not in ("admin",) and log.user_id != current_user.id:
         raise HTTPException(403, "Not authorized")
 
-    # Parse intent_json (stored as JSON string) so the frontend gets a real object
+    # Parse intent_json / pipeline_json (stored as JSON strings) so the
+    # frontend gets real objects/arrays instead of raw text.
+    import json as _json
+
     intent_obj = None
     raw_intent = getattr(log, "intent_json", None)
     if raw_intent:
-        import json as _json
         try:
             intent_obj = _json.loads(raw_intent)
         except Exception:
             intent_obj = {"_parse_error": True, "raw": raw_intent[:500]}
+
+    pipeline_steps = None
+    raw_pipeline = getattr(log, "pipeline_json", None)
+    if raw_pipeline:
+        try:
+            pipeline_steps = _json.loads(raw_pipeline)
+        except Exception:
+            pipeline_steps = [{"step": "_parse_error", "label": "Could not parse pipeline trace", "detail": {"raw": raw_pipeline[:500]}}]
 
     requester = db.query(User).filter(User.id == log.user_id).first() if log.user_id else None
 
@@ -437,6 +448,7 @@ def get_agent_log_detail(
         "matched_question_id": getattr(log, "matched_question_id", None),
         "match_score": getattr(log, "match_score", None),
         "routing": getattr(log, "routing", None),
+        "pipeline": pipeline_steps,
         "response_text": getattr(log, "response_text", None),
         "status": log.status,
         "error_message": log.error_message,

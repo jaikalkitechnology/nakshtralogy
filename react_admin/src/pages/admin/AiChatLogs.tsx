@@ -67,6 +67,7 @@ interface LogRow {
   routing?: string;
   error_message?: string;
   latency_ms?: number;
+  has_pipeline?: boolean;
   created_at?: string;
 }
 
@@ -218,6 +219,44 @@ export default function AiChatLogs() {
   );
 }
 
+// One row per stage the turn passed through (see ws_agent.py's `_trace()`):
+// received -> language resolved -> [short-circuit] or [intent detected ->
+// kundli context pulled -> template checked -> prompt built -> LLM called]
+// -> response stored in the DB. Shows exactly when/why a turn skipped the
+// chart+LLM pipeline vs. ran the full flow, and what each stage saw.
+function PipelineTrace({ steps }: { steps: Array<{ step: string; label: string; detail?: Record<string, any> }> | null | undefined }) {
+  if (!steps || steps.length === 0) return null;
+  return (
+    <div>
+      <p className="text-xs font-semibold text-muted-foreground mb-2">Processing pipeline — how this turn was handled</p>
+      <div className="space-y-2">
+        {steps.map((s, i) => {
+          const entries = s.detail ? Object.entries(s.detail).filter(([, v]) => v !== null && v !== undefined && v !== "") : [];
+          return (
+            <div key={i} className="rounded-lg border border-border bg-muted/20 p-2.5">
+              <div className="flex items-center gap-2">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/20 text-[10px] font-semibold text-primary">{i + 1}</span>
+                <span className="text-xs font-medium text-foreground">{s.label}</span>
+                <Badge className="ml-auto bg-cosmic/10 text-muted-foreground text-[10px] shrink-0">{s.step}</Badge>
+              </div>
+              {entries.length > 0 && (
+                <div className="ml-7 mt-1.5 grid grid-cols-1 gap-0.5 text-[11px]">
+                  {entries.map(([k, v]) => (
+                    <div key={k} className="flex gap-1.5">
+                      <span className="shrink-0 text-muted-foreground/70">{k}:</span>
+                      <span className="text-foreground break-words">{typeof v === "object" ? JSON.stringify(v) : String(v)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function LogDetailModal({ data, loading, onClose }: { data: any; loading: boolean; onClose: () => void }) {
   const [view, setView] = useState<"formatted" | "json">("formatted");
   return (
@@ -260,6 +299,8 @@ function LogDetailModal({ data, loading, onClose }: { data: any; loading: boolea
                 <Badge className="bg-cosmic/15 text-foreground">{data.language || "—"}</Badge>
                 {data.latency_ms != null && <Badge className="bg-cosmic/15 text-foreground">{data.latency_ms}ms</Badge>}
               </div>
+
+              <PipelineTrace steps={data.pipeline} />
 
               <div>
                 <p className="text-xs font-semibold text-muted-foreground mb-1">Question</p>
