@@ -377,6 +377,20 @@ _SPECIFIC_TIME_PATTERNS = [
 _HINGLISH_MARKERS = {"kya","kab","kyun","upay","naukri","shaadi","pyaar","dhan","kismat","bhagya"}
 _HINGLISH_RX = _compile_bounded(_HINGLISH_MARKERS)
 
+# Explicit request for a longer/more detailed answer ("give me in long
+# details", "explain in detail", "tell me everything", "elaborate"...) —
+# an unambiguous, direct user request that should override the implicit
+# question-type-based depth scoring below, in English and Hinglish/Hindi.
+_EXPLICIT_DETAIL_RX = re.compile(
+    r"\b("
+    r"in\s*detail\w*|in\s*depth|elaborat\w*|detail\w*\s*answer|full\s*detail\w*|"
+    r"long\s*(answer|detail\w*|explanation)|more\s*detail\w*|explain\s*(more|fully|thoroughly)|"
+    r"tell\s*me\s*everything|complete\s*(explanation|detail\w*|analysis)|"
+    r"go\s*deeper|deep\s*dive|in\s*length|vistar\s*se|vistaar\s*se|puri\s*detail\w*|pura\s*detail\w*"
+    r")\b",
+    re.IGNORECASE,
+)
+
 
 def _has_negation_before(text: str, match_start: int, window: int = 3) -> bool:
     """True if any negation word appears within `window` tokens before match_start."""
@@ -494,6 +508,11 @@ def detect_intent(query: str, user_language: Optional[str] = None) -> dict:
     if question_type == "timing":      depth_scores["moderate"] += 2
     if question_type == "prediction":  depth_scores["moderate"] += 1
     response_depth = max(depth_scores, key=depth_scores.get)
+    # An explicit, direct request for a long/detailed answer wins over
+    # every other signal above — including urgency/crisis "keep it brief"
+    # scoring, since the user said what they want in plain words.
+    if _EXPLICIT_DETAIL_RX.search(q_lower):
+        response_depth = "explicit_detailed"
 
     # ═══ 8. LANGUAGE PREFERENCE (UI choice wins) ═══
     if user_language in ("english", "hindi", "hinglish"):
