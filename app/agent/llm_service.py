@@ -12,6 +12,14 @@ import time
 from app.agent.remedies import format_remedies_for_prompt
 from app.agent.classical_citations import get_citations_for, format_citations_for_prompt
 
+# The marker the model is instructed to emit between its answer and its
+# generated follow-up questions (see build_rich_prompt's followup_rule).
+# Shared so the prompt instruction, the server-side streaming buffer
+# (_stream_ollama, which withholds it from the client entirely — see
+# that function), and ws_agent.py's post-stream split can never drift
+# out of sync with each other.
+FOLLOWUPS_MARKER = "---FOLLOWUPS---"
+
 # ═══════════════════════════════════════════════════════════════════
 # D-CHART RELEVANCE BY DOMAIN
 # Varga (divisional) charts each specialize in a life area.
@@ -925,7 +933,7 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
     skip_followups = (urgency == "crisis")
     followup_rule = (
         "" if skip_followups else
-        " After your answer, on a new line write exactly ---FOLLOWUPS--- and then exactly 3 short "
+        f" After your answer, on a new line write exactly {FOLLOWUPS_MARKER} and then exactly 3 short "
         "follow-up questions the user might ask next (each on its own line, under 60 chars, relevant "
         "to this chart, formatted as 'Q: ...')."
     )
@@ -1044,6 +1052,11 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                     return
 
                 got_any = False
+                marker_found = False
+                # Text held back because it might be the start of
+                # FOLLOWUPS_MARKER — can't know until enough more text has
+                # arrived to either complete the match or rule it out.
+                pending = ""
                 async for line in stream.aiter_lines():
                     if not line.strip():
                         continue
@@ -1062,14 +1075,48 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                     text = chunk.get("message", {}).get("content", "")
                     if text:
                         got_any = True
-                        ok = await _send({"type": "token", "text": text})
-                        if ok is False:
-                            logger.info("Client disconnected mid-stream (ollama)")
-                            return
+                        # The full raw text (marker + follow-up Q: lines
+                        # included) is always collected — ws_agent.py needs
+                        # it to build the separate 'followups' frame and to
+                        # persist/log the complete turn.
                         if token_collector is not None:
                             token_collector.append(text)
+                        if not marker_found:
+                            pending += text
+                            idx = pending.find(FOLLOWUPS_MARKER)
+                            if idx != -1:
+                                # Found it — everything from here on is
+                                # follow-up content; the client never sees
+                                # the marker or anything after it as a
+                                # 'token' frame (relying on client-side
+                                # string-matching to hide it was fragile —
+                                # this makes it structurally impossible to
+                                # leak regardless of the client build).
+                                marker_found = True
+                                safe = pending[:idx]
+                                pending = ""
+                                if safe:
+                                    ok = await _send({"type": "token", "text": safe})
+                                    if ok is False:
+                                        logger.info("Client disconnected mid-stream (ollama)")
+                                        return
+                            else:
+                                # Flush everything except a tail short enough
+                                # to still possibly be an in-progress match.
+                                hold_back = len(FOLLOWUPS_MARKER) - 1
+                                if len(pending) > hold_back:
+                                    safe = pending[:-hold_back]
+                                    pending = pending[-hold_back:]
+                                    ok = await _send({"type": "token", "text": safe})
+                                    if ok is False:
+                                        logger.info("Client disconnected mid-stream (ollama)")
+                                        return
+                        # else: marker already found — already collected
+                        # above, never forwarded as a 'token' frame.
                     if chunk.get("done"):
                         break
+                if not marker_found and pending:
+                    await _send({"type": "token", "text": pending})
                 if not got_any and (token_collector is None or not token_collector):
                     logger.warning("Ollama stream ended with no content (model=%s)", provider.get("model"))
                     err = "⚠️ Ollama returned an empty response. Check the backend logs and that the model is pulled (`ollama list`)."
