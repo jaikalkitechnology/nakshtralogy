@@ -13,6 +13,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -322,41 +323,78 @@ def get_domain(domain_key: str):
 @router.get("/logs")
 def get_agent_logs(
     limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
     provider: Optional[str] = None,
     status: Optional[str] = None,
+    domain: Optional[str] = None,
+    language: Optional[str] = None,
+    routing: Optional[str] = None,
+    user_id: Optional[str] = Query(None, description="Admin only — filter to one user"),
+    q: Optional[str] = Query(None, description="Search the query/response text"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Get recent agent logs for debugging LLM issues."""
-    q = db.query(AgentLog)
-    if current_user.role not in ("admin",):
-        q = q.filter(AgentLog.user_id == current_user.id)
+    """Chat logs for the admin panel (and for a user's own debugging) —
+    every turn's question, detected intent, response, and routing/status.
+    Non-admins only ever see their own; `user_id` is admin-only."""
+    is_admin = current_user.role == "admin"
+    query = db.query(AgentLog)
+    if not is_admin:
+        query = query.filter(AgentLog.user_id == current_user.id)
+    elif user_id:
+        query = query.filter(AgentLog.user_id == user_id)
     if provider:
-        q = q.filter(AgentLog.provider == provider)
+        query = query.filter(AgentLog.provider == provider)
     if status:
-        q = q.filter(AgentLog.status == status)
-    logs = q.order_by(AgentLog.created_at.desc()).limit(limit).all()
-    return [
-        {
-            "id": l.id,
-            "provider": l.provider,
-            "domain": l.domain,
-            "raw_query": getattr(l, "raw_query", None),
-            "query": (l.query or "")[:100],
-            "intent_json": getattr(l, "intent_json", None),
-            "matched_question_id": getattr(l, "matched_question_id", None),
-            "match_score": getattr(l, "match_score", None),
-            "routing": getattr(l, "routing", None),
-            "response_preview": (getattr(l, "response_text", None) or "")[:200],
-            "status": l.status,
-            "error_message": l.error_message,
-            "response_tokens": l.response_tokens,
-            "latency_ms": l.latency_ms,
-            "prompt_chars": l.prompt_chars,
-            "created_at": str(l.created_at) if l.created_at else None,
-        }
-        for l in logs
-    ]
+        query = query.filter(AgentLog.status == status)
+    if domain:
+        query = query.filter(AgentLog.domain == domain)
+    if language:
+        query = query.filter(AgentLog.language == language)
+    if routing:
+        query = query.filter(AgentLog.routing == routing)
+    if q:
+        like = f"%{q}%"
+        query = query.filter(or_(AgentLog.query.ilike(like), AgentLog.response_text.ilike(like)))
+
+    total = query.count()
+    logs = query.order_by(AgentLog.created_at.desc()).offset(offset).limit(limit).all()
+
+    user_map = {}
+    if is_admin and logs:
+        user_ids = {l.user_id for l in logs if l.user_id}
+        if user_ids:
+            for u in db.query(User).filter(User.id.in_(user_ids)).all():
+                user_map[u.id] = {"name": u.name, "email": u.email}
+
+    return {
+        "total": total,
+        "items": [
+            {
+                "id": l.id,
+                "user_id": l.user_id,
+                "user": user_map.get(l.user_id),
+                "chart_id": l.chart_id,
+                "provider": l.provider,
+                "domain": l.domain,
+                "language": l.language,
+                "raw_query": getattr(l, "raw_query", None),
+                "query": (l.query or "")[:100],
+                "intent_json": getattr(l, "intent_json", None),
+                "matched_question_id": getattr(l, "matched_question_id", None),
+                "match_score": getattr(l, "match_score", None),
+                "routing": getattr(l, "routing", None),
+                "response_preview": (getattr(l, "response_text", None) or "")[:200],
+                "status": l.status,
+                "error_message": l.error_message,
+                "response_tokens": l.response_tokens,
+                "latency_ms": l.latency_ms,
+                "prompt_chars": l.prompt_chars,
+                "created_at": str(l.created_at) if l.created_at else None,
+            }
+            for l in logs
+        ],
+    }
 
 
 @router.get("/logs/{log_id}")
@@ -382,9 +420,12 @@ def get_agent_log_detail(
         except Exception:
             intent_obj = {"_parse_error": True, "raw": raw_intent[:500]}
 
+    requester = db.query(User).filter(User.id == log.user_id).first() if log.user_id else None
+
     return {
         "id": log.id,
         "user_id": log.user_id,
+        "user": {"name": requester.name, "email": requester.email} if requester else None,
         "chart_id": log.chart_id,
         "provider": log.provider,
         "domain": log.domain,

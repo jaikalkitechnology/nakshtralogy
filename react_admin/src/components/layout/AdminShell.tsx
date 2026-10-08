@@ -46,6 +46,7 @@ export const NAV: NavGroup[] = [
     { to: "/admin/faq", label: "FAQ Management", icon: LifeBuoy },
     { to: "/admin/banners", label: "Banner Management", icon: ImageIcon },
     { to: "/admin/ai-agents", label: "AI Chat Agents", icon: Bot },
+    { to: "/admin/ai-chat-logs", label: "AI Chat Logs", icon: ScrollText },
     { to: "/admin/coupons", label: "Coupons & Discounts", icon: Ticket },
     { to: "/admin/subscriptions", label: "NakshtralogyPlus", icon: Crown },
     { to: "/admin/payment-gateways", label: "Payment Gateways", icon: CreditCard },
