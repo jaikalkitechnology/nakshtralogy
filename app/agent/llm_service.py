@@ -243,7 +243,7 @@ _LANG_NAMES_RX_PART = "|".join(_LANGUAGE_NAME_TO_CODE.keys())
 _LANG_REQUEST_RX = re.compile(
     rf"\b(?:in|reply\s*in|respond\s*in|answer\s*in|tell\s*me\s*in|speak\s*in|say\s*(?:it\s*)?in|"
     rf"switch\s*to|change\s*to|use)\s*({_LANG_NAMES_RX_PART})\b"
-    rf"|\b({_LANG_NAMES_RX_PART})\s*(?:mein|me|bhasha|language)\s*(?:bata|bolo|batao|kaho|likho|de|do)?",
+    rf"|\b({_LANG_NAMES_RX_PART})\s*(?:mein|me|bhasha|language)\s*(?:batao|bata|bolo|kaho|likho|de|do)?\b",
     re.IGNORECASE,
 )
 
@@ -259,6 +259,31 @@ def detect_explicit_language_request(query: str) -> Optional[str]:
         return None
     name = (m.group(1) or m.group(2) or "").lower()
     return _LANGUAGE_NAME_TO_CODE.get(name)
+
+
+_LANG_SWITCH_FILLER = {
+    "give", "me", "in", "it", "to", "now", "please", "pls", "plz", "kindly",
+    "can", "you", "tell", "reply", "answer", "respond", "say", "switch",
+    "change", "use", "mein", "bhasha", "language", "bata", "bolo", "batao", "kaho", "likho", "de", "do",
+}
+
+
+def detect_bare_language_switch(query: str) -> Optional[str]:
+    """Like detect_explicit_language_request(), but returns a language code
+    ONLY when the message is JUST a language-switch command with no real
+    question attached ("give me in tamil", "hindi mein batao") — nothing
+    left over once the language phrase and its filler words are removed.
+    Lets ws_agent.py reply with a clean acknowledgment instead of sending
+    an empty, content-free "question" through the full chart/LLM pipeline,
+    where a confused model has been observed echoing the query back and
+    leaking its follow-up questions into the main answer."""
+    lang = detect_explicit_language_request(query)
+    if not lang:
+        return None
+    remainder = _LANG_REQUEST_RX.sub("", query)
+    words = re.sub(r"[^\w\s]", "", remainder.lower()).split()
+    meaningful = [w for w in words if w not in _LANG_SWITCH_FILLER]
+    return lang if not meaningful else None
 
 
 _LANGUAGE_INSTRUCTIONS = {
