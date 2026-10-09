@@ -310,10 +310,15 @@ _ASK_TODAY_DATE_RE = re.compile(
 # for. Same fix shape as _PERSONAL_INFO_FIELDS: point the LLM straight
 # at the right section instead of hoping it finds it unaided.
 _ASK_PLANETS_RE = re.compile(
-    # "posi\w*" (not "posit\w*") deliberately — the exact reported query
-    # had "posiitons" (typo for "positions"), which a "posit" prefix
-    # match misses entirely since "posit" isn't a substring of "posiit".
-    r"\b(planet\s*posi\w*|graha\s*posi\w*|planet\s*placement\w*|mere\s*grah|planets?\s*(ki|in)\s*(sthiti|position))\b",
+    # "pos\w*" deliberately loose — real queries have arrived as
+    # "posiitons", "possition" and "postion"; any stricter prefix
+    # ("posit", "posi") missed at least one of them.
+    r"\b(planets?\s*(ki|ka|ke|in|of)?\s*(pos\w*|placement\w*|sthiti)|"
+    r"grah(a|as|on|o)?\s*(ki\s*)?(pos\w*|sthiti|placement\w*)|mere\s*grah\w*|sab(hi)?\s*grah\w*|"
+    r"navagraha\s*(pos\w*|sthiti)?|where\s*(are|is)\s*my\s*planets?)\b"
+    # Devanagari kept outside \b: Python's \w doesn't count matras as word
+    # characters, so a \b-wrapped Devanagari alternative never matches.
+    r"|ग्रह\S*\s*(की\s*)?स्थिति",
     re.IGNORECASE,
 )
 _ASK_HOUSES_RE = re.compile(
@@ -362,6 +367,16 @@ def _format_dasha_compact(chart_context: dict) -> str:
     return "; ".join(bits)
 
 
+def _is_chart_listing_request(query: str) -> bool:
+    """True when the question asks to SEE a full list of chart facts
+    (every planet, every house) — build_rich_prompt then swaps its usual
+    "cover at most 2-3 factors / pick ONE detail" rules, which otherwise
+    make the model mention one or two planets and stop."""
+    if any(rx.search(query) for _, rx, _ in _PERSONAL_INFO_FIELDS):
+        return False
+    return bool(_ASK_PLANETS_RE.search(query) or _ASK_HOUSES_RE.search(query))
+
+
 def _personal_info_hint(query: str, chart: "Chart", chart_context: dict = None) -> str | None:
     for attr, rx, label in _PERSONAL_INFO_FIELDS:
         if rx.search(query):
@@ -387,11 +402,13 @@ def _personal_info_hint(query: str, chart: "Chart", chart_context: dict = None) 
     if _ASK_PLANETS_RE.search(query):
         facts = _format_planets_compact(chart_context)
         if facts:
+            count = facts.count(";") + 1
             return (
                 'The user is asking to SEE their actual planet positions, not an interpretation, dosha, '
-                f'or remedy commentary. These are their EXACT planet positions — use ONLY these values, '
-                f'never different ones you recall or infer: {facts}. State them in plain natural '
-                'sentences — do not substitute dosha/yoga/remedy talk for this direct data request.'
+                f'or remedy commentary. These are their EXACT positions for all {count} planets — use ONLY '
+                f'these values, never different ones you recall or infer: {facts}. List EVERY ONE of these '
+                f'{count} planets (sign, degree, nakshatra) — not just one or two — and do not substitute '
+                'dosha/yoga/remedy or transit talk for this direct data request.'
             )
         return (
             'The user is asking to SEE their actual planet positions, not an interpretation, dosha, '
@@ -404,9 +421,9 @@ def _personal_info_hint(query: str, chart: "Chart", chart_context: dict = None) 
         if facts:
             return (
                 'The user is asking to SEE their actual house/bhava details, not an interpretation. '
-                f'These are their EXACT house facts — use ONLY these values, never different ones you '
-                f'recall or infer: {facts}. State them in plain natural sentences — do not substitute '
-                'dosha/yoga/remedy talk for this direct data request.'
+                f'These are their EXACT facts for all 12 houses — use ONLY these values, never different ones '
+                f'you recall or infer: {facts}. List EVERY ONE of the 12 houses — not just a few — and do not '
+                'substitute dosha/yoga/remedy talk for this direct data request.'
             )
         return (
             'The user is asking to SEE their actual house/bhava details, not an interpretation. Relay '
@@ -1141,9 +1158,11 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                                 match_info["score"], match_info.get("sub_domain"), match_info.get("question_type"))
 
                 personal_info_hint = _personal_info_hint(query, chart, chart_context)
+                chart_listing = bool(personal_info_hint) and _is_chart_listing_request(query)
                 user_prompt = build_rich_prompt(
                     query, chart_context, intent=result.get("intent"), topic_locked=bool(chat.engine_key),
                     language=effective_lang, personal_info_hint=personal_info_hint,
+                    data_listing=chart_listing,
                 )
 
                 # Personalize system prompt with chart holder's details + detected domain
@@ -1248,6 +1267,10 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 num_predict_override = _NUM_PREDICT_BY_DEPTH.get(
                     (result.get("intent") or {}).get("response_depth"), _NUM_PREDICT_BY_DEPTH["moderate"],
                 )
+                if chart_listing:
+                    # 9 planets / 12 houses, one line each, plus follow-ups —
+                    # a "brief"/"moderate" budget would cut the list off.
+                    num_predict_override = max(num_predict_override, _NUM_PREDICT_BY_DEPTH["detailed"])
                 try:
                     await stream_provider(provider_key, messages, websocket, token_collector=collected_tokens, num_predict=num_predict_override)
                     # Check if tokens contain error markers
