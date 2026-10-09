@@ -1193,6 +1193,12 @@ class AgentLog(Base):
     matched_question_id = Column(String(36), nullable=True, index=True)
     match_score = Column(Float, nullable=True)
     routing = Column(String(20), nullable=True)  # template | sharpened_llm | llm | rejected
+    # Ordered trace of every stage this turn passed through — language
+    # resolution, intent/probability detection, kundli context assembly,
+    # template matching, the LLM call, and where the final answer got
+    # written to the DB. JSON list of {step, label, detail}. See
+    # ws_agent.py's `_trace()` helper for what populates this.
+    pipeline_json = Column(Text, nullable=True)
     response_text = Column(Text, nullable=True)
     status = Column(String(20), nullable=False, index=True)  # success | error | timeout | interrupted
     error_message = Column(Text, nullable=True)

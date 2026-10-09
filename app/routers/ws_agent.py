@@ -240,6 +240,16 @@ def _off_topic_redirect(query: str, chat_engine_key: str) -> str | None:
     return f"I'm not the right agent for this — please ask the {target_label} agent."
 
 
+def _trace(pipeline: list, step: str, label: str, **detail) -> None:
+    """Append one stage to a turn's pipeline trace — shown in the admin
+    panel's AI Chat Logs detail view so a real question can be followed
+    step by step: language resolved -> intent/probability detected ->
+    kundli context pulled -> template checked -> LLM called -> answer
+    written to the DB. `detail` is whatever's useful to see for that step;
+    kept small since the whole trace is serialized into one DB column."""
+    pipeline.append({"step": step, "label": label, "detail": detail})
+
+
 _chart_cache: dict = {}
 _CACHE_MAX = 30
 
@@ -537,6 +547,13 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
 
                 chat = _get_or_create_chat(db, user.id, chat_id, chart_id, explicit_engine, language)
 
+                pipeline: list = []
+                _trace(
+                    pipeline, "received", "Question received",
+                    query=query, chat_id=chat.id, chart_id=chart_id,
+                    topic_locked=bool(chat.engine_key), engine_key=chat.engine_key,
+                )
+
                 # Resolve this turn's language, with stickiness: an explicit
                 # in-message request ("give me in hindi") always wins and
                 # becomes the new sticky default; otherwise an explicit
@@ -549,15 +566,24 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 in_text_lang = detect_explicit_language_request(query)
                 if in_text_lang:
                     resolved_lang = in_text_lang
+                    lang_source = "in_text_request"
                 elif language and language != "auto":
                     resolved_lang = language
+                    lang_source = "dropdown_explicit"
                 elif chat.language:
                     resolved_lang = chat.language
+                    lang_source = "sticky_chat_default"
                 else:
                     resolved_lang = detect_language(query)
+                    lang_source = "auto_detect_script"
                 if resolved_lang and resolved_lang != "auto" and chat.language != resolved_lang:
                     chat.language = resolved_lang
                     db.commit()
+                _trace(
+                    pipeline, "language", "Language resolved",
+                    resolved_lang=resolved_lang, source=lang_source,
+                    dropdown_value=language, in_text_request=in_text_lang,
+                )
 
                 # ⭐️ SMALL TALK / GIBBERISH / META-PROBE / BARE LANGUAGE-SWITCH
                 # SHORT-CIRCUIT — skip chart computation, the specialist
@@ -591,6 +617,10 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     import uuid as _uuid
                     smalltalk_message_id = str(_uuid.uuid4())
                     smalltalk_t0 = time.time()
+                    _trace(
+                        pipeline, "short_circuit", "Deterministic short-circuit matched — no chart/LLM call made",
+                        routing=smalltalk_routing,
+                    )
                     _append_message(db, chat, "user", query, language=smalltalk_lang)
                     await _send({
                         "type": "prob",
@@ -610,6 +640,10 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     await _send({"type": "token", "text": smalltalk_text})
                     await _send({"type": "done"})
                     _append_message(db, chat, "assistant", smalltalk_text, language=smalltalk_lang, message_id=smalltalk_message_id)
+                    _trace(
+                        pipeline, "response_stored", "Canned reply stored in DB",
+                        message_id=smalltalk_message_id, chars=len(smalltalk_text),
+                    )
                     try:
                         log_db = SessionLocal()
                         try:
@@ -618,6 +652,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                                 provider=smalltalk_routing, domain=domain, language=smalltalk_lang,
                                 raw_query=query[:2000], query=query[:500],
                                 routing=smalltalk_routing,
+                                pipeline_json=json.dumps(pipeline, ensure_ascii=False)[:8000],
                                 response_text=smalltalk_text[:5000],
                                 status="success", response_tokens=1,
                                 latency_ms=int((time.time() - smalltalk_t0) * 1000),
@@ -638,6 +673,12 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 ui_lang = resolved_lang if resolved_lang in ("english", "hindi", "hinglish") else None
                 result = _agent.query(query, pdata, birth_jd, domain_override=domain, user_language=ui_lang)
                 logger.info("Probability in %.2fs: %s %.0f%%", time.time() - t0, result["domain"], result["probability"])
+                _trace(
+                    pipeline, "intent_detected", "Intent + probability detected from kundli",
+                    domain=result.get("domain"), label=result.get("label"),
+                    probability=result.get("probability"), band=result.get("band"),
+                    intent=result.get("intent"),
+                )
 
                 effective_lang = resolved_lang
 
@@ -669,6 +710,11 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # Build rich kundli context + session memory
                 t1 = time.time()
                 chart_context = _build_chart_context(data, result, chart=chart, explicit_engine=explicit_engine)
+                _trace(
+                    pipeline, "chart_context", "Kundli data pulled for prompt context",
+                    sections=list(chart_context.keys()),
+                    specialist_report_included="specialist_report" in chart_context,
+                )
 
                 # ⭐️ TEMPLATE-FIRST ROUTING — check templates before LLM
                 template_text = None
@@ -691,6 +737,12 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                                             match_info["question_id"], match_info["score"])
                 except Exception as te:
                     logger.warning("Template routing error (falling through to LLM): %s", te)
+                _trace(
+                    pipeline, "template_match", "Checked curated question templates",
+                    matched=bool(template_text),
+                    question_id=match_info.get("question_id") if match_info else None,
+                    score=match_info.get("score") if match_info else None,
+                )
 
                 if template_text:
                     # Send template response directly — no LLM call
@@ -704,6 +756,10 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
 
                     # Save turn to chat history + write the debug log
                     _append_message(db, chat, "assistant", template_text, language=effective_lang, message_id=message_id)
+                    _trace(
+                        pipeline, "response_stored", "Curated template response stored in DB (no LLM call)",
+                        message_id=message_id, chars=len(template_text),
+                    )
                     try:
                         log_db = SessionLocal()
                         try:
@@ -717,6 +773,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                                 matched_question_id=match_info.get("question_id") if match_info else None,
                                 match_score=match_info.get("score") if match_info else None,
                                 routing="template",
+                                pipeline_json=json.dumps(pipeline, ensure_ascii=False)[:8000],
                                 response_text=template_text[:5000],
                                 status="success", response_tokens=1,
                                 latency_ms=int((time.time() - t0) * 1000),
@@ -801,13 +858,11 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # stays scoped to it, even if the wording sounds like another
                 # life area. A "General — Ask Anything" chat (engine_key=None)
                 # stays free to answer whatever the question actually is.
-                messages = [{
-                    "role": "system",
-                    "content": build_system_prompt(
-                        effective_lang, domain=detected_domain, user=chart_holder, query=query,
-                        topic_locked=bool(chat.engine_key),
-                    ),
-                }]
+                system_prompt_text = build_system_prompt(
+                    effective_lang, domain=detected_domain, user=chart_holder, query=query,
+                    topic_locked=bool(chat.engine_key),
+                )
+                messages = [{"role": "system", "content": system_prompt_text}]
                 for turn in history:
                     messages.append({"role": "user", "content": turn["q"]})
                     # Full answers are kept in the DB for the chat-history UI;
@@ -815,6 +870,11 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     # current question's context budget (num_ctx is small).
                     messages.append({"role": "assistant", "content": turn["a"][:500]})
                 messages.append({"role": "user", "content": user_prompt})
+                _trace(
+                    pipeline, "prompt_built", "System + user prompt assembled for the LLM",
+                    system_prompt_chars=len(system_prompt_text), user_prompt_chars=len(user_prompt),
+                    history_turns=len(history), total_messages=len(messages), topic_locked=bool(chat.engine_key),
+                )
 
                 logger.info("Context built in %.2fs, %d history turns, streaming via %s", time.time() - t1, len(history), provider_key)
 
@@ -853,6 +913,33 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     fallback = _fallback_response(query, result, language)
                     await _send({"type": "token", "text": fallback})
                     collected_tokens.append(fallback)
+                _trace(
+                    pipeline, "llm_call", "LLM streamed the answer",
+                    provider=provider_key, num_predict=num_predict_override or 300,
+                    latency_ms=int((time.time() - stream_t0) * 1000), status=log_status,
+                )
+
+                # Parse follow-up suggestions from end of response (before logging,
+                # so the pipeline trace reflects the actual stored answer length)
+                full_response = "".join(collected_tokens)
+                followups = []
+                main_answer = full_response
+                if FOLLOWUPS_MARKER in full_response:
+                    main_answer, tail = full_response.split(FOLLOWUPS_MARKER, 1)
+                    for line in tail.strip().split("\n"):
+                        line = line.strip().lstrip("-•* ").lstrip()
+                        if line.upper().startswith("Q:"):
+                            q = line[2:].strip().strip("?.!").strip()
+                            if q and len(q) <= 100:
+                                followups.append(q + "?" if not q.endswith("?") else q)
+                        elif line and len(followups) < 3 and 10 <= len(line) <= 100 and "?" in line:
+                            followups.append(line)
+                        if len(followups) >= 3:
+                            break
+                _trace(
+                    pipeline, "response_stored", "Final answer stored in DB",
+                    message_id=message_id, chars=len(main_answer), followups=len(followups),
+                )
 
                 # Write agent log
                 try:
@@ -880,6 +967,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             matched_question_id=match_info.get("question_id") if match_info else None,
                             match_score=match_info.get("score") if match_info else None,
                             routing=routing_type,
+                            pipeline_json=json.dumps(pipeline, ensure_ascii=False)[:8000],
                             response_text=full_response[:5000],
                             status=log_status,
                             error_message=log_error,
@@ -895,23 +983,6 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                         log_db.close()
                 except Exception as le:
                     logger.error("Agent log write failed: %s", le)
-
-                # Parse follow-up suggestions from end of response
-                full_response = "".join(collected_tokens)
-                followups = []
-                main_answer = full_response
-                if FOLLOWUPS_MARKER in full_response:
-                    main_answer, tail = full_response.split(FOLLOWUPS_MARKER, 1)
-                    for line in tail.strip().split("\n"):
-                        line = line.strip().lstrip("-•* ").lstrip()
-                        if line.upper().startswith("Q:"):
-                            q = line[2:].strip().strip("?.!").strip()
-                            if q and len(q) <= 100:
-                                followups.append(q + "?" if not q.endswith("?") else q)
-                        elif line and len(followups) < 3 and 10 <= len(line) <= 100 and "?" in line:
-                            followups.append(line)
-                        if len(followups) >= 3:
-                            break
 
                 # Send follow-ups as a separate frame for Flutter to render as chips
                 if followups:
