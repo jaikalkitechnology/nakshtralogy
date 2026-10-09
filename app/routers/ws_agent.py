@@ -23,7 +23,7 @@ import re
 import time
 import io
 import contextlib
-from datetime import date, datetime
+from datetime import date, datetime, timezone, timedelta
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 from jose import jwt, JWTError
@@ -277,6 +277,26 @@ _PERSONAL_INFO_FIELDS = (
     ("place", _ASK_PLACE_RE, "place of birth"),
 )
 
+# The CURRENT real-world date/time (as opposed to _ASK_TOB_RE/_ASK_DOB_RE
+# above, which ask about the BIRTH date/time stored on the chart) — an
+# LLM has no real clock and will otherwise guess or flatly refuse, so
+# this is grounded the same way: detect the question, hand the model the
+# actual current IST date/time as an unambiguous fact next to the
+# question, instead of leaving it to invent one. IST specifically (not
+# server-local time) since every date/time already shown elsewhere in
+# this app — gochar, dasha activation, transits — is IST-based.
+_IST = timezone(timedelta(hours=5, minutes=30))
+_ASK_CURRENT_TIME_RE = re.compile(
+    r"\b(what'?s?\s*(is\s*)?the\s*time(\s*now)?|what\s*time\s*is\s*it|current\s*time|"
+    r"abhi\s*kya\s*time\s*hai|time\s*kya\s*hai|kitne\s*baje\s*hai)\b",
+    re.IGNORECASE,
+)
+_ASK_TODAY_DATE_RE = re.compile(
+    r"\b(what'?s?\s*(is\s*)?today'?s?\s*date|what'?s?\s*the\s*date\s*today|"
+    r"what\s*day\s*is\s*(it|today)|which\s*day\s*is\s*today|aaj\s*ki\s*tareekh|aaj\s*kaun\s*sa\s*din\s*hai)\b",
+    re.IGNORECASE,
+)
+
 
 def _personal_info_hint(query: str, chart: "Chart") -> str | None:
     for attr, rx, label in _PERSONAL_INFO_FIELDS:
@@ -288,6 +308,18 @@ def _personal_info_hint(query: str, chart: "Chart") -> str | None:
                 f'The user is asking for their {label}. Their {label} is exactly "{value}" — '
                 f'state this directly and clearly in your response, in your own natural words.'
             )
+    if _ASK_CURRENT_TIME_RE.search(query):
+        now = datetime.now(_IST).strftime("%I:%M %p IST")
+        return (
+            f'The user is asking for the current time right now (not their birth time). It is '
+            f'exactly "{now}" — state this directly and clearly in your response.'
+        )
+    if _ASK_TODAY_DATE_RE.search(query):
+        today_str = datetime.now(_IST).strftime("%A, %d %B %Y")
+        return (
+            f'The user is asking for today\'s date/day (not their birth date). Today is exactly '
+            f'"{today_str}" — state this directly and clearly in your response.'
+        )
     return None
 
 
