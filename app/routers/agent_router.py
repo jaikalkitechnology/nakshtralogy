@@ -389,6 +389,7 @@ def get_agent_logs(
                 "user_id": l.user_id,
                 "user": user_map.get(l.user_id),
                 "chart_id": l.chart_id,
+                "chat_id": getattr(l, "chat_id", None),
                 "provider": l.provider,
                 "domain": l.domain,
                 "language": l.language,
@@ -452,6 +453,7 @@ def get_agent_log_detail(
         "user_id": log.user_id,
         "user": {"name": requester.name, "email": requester.email} if requester else None,
         "chart_id": log.chart_id,
+        "chat_id": getattr(log, "chat_id", None),
         "provider": log.provider,
         "domain": log.domain,
         "language": log.language,
@@ -471,6 +473,74 @@ def get_agent_log_detail(
         "latency_ms": log.latency_ms,
         "prompt_chars": log.prompt_chars,
         "created_at": _utc_iso(log.created_at),
+    }
+
+
+@router.get("/chats/{chat_id}/transcript")
+def get_chat_transcript(
+    chat_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Consolidated view of one whole chat conversation for the admin
+    panel: every message (user + assistant) in order, with each
+    assistant turn's intent/domain/routing/status/latency attached from
+    its matching AgentLog row (joined via message_id, both scoped to
+    chat_id). Nothing new is computed or stored — this reads data that
+    was already being saved per-turn, just not previously viewable as a
+    single transcript without cross-referencing separate log rows."""
+    chat = db.query(AIChat).filter(AIChat.id == chat_id).first()
+    if not chat:
+        raise HTTPException(404, "Chat not found")
+    if current_user.role not in ("admin",) and chat.user_id != current_user.id:
+        raise HTTPException(403, "Not authorized")
+
+    messages = (
+        db.query(AIChatMessage)
+        .filter(AIChatMessage.chat_id == chat_id)
+        .order_by(AIChatMessage.created_at)
+        .all()
+    )
+    logs = db.query(AgentLog).filter(AgentLog.chat_id == chat_id).all()
+    logs_by_message_id = {l.message_id: l for l in logs if l.message_id}
+
+    import json as _json
+
+    turns = []
+    for m in messages:
+        log = logs_by_message_id.get(m.message_id) if m.message_id else None
+        intent_obj = None
+        if log and log.intent_json:
+            try:
+                intent_obj = _json.loads(log.intent_json)
+            except Exception:
+                intent_obj = None
+        turns.append({
+            "message_id": m.message_id,
+            "role": m.role,
+            "content": m.content,
+            "language": m.language,
+            "created_at": _utc_iso(m.created_at),
+            "intent": intent_obj,
+            "domain": log.domain if log else None,
+            "routing": log.routing if log else None,
+            "status": log.status if log else None,
+            "latency_ms": log.latency_ms if log else None,
+        })
+
+    requester = db.query(User).filter(User.id == chat.user_id).first() if chat.user_id else None
+
+    return {
+        "chat_id": chat.id,
+        "title": chat.title,
+        "engine_key": chat.engine_key,
+        "language": chat.language,
+        "chart_id": chat.chart_id,
+        "user": {"name": requester.name, "email": requester.email} if requester else None,
+        "created_at": _utc_iso(chat.created_at),
+        "updated_at": _utc_iso(chat.updated_at),
+        "turns": turns,
+        "turn_count": len(turns),
     }
 
 
