@@ -331,7 +331,38 @@ _ASK_CHART_DETAILS_RE = re.compile(
 )
 
 
-def _personal_info_hint(query: str, chart: "Chart") -> str | None:
+def _format_planets_compact(chart_context: dict) -> str:
+    planets = chart_context.get("planets", {}) if chart_context else {}
+    bits = []
+    for name, p in planets.items():
+        if name == "Lagna":
+            continue
+        bits.append(f"{name} in {p.get('sign_full','?')} at {p.get('degree',0):.1f}° ({p.get('nakshatra','?')})")
+    return "; ".join(bits)
+
+
+def _format_houses_compact(chart_context: dict) -> str:
+    bhava = chart_context.get("bhava", {}) if chart_context else {}
+    bits = []
+    for hkey in sorted(bhava.keys()):
+        h = bhava[hkey]
+        occ = ", ".join(h.get("occupants", [])) or "empty"
+        bits.append(f"House {h.get('house',0)} is {h.get('sign','')} (lord {h.get('lord','')}, occupants: {occ})")
+    return "; ".join(bits)
+
+
+def _format_dasha_compact(chart_context: dict) -> str:
+    vim = chart_context.get("current_dasha", {}) if chart_context else {}
+    moola = chart_context.get("current_dasha_moola", {}) if chart_context else {}
+    bits = []
+    if vim:
+        bits.append(f"Vimshottari Mahadasha is {vim.get('md','')} (Antardasha {vim.get('ad','')})")
+    if moola:
+        bits.append(f"Moola Dasha Mahadasha is {moola.get('md','')} (Antardasha {moola.get('ad','')})")
+    return "; ".join(bits)
+
+
+def _personal_info_hint(query: str, chart: "Chart", chart_context: dict = None) -> str | None:
     for attr, rx, label in _PERSONAL_INFO_FIELDS:
         if rx.search(query):
             value = getattr(chart, attr, None)
@@ -354,6 +385,14 @@ def _personal_info_hint(query: str, chart: "Chart") -> str | None:
             f'"{today_str}" — state this directly and clearly in your response.'
         )
     if _ASK_PLANETS_RE.search(query):
+        facts = _format_planets_compact(chart_context)
+        if facts:
+            return (
+                'The user is asking to SEE their actual planet positions, not an interpretation, dosha, '
+                f'or remedy commentary. These are their EXACT planet positions — use ONLY these values, '
+                f'never different ones you recall or infer: {facts}. State them in plain natural '
+                'sentences — do not substitute dosha/yoga/remedy talk for this direct data request.'
+            )
         return (
             'The user is asking to SEE their actual planet positions, not an interpretation, dosha, '
             'or remedy commentary. Relay the specific facts from the PLANET POSITIONS section above '
@@ -361,18 +400,45 @@ def _personal_info_hint(query: str, chart: "Chart") -> str | None:
             'dosha/yoga/remedy talk for this direct data request.'
         )
     if _ASK_HOUSES_RE.search(query):
+        facts = _format_houses_compact(chart_context)
+        if facts:
+            return (
+                'The user is asking to SEE their actual house/bhava details, not an interpretation. '
+                f'These are their EXACT house facts — use ONLY these values, never different ones you '
+                f'recall or infer: {facts}. State them in plain natural sentences — do not substitute '
+                'dosha/yoga/remedy talk for this direct data request.'
+            )
         return (
             'The user is asking to SEE their actual house/bhava details, not an interpretation. Relay '
             'the specific facts from the HOUSE STRENGTHS (Bhava) section above in plain natural '
             'sentences — do not substitute dosha/yoga/remedy talk for this direct data request.'
         )
     if _ASK_DASHA_RE.search(query):
+        facts = _format_dasha_compact(chart_context)
+        if facts:
+            return (
+                'The user is asking to SEE their actual current dasha period, not an interpretation. '
+                f'This is their EXACT current dasha — use ONLY this, never a different period you recall '
+                f'or infer: {facts}. State it in plain natural sentences — do not substitute dosha/yoga/'
+                'remedy talk for this direct data request.'
+            )
         return (
             'The user is asking to SEE their actual current dasha period, not an interpretation. '
             'State the specific MD/AD/PD from the CURRENT DASHA PERIODS section above in plain natural '
             'sentences — do not substitute dosha/yoga/remedy talk for this direct data request.'
         )
     if _ASK_CHART_DETAILS_RE.search(query):
+        planet_facts = _format_planets_compact(chart_context)
+        dasha_facts = _format_dasha_compact(chart_context)
+        if planet_facts or dasha_facts:
+            facts = "; ".join(f for f in (planet_facts, dasha_facts) if f)
+            return (
+                'The user is asking for a general overview of their chart facts, not a themed '
+                f'interpretation. These are EXACT facts from their chart — use ONLY these values, never '
+                f'different ones you recall or infer, and pick a few to mention: {facts}. State them in '
+                'plain sentences — do not default to dosha or remedy commentary unless they specifically '
+                'asked about problems.'
+            )
         return (
             'The user is asking for a general overview of their chart facts, not a themed '
             'interpretation. Briefly relay a few concrete facts from the REFERENCE DATA above '
@@ -1063,7 +1129,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     logger.info("QUESTION MATCH (no template) score=%.2f → sharpened sub=%s qtype=%s",
                                 match_info["score"], match_info.get("sub_domain"), match_info.get("question_type"))
 
-                personal_info_hint = _personal_info_hint(query, chart)
+                personal_info_hint = _personal_info_hint(query, chart, chart_context)
                 user_prompt = build_rich_prompt(
                     query, chart_context, intent=result.get("intent"), topic_locked=bool(chat.engine_key),
                     language=effective_lang, personal_info_hint=personal_info_hint,
