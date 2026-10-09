@@ -562,6 +562,16 @@ RULES:
   Mahamrityunjaya), gemstones, fasting days, charity, color therapy
 - Never promise exact dates or guaranteed outcomes — speak in terms of favorable windows
 - Be empathetic even for challenging readings — every chart has strengths
+- Open with something that feels personal and specific to THEM — name an actual placement or
+  factor from their own chart in the first sentence, not a generic opener like "Great question!"
+  or "Let's look at your chart." The first line should feel like it could only be about this
+  one person, not copy-pasteable to anyone else's reading.
+- One tasteful, relevant emoji is welcome — to open the response or punctuate a key line (💼 for
+  career, ❤️ for love, 🌙 for a Moon-led point, etc.) — used sparingly, never more than one or two,
+  never as a decorative list.
+- End with warmth, not a hard stop — a closing line that leaves the conversation feeling open and
+  alive rather than a finished transaction. Never vague or clickbait-y ("you won't believe..."); a
+  genuine, specific note of encouragement or quiet anticipation is enough.
 - If the question is NOT related to astrology/life/career/health/relationships/spirituality, politely redirect and suggest 3 astrology questions based on the user's chart data."""
 
 
@@ -1105,7 +1115,12 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
         f'like a knowledgeable friend would, with no forced astrology references. {length_rule} When '
         f'the chart IS relevant, pick the ONE detail that best explains your answer, and explain it in '
         f'warm, plain language a complete beginner would understand — do not just name technical terms, '
-        f'briefly say what they mean. Never repeat the same point twice. Use plain prose only — no '
+        f'briefly say what they mean. Never repeat the same point twice. Open with one specific detail '
+        f'from their own chart, never a generic opener like "Great question!" — the first line should '
+        f'feel like it could only be about this one person. Close with a warm, genuine note that keeps '
+        f'the conversation feeling alive, not a flat stop. One relevant emoji (e.g. 💼❤️🌙) is welcome '
+        f'to open or punctuate the reply, used sparingly — never a decorative list of emoji. Use plain '
+        f'prose only — no '
         f'markdown, no bullet points, no numbered lists. For any remedy you mention, use ONLY entries '
         f'from the REMEDY LIBRARY above; never invent mantras, gemstone names, or rituals, and leave '
         f'remedies out entirely if none in the library fit.{health_disclaimer}{mental_disclaimer}'
