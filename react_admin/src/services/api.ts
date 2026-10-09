@@ -402,6 +402,10 @@ export async function adminAgentLogDetail(logId: string) {
   return request(`/agent/logs/${logId}`);
 }
 
+export async function adminChatTranscript(chatId: string) {
+  return request(`/agent/chats/${chatId}/transcript`);
+}
+
 // ── FAQ management ───────────────────────────────────────────────
 
 export async function adminFaqList(audience?: string, lang?: string) {
