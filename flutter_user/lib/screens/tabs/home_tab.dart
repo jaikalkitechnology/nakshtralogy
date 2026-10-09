@@ -131,9 +131,59 @@ class _HomeTabState extends State<HomeTab> {
       _agentMeta = {..._agentMeta, key: {...meta, 'unlocked': true}};
     }
     if (!mounted) return;
+    // Engine-only topics (kundli, daily_forecast, character, past_life) have
+    // no probability-domain counterpart — route them via engineKey instead
+    // of domainKey (mirrors ai_topics.dart's AiTopic.metaKey resolution).
+    final engineOnly = s['engineOnly'] == true;
     await Navigator.push(context, MaterialPageRoute(
-      builder: (_) => AiSpecialistChatScreen(domainKey: key, label: label, emoji: emoji),
+      builder: (_) => AiSpecialistChatScreen(
+        domainKey: engineOnly ? null : key,
+        engineKey: engineOnly ? key : null,
+        label: label, emoji: emoji,
+      ),
     ));
+  }
+
+  /// The home "Kundli" quick action now offers both the deterministic chart
+  /// viewer (planet positions, dashas, doshas etc. as computed facts) and
+  /// the new Kundli AI chat agent (ask it anything about that same data in
+  /// plain language) — tapping the tile used to jump straight to the viewer
+  /// only, with no way to reach the AI agent from here.
+  Future<void> _openKundliOptions() async {
+    final choice = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: AppColors.nebula,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text('Kundli', style: TextStyle(color: AppColors.gold, fontSize: 16, fontWeight: FontWeight.w700)),
+            const SizedBox(height: 14),
+            ListTile(
+              leading: const Icon(Icons.auto_stories, color: AppColors.aurora),
+              title: const Text('View My Kundli', style: TextStyle(color: AppColors.ivory)),
+              subtitle: const Text('Planets, charts, dashas & doshas', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+              onTap: () => Navigator.pop(ctx, 'view'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.auto_awesome, color: AppColors.gold),
+              title: const Text('Ask Kundli AI', style: TextStyle(color: AppColors.ivory)),
+              subtitle: const Text('Chat about your chart in plain language', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+              onTap: () => Navigator.pop(ctx, 'ask'),
+            ),
+          ]),
+        ),
+      ),
+    );
+    if (!mounted || choice == null) return;
+    if (choice == 'view') {
+      widget.onOpenKundli?.call();
+    } else {
+      await _openAiSpecialist(const {
+        'key': 'kundli', 'label': 'Kundli Specialist', 'emoji': '\u{1F4DC}', 'engineOnly': true,
+      });
+    }
   }
 
   @override
@@ -241,7 +291,7 @@ class _HomeTabState extends State<HomeTab> {
   Widget _quickActions(AppLocalizations l) {
     final actions = [
       {'icon': Icons.star, 'label': l.astrologer, 'color': AppColors.gold, 'onTap': widget.onSeeAllAstrologers},
-      {'icon': Icons.auto_awesome, 'label': l.kundli, 'color': AppColors.aurora, 'onTap': widget.onOpenKundli},
+      {'icon': Icons.auto_awesome, 'label': l.kundli, 'color': AppColors.aurora, 'onTap': _openKundliOptions},
       {'icon': Icons.assessment, 'label': l.reports, 'color': Colors.purple, 'onTap': () =>
           Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistListScreen()))},
       {'icon': Icons.favorite, 'label': l.milan, 'color': AppColors.cosmicPink, 'onTap': () =>
@@ -349,6 +399,9 @@ class _HomeTabState extends State<HomeTab> {
     {'key': 'property_assets',  'label': 'Property & Assets',     'emoji': '\u{1F3E0}', 'color': AppColors.saffron},
     {'key': 'legal_dispute',    'label': 'Legal & Dispute',       'emoji': '\u2696\ufe0f','color': AppColors.smoke},
     {'key': 'life_path_luck',   'label': 'Life Path & Luck',      'emoji': '\u{1F31F}', 'color': AppColors.gold},
+    // Engine-only topic (no probability-domain counterpart) — routed via
+    // engineKey in _openAiSpecialist, not domainKey.
+    {'key': 'kundli',           'label': 'Kundli Specialist',     'emoji': '\u{1F4DC}', 'color': AppColors.aurora, 'engineOnly': true},
   ];
 
   Widget _aiSpecialistCarousel() {

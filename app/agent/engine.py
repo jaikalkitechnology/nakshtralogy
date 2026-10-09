@@ -631,6 +631,25 @@ def compute_domain_probability(pdata: dict, birth_jd: float, domain: str) -> dic
     }
 
 
+# Decorative display floor — the user-facing probability/band (chat badge,
+# LLM narrative, REST response) never reads below this, even when the real
+# calculated score is lower. Callers that need the true score for internal
+# use (admin pipeline trace, debugging) must read it BEFORE calling this,
+# since it does not mutate anything — it only returns what to show.
+DISPLAY_PROBABILITY_FLOOR = 60.0
+
+
+def apply_display_floor(probability: float, floor: float = DISPLAY_PROBABILITY_FLOOR):
+    """Return a (display_probability, display_band) pair for user-facing
+    output, flooring `probability` at `floor` and recomputing the band from
+    the same thresholds `compute_domain_probability` uses, so the label
+    shown always matches the number shown."""
+    display = max(probability, floor)
+    band = ("Very High" if display >= 78 else "High" if display >= 62 else
+            "Moderate" if display >= 46 else "Low" if display >= 30 else "Very Low")
+    return display, band
+
+
 class NakshtraAgent:
     def query(self, user_query: str, pdata: dict, birth_jd: float,
               domain_override: str = None, user_language: Optional[str] = None) -> dict:
