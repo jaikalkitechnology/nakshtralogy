@@ -83,10 +83,17 @@ _PRIORITY_KEY_MARKERS = (
     "window", "risk", "readiness", "plain_statement", "confidence",
     "partner_quali", "overall_", "primary_theme", "core_", "delay",
     "dosh_present", "disclaimer_short",
+    # Added after testing the career engine directly (109 raw fields,
+    # even more than marriage's 76) — strengths/weaknesses/industries/
+    # salary/leadership/archetype are exactly the kind of thing a user
+    # asks about directly, but none matched the original marker list and
+    # were still losing the field-cap race even after it was raised.
+    "strength", "weakness", "best_industr", "salary", "leadership",
+    "archetype", "job_role",
 )
 
 
-def _compact(result: dict, max_str_len: int = 220, max_list_items: int = 6, max_fields: int = 55, _depth: int = 0) -> dict:
+def _compact(result: dict, max_str_len: int = 220, max_list_items: int = 6, max_fields: int = 70, _depth: int = 0) -> dict:
     """Engine-agnostic compaction of a specialist's analyze() output.
 
     These engines return mostly-numeric/short-categorical JSON (0-100
@@ -131,13 +138,19 @@ def _compact(result: dict, max_str_len: int = 220, max_list_items: int = 6, max_
         elif isinstance(v, str):
             if v and len(v) <= max_str_len:
                 out[k] = v
-        elif isinstance(v, list) and 0 < len(v) <= max_list_items:
+        elif isinstance(v, list) and len(v) > 0:
             if all(
                 isinstance(it, (str, int, float))
                 or (isinstance(it, dict) and len(it) <= 6)
                 for it in v
             ):
-                out[k] = v
+                # Truncate rather than drop the whole field — a list like
+                # specific_job_role_fits (10 items) was being cut entirely
+                # just for having 4 more entries than max_list_items,
+                # losing a genuinely useful field instead of just
+                # trimming it. The first N items of a scored/ranked list
+                # are normally the most relevant ones anyway.
+                out[k] = v[:max_list_items]
         elif isinstance(v, dict) and 0 < len(v) <= 12 and _depth < 1:
             # One level of recursion only — these engines nest at most one
             # level deep for things like venus_condition/d9_validation
