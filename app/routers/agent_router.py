@@ -13,12 +13,12 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
-from sqlalchemy import or_
+from sqlalchemy import or_, func, case
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
-from app.models.model import Chart, User, AgentLog, AIChat, AIChatMessage
+from app.models.model import Chart, User, AgentLog, AgentLogSection, AIChat, AIChatMessage
 from app.kundli import engine as nk_engine
 from app.agent.engine import NakshtraAgent, DOMAINS, detect_intent
 from app.agent.llm_service import generate_llm_response, get_available_providers
@@ -411,6 +411,66 @@ def get_agent_logs(
             for l in logs
         ],
     }
+
+
+@router.get("/logs/summary")
+def get_agent_logs_summary(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Section-wise (domain-wise) breakdown of chat activity for the
+    admin panel — one row per domain (Career & Job, Marriage & Family,
+    ...) with its question count, success/error split, and average
+    latency. Admins read straight from AgentLogSection — a real,
+    persisted table kept incrementally up to date by
+    ws_agent.py's `_record_section_stat()` on every turn, not a live
+    aggregation recomputed from scratch on every view. Non-admins (who
+    have no row of their own in that global table) instead get a live
+    per-user GROUP BY over just their own AgentLog rows, which stays
+    cheap since it's scoped to one person. Pairs with the existing
+    GET /logs?domain=X to drill into one section's actual Q&A list."""
+    is_admin = current_user.role == "admin"
+
+    if is_admin:
+        section_rows = db.query(AgentLogSection).all()
+        sections = [
+            {
+                "domain": None if r.domain == "general" else r.domain,
+                "label": r.label or "General / Other",
+                "total": r.total,
+                "success_count": r.success_count,
+                "error_count": r.error_count,
+                "avg_latency_ms": round(r.total_latency_ms / r.total) if r.total else None,
+            }
+            for r in section_rows
+        ]
+    else:
+        success_expr = func.sum(case((AgentLog.status == "success", 1), else_=0))
+        rows = (
+            db.query(
+                AgentLog.domain,
+                func.count(AgentLog.id).label("total"),
+                success_expr.label("success_count"),
+                func.avg(AgentLog.latency_ms).label("avg_latency_ms"),
+            )
+            .filter(AgentLog.user_id == current_user.id)
+            .group_by(AgentLog.domain)
+            .all()
+        )
+        sections = []
+        for domain, total, success_count, avg_latency in rows:
+            success_count = int(success_count or 0)
+            sections.append({
+                "domain": domain,
+                "label": DOMAINS.get(domain, {}).get("label", "General / Other") if domain else "General / Other",
+                "total": total,
+                "success_count": success_count,
+                "error_count": total - success_count,
+                "avg_latency_ms": round(avg_latency) if avg_latency is not None else None,
+            })
+
+    sections.sort(key=lambda s: -s["total"])
+    return {"sections": sections, "grand_total": sum(s["total"] for s in sections)}
 
 
 @router.get("/logs/{log_id}")

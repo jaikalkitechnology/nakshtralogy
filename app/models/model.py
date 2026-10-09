@@ -1224,6 +1224,24 @@ class AgentLog(Base):
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
 
+class AgentLogSection(Base):
+    """Persisted, section-wise (domain-wise) running summary of chat
+    activity — one row per domain, incrementally updated every time a
+    turn is logged (see ws_agent.py's `_record_section_stat`), instead
+    of a live aggregation query recomputed on every admin-panel view.
+    "general" is the sentinel domain for short-circuited turns (small
+    talk, gibberish, etc.) that never got a real detected domain."""
+    __tablename__ = "agent_log_sections"
+
+    domain = Column(String(40), primary_key=True)  # "general" for no-domain turns
+    label = Column(String(100), nullable=True)
+    total = Column(Integer, default=0, nullable=False)
+    success_count = Column(Integer, default=0, nullable=False)
+    error_count = Column(Integer, default=0, nullable=False)
+    total_latency_ms = Column(BigInteger, default=0, nullable=False)  # / total = avg
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+
 # ─────────────────────────────────────────────────────────────────────
 #  AI CONFIG — DB-driven languages, domains, engines, questions, templates
 # ─────────────────────────────────────────────────────────────────────
