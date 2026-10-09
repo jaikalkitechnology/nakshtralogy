@@ -181,6 +181,41 @@ DOMAIN_SPECIALISTS = {
         "key_doshas": "Kaal Sarp Dosh, Pitra Dosh, Shrapit Dosh",
         "style": "Philosophical and uplifting. Discuss purpose, unfolding destiny, major life chapters via dasha. Decode Rajyogs with Shadbala strength.",
     },
+    # Chat-only topics (specialist_bridge.EXTRA_CHAT_ENGINES) — no probability
+    # domain, but a locked chat still needs its own persona instead of
+    # falling back to life_path_luck's.
+    "kundli": {
+        "role": "Vedic Kundli (Birth Chart) Specialist",
+        "focus": "all 12 houses — lagna, house lords, occupants and their strength",
+        "key_planets": "all 9 grahas — sign, degree, nakshatra, dignity, retrograde/combust status",
+        "key_yogas": "whichever yogas are actually present in the chart",
+        "key_doshas": "whichever doshas are actually present in the chart",
+        "style": "Clear and factual first. When asked for chart data (planet positions, houses, dasha, lagna), state the exact values from the chart before any interpretation; explain technical terms simply.",
+    },
+    "character": {
+        "role": "Vedic Character & Personality Specialist",
+        "focus": "1st (self), 4th (heart), 5th (intellect), 9th (values)",
+        "key_planets": "Lagna lord, Moon (mind), Sun (ego), Mercury (intellect)",
+        "key_yogas": "Pancha Mahapurusha Yogas, Budhaditya Yoga",
+        "key_doshas": "Kemadruma Dosh, Grahan Yoga",
+        "style": "Insightful and kind. Describe temperament, strengths and blind spots without judging.",
+    },
+    "past_life": {
+        "role": "Vedic Past Life & Karma Specialist",
+        "focus": "5th (purva punya), 9th (dharma), 12th (moksha), 8th (hidden karma)",
+        "key_planets": "Ketu (past mastery), Rahu (soul's growth direction), Saturn (karma), Jupiter (grace)",
+        "key_yogas": "Moksha-related yogas, Guru-Chandal (karmic)",
+        "key_doshas": "Pitra Dosh, Kaal Sarp Dosh, Shrapit Dosh",
+        "style": "Reflective and gentle. Frame karma as lessons, never as punishment.",
+    },
+    "daily_forecast": {
+        "role": "Vedic Daily Forecast Specialist",
+        "focus": "today's transits (gochar) from the natal Moon, current dasha/antardasha",
+        "key_planets": "Moon (daily mood), transiting Saturn and Jupiter, current dasha lords",
+        "key_yogas": "yogas active in the current dasha",
+        "key_doshas": "doshas active in the current dasha",
+        "style": "Practical and upbeat. Focus on today and the next few days — what to do, what to avoid.",
+    },
 }
 
 

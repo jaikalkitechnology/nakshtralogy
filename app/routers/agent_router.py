@@ -22,7 +22,7 @@ from app.models.model import Chart, User, AgentLog, AgentLogSection, AIChat, AIC
 from app.kundli import engine as nk_engine
 from app.agent.engine import NakshtraAgent, DOMAINS, detect_intent, apply_display_floor
 from app.agent.llm_service import generate_llm_response, get_available_providers
-from app.agent.specialist_bridge import CHAT_ENGINE_KEYS, EXTRA_CHAT_ENGINES, setting_key_for_chat_engine
+from app.agent.specialist_bridge import CHAT_ENGINE_KEYS, EXTRA_CHAT_ENGINES, EXTRA_CHAT_ENGINE_META, setting_key_for_chat_engine
 
 
 def _utc_iso(dt) -> Optional[str]:
@@ -485,7 +485,8 @@ def get_agent_logs_summary(
             last_q, last_a, last_at = latest_by_domain.get(domain, (None, None, None))
             sections.append({
                 "domain": domain,
-                "label": DOMAINS.get(domain, {}).get("label", "General / Other") if domain else "General / Other",
+                "label": (DOMAINS.get(domain, {}).get("label") or EXTRA_CHAT_ENGINE_META.get(domain, (None,))[0]
+                          or "General / Other") if domain else "General / Other",
                 "total": total,
                 "success_count": success_count,
                 "last_question": last_q,
