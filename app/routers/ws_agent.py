@@ -30,7 +30,7 @@ from jose import jwt, JWTError
 
 from app.core.config import settings
 from app.core.database import SessionLocal
-from app.models.model import User, Chart, AgentLog, AIChat, AIChatMessage
+from app.models.model import User, Chart, AgentLog, AgentLogSection, AIChat, AIChatMessage
 from app.kundli import engine as nk_engine
 from app.kundli.helper import NakshtraEngine
 from app.agent.engine import NakshtraAgent, DOMAINS, detect_intent
@@ -437,6 +437,29 @@ def _trace(pipeline: list, step: str, step_label: str, **detail) -> None:
     domain's display label), which would collide with a parameter named
     `label` and raise "got multiple values for argument 'label'"."""
     pipeline.append({"step": step, "label": step_label, "detail": detail})
+
+
+def _record_section_stat(log_db, domain: str | None, status: str, latency_ms: int | None) -> None:
+    """Incrementally upsert the persisted section-wise summary table
+    (AgentLogSection) — a real DB table with one row per domain, kept
+    up to date on every turn, instead of a live GROUP BY query
+    recomputed from scratch on every admin-panel view. Called on the
+    same session as the AgentLog write for that turn, right before it
+    commits, so both land together."""
+    key = domain or "general"
+    label = DOMAINS.get(key, {}).get("label") if key != "general" else None
+    label = label or "General / Other"
+    row = log_db.query(AgentLogSection).filter(AgentLogSection.domain == key).first()
+    if row is None:
+        row = AgentLogSection(domain=key, label=label, total=0, success_count=0, error_count=0, total_latency_ms=0)
+        log_db.add(row)
+    row.label = label
+    row.total += 1
+    if status == "success":
+        row.success_count += 1
+    else:
+        row.error_count += 1
+    row.total_latency_ms += (latency_ms or 0)
 
 
 # Response-length budget (Ollama's num_predict, i.e. max output tokens),
@@ -862,6 +885,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     try:
                         log_db = SessionLocal()
                         try:
+                            _smalltalk_latency = int((time.time() - smalltalk_t0) * 1000)
                             log_db.add(AgentLog(
                                 user_id=user.id, chart_id=chart_id, chat_id=chat.id, message_id=smalltalk_message_id,
                                 provider=smalltalk_routing, domain=domain, language=smalltalk_lang,
@@ -870,9 +894,10 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                                 pipeline_json=json.dumps(pipeline, ensure_ascii=False)[:8000],
                                 response_text=smalltalk_text[:5000],
                                 status="success", response_tokens=1,
-                                latency_ms=int((time.time() - smalltalk_t0) * 1000),
+                                latency_ms=_smalltalk_latency,
                                 prompt_chars=len(query),
                             ))
+                            _record_section_stat(log_db, domain, "success", _smalltalk_latency)
                             log_db.commit()
                         finally:
                             log_db.close()
@@ -983,9 +1008,11 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                         try:
                             intent_obj = result.get("intent") or {}
                             intent_json_str = json.dumps(intent_obj, ensure_ascii=False)[:2000]
+                            _template_domain = result.get("domain") or domain
+                            _template_latency = int((time.time() - t0) * 1000)
                             log_entry = AgentLog(
                                 user_id=user.id, chart_id=chart_id, chat_id=chat.id, message_id=message_id,
-                                provider="template", domain=(result.get("domain") or domain), language=effective_lang,
+                                provider="template", domain=_template_domain, language=effective_lang,
                                 raw_query=query[:2000],
                                 query=query[:500], intent_json=intent_json_str,
                                 matched_question_id=match_info.get("question_id") if match_info else None,
@@ -994,10 +1021,11 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                                 pipeline_json=json.dumps(pipeline, ensure_ascii=False)[:8000],
                                 response_text=template_text[:5000],
                                 status="success", response_tokens=1,
-                                latency_ms=int((time.time() - t0) * 1000),
+                                latency_ms=_template_latency,
                                 prompt_chars=len(template_text),
                             )
                             log_db.add(log_entry)
+                            _record_section_stat(log_db, _template_domain, "success", _template_latency)
                             log_db.commit()
                         finally:
                             log_db.close()
@@ -1183,6 +1211,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             intent_json_str = None
                         full_response = "".join(collected_tokens)
                         routing_type = "sharpened_llm" if match_info else "llm"
+                        _llm_latency = int((time.time() - stream_t0) * 1000)
                         log_entry = AgentLog(
                             user_id=user.id,
                             chart_id=chart_id,
@@ -1203,12 +1232,13 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             error_message=log_error,
                             http_status=log_http,
                             response_tokens=len(collected_tokens),
-                            latency_ms=int((time.time() - stream_t0) * 1000),
+                            latency_ms=_llm_latency,
                             prompt_chars=len(user_prompt),
                         )
                         log_db.add(log_entry)
+                        _record_section_stat(log_db, detected_domain, log_status, _llm_latency)
                         log_db.commit()
-                        logger.info("Agent log saved: id=%s, status=%s, latency=%dms", log_entry.id, log_status, int((time.time() - stream_t0) * 1000))
+                        logger.info("Agent log saved: id=%s, status=%s, latency=%dms", log_entry.id, log_status, _llm_latency)
                     finally:
                         log_db.close()
                 except Exception as le:

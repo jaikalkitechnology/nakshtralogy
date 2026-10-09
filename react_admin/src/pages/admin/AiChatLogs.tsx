@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { MessageSquare, RefreshCw, X, ChevronLeft, ChevronRight, Download, Copy, Braces, AlignLeft, MessagesSquare, Bot, User as UserIcon } from "lucide-react";
-import { adminAgentLogs, adminAgentLogDetail, adminChatTranscript } from "@/services/api";
+import { MessageSquare, RefreshCw, X, ChevronLeft, ChevronRight, Download, Copy, Braces, AlignLeft, MessagesSquare, Bot, User as UserIcon, LayoutGrid, List } from "lucide-react";
+import { adminAgentLogs, adminAgentLogDetail, adminChatTranscript, adminAgentLogsSummary } from "@/services/api";
 import { toast } from "sonner";
 
 // The backend now sends created_at as an unambiguous UTC ISO string
@@ -112,6 +112,10 @@ export default function AiChatLogs() {
   const [transcript, setTranscript] = useState<any>(null);
   const [transcriptOpen, setTranscriptOpen] = useState(false);
   const [transcriptLoading, setTranscriptLoading] = useState(false);
+  const [viewMode, setViewMode] = useState<"logs" | "sections">("sections");
+  const [sections, setSections] = useState<any[]>([]);
+  const [sectionsLoading, setSectionsLoading] = useState(false);
+  const [sectionsLoaded, setSectionsLoaded] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -141,6 +145,25 @@ export default function AiChatLogs() {
 
   useEffect(() => { load(); }, [load]);
 
+  const loadSections = useCallback(async () => {
+    setSectionsLoading(true);
+    const r = await adminAgentLogsSummary();
+    setSectionsLoading(false);
+    setSectionsLoaded(true);
+    if (r.ok) setSections(r.data?.sections ?? []);
+    else toast.error(r.data?.detail || "Failed to load section summary");
+  }, []);
+
+  useEffect(() => {
+    if (viewMode === "sections" && !sectionsLoaded) loadSections();
+  }, [viewMode, sectionsLoaded, loadSections]);
+
+  const openSection = (domainKey: string | null) => {
+    setDomain(domainKey || "");
+    setOffset(0);
+    setViewMode("logs");
+  };
+
   const openDetail = async (id: string) => {
     setDetailOpen(true);
     setDetailLoading(true);
@@ -169,12 +192,31 @@ export default function AiChatLogs() {
           <p className="text-sm text-muted-foreground">Every chat turn — question, detected intent, response, routing and status.</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => downloadJson(rows, `ai-chat-logs-${Date.now()}.json`)} disabled={rows.length === 0}>
-            <Download className="w-4 h-4 mr-1" /> Export JSON ({rows.length})
+          <div className="flex rounded-lg border border-border overflow-hidden">
+            <button onClick={() => setViewMode("sections")}
+              className={`flex items-center gap-1 px-2.5 py-1.5 text-xs ${viewMode === "sections" ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"}`}>
+              <LayoutGrid className="w-3.5 h-3.5" /> By Section
+            </button>
+            <button onClick={() => setViewMode("logs")}
+              className={`flex items-center gap-1 px-2.5 py-1.5 text-xs border-l border-border ${viewMode === "logs" ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"}`}>
+              <List className="w-3.5 h-3.5" /> All Logs
+            </button>
+          </div>
+          {viewMode === "logs" && (
+            <Button variant="outline" size="sm" onClick={() => downloadJson(rows, `ai-chat-logs-${Date.now()}.json`)} disabled={rows.length === 0}>
+              <Download className="w-4 h-4 mr-1" /> Export JSON ({rows.length})
+            </Button>
+          )}
+          <Button variant="outline" size="sm" onClick={viewMode === "sections" ? loadSections : load} disabled={viewMode === "sections" ? sectionsLoading : loading}>
+            <RefreshCw className={`w-4 h-4 ${(viewMode === "sections" ? sectionsLoading : loading) ? "animate-spin" : ""}`} />
           </Button>
-          <Button variant="outline" size="sm" onClick={load} disabled={loading}><RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} /></Button>
         </div>
       </div>
+
+      {viewMode === "sections" ? (
+        <SectionsView sections={sections} loading={sectionsLoading} onOpen={openSection} />
+      ) : (
+      <>
 
       <div className="flex flex-wrap items-center gap-2">
         <select value={domain} onChange={(e) => { setOffset(0); setDomain(e.target.value); }}
@@ -252,9 +294,51 @@ export default function AiChatLogs() {
           Next <ChevronRight className="w-4 h-4 ml-1" />
         </Button>
       </div>
+      </>
+      )}
 
       {detailOpen && <LogDetailModal data={detail} loading={detailLoading} onClose={() => { setDetailOpen(false); setDetail(null); }} />}
       {transcriptOpen && <ChatTranscriptModal data={transcript} loading={transcriptLoading} onClose={() => { setTranscriptOpen(false); setTranscript(null); }} />}
+    </div>
+  );
+}
+
+// Section-wise summary (app/routers/agent_router.py GET /agent/logs/summary):
+// one card per domain — question count, success/error split, average
+// latency — computed with a single SQL GROUP BY, not by loading every
+// row. Clicking a card jumps to the "All Logs" view pre-filtered to
+// that domain, so a question like "how many career questions came in,
+// and how did they go" is answerable at a glance before drilling in.
+function SectionsView({ sections, loading, onOpen }: { sections: any[]; loading: boolean; onOpen: (domain: string | null) => void }) {
+  if (loading) {
+    return <p className="text-center text-muted-foreground py-12">Loading section summary…</p>;
+  }
+  if (sections.length === 0) {
+    return <p className="text-center text-muted-foreground py-12">No chat activity yet.</p>;
+  }
+  const grandTotal = sections.reduce((sum, s) => sum + s.total, 0);
+  return (
+    <div className="space-y-3">
+      <p className="text-xs text-muted-foreground">{grandTotal} question{grandTotal === 1 ? "" : "s"} across {sections.length} section{sections.length === 1 ? "" : "s"} — click a section to see its full Q&A list.</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {sections.map((s) => {
+          const errorRate = s.total > 0 ? Math.round((s.error_count / s.total) * 100) : 0;
+          return (
+            <button key={s.domain ?? "none"} onClick={() => onOpen(s.domain)}
+              className="text-left rounded-xl border border-border bg-card/60 p-4 hover:border-primary/40 hover:bg-card transition-colors">
+              <div className="flex items-start justify-between gap-2">
+                <p className="font-display text-foreground text-sm">{s.label}</p>
+                <Badge className="bg-primary/15 text-primary shrink-0">{s.total}</Badge>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-1.5 text-[10px]">
+                <Badge className="bg-green-500/15 text-green-400">{s.success_count} success</Badge>
+                {s.error_count > 0 && <Badge className="bg-destructive/15 text-destructive">{s.error_count} error ({errorRate}%)</Badge>}
+                {s.avg_latency_ms != null && <Badge className="bg-cosmic/10 text-muted-foreground">~{s.avg_latency_ms}ms avg</Badge>}
+              </div>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
