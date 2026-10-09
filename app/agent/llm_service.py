@@ -1174,10 +1174,13 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                     "options": {
                         "temperature": 0.7,
                         # A longer requested answer needs more context headroom too —
-                        # the default 2048 is sized for the normal short-answer case
-                        # and may not leave enough room for a 10-15 sentence reply on
-                        # top of the (large) chart-context prompt.
-                        "num_ctx": 4096 if num_predict else 2048,
+                        # the default 2048 is sized for the normal short-answer case.
+                        # A real chart-context prompt alone is commonly 4000+ tokens
+                        # (confirmed: a full prompt with the specialist report
+                        # included runs ~13-15K chars, ~3.5-4K tokens), so the
+                        # explicit_detailed tier's 3000-token response budget needs
+                        # real headroom on top of that, not just a flat bump.
+                        "num_ctx": 8192 if (num_predict or 0) >= 1500 else (4096 if num_predict else 2048),
                         "num_predict": num_predict or 300,  # Hard ceiling backing up the "be short" prompt rules
                         # Ollama's own default (1.1) wasn't enough to stop the
                         # model degenerating into an exact-phrase repetition
