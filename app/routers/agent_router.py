@@ -24,6 +24,20 @@ from app.agent.engine import NakshtraAgent, DOMAINS, detect_intent
 from app.agent.llm_service import generate_llm_response, get_available_providers
 from app.agent.specialist_bridge import CHAT_ENGINE_KEYS, setting_key_for_chat_engine
 
+
+def _utc_iso(dt) -> Optional[str]:
+    """Serialize a DB datetime (stored UTC via func.now(), but naive — no
+    tzinfo attached) as an unambiguous UTC ISO string. Plain str(dt) (e.g.
+    "2026-10-09 08:02:51") carries no timezone marker at all, so the
+    admin panel has no way to know it needs converting — it was being
+    displayed as if it were already local/IST time, off by 5.5 hours from
+    the real IST time. The trailing "Z" lets the browser's Date parser
+    (and toLocaleString with an explicit Asia/Kolkata timeZone) convert
+    it correctly instead of guessing."""
+    if not dt:
+        return None
+    return dt.isoformat() + ("Z" if dt.tzinfo is None else "")
+
 logger = logging.getLogger("agent_router")
 router = APIRouter()
 
@@ -391,7 +405,7 @@ def get_agent_logs(
                 "response_tokens": l.response_tokens,
                 "latency_ms": l.latency_ms,
                 "prompt_chars": l.prompt_chars,
-                "created_at": str(l.created_at) if l.created_at else None,
+                "created_at": _utc_iso(l.created_at),
             }
             for l in logs
         ],
@@ -456,7 +470,7 @@ def get_agent_log_detail(
         "response_tokens": log.response_tokens,
         "latency_ms": log.latency_ms,
         "prompt_chars": log.prompt_chars,
-        "created_at": str(log.created_at) if log.created_at else None,
+        "created_at": _utc_iso(log.created_at),
     }
 
 

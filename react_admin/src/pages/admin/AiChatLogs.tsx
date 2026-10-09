@@ -6,6 +6,23 @@ import { MessageSquare, RefreshCw, X, ChevronLeft, ChevronRight, Download, Copy,
 import { adminAgentLogs, adminAgentLogDetail } from "@/services/api";
 import { toast } from "sonner";
 
+// The backend now sends created_at as an unambiguous UTC ISO string
+// (see agent_router.py's _utc_iso) — explicitly formatted in IST here
+// regardless of the viewer's own machine/browser timezone, since this
+// panel is for an India-based team. Previously this was a raw
+// str(datetime) slice with no timezone marker at all, silently shown
+// as if it were already IST — off by 5.5 hours from the real time.
+function formatIST(iso?: string | null): string {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  return d.toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "2-digit", month: "short", year: "numeric",
+    hour: "2-digit", minute: "2-digit", hour12: true,
+  });
+}
+
 function downloadJson(data: unknown, filename: string) {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -185,7 +202,7 @@ export default function AiChatLogs() {
             <tbody>
               {rows.map((l) => (
                 <tr key={l.id} className="border-t border-border hover:bg-muted/30">
-                  <td className="p-2.5 text-muted-foreground whitespace-nowrap">{(l.created_at || "").slice(0, 16)}</td>
+                  <td className="p-2.5 text-muted-foreground whitespace-nowrap">{formatIST(l.created_at)}</td>
                   <td className="p-2.5 text-foreground">{l.user?.name || l.user?.email || l.user_id?.slice(0, 8) || "—"}</td>
                   <td className="p-2.5 text-foreground">{l.domain || "—"}</td>
                   <td className="p-2.5 text-muted-foreground">{l.language || "—"}</td>
