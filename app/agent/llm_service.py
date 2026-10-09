@@ -196,22 +196,116 @@ _UNICODE_RANGES = [
 
 # Common Hinglish markers — if Roman script contains these, it's Hinglish not English
 _HINGLISH_MARKERS = {
-    "kab", "kaise", "kyun", "kyu", "kya", "hai", "hoga", "hogi", "hoon", "hun",
-    "mein", "me", "mera", "meri", "mere", "aap", "aapka", "aapki", "aapke",
+    "kab", "kb", "kaise", "kyun", "kyu", "kya", "hai", "hoga", "hogi", "hoon", "hun",
+    "milega", "milegi", "milenge", "mein", "me", "mera", "meri", "mere",
+    "aap", "aapka", "aapki", "aapke", "mujhe", "muje", "mujhko",
     "hum", "hume", "humein", "ko", "se", "par", "aur", "bhi", "toh", "to",
     "nahi", "nahin", "na", "haan", "ji", "acha", "accha", "theek", "sahi",
     "galat", "zyada", "kam", "bahut", "thoda", "abhi", "bad", "baad", "pehle",
     "karna", "karenge", "kar", "karo", "karein", "bolna", "bolo", "bolenge",
-    "shaadi", "vivah", "naukri", "job", "paisa", "paise", "dhan", "ghar",
+    "shaadi", "shadi", "vivah", "naukri", "nokri", "paisa", "paise", "dhan", "ghar",
     "parivar", "bhai", "behen", "dost", "dosti", "dushman",
-    "kundli", "rashi", "nakshatra", "dasha", "graha", "dosh", "yog", "yoga",
-    "bhagya", "kismat", "naseeb", "karm", "punya",
+    "kundli", "rashi", "nakshatra", "dasha", "graha", "dosh", "yog",
+    "bhagya", "kismat", "naseeb", "karm", "punya", "pyaar", "pyar", "ishq",
+    # NOTE: deliberately NOT including "job" or "yoga" here — both are
+    # common standalone English words (job hunting, doing yoga), so
+    # including them was misdetecting plain English questions as Hinglish
+    # (e.g. "will I get a job this year" -> wrongly tagged hinglish).
+}
+
+# Romanized markers for every OTHER supported regional language — same idea
+# as Hinglish (Hindi-in-Roman-letters), so a question written as "Tanglish"
+# (Tamil), "Manglish" (Malayalam), "Tenglish" (Telugu), etc. is recognized
+# as that language rather than silently falling through to English just
+# because it has no native-script characters. Best-effort common-word
+# lists (question words, pronouns, high-frequency verbs/nouns) — not
+# exhaustive; extend as real user queries reveal gaps, same as Hinglish.
+_TANGLISH_MARKERS = {  # Tamil
+    "enna", "eppo", "eppadi", "epdi", "yen", "yaaru", "evlo", "venum", "vendam",
+    "irukku", "iruku", "illai", "illa", "nalla", "romba", "konjam",
+    "kalyanam", "thirumanam", "velai", "vela", "kadhal", "kaadhal",
+    "panam", "udhavi", "enaku", "ennaku", "unaku", "naan", "nee", "neenga",
+    "sari", "seri", "aama", "illaye",
+}
+_TENGLISH_MARKERS = {  # Telugu
+    "enti", "eppudu", "enduku", "ela", "evaru", "entha", "kavali", "vaddu",
+    "undi", "ledu", "manchi", "chala", "koncham",
+    "pelli", "udyogam", "pani", "prema",
+    "dabbu", "sahayam", "naaku", "neeku", "nenu", "nuvvu", "meeru",
+    "ento", "avunu", "kadu",
+}
+_KANGLISH_MARKERS = {  # Kannada
+    "enu", "yavaga", "yake", "hege", "yaaru", "estu", "beku", "beda",
+    "ide", "illa", "chennagi", "tumba", "swalpa",
+    "maduve", "mduve", "kelasa", "kelsa", "preethi", "preeti",
+    "hana", "sahaya", "nanage", "ninage", "naanu", "neenu", "neevu",
+    "houdu", "alla",
+}
+_MANGLISH_MARKERS = {  # Malayalam
+    "enthu", "entha", "ente", "eppo", "eppol", "enthinu", "engane", "ethra",
+    "venam", "venda", "undu", "und", "illa", "nalla", "valare", "kurachu",
+    "kalyanam", "vivaham", "nadakum", "joli", "panam", "premam", "sahayam",
+    "enikku", "ninakku", "njan", "nee", "ningal",
+    "aano", "alla",
+}
+_BANGLISH_MARKERS = {  # Bengali
+    "ki", "kobe", "keno", "kivabe", "kemne", "koto", "chai", "lagbe",
+    "ache", "nei", "bhalo", "khub", "ektu",
+    "biye", "biyer", "chakri", "bhalobasha", "bhalobasa",
+    "taka", "sahajjo", "amar", "tomar", "ami", "tumi", "apni",
+    "hae",
+}
+_GUJLISH_MARKERS = {  # Gujarati
+    "shu", "kyare", "kem", "kon", "ketla", "joiye",
+    "chhe", "nathi", "saru", "khub", "thodu",
+    "lagna", "kaam", "prem", "madad",
+    "mane", "tane", "hu", "tame", "amaru", "maru",
+    "haa",
+}
+_MARLISH_MARKERS = {  # Marathi
+    "kay", "kadhi", "kasa", "kiti", "pahije", "nako",
+    "ahe", "changla", "khup", "thoda",
+    "lagna", "kaam", "prem", "madat",
+    "mala", "tula", "mi", "tumhi", "majha", "tujha",
+}
+_PUNGLISH_MARKERS = {  # Punjabi
+    "ki", "kado", "kadon", "kiven", "kaun", "kinna", "chahida",
+    "hai", "changa", "bahut", "thoda",
+    "viah", "vyah", "kamm", "pyar", "madad",
+    "mainu", "tainu", "main", "tussi", "mera", "tera",
+    "haan",
+}
+_ODIALISH_MARKERS = {  # Odia
+    "kana", "kebe", "kahinki", "kemiti", "kie", "keteka", "darkar",
+    "achi", "nahin", "bhala", "khub",
+    "bibaha", "chakiri", "kama", "prema", "sahajya",
+    "mote", "tumaku", "mu", "tume", "mora", "tuma",
+}
+
+# Code -> marker set, in detection priority order (checked together;
+# whichever language's markers have the most hits in the message wins).
+_ROMAN_LANG_MARKER_SETS = {
+    "hinglish": _HINGLISH_MARKERS,
+    "tanglish": _TANGLISH_MARKERS,
+    "tenglish": _TENGLISH_MARKERS,
+    "kanglish": _KANGLISH_MARKERS,
+    "manglish": _MANGLISH_MARKERS,
+    "banglish": _BANGLISH_MARKERS,
+    "gujlish": _GUJLISH_MARKERS,
+    "marlish": _MARLISH_MARKERS,
+    "punglish": _PUNGLISH_MARKERS,
+    "odialish": _ODIALISH_MARKERS,
 }
 
 
 def detect_language(text: str, default: str = "english") -> str:
-    """Detect language from text. Returns one of: english, hindi, hinglish,
-    bengali, tamil, telugu, kannada, gujarati, punjabi, malayalam, odia."""
+    """Detect language from text. Returns one of: english, hindi, or a
+    native-script/romanized pair for each of the 9 other supported
+    languages (e.g. tamil/tanglish, malayalam/manglish, bengali/banglish,
+    telugu/tenglish, kannada/kanglish, gujarati/gujlish, marathi/marlish,
+    punjabi/punglish, odia/odialish) — romanized text is matched by
+    common-word markers so a question written in Roman letters gets
+    recognized as that language instead of defaulting to English."""
     if not text:
         return default
     # 1. Check each char against Unicode script ranges (first match wins)
@@ -220,10 +314,14 @@ def detect_language(text: str, default: str = "english") -> str:
         for start, end, lang in _UNICODE_RANGES:
             if start <= code <= end:
                 return lang
-    # 2. Pure Roman script — check Hinglish markers
+    # 2. Pure Roman script — score against every language's romanized
+    # marker set; the best match wins (so a question with more Tamil
+    # words than Hindi words is correctly tagged Tanglish, not Hinglish).
     words = {w.lower().strip(".,!?\"';:()") for w in text.split()}
-    if words & _HINGLISH_MARKERS:
-        return "hinglish"
+    scores = {lang: len(words & markers) for lang, markers in _ROMAN_LANG_MARKER_SETS.items()}
+    best_lang = max(scores, key=scores.get)
+    if scores[best_lang] > 0:
+        return best_lang
     return "english"
 
 
@@ -231,15 +329,15 @@ _LANGUAGE_NAME_TO_CODE = {
     "english": "english",
     "hindi": "hindi",
     "hinglish": "hinglish",
-    "bengali": "bengali", "bangla": "bengali",
-    "tamil": "tamil",
-    "telugu": "telugu",
-    "kannada": "kannada",
-    "malayalam": "malayalam",
-    "gujarati": "gujarati",
-    "marathi": "marathi",
-    "punjabi": "punjabi",
-    "odia": "odia", "oriya": "odia",
+    "bengali": "bengali", "bangla": "bengali", "banglish": "banglish", "benglish": "banglish",
+    "tamil": "tamil", "tanglish": "tanglish",
+    "telugu": "telugu", "tenglish": "tenglish",
+    "kannada": "kannada", "kanglish": "kanglish",
+    "malayalam": "malayalam", "manglish": "manglish",
+    "gujarati": "gujarati", "gujlish": "gujlish",
+    "marathi": "marathi", "marlish": "marlish",
+    "punjabi": "punjabi", "punglish": "punglish", "punjlish": "punglish",
+    "odia": "odia", "oriya": "odia", "odialish": "odialish",
 }
 _LANG_NAMES_RX_PART = "|".join(_LANGUAGE_NAME_TO_CODE.keys())
 # An explicit in-message request to answer in a specific language — "give
@@ -307,6 +405,19 @@ _LANGUAGE_INSTRUCTIONS = {
     "marathi":    "Respond in Marathi (Devanagari/देवनागरी script). Use proper Marathi throughout.",
     "punjabi":    "Respond in Punjabi (Gurmukhi/ਗੁਰਮੁਖੀ script). Use proper Punjabi throughout.",
     "odia":       "Respond in Odia (ଓଡ଼ିଆ script). Use proper Odia throughout.",
+    # Romanized siblings — same idea as Hinglish: that language's own
+    # words, spelled in Roman/English letters, mixed with English, not
+    # the native script. Best-effort example sentences — not
+    # native-speaker verified; treat as a starting point to refine.
+    "tanglish":  "Respond in Tanglish (Tamil words in Roman/English script, mixed with English). Example: 'Unga kundli-la Jupiter romba strong-a irukku. Kalyana yogam October varaikum activate aagum.'",
+    "tenglish":  "Respond in Tenglish (Telugu words in Roman/English script, mixed with English). Example: 'Mee kundli lo Jupiter chala strong ga undi. Pelli yogam October varaku activate avutundi.'",
+    "kanglish":  "Respond in Kanglish (Kannada words in Roman/English script, mixed with English). Example: 'Nim kundli nalli Jupiter tumba strong ide. Maduve yoga October varige activate aagutte.'",
+    "manglish":  "Respond in Manglish (Malayalam words in Roman/English script, mixed with English). Example: 'Ningalude kundli il Jupiter valare strong aanu. Kalyana yogam October vare activate aakum.'",
+    "banglish":  "Respond in Banglish (Bengali words in Roman/English script, mixed with English). Example: 'Apnar kundli te Jupiter khub strong ache. Biyer yog October porjonto activate hobe.'",
+    "gujlish":   "Respond in Gujlish (Gujarati words in Roman/English script, mixed with English). Example: 'Tamara kundli ma Jupiter khub strong chhe. Lagna yog October sudhi activate thashe.'",
+    "marlish":   "Respond in Marlish (Marathi words in Roman/English script, mixed with English). Example: 'Tumchya kundli madhe Jupiter khup strong ahe. Lagna yog October paryant activate hoil.'",
+    "punglish":  "Respond in Punglish (Punjabi words in Roman/English script, mixed with English). Example: 'Tuhadi kundli vich Jupiter bahut strong hai. Viah da yog October tak activate hovega.'",
+    "odialish":  "Respond in Odialish (Odia words in Roman/English script, mixed with English). Example: 'Apanka kundli re Jupiter khub strong achi. Bibaha yog October paryanta activate heba.'",
 }
 
 
