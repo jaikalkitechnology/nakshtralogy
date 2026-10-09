@@ -43,7 +43,7 @@ from app.agent.llm_service import (
     detect_language,
     detect_explicit_language_request,
     detect_bare_language_switch,
-    FOLLOWUPS_MARKER,
+    _FOLLOWUPS_LOOSE_RX,
 )
 
 logger = logging.getLogger("ws_agent")
@@ -238,6 +238,82 @@ def _off_topic_redirect(query: str, chat_engine_key: str) -> str | None:
         return None
     target_label = DOMAINS.get(detected_domain, {}).get("label", detected_domain)
     return f"I'm not the right agent for this — please ask the {target_label} agent."
+
+
+# Basic personal-info questions ("what is my name?", "when was I born?")
+# have nothing to do with astrology and already have a 100%-certain
+# answer sitting right in the chart row — but with 10k+ chars of chart
+# context ahead of the question in the prompt, an 8B model can lose
+# track of a short factual question entirely and free-associate with
+# the astrology data instead (observed directly: "what is my name?" got
+# a reply about Raj Yoga and Saturn, never mentioning the name at all).
+# Answering these deterministically from the DB is both more reliable
+# (zero hallucination risk) and instant — same reasoning as the
+# smalltalk/gibberish short-circuits above.
+_ASK_NAME_RE = re.compile(
+    r"\b(what'?s?\s*is\s*my\s*name|what'?s\s*my\s*name|who\s*am\s*i|mera\s*naam\s*kya\s*hai|naam\s*kya\s*hai|naam\s*batao)\b",
+    re.IGNORECASE,
+)
+_ASK_DOB_RE = re.compile(
+    r"\b(my\s*(date\s*of\s*birth|dob|birth\s*date|birthday)|when\s*was\s*i\s*born|mera\s*janam\s*kab\s*hua|meri\s*janam\s*tithi)\b",
+    re.IGNORECASE,
+)
+_ASK_TOB_RE = re.compile(
+    r"\b(what\s*time\s*was\s*i\s*born|my\s*birth\s*time|kitne\s*baje\s*janam)\b",
+    re.IGNORECASE,
+)
+_ASK_PLACE_RE = re.compile(
+    r"\b(where\s*was\s*i\s*born|my\s*birth\s*place|my\s*birthplace|kahan\s*janam\s*hua)\b",
+    re.IGNORECASE,
+)
+
+_PERSONAL_INFO_TEMPLATES = {
+    "name": {
+        "english": "Your name is {v}.", "hindi": "आपका नाम {v} है।", "hinglish": "Aapka naam {v} hai.",
+        "bengali": "আপনার নাম {v}।", "tamil": "உங்கள் பெயர் {v}.", "telugu": "మీ పేరు {v}.",
+        "kannada": "ನಿಮ್ಮ ಹೆಸರು {v}.", "malayalam": "നിങ്ങളുടെ പേര് {v} ആണ്.",
+        "gujarati": "તમારું નામ {v} છે.", "marathi": "तुमचे नाव {v} आहे.",
+        "punjabi": "ਤੁਹਾਡਾ ਨਾਮ {v} ਹੈ।", "odia": "ଆପଣଙ୍କ ନାମ {v}।",
+    },
+    "dob": {
+        "english": "Your date of birth is {v}.", "hindi": "आपकी जन्म तिथि {v} है।", "hinglish": "Aapki date of birth {v} hai.",
+        "bengali": "আপনার জন্ম তারিখ {v}।", "tamil": "உங்கள் பிறந்த தேதி {v}.", "telugu": "మీ పుట్టిన తేదీ {v}.",
+        "kannada": "ನಿಮ್ಮ ಹುಟ್ಟಿದ ದಿನಾಂಕ {v}.", "malayalam": "നിങ്ങളുടെ ജനനത്തീയതി {v} ആണ്.",
+        "gujarati": "તમારી જન્મ તારીખ {v} છે.", "marathi": "तुमची जन्मतारीख {v} आहे.",
+        "punjabi": "ਤੁਹਾਡੀ ਜਨਮ ਮਿਤੀ {v} ਹੈ।", "odia": "ଆପଣଙ୍କ ଜନ୍ମ ତାରିଖ {v}।",
+    },
+    "tob": {
+        "english": "You were born at {v}.", "hindi": "आपका जन्म {v} बजे हुआ था।", "hinglish": "Aapka janam {v} baje hua tha.",
+        "bengali": "আপনার জন্ম হয়েছিল {v} টায়।", "tamil": "நீங்கள் {v} மணிக்கு பிறந்தீர்கள்.", "telugu": "మీరు {v} గంటలకు జన్మించారు.",
+        "kannada": "ನೀವು {v} ಗಂಟೆಗೆ ಜನಿಸಿದಿರಿ.", "malayalam": "നിങ്ങൾ {v} മണിക്ക് ജനിച്ചു.",
+        "gujarati": "તમારો જન્મ {v} વાગ્યે થયો હતો.", "marathi": "तुमचा जन्म {v} वाजता झाला.",
+        "punjabi": "ਤੁਹਾਡਾ ਜਨਮ {v} ਵਜੇ ਹੋਇਆ ਸੀ।", "odia": "ଆପଣ {v} ଟାରେ ଜନ୍ମ ହୋଇଥିଲେ।",
+    },
+    "place": {
+        "english": "You were born in {v}.", "hindi": "आपका जन्म {v} में हुआ था।", "hinglish": "Aapka janam {v} mein hua tha.",
+        "bengali": "আপনার জন্ম হয়েছিল {v}-এ।", "tamil": "நீங்கள் {v}-ல் பிறந்தீர்கள்.", "telugu": "మీరు {v}లో జన్మించారు.",
+        "kannada": "ನೀವು {v} ನಲ್ಲಿ ಜನಿಸಿದಿರಿ.", "malayalam": "നിങ്ങൾ {v}-ൽ ജനിച്ചു.",
+        "gujarati": "તમારો જન્મ {v}માં થયો હતો.", "marathi": "तुमचा जन्म {v} येथे झाला.",
+        "punjabi": "ਤੁਹਾਡਾ ਜਨਮ {v} ਵਿੱਚ ਹੋਇਆ ਸੀ।", "odia": "ଆପଣ {v} ରେ ଜନ୍ମ ହୋଇଥିଲେ।",
+    },
+}
+
+
+def _personal_info_reply(query: str, chart: "Chart", language: str) -> str | None:
+    if _ASK_NAME_RE.search(query):
+        field, value = "name", chart.name
+    elif _ASK_DOB_RE.search(query):
+        field, value = "dob", chart.dob
+    elif _ASK_TOB_RE.search(query):
+        field, value = "tob", chart.tob
+    elif _ASK_PLACE_RE.search(query):
+        field, value = "place", chart.place
+    else:
+        return None
+    if not value:
+        return None
+    template = _PERSONAL_INFO_TEMPLATES[field].get(language, _PERSONAL_INFO_TEMPLATES[field]["english"])
+    return template.format(v=value)
 
 
 # Short, friendly "thinking" captions streamed to the client WHILE the
@@ -666,9 +742,13 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                         smalltalk_text = _CLARIFY_REPLY.get(smalltalk_lang, _CLARIFY_REPLY["english"])
                         smalltalk_routing = "gibberish_clarify"
                     else:
-                        smalltalk_text = _off_topic_redirect(query, chat.engine_key)
+                        smalltalk_text = _personal_info_reply(query, chart, smalltalk_lang)
                         if smalltalk_text is not None:
-                            smalltalk_routing = "off_topic_redirect"
+                            smalltalk_routing = "personal_info"
+                        else:
+                            smalltalk_text = _off_topic_redirect(query, chat.engine_key)
+                            if smalltalk_text is not None:
+                                smalltalk_routing = "off_topic_redirect"
                 if smalltalk_text is not None:
                     import uuid as _uuid
                     smalltalk_message_id = str(_uuid.uuid4())
@@ -983,8 +1063,9 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 full_response = "".join(collected_tokens)
                 followups = []
                 main_answer = full_response
-                if FOLLOWUPS_MARKER in full_response:
-                    main_answer, tail = full_response.split(FOLLOWUPS_MARKER, 1)
+                _fm = _FOLLOWUPS_LOOSE_RX.search(full_response)
+                if _fm:
+                    main_answer, tail = full_response[:_fm.start()], full_response[_fm.end():]
                     for line in tail.strip().split("\n"):
                         line = line.strip().lstrip("-•* ").lstrip()
                         if line.upper().startswith("Q:"):

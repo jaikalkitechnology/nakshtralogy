@@ -19,6 +19,14 @@ from app.agent.classical_citations import get_citations_for, format_citations_fo
 # that function), and ws_agent.py's post-stream split can never drift
 # out of sync with each other.
 FOLLOWUPS_MARKER = "---FOLLOWUPS---"
+# Lenient match for the same marker — the model is instructed to write
+# FOLLOWUPS_MARKER exactly, but doesn't always (observed in production:
+# "---\n\nFOLLOWUPS" instead of "---FOLLOWUPS---"). Used instead of a
+# plain substring match wherever the marker needs to be found/stripped,
+# so a near-miss still gets caught instead of leaking into the visible
+# answer. Matches 2+ dashes, optional whitespace, "FOLLOWUPS"
+# (case-insensitive), optional trailing dashes.
+_FOLLOWUPS_LOOSE_RX = re.compile(r"-{2,}\s*FOLLOWUPS\s*-{0,}", re.IGNORECASE)
 
 # ═══════════════════════════════════════════════════════════════════
 # D-CHART RELEVANCE BY DOMAIN
@@ -1044,9 +1052,11 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
     skip_followups = (urgency == "crisis")
     followup_rule = (
         "" if skip_followups else
-        f" After your answer, on a new line write exactly {FOLLOWUPS_MARKER} and then exactly 3 short "
-        "follow-up questions the user might ask next (each on its own line, under 60 chars, relevant "
-        "to this chart, formatted as 'Q: ...')."
+        f" After your answer, on its own new line write this exact literal text and nothing else on "
+        f"that line: {FOLLOWUPS_MARKER} — no extra dashes, no blank line before it, no variation of "
+        f"this text; copy it character-for-character. Then on the following lines write exactly 3 "
+        "short follow-up questions the user might ask next (each on its own line, under 60 chars, "
+        "relevant to this chart, formatted as 'Q: ...')."
     )
 
     if topic_locked:
@@ -1184,10 +1194,17 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
 
                 got_any = False
                 marker_found = False
-                # Text held back because it might be the start of
-                # FOLLOWUPS_MARKER — can't know until enough more text has
+                # Text held back because it might be the start of the
+                # follow-ups marker — can't know until enough more text has
                 # arrived to either complete the match or rule it out.
+                # Matched leniently (not the exact FOLLOWUPS_MARKER string)
+                # because the model doesn't always write it character-for-
+                # character despite being told to — observed in production:
+                # "---\n\nFOLLOWUPS" instead of "---FOLLOWUPS---". Missing
+                # that would leak the whole follow-ups block into the
+                # visible answer, which the exact-match version did.
                 pending = ""
+                _FOLLOWUPS_HOLD_BACK = 24
                 async for line in stream.aiter_lines():
                     if not line.strip():
                         continue
@@ -1214,8 +1231,8 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                             token_collector.append(text)
                         if not marker_found:
                             pending += text
-                            idx = pending.find(FOLLOWUPS_MARKER)
-                            if idx != -1:
+                            m = _FOLLOWUPS_LOOSE_RX.search(pending)
+                            if m:
                                 # Found it — everything from here on is
                                 # follow-up content; the client never sees
                                 # the marker or anything after it as a
@@ -1224,7 +1241,7 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                                 # this makes it structurally impossible to
                                 # leak regardless of the client build).
                                 marker_found = True
-                                safe = pending[:idx]
+                                safe = pending[:m.start()]
                                 pending = ""
                                 if safe:
                                     ok = await _send({"type": "token", "text": safe})
@@ -1234,10 +1251,9 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                             else:
                                 # Flush everything except a tail short enough
                                 # to still possibly be an in-progress match.
-                                hold_back = len(FOLLOWUPS_MARKER) - 1
-                                if len(pending) > hold_back:
-                                    safe = pending[:-hold_back]
-                                    pending = pending[-hold_back:]
+                                if len(pending) > _FOLLOWUPS_HOLD_BACK:
+                                    safe = pending[:-_FOLLOWUPS_HOLD_BACK]
+                                    pending = pending[-_FOLLOWUPS_HOLD_BACK:]
                                     ok = await _send({"type": "token", "text": safe})
                                     if ok is False:
                                         logger.info("Client disconnected mid-stream (ollama)")
