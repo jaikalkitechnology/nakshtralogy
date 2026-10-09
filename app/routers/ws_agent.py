@@ -284,14 +284,18 @@ def _stage_text(key: str, language: str) -> str:
     return bucket.get(language, bucket.get("english", ""))
 
 
-def _trace(pipeline: list, step: str, label: str, **detail) -> None:
+def _trace(pipeline: list, step: str, step_label: str, **detail) -> None:
     """Append one stage to a turn's pipeline trace — shown in the admin
     panel's AI Chat Logs detail view so a real question can be followed
     step by step: language resolved -> intent/probability detected ->
     kundli context pulled -> template checked -> LLM called -> answer
     written to the DB. `detail` is whatever's useful to see for that step;
-    kept small since the whole trace is serialized into one DB column."""
-    pipeline.append({"step": step, "label": label, "detail": detail})
+    kept small since the whole trace is serialized into one DB column.
+    NOTE: the third positional arg is named `step_label` (not `label`) on
+    purpose — several call sites pass a `label=...` detail kwarg (e.g. the
+    domain's display label), which would collide with a parameter named
+    `label` and raise "got multiple values for argument 'label'"."""
+    pipeline.append({"step": step, "label": step_label, "detail": detail})
 
 
 _chart_cache: dict = {}
