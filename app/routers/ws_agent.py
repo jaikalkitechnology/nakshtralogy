@@ -381,6 +381,20 @@ def _trace(pipeline: list, step: str, step_label: str, **detail) -> None:
     pipeline.append({"step": step, "label": step_label, "detail": detail})
 
 
+# Response-length budget (Ollama's num_predict, i.e. max output tokens),
+# tiered by the intent-detected response_depth — see engine.py's depth
+# scoring. "explicit_detailed" (an explicit "give me full/complete
+# detail" request) gets the full 3000-token ceiling; every other tier
+# stays small so a normal short question doesn't pay for a budget it
+# never uses. llm_service._stream_ollama scales num_ctx to match
+# whichever of these is actually requested.
+_NUM_PREDICT_BY_DEPTH = {
+    "brief": 150,
+    "moderate": 300,
+    "detailed": 700,
+    "explicit_detailed": 3000,
+}
+
 _chart_cache: dict = {}
 _CACHE_MAX = 30
 
@@ -1045,11 +1059,16 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 log_status = "success"
                 log_error = None
                 log_http = None
-                # User explicitly asked for a long/detailed answer — give the
-                # model real room to write one instead of being cut off by the
-                # normal short-answer token budget (see engine.py
-                # _EXPLICIT_DETAIL_RX / llm_service.py's matching length_rule).
-                num_predict_override = 900 if (result.get("intent") or {}).get("response_depth") == "explicit_detailed" else None
+                # Response length budget, tiered by the intent-detected
+                # response_depth (see engine.py's depth scoring /
+                # _EXPLICIT_DETAIL_RX and llm_service.py's matching
+                # length_rule) — scales up to a hard ceiling of 3000 tokens
+                # only for an explicit "give me full detail" request, not
+                # applied by default to every message (num_ctx below scales
+                # with it so the larger budget actually has room to use).
+                num_predict_override = _NUM_PREDICT_BY_DEPTH.get(
+                    (result.get("intent") or {}).get("response_depth"), _NUM_PREDICT_BY_DEPTH["moderate"],
+                )
                 try:
                     await stream_provider(provider_key, messages, websocket, token_collector=collected_tokens, num_predict=num_predict_override)
                     # Check if tokens contain error markers

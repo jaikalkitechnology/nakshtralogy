@@ -562,6 +562,16 @@ RULES:
   Mahamrityunjaya), gemstones, fasting days, charity, color therapy
 - Never promise exact dates or guaranteed outcomes — speak in terms of favorable windows
 - Be empathetic even for challenging readings — every chart has strengths
+- Open with something that feels personal and specific to THEM — name an actual placement or
+  factor from their own chart in the first sentence, not a generic opener like "Great question!"
+  or "Let's look at your chart." The first line should feel like it could only be about this
+  one person, not copy-pasteable to anyone else's reading.
+- One tasteful, relevant emoji is welcome — to open the response or punctuate a key line (💼 for
+  career, ❤️ for love, 🌙 for a Moon-led point, etc.) — used sparingly, never more than one or two,
+  never as a decorative list.
+- End with warmth, not a hard stop — a closing line that leaves the conversation feeling open and
+  alive rather than a finished transaction. Never vague or clickbait-y ("you won't believe..."); a
+  genuine, specific note of encouragement or quiet anticipation is enough.
 - If the question is NOT related to astrology/life/career/health/relationships/spirituality, politely redirect and suggest 3 astrology questions based on the user's chart data."""
 
 
@@ -1105,7 +1115,12 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
         f'like a knowledgeable friend would, with no forced astrology references. {length_rule} When '
         f'the chart IS relevant, pick the ONE detail that best explains your answer, and explain it in '
         f'warm, plain language a complete beginner would understand — do not just name technical terms, '
-        f'briefly say what they mean. Never repeat the same point twice. Use plain prose only — no '
+        f'briefly say what they mean. Never repeat the same point twice. Open with one specific detail '
+        f'from their own chart, never a generic opener like "Great question!" — the first line should '
+        f'feel like it could only be about this one person. Close with a warm, genuine note that keeps '
+        f'the conversation feeling alive, not a flat stop. One relevant emoji (e.g. 💼❤️🌙) is welcome '
+        f'to open or punctuate the reply, used sparingly — never a decorative list of emoji. Use plain '
+        f'prose only — no '
         f'markdown, no bullet points, no numbered lists. For any remedy you mention, use ONLY entries '
         f'from the REMEDY LIBRARY above; never invent mantras, gemstone names, or rituals, and leave '
         f'remedies out entirely if none in the library fit.{health_disclaimer}{mental_disclaimer}'
@@ -1174,10 +1189,13 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                     "options": {
                         "temperature": 0.7,
                         # A longer requested answer needs more context headroom too —
-                        # the default 2048 is sized for the normal short-answer case
-                        # and may not leave enough room for a 10-15 sentence reply on
-                        # top of the (large) chart-context prompt.
-                        "num_ctx": 4096 if num_predict else 2048,
+                        # the default 2048 is sized for the normal short-answer case.
+                        # A real chart-context prompt alone is commonly 4000+ tokens
+                        # (confirmed: a full prompt with the specialist report
+                        # included runs ~13-15K chars, ~3.5-4K tokens), so the
+                        # explicit_detailed tier's 3000-token response budget needs
+                        # real headroom on top of that, not just a flat bump.
+                        "num_ctx": 8192 if (num_predict or 0) >= 1500 else (4096 if num_predict else 2048),
                         "num_predict": num_predict or 300,  # Hard ceiling backing up the "be short" prompt rules
                         # Ollama's own default (1.1) wasn't enough to stop the
                         # model degenerating into an exact-phrase repetition
