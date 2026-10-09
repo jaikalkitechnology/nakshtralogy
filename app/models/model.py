@@ -733,6 +733,14 @@ class AIChat(Base):
     # plus "daily_forecast", or NULL for a general/unscoped chat.
     engine_key = Column(String(40), nullable=True, index=True)
     language = Column(String(20), nullable=True)
+    # True only when `language` was set by a deliberate choice — an
+    # in-text request ("give me in hindi") or a non-auto dropdown pick —
+    # as opposed to just being carried over from auto-detecting an
+    # earlier message's script. Only an explicit choice should override
+    # later turns; a merely auto-detected language must never "stick" and
+    # silently override later messages that are actually written in a
+    # different script/style (see ws_agent.py's language resolution).
+    language_explicit = Column(Boolean, default=False, nullable=True)
     model_used = Column(String(50), default="qwen3:8b")
     total_tokens = Column(Integer, default=0)
     cost_inr = Column(Numeric(10, 4), default=0.00)

@@ -263,10 +263,10 @@ _GUJLISH_MARKERS = {  # Gujarati
     "haa",
 }
 _MARLISH_MARKERS = {  # Marathi
-    "kay", "kadhi", "kasa", "kiti", "pahije", "nako",
-    "ahe", "changla", "khup", "thoda",
-    "lagna", "kaam", "prem", "madat",
-    "mala", "tula", "mi", "tumhi", "majha", "tujha",
+    "kay", "kaye", "kadhi", "kasa", "kiti", "pahije", "nako",
+    "ahe", "aahe", "changla", "khup", "thoda",
+    "lagna", "kaam", "prem", "madat", "nav", "naav",
+    "mala", "tula", "mi", "tumhi", "majha", "maza", "mzaa", "tujha",
 }
 _PUNGLISH_MARKERS = {  # Punjabi
     "ki", "kado", "kadon", "kiven", "kaun", "kinna", "chahida",
@@ -1157,6 +1157,18 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                         # top of the (large) chart-context prompt.
                         "num_ctx": 4096 if num_predict else 2048,
                         "num_predict": num_predict or 300,  # Hard ceiling backing up the "be short" prompt rules
+                        # Ollama's own default (1.1) wasn't enough to stop the
+                        # model degenerating into an exact-phrase repetition
+                        # loop (observed on romanized-regional-language
+                        # replies — e.g. the same Malayalam/Manglish clause
+                        # repeated a dozen times until num_predict cut it
+                        # off) — a harder-to-trigger task for an 8B model
+                        # than plain English/Hindi. A stronger penalty over
+                        # a longer lookback window makes that loop much
+                        # less likely without noticeably hurting normal
+                        # answers.
+                        "repeat_penalty": 1.3,
+                        "repeat_last_n": 256,
                     },
                 },
             ) as stream:
@@ -1273,7 +1285,7 @@ async def generate_llm_response(
                     ],
                     "stream": False,
                     "think": False,
-                    "options": {"temperature": 0.7, "num_predict": 300, "num_ctx": 2048},
+                    "options": {"temperature": 0.7, "num_predict": 300, "num_ctx": 2048, "repeat_penalty": 1.3, "repeat_last_n": 256},
                 },
             )
             if resp.status_code == 200:
