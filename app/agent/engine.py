@@ -374,16 +374,10 @@ _SPECIFIC_TIME_PATTERNS = [
     re.compile(r'\b(january|february|march|april|may|june|july|august|september|october|november|december)\b', re.IGNORECASE),
 ]
 
-_HINGLISH_MARKERS = {
-    "kya","kab","kb","kyun","kyu","kaise","kaisi","kaisa","kahan","kaha","kaun","kitna","kitne","kitni",
-    "hoga","hogi","honge","milega","milegi","milenge","chahiye","karu","karoon","kardo",
-    "mera","meri","mere","mujhe","muje","mujhko","tumhara","hamara","uska","unka",
-    "upay","naukri","nokri","shaadi","shadi","vivah","pyaar","pyar","ishq",
-    "dhan","paisa","paise","kismat","bhagya","vyapar","vyapaar",
-    "ghar","zameen","zamin","karz","karza","bimari","beemari",
-    "achha","theek","sahi","galat","zindagi","jivan","hai","nahi","nahin",
-}
-_HINGLISH_RX = _compile_bounded(_HINGLISH_MARKERS)
+# NOTE: Hinglish/regional-romanized-language marker detection used to be
+# duplicated here; it's now delegated to llm_service.detect_language()
+# (see the LANGUAGE PREFERENCE section below) so there's a single source
+# of truth instead of two marker lists that can drift out of sync.
 
 # Explicit request for a longer/more detailed answer ("give me in long
 # details", "explain in detail", "tell me everything", "elaborate"...) —
@@ -523,24 +517,23 @@ def detect_intent(query: str, user_language: Optional[str] = None) -> dict:
         response_depth = "explicit_detailed"
 
     # ═══ 8. LANGUAGE PREFERENCE (actual script/wording of THIS message wins) ═══
-    # `user_language` is the chat's resolved reply-language (often just a
-    # sticky default carried over from an earlier message, or the UI
-    # dropdown's current pick) — it says what language the ANSWER should
-    # come back in, not what language this particular question is written
-    # in. Trusting it here meant a Hinglish question asked inside an
-    # English-default chat always got tagged language_preference="english"
-    # in the intent (and the admin logs), even though the actual text was
-    # clearly Hinglish. Real script/wording detection on the query itself
-    # always wins now; `user_language` is only a fallback for genuinely
-    # ambiguous text with no Devanagari and no recognized Hinglish words.
-    if any('ऀ' <= c <= 'ॿ' for c in query):
-        language_preference = "hindi"
-    elif _HINGLISH_RX and _HINGLISH_RX.search(q_lower):
-        language_preference = "hinglish"
-    elif user_language in ("english", "hindi", "hinglish"):
-        language_preference = user_language
-    else:
-        language_preference = "english"
+    # Delegates to llm_service.detect_language() — the SAME function that
+    # actually decides what language the reply comes back in — instead of
+    # maintaining a second, separate Hindi/Hinglish-only detector here.
+    # Keeping two copies is exactly what caused this field to drift out of
+    # sync earlier: a fix to one (e.g. adding "kb"/"pyar" as Hinglish
+    # markers) didn't carry over to the other, so this log-only field kept
+    # showing "english" for a query that was actually Hinglish, Manglish,
+    # Tanglish, etc. even after the real reply language was already fixed.
+    # detect_language() always resolves to a concrete code for non-empty
+    # text (falling back to "english" itself when nothing matches), so
+    # `user_language` no longer has a gap left to fill here — kept as the
+    # function's own fallback only for the (practically unreachable, since
+    # callers never pass an empty query) empty-text case.
+    from app.agent.llm_service import detect_language as _detect_reply_language
+    language_preference = _detect_reply_language(
+        query, default=(user_language if user_language in ("english", "hindi", "hinglish") else "english"),
+    )
 
     # ═══ CONFIDENCE (weighted across 8 dimensions, no artificial floor) ═══
     domain_conf     = min(100, best_score * 25) if best_score > 0 else 15
