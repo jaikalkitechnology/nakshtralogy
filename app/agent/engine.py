@@ -37,7 +37,7 @@ DOMAINS = {
         "planet_weights": {"Sun":0.30,"Saturn":0.30,"Mars":0.20,"Mercury":0.20},
         "yogas": ["Raj Yoga","Dharma Karma Adhipati Yoga","Amala Yoga"],
         "doshas": ["Shani Dosh","Surya Dosh","Budh Dosh"],
-        "keywords": ["job","career","work","promotion","salary","naukri","profession","interview"],
+        "keywords": ["job","career","work","promotion","salary","naukri","nokri","naukari","profession","interview"],
     },
     "business_startup": {
         "label": "Business & Startup Specialist", "emoji": "\U0001f680",
@@ -47,7 +47,7 @@ DOMAINS = {
         "planet_weights": {"Mercury":0.30,"Jupiter":0.25,"Sun":0.20,"Mars":0.15,"Venus":0.10},
         "yogas": ["Raj Yoga","Dhan Yoga","Budhaditya Yoga","Lakshmi Yoga"],
         "doshas": ["Budh Dosh","Guru Dosh","Daridra Dosh"],
-        "keywords": ["business","startup","entrepreneur","company","profit","vyapaar"],
+        "keywords": ["business","startup","entrepreneur","company","profit","vyapaar","vyapar","vyaapar"],
     },
     "education_career": {
         "label": "Education & Career Direction", "emoji": "\U0001f393",
@@ -57,7 +57,7 @@ DOMAINS = {
         "planet_weights": {"Jupiter":0.30,"Mercury":0.30,"Moon":0.20,"Sun":0.20},
         "yogas": ["Budhaditya Yoga","Saraswati Yoga","Raj Yoga"],
         "doshas": ["Budh Dosh","Guru Dosh"],
-        "keywords": ["education","study","studies","studying","exam","college","degree","padhai","school","university"],
+        "keywords": ["education","study","studies","studying","exam","college","degree","padhai","padhayi","padhaai","school","university"],
     },
     "money_wealth": {
         "label": "Money & Wealth Specialist", "emoji": "\U0001f4b0",
@@ -67,7 +67,7 @@ DOMAINS = {
         "planet_weights": {"Jupiter":0.30,"Venus":0.25,"Mercury":0.25,"Moon":0.20},
         "yogas": ["Dhan Yoga","Lakshmi Yoga","Raj Yoga"],
         "doshas": ["Daridra Dosh","Guru Dosh"],
-        "keywords": ["money","wealth","income","rich","paisa","dhan","finance","investment"],
+        "keywords": ["money","wealth","income","rich","paisa","paise","dhan","finance","investment"],
     },
     "debt_recovery": {
         "label": "Debt & Financial Recovery", "emoji": "\U0001f4c9",
@@ -77,7 +77,7 @@ DOMAINS = {
         "planet_weights": {"Saturn":0.30,"Rahu":0.25,"Mars":0.25,"Jupiter":0.20},
         "yogas": ["Vipreet Raj Yoga","Harsha Yoga"],
         "doshas": ["Daridra Dosh","Shani Dosh","Rahu Dosh"],
-        "keywords": ["debt","loan","loss","bankrupt","karz","recovery","financial problem"],
+        "keywords": ["debt","loan","loss","bankrupt","karz","karza","qarz","recovery","financial problem"],
     },
     "love_relationship": {
         "label": "Love & Relationship Specialist", "emoji": "\u2764\ufe0f",
@@ -87,7 +87,7 @@ DOMAINS = {
         "planet_weights": {"Venus":0.35,"Moon":0.25,"Jupiter":0.20,"Mars":0.20},
         "yogas": ["Raj Yoga","Dhan Yoga"],
         "doshas": ["Mangal Dosh","Shukra Dosh"],
-        "keywords": ["love","relationship","girlfriend","boyfriend","partner","pyaar","romance"],
+        "keywords": ["love","relationship","girlfriend","boyfriend","partner","pyaar","pyar","ishq","mohabbat","romance"],
     },
     "marriage_family": {
         "label": "Marriage & Family Specialist", "emoji": "\U0001f492",
@@ -97,7 +97,7 @@ DOMAINS = {
         "planet_weights": {"Venus":0.30,"Jupiter":0.30,"Moon":0.20,"Mars":0.20},
         "yogas": ["Raj Yoga","Dhan Yoga"],
         "doshas": ["Mangal Dosh","Shukra Dosh","Guru Dosh"],
-        "keywords": ["marriage","married","shaadi","wedding","wife","husband","family","children","divorce","vivah","parivar"],
+        "keywords": ["marriage","married","shaadi","shadi","wedding","wife","husband","family","children","divorce","vivah","vivaah","parivar"],
     },
     "health_wellness": {
         "label": "Health & Wellness Specialist", "emoji": "\U0001f3e5",
@@ -107,7 +107,7 @@ DOMAINS = {
         "planet_weights": {"Sun":0.30,"Mars":0.25,"Saturn":0.25,"Moon":0.20},
         "yogas": [],
         "doshas": ["Shani Dosh","Mangal Dosh","Surya Dosh"],
-        "keywords": ["health","disease","illness","hospital","body","swasthya","bimari","doctor"],
+        "keywords": ["health","disease","illness","hospital","body","swasthya","bimari","beemari","doctor"],
     },
     "mental_stress": {
         "label": "Mental Stress & Stability", "emoji": "\U0001f9e0",
@@ -117,7 +117,7 @@ DOMAINS = {
         "planet_weights": {"Moon":0.35,"Mercury":0.25,"Ketu":0.20,"Rahu":0.20},
         "yogas": [],
         "doshas": ["Chandra Dosh","Budh Dosh","Ketu Dosh"],
-        "keywords": ["stress","anxiety","depression","mental","tension","sleep","chinta","neend"],
+        "keywords": ["stress","anxiety","depression","mental","tension","sleep","chinta","neend","tanaav","tanav"],
     },
     "property_assets": {
         "label": "Property & Assets Specialist", "emoji": "\U0001f3e0",
@@ -127,7 +127,7 @@ DOMAINS = {
         "planet_weights": {"Mars":0.30,"Venus":0.25,"Saturn":0.25,"Jupiter":0.20},
         "yogas": ["Dhan Yoga","Lakshmi Yoga"],
         "doshas": ["Mangal Dosh","Shani Dosh"],
-        "keywords": ["property","house","land","flat","real estate","ghar","zameen","plot","rent"],
+        "keywords": ["property","house","land","flat","real estate","ghar","zameen","zamin","plot","rent"],
     },
     "legal_dispute": {
         "label": "Legal & Dispute Specialist", "emoji": "\u2696\ufe0f",
@@ -137,7 +137,7 @@ DOMAINS = {
         "planet_weights": {"Saturn":0.30,"Mars":0.25,"Rahu":0.25,"Jupiter":0.20},
         "yogas": ["Vipreet Raj Yoga"],
         "doshas": ["Shrapit Dosh","Angarak Dosh","Pitra Dosh"],
-        "keywords": ["legal","court","case","dispute","lawsuit","police","kanoon","vakil"],
+        "keywords": ["legal","court","case","dispute","lawsuit","police","kanoon","kanun","vakil","wakil"],
     },
     "life_path_luck": {
         "label": "Life Path & Luck (Rajyog)", "emoji": "\U0001f31f",
@@ -147,7 +147,7 @@ DOMAINS = {
         "planet_weights": {"Jupiter":0.35,"Sun":0.30,"Moon":0.20,"Rahu":0.15},
         "yogas": ["Raj Yoga","Maha Raj Yoga","Gaj Kesari Yoga","Lakshmi Yoga"],
         "doshas": ["Kaal Sarp Dosh","Pitra Dosh","Shrapit Dosh"],
-        "keywords": ["luck","fortune","destiny","life","future","rajyog","bhagya","kismat"],
+        "keywords": ["luck","fortune","destiny","life","future","rajyog","bhagya","kismat","kismet","naseeb"],
     },
 }
 
@@ -191,7 +191,7 @@ SUB_DOMAINS = {
         "new_relationship": ["new love","fall in love","dating","romance","relationship start"],
         "relationship_status": ["current love","existing relationship","boyfriend","girlfriend"],
         "relationship_problem": ["fight","conflict","issue","break up","breakup"],
-        "future_relationship": ["future love","will i find","soulmate","true love"],
+        "future_relationship": ["future love","will i find","soulmate","true love","pyar kab milega","pyar kb milega","love kab milega","mera pyar"],
     },
     "marriage_family": {
         "marriage_timing": ["marriage when","shaadi kab","wedding date","get married","marriage year"],
@@ -374,7 +374,15 @@ _SPECIFIC_TIME_PATTERNS = [
     re.compile(r'\b(january|february|march|april|may|june|july|august|september|october|november|december)\b', re.IGNORECASE),
 ]
 
-_HINGLISH_MARKERS = {"kya","kab","kyun","upay","naukri","shaadi","pyaar","dhan","kismat","bhagya"}
+_HINGLISH_MARKERS = {
+    "kya","kab","kb","kyun","kyu","kaise","kaisi","kaisa","kahan","kaha","kaun","kitna","kitne","kitni",
+    "hoga","hogi","honge","milega","milegi","milenge","chahiye","karu","karoon","kardo",
+    "mera","meri","mere","mujhe","muje","mujhko","tumhara","hamara","uska","unka",
+    "upay","naukri","nokri","shaadi","shadi","vivah","pyaar","pyar","ishq",
+    "dhan","paisa","paise","kismat","bhagya","vyapar","vyapaar",
+    "ghar","zameen","zamin","karz","karza","bimari","beemari",
+    "achha","theek","sahi","galat","zindagi","jivan","hai","nahi","nahin",
+}
 _HINGLISH_RX = _compile_bounded(_HINGLISH_MARKERS)
 
 # Explicit request for a longer/more detailed answer ("give me in long
@@ -514,13 +522,23 @@ def detect_intent(query: str, user_language: Optional[str] = None) -> dict:
     if _EXPLICIT_DETAIL_RX.search(q_lower):
         response_depth = "explicit_detailed"
 
-    # ═══ 8. LANGUAGE PREFERENCE (UI choice wins) ═══
-    if user_language in ("english", "hindi", "hinglish"):
-        language_preference = user_language
-    elif any('ऀ' <= c <= 'ॿ' for c in query):
+    # ═══ 8. LANGUAGE PREFERENCE (actual script/wording of THIS message wins) ═══
+    # `user_language` is the chat's resolved reply-language (often just a
+    # sticky default carried over from an earlier message, or the UI
+    # dropdown's current pick) — it says what language the ANSWER should
+    # come back in, not what language this particular question is written
+    # in. Trusting it here meant a Hinglish question asked inside an
+    # English-default chat always got tagged language_preference="english"
+    # in the intent (and the admin logs), even though the actual text was
+    # clearly Hinglish. Real script/wording detection on the query itself
+    # always wins now; `user_language` is only a fallback for genuinely
+    # ambiguous text with no Devanagari and no recognized Hinglish words.
+    if any('ऀ' <= c <= 'ॿ' for c in query):
         language_preference = "hindi"
     elif _HINGLISH_RX and _HINGLISH_RX.search(q_lower):
         language_preference = "hinglish"
+    elif user_language in ("english", "hindi", "hinglish"):
+        language_preference = user_language
     else:
         language_preference = "english"
 
