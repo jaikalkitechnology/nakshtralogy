@@ -43,7 +43,7 @@ from app.agent.llm_service import (
     detect_language,
     detect_explicit_language_request,
     detect_bare_language_switch,
-    FOLLOWUPS_MARKER,
+    _FOLLOWUPS_LOOSE_RX,
 )
 
 logger = logging.getLogger("ws_agent")
@@ -238,6 +238,57 @@ def _off_topic_redirect(query: str, chat_engine_key: str) -> str | None:
         return None
     target_label = DOMAINS.get(detected_domain, {}).get("label", detected_domain)
     return f"I'm not the right agent for this — please ask the {target_label} agent."
+
+
+# Basic personal-info questions ("what is my name?", "when was I born?")
+# have nothing to do with astrology and already have a 100%-certain
+# answer sitting right in the chart row — but with 10k+ chars of chart
+# context ahead of the question in the prompt, an 8B model can lose
+# track of a short factual question entirely and free-associate with
+# the astrology data instead (observed directly: "what is my name?" got
+# a reply about Raj Yoga and Saturn, never mentioning the name at all).
+# Rather than bypass the LLM, this detects the question and hands
+# build_rich_prompt() an explicit, unambiguous hint with the correct
+# value, placed right next to the question in the FINAL INSTRUCTIONS
+# block — the LLM still generates the actual reply (so it comes out in
+# the right language, phrased naturally), it's just no longer expected
+# to find a single fact on its own inside 10K+ chars of chart data.
+_ASK_NAME_RE = re.compile(
+    r"\b(what'?s?\s*is\s*my\s*name|what'?s\s*my\s*name|who\s*am\s*i|mera\s*naam\s*kya\s*hai|naam\s*kya\s*hai|naam\s*batao)\b",
+    re.IGNORECASE,
+)
+_ASK_DOB_RE = re.compile(
+    r"\b(my\s*(date\s*of\s*birth|dob|birth\s*date|birthday)|when\s*was\s*i\s*born|mera\s*janam\s*kab\s*hua|meri\s*janam\s*tithi)\b",
+    re.IGNORECASE,
+)
+_ASK_TOB_RE = re.compile(
+    r"\b(what\s*time\s*was\s*i\s*born|my\s*birth\s*time|kitne\s*baje\s*janam)\b",
+    re.IGNORECASE,
+)
+_ASK_PLACE_RE = re.compile(
+    r"\b(where\s*was\s*i\s*born|my\s*birth\s*place|my\s*birthplace|kahan\s*janam\s*hua)\b",
+    re.IGNORECASE,
+)
+
+_PERSONAL_INFO_FIELDS = (
+    ("name", _ASK_NAME_RE, "name"),
+    ("dob", _ASK_DOB_RE, "date of birth"),
+    ("tob", _ASK_TOB_RE, "time of birth"),
+    ("place", _ASK_PLACE_RE, "place of birth"),
+)
+
+
+def _personal_info_hint(query: str, chart: "Chart") -> str | None:
+    for attr, rx, label in _PERSONAL_INFO_FIELDS:
+        if rx.search(query):
+            value = getattr(chart, attr, None)
+            if not value:
+                return None
+            return (
+                f'The user is asking for their {label}. Their {label} is exactly "{value}" — '
+                f'state this directly and clearly in your response, in your own natural words.'
+            )
+    return None
 
 
 # Short, friendly "thinking" captions streamed to the client WHILE the
@@ -666,6 +717,10 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                         smalltalk_text = _CLARIFY_REPLY.get(smalltalk_lang, _CLARIFY_REPLY["english"])
                         smalltalk_routing = "gibberish_clarify"
                     else:
+                        # Personal-info questions (name/DOB/etc.) are NOT
+                        # short-circuited — they still go through the LLM
+                        # (see personal_info_hint below) so the answer comes
+                        # out in the right language and natural phrasing.
                         smalltalk_text = _off_topic_redirect(query, chat.engine_key)
                         if smalltalk_text is not None:
                             smalltalk_routing = "off_topic_redirect"
@@ -860,7 +915,11 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     logger.info("QUESTION MATCH (no template) score=%.2f → sharpened sub=%s qtype=%s",
                                 match_info["score"], match_info.get("sub_domain"), match_info.get("question_type"))
 
-                user_prompt = build_rich_prompt(query, chart_context, intent=result.get("intent"), topic_locked=bool(chat.engine_key), language=effective_lang)
+                personal_info_hint = _personal_info_hint(query, chart)
+                user_prompt = build_rich_prompt(
+                    query, chart_context, intent=result.get("intent"), topic_locked=bool(chat.engine_key),
+                    language=effective_lang, personal_info_hint=personal_info_hint,
+                )
 
                 # Personalize system prompt with chart holder's details + detected domain
                 chart_holder = {
@@ -933,6 +992,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     pipeline, "prompt_built", "System + user prompt assembled for the LLM",
                     system_prompt_chars=len(system_prompt_text), user_prompt_chars=len(user_prompt),
                     history_turns=len(history), total_messages=len(messages), topic_locked=bool(chat.engine_key),
+                    personal_info_hint_given=bool(personal_info_hint),
                 )
 
                 logger.info("Context built in %.2fs, %d history turns, streaming via %s", time.time() - t1, len(history), provider_key)
@@ -983,8 +1043,9 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 full_response = "".join(collected_tokens)
                 followups = []
                 main_answer = full_response
-                if FOLLOWUPS_MARKER in full_response:
-                    main_answer, tail = full_response.split(FOLLOWUPS_MARKER, 1)
+                _fm = _FOLLOWUPS_LOOSE_RX.search(full_response)
+                if _fm:
+                    main_answer, tail = full_response[:_fm.start()], full_response[_fm.end():]
                     for line in tail.strip().split("\n"):
                         line = line.strip().lstrip("-•* ").lstrip()
                         if line.upper().startswith("Q:"):
