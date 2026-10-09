@@ -20,7 +20,7 @@ from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.model import Chart, User, AgentLog, AgentLogSection, AIChat, AIChatMessage
 from app.kundli import engine as nk_engine
-from app.agent.engine import NakshtraAgent, DOMAINS, detect_intent
+from app.agent.engine import NakshtraAgent, DOMAINS, detect_intent, apply_display_floor
 from app.agent.llm_service import generate_llm_response, get_available_providers
 from app.agent.specialist_bridge import CHAT_ENGINE_KEYS, EXTRA_CHAT_ENGINES, setting_key_for_chat_engine
 
@@ -656,6 +656,10 @@ async def agent_chat(
         t1 = time.time()
         result = _agent.query(req.query, pdata, birth_jd, domain_override=req.domain, user_language=req.language)
         logger.info("Agent probability in %.2fs — %s %.0f%%", time.time() - t1, result["domain"], result["probability"])
+        # Display-only floor — logged above keeps the real score; everything
+        # returned to the client (and fed into the LLM prompt below) uses
+        # the floored value so the badge and narrative stay consistent.
+        result["probability"], result["band"] = apply_display_floor(result["probability"])
 
         # Question match → sharpen intent even for REST endpoint
         try:

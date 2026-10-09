@@ -34,7 +34,7 @@ from app.core.database import SessionLocal
 from app.models.model import User, Chart, AgentLog, AgentLogSection, AIChat, AIChatMessage
 from app.kundli import engine as nk_engine
 from app.kundli.helper import NakshtraEngine
-from app.agent.engine import NakshtraAgent, DOMAINS, detect_intent
+from app.agent.engine import NakshtraAgent, DOMAINS, detect_intent, apply_display_floor
 from app.agent.specialist_bridge import resolve_chat_engine, get_specialist_summary, get_forecast_summary, DOMAIN_TO_SPECIALIST
 from app.agent.llm_service import (
     build_system_prompt,
@@ -931,6 +931,12 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     probability=result.get("probability"), band=result.get("band"),
                     intent=result.get("intent"),
                 )
+                # Display-only floor applied AFTER the true score is captured
+                # above in `pipeline` (admin trace keeps the real number).
+                # Everything downstream — the chat badge, the LLM prompt's
+                # ANALYSIS line, template text — reads this floored value so
+                # the badge and the narrative never disagree.
+                result["probability"], result["band"] = apply_display_floor(result["probability"])
 
                 effective_lang = resolved_lang
 
