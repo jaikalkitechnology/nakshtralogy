@@ -636,7 +636,7 @@ def compute_domain_probability(pdata: dict, birth_jd: float, domain: str) -> dic
 # calculated score is lower. Callers that need the true score for internal
 # use (admin pipeline trace, debugging) must read it BEFORE calling this,
 # since it does not mutate anything — it only returns what to show.
-DISPLAY_PROBABILITY_FLOOR = 70.0
+DISPLAY_PROBABILITY_FLOOR = 60.0
 
 
 def apply_display_floor(probability: float, floor: float = DISPLAY_PROBABILITY_FLOOR):
