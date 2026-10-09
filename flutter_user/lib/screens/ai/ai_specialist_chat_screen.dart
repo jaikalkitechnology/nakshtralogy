@@ -61,6 +61,10 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   String? _detectedLanguage;    // last detected language from server
   List<String> _followupSuggestions = []; // LLM-generated chips after each reply
   List<dynamic> _suggestedQuestions = []; // DB-loaded question chips per domain
+  // Short evolving "thinking" caption from the server ("Consulting your
+  // kundli…", "Preparing your answer…") shown ChatGPT-style while waiting
+  // for the first token — see the 'stage' WS message type.
+  String? _currentStage;
 
   WebSocketChannel? _ws;
   bool _wsConnected = false;
@@ -191,7 +195,10 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   void _handleWsMessage(Map<String, dynamic> msg) {
     final type = msg['type']?.toString();
 
-    if (type == 'prob') {
+    if (type == 'stage') {
+      final text = msg['text']?.toString();
+      if (text != null && text.isNotEmpty) setState(() => _currentStage = text);
+    } else if (type == 'prob') {
       final d = msg['data'] as Map<String, dynamic>? ?? {};
       final detected = d['detected_language']?.toString();
       final serverChatId = d['chat_id']?.toString();
@@ -240,10 +247,11 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
             }
           }
           _sending = false;
+          _currentStage = null;
         });
       }
     } else if (type == 'error') {
-      setState(() => _sending = false);
+      setState(() { _sending = false; _currentStage = null; });
       _addBotMessage('⚠️ ${msg['text'] ?? AppLocalizations.of(context)!.aiSomethingWrong}');
     }
   }
@@ -303,6 +311,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
       _messages.add({'role': 'user', 'text': text});
       _sending = true;
       _followupSuggestions = [];  // clear old suggestions
+      _currentStage = null;
     });
     _msgCtrl.clear();
     _scrollToBottom();
@@ -532,14 +541,21 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           itemBuilder: (_, i) => _messageBubble(_messages[i]),
         ),
       ),
-      // Streaming indicator
+      // Streaming indicator — ChatGPT-style evolving status line while
+      // waiting for the first server frame; crossfades as `_currentStage`
+      // updates ("Consulting your kundli…" -> "Preparing your answer…").
       if (_sending && (_messages.isEmpty || _messages.last['streaming'] != true))
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
           child: Row(children: [
             const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold)),
             const SizedBox(width: 8),
-            Text(l.aiAnalyzingChart, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 250),
+              child: Text(_currentStage ?? l.aiAnalyzingChart,
+                  key: ValueKey(_currentStage ?? 'default'),
+                  style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+            ),
           ]),
         ),
       // Initial sample suggestions (before any chat)
@@ -758,7 +774,12 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
             Row(mainAxisSize: MainAxisSize.min, children: [
               const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: AppColors.gold)),
               const SizedBox(width: 6),
-              Text(AppLocalizations.of(context)!.aiThinking, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 250),
+                child: Text(_currentStage ?? AppLocalizations.of(context)!.aiThinking,
+                    key: ValueKey(_currentStage ?? 'default'),
+                    style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+              ),
             ]),
           if (streaming && text.isNotEmpty)
             Padding(

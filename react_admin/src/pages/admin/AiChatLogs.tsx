@@ -219,6 +219,40 @@ export default function AiChatLogs() {
   );
 }
 
+// Quick-scan version of the same trace: FastAPI receives the request ->
+// intent + domain detected (as JSON) -> that domain's kundli data is
+// combined with the intent -> sent to the LLM -> FastAPI returns the
+// answer. One chip per stage that actually ran for this turn (a short-
+// circuited turn collapses straight to "Response").
+const FLOW_STEP_LABEL: Record<string, string> = {
+  received: "FastAPI (request)",
+  short_circuit: "Short-circuit",
+  intent_detected: "Intent + Domain (JSON)",
+  chart_context: "Domain + Kundli Context",
+  template_match: "Template Check",
+  prompt_built: "Prompt (Domain + Intent)",
+  llm_call: "LLM",
+  response_stored: "FastAPI → Response",
+};
+
+function FlowSummary({ steps }: { steps: Array<{ step: string }> | null | undefined }) {
+  if (!steps || steps.length === 0) return null;
+  const chips = steps.map((s) => FLOW_STEP_LABEL[s.step] || s.step).filter((_, i) => steps[i].step !== "language");
+  return (
+    <div>
+      <p className="text-xs font-semibold text-muted-foreground mb-2">Flow</p>
+      <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-muted/20 p-2.5">
+        {chips.map((c, i) => (
+          <span key={i} className="flex items-center gap-1.5">
+            <Badge className="bg-primary/15 text-primary text-[10px] whitespace-nowrap">{c}</Badge>
+            {i < chips.length - 1 && <span className="text-muted-foreground/50 text-xs">→</span>}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // One row per stage the turn passed through (see ws_agent.py's `_trace()`):
 // received -> language resolved -> [short-circuit] or [intent detected ->
 // kundli context pulled -> template checked -> prompt built -> LLM called]
@@ -300,6 +334,7 @@ function LogDetailModal({ data, loading, onClose }: { data: any; loading: boolea
                 {data.latency_ms != null && <Badge className="bg-cosmic/15 text-foreground">{data.latency_ms}ms</Badge>}
               </div>
 
+              <FlowSummary steps={data.pipeline} />
               <PipelineTrace steps={data.pipeline} />
 
               <div>

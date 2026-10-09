@@ -240,6 +240,50 @@ def _off_topic_redirect(query: str, chat_engine_key: str) -> str | None:
     return f"I'm not the right agent for this — please ask the {target_label} agent."
 
 
+# Short, friendly "thinking" captions streamed to the client WHILE the
+# fastapi -> intent -> domain -> llm -> fastapi pipeline runs, so the chat
+# screen shows an evolving ChatGPT-style status line instead of a static
+# "Thinking…" the whole time — never technical wording (no "intent",
+# "LLM", "JSON", "FastAPI"), per the same never-reveal-internals rule the
+# model itself follows. Purely cosmetic: never stored, never affects
+# routing or the answer.
+_STAGE_TEXTS = {
+    "consulting": {
+        "english": "Consulting your kundli…",
+        "hindi": "आपकी कुंडली देख रहा हूँ…",
+        "hinglish": "Aapki kundli dekh raha hoon…",
+        "bengali": "আপনার কুষ্ঠি দেখছি…",
+        "tamil": "உங்கள் ஜாதகத்தை பார்க்கிறேன்…",
+        "telugu": "మీ జాతకాన్ని చూస్తున్నాను…",
+        "kannada": "ನಿಮ್ಮ ಜಾತಕವನ್ನು ನೋಡುತ್ತಿದ್ದೇನೆ…",
+        "malayalam": "നിങ്ങളുടെ ജാതകം പരിശോധിക്കുന്നു…",
+        "gujarati": "તમારી કુંડળી જોઈ રહ્યો છું…",
+        "marathi": "तुमची कुंडली पाहत आहे…",
+        "punjabi": "ਤੁਹਾਡੀ ਕੁੰਡਲੀ ਦੇਖ ਰਿਹਾ ਹਾਂ…",
+        "odia": "ଆପଣଙ୍କ କୁଣ୍ଡଳୀ ଦେଖୁଛି…",
+    },
+    "preparing": {
+        "english": "Preparing your answer…",
+        "hindi": "आपका जवाब तैयार कर रहा हूँ…",
+        "hinglish": "Aapka jawaab taiyaar kar raha hoon…",
+        "bengali": "আপনার উত্তর তৈরি করছি…",
+        "tamil": "உங்கள் பதிலை தயார் செய்கிறேன்…",
+        "telugu": "మీ సమాధానాన్ని సిద్ధం చేస్తున్నాను…",
+        "kannada": "ನಿಮ್ಮ ಉತ್ತರವನ್ನು ತಯಾರಿಸುತ್ತಿದ್ದೇನೆ…",
+        "malayalam": "നിങ്ങളുടെ ഉത്തരം തയ്യാറാക്കുന്നു…",
+        "gujarati": "તમારો જવાબ તૈયાર કરી રહ્યો છું…",
+        "marathi": "तुमचे उत्तर तयार करत आहे…",
+        "punjabi": "ਤੁਹਾਡਾ ਜਵਾਬ ਤਿਆਰ ਕਰ ਰਿਹਾ ਹਾਂ…",
+        "odia": "ଆପଣଙ୍କ ଉତ୍ତର ପ୍ରସ୍ତୁତ କରୁଛି…",
+    },
+}
+
+
+def _stage_text(key: str, language: str) -> str:
+    bucket = _STAGE_TEXTS.get(key, {})
+    return bucket.get(language, bucket.get("english", ""))
+
+
 def _trace(pipeline: list, step: str, label: str, **detail) -> None:
     """Append one stage to a turn's pipeline trace — shown in the admin
     panel's AI Chat Logs detail view so a real question can be followed
@@ -665,6 +709,8 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                         logger.error("Short-circuit log write failed: %s", le)
                     continue
 
+                await _send({"type": "stage", "text": _stage_text("consulting", resolved_lang)})
+
                 t0 = time.time()
                 data = _get_chart_data(chart)
                 pdata = data["_pdata"]
@@ -706,6 +752,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                         "provider": provider_key,
                     },
                 })
+                await _send({"type": "stage", "text": _stage_text("preparing", effective_lang)})
 
                 # Build rich kundli context + session memory
                 t1 = time.time()
