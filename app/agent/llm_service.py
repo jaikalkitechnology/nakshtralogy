@@ -21,12 +21,14 @@ from app.agent.classical_citations import get_citations_for, format_citations_fo
 FOLLOWUPS_MARKER = "---FOLLOWUPS---"
 # Lenient match for the same marker — the model is instructed to write
 # FOLLOWUPS_MARKER exactly, but doesn't always (observed in production:
-# "---\n\nFOLLOWUPS" instead of "---FOLLOWUPS---"). Used instead of a
+# "---\n\nFOLLOWUPS---" and "---\n**Follow-ups:**"). Used instead of a
 # plain substring match wherever the marker needs to be found/stripped,
 # so a near-miss still gets caught instead of leaking into the visible
-# answer. Matches 2+ dashes, optional whitespace, "FOLLOWUPS"
-# (case-insensitive), optional trailing dashes.
-_FOLLOWUPS_LOOSE_RX = re.compile(r"-{2,}\s*FOLLOWUPS\s*-{0,}", re.IGNORECASE)
+# answer. Leading dashes stay required so ordinary prose ("a follow-up
+# visit") never matches.
+_FOLLOWUPS_LOOSE_RX = re.compile(
+    r"-{2,}\s*\**\s*FOLLOW[\s-]?UPS?(\s+QUESTIONS?)?\s*:?\s*\**\s*-{0,}", re.IGNORECASE,
+)
 
 # ═══════════════════════════════════════════════════════════════════
 # D-CHART RELEVANCE BY DOMAIN
@@ -610,7 +612,7 @@ RULES:
 - If the question is NOT related to astrology/life/career/health/relationships/spirituality, politely redirect and suggest 3 astrology questions based on the user's chart data."""
 
 
-def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topic_locked: bool = False, language: str = None, personal_info_hint: str = None) -> str:
+def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topic_locked: bool = False, language: str = None, personal_info_hint: str = None, data_listing: bool = False) -> str:
     """Build a detailed prompt with full kundli context including Shadbala.
 
     intent: 8-section intent dict from detect_intent() — if present, drives
@@ -620,6 +622,11 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
     different life area even if the question's own wording suggests one.
     False for a "General — Ask Anything" chat, which should stay free to
     answer whatever the question is actually about.
+    data_listing: the question asks to see a full list of chart facts
+    (all planets / all houses) — the usual "cover at most 2-3 factors,
+    pick ONE detail, plain prose only" rules are swapped for "list every
+    item, one per line", since those rules otherwise make the model name
+    one or two planets and stop.
     personal_info_hint: set when the question was detected as asking for
     a basic fact already sitting in the chart row (name/DOB/birth time/
     birth place) — e.g. 'The user is asking for their name. Their name
@@ -1084,6 +1091,11 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
         length_rule = "Write 5-7 sentences. Cover at most 2-3 chart factors — do not try to mention everything."
     else:
         length_rule = "Write 3-5 sentences — the single most relevant chart reference, not a full report."
+    if data_listing:
+        length_rule = (
+            "This is a request to SEE a full list of chart facts, so the usual length limit does not apply: "
+            "give EVERY item from the list given next to the question, none skipped, each on its own line."
+        )
 
     # Health-domain mandatory disclaimer
     health_disclaimer = ""
@@ -1126,6 +1138,27 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
     else:
         topic_rule = ''
 
+    style_rule_default = (
+        'When the chart IS relevant, pick the ONE detail that best explains your answer, and explain it in '
+        'warm, plain language a complete beginner would understand — do not just name technical terms, '
+        'briefly say what they mean. Never repeat the same point twice. Open with one specific detail '
+        'from their own chart, never a generic opener like "Great question!" — the first line should '
+        'feel like it could only be about this one person. Close with a warm, genuine note that keeps '
+        'the conversation feeling alive, not a flat stop. One relevant emoji (e.g. 💼❤️🌙) is welcome '
+        'to open or punctuate the reply, used sparingly — never a decorative list of emoji. Use plain '
+        'prose only — no markdown, no bullet points, no numbered lists. '
+    )
+    style_rule_listing = (
+        'Open with one short warm line, then put each item on its own line in plain text: the planet '
+        '(or house) name, a dash, then its exact values from the list given (you may add a few plain '
+        'words on what the sign or nakshatra means). No markdown symbols — no *, #, bullets or '
+        'numbering. After the list, at most 1-2 sentences of simple overall context, then a warm close. '
+        'Do not talk about transits, doshas or dasha unless they asked. '
+    )
+    listing_reminder = (
+        ' REMEMBER: list EVERY item from the list next to the question — all of them, not one or two.'
+    )
+
     language_rule = f'LANGUAGE (follow this regardless of what language the question itself is written in): {_resolve_language_instruction(language)} ' if language else ''
 
     # Deliberately NOT a numbered/bulleted list — qwen3:8b was observed echoing a
@@ -1147,18 +1180,12 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
         f'Use the chart data above only where '
         f'it is actually relevant to this question; if the question does not need it (general '
         f'knowledge, small talk, anything not about the chart), just answer it directly and briefly '
-        f'like a knowledgeable friend would, with no forced astrology references. {length_rule} When '
-        f'the chart IS relevant, pick the ONE detail that best explains your answer, and explain it in '
-        f'warm, plain language a complete beginner would understand — do not just name technical terms, '
-        f'briefly say what they mean. Never repeat the same point twice. Open with one specific detail '
-        f'from their own chart, never a generic opener like "Great question!" — the first line should '
-        f'feel like it could only be about this one person. Close with a warm, genuine note that keeps '
-        f'the conversation feeling alive, not a flat stop. One relevant emoji (e.g. 💼❤️🌙) is welcome '
-        f'to open or punctuate the reply, used sparingly — never a decorative list of emoji. Use plain '
-        f'prose only — no '
-        f'markdown, no bullet points, no numbered lists. For any remedy you mention, use ONLY entries '
+        f'like a knowledgeable friend would, with no forced astrology references. {length_rule} '
+        + (style_rule_listing if data_listing else style_rule_default) +
+        f'For any remedy you mention, use ONLY entries '
         f'from the REMEDY LIBRARY above; never invent mantras, gemstone names, or rituals, and leave '
         f'remedies out entirely if none in the library fit.{health_disclaimer}{mental_disclaimer}'
+        + (listing_reminder if data_listing else '') +
         f'{followup_rule}'
     )
     return "\n".join(parts)
