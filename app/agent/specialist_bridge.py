@@ -65,17 +65,38 @@ _SKIP_FIELD_SUFFIXES = ("_disclaimer",)
 _SKIP_FIELDS = {"version"}
 
 
-def _compact(result: dict, max_str_len: int = 220, max_list_items: int = 6, max_fields: int = 35) -> dict:
+# Keys containing any of these are the ones a conversational answer
+# actually leans on — verdicts, remedies, concrete advice, timing
+# windows, risk flags, confidence framing — vs. deep technical sub-
+# component math (sign indices, dignity-per-divisional-chart, raw
+# aspect degrees) that's real but rarely what a user's question needs
+# quoted. Checked generically against every engine's key names (not
+# hand-curated per engine) so this doesn't risk guessing one engine's
+# schema wrong. Verified directly against the marriage engine: without
+# this, overall_marriage_verdict, astrological_remedies,
+# practical_solutions, primary_marriage_windows,
+# partner_qualities_to_seek, mangal_dosh_present and confidence_score
+# were ALL silently cut by the field cap (they sit late in that engine's
+# return dict) even though they're exactly what a user's question needs.
+_PRIORITY_KEY_MARKERS = (
+    "verdict", "remed", "practical_solution", "recommend", "advice",
+    "window", "risk", "readiness", "plain_statement", "confidence",
+    "partner_quali", "overall_", "primary_theme", "core_", "delay",
+    "dosh_present", "disclaimer_short",
+)
+
+
+def _compact(result: dict, max_str_len: int = 220, max_list_items: int = 6, max_fields: int = 55, _depth: int = 0) -> dict:
     """Engine-agnostic compaction of a specialist's analyze() output.
 
     These engines return mostly-numeric/short-categorical JSON (0-100
     scores, short category strings, small lists of {name, score} for
     active yogas/doshas) rather than prose — confirmed against real
     engine output (career/character/marriage/... all tested directly).
-    This keeps short scalars and small simple lists/dicts as-is and drops
-    large nested blobs (raw chart dumps, long multi-paragraph sections)
-    that would spend the LLM's context budget on sub-component math it
-    doesn't need to quote.
+    This keeps short scalars, small simple lists/dicts, and small nested
+    dicts as-is, and drops large nested blobs (raw chart dumps, long
+    multi-paragraph sections) that would spend the LLM's context budget
+    on sub-component math it doesn't need to quote.
 
     Deliberately engine-agnostic (no per-engine field allowlist): hand-
     curating field names per engine without having verified each one's
@@ -84,14 +105,23 @@ def _compact(result: dict, max_str_len: int = 220, max_list_items: int = 6, max_
     capped at `max_fields` (some engines return 100+ top-level fields,
     confirmed by direct testing; the architecture doc's whole token budget
     for the astrology-engine payload is ~3K tokens, so one specialist
-    can't eat it alone). Dict insertion order is preserved from the
-    engine's own return statement, and every engine checked puts its
-    headline overall/summary scores first and progressively finer-grained
-    breakdowns after — so truncating at the cap keeps the most decision-
-    relevant fields, not an arbitrary subset.
+    can't eat it alone).
+
+    Fields are reordered (stable sort, so relative order within each
+    group is unchanged) so anything matching _PRIORITY_KEY_MARKERS is
+    considered before the cap is applied — NOT just "first N in dict
+    order". That assumption (every engine puts headline fields first)
+    turned out false for at least the marriage engine, where the most
+    actionable fields sit near the end of a 75+ field dict and were being
+    cut entirely; this keyword-based reordering fixes that generically
+    instead of hand-fixing one engine's field order.
     """
+    items = sorted(
+        result.items(),
+        key=lambda kv: 0 if any(m in kv[0].lower() for m in _PRIORITY_KEY_MARKERS) else 1,
+    )
     out = {}
-    for k, v in result.items():
+    for k, v in items:
         if len(out) >= max_fields:
             break
         if k in _SKIP_FIELDS or any(k.endswith(s) for s in _SKIP_FIELD_SUFFIXES):
@@ -108,6 +138,13 @@ def _compact(result: dict, max_str_len: int = 220, max_list_items: int = 6, max_
                 for it in v
             ):
                 out[k] = v
+        elif isinstance(v, dict) and 0 < len(v) <= 12 and _depth < 1:
+            # One level of recursion only — these engines nest at most one
+            # level deep for things like venus_condition/d9_validation
+            # (confirmed by direct testing), so this isn't open-ended.
+            inner = _compact(v, max_str_len=120, max_list_items=4, max_fields=8, _depth=_depth + 1)
+            if inner:
+                out[k] = inner
     return out
 
 
