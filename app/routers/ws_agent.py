@@ -297,6 +297,38 @@ _ASK_TODAY_DATE_RE = re.compile(
     re.IGNORECASE,
 )
 
+# A direct request to SEE specific chart facts already sitting in the
+# REFERENCE DATA block (planet positions, houses, dasha periods, a
+# general "show me my chart" ask) — as opposed to asking for an
+# interpretation/analysis of them. Observed failure: "give me the
+# details and planet positions from the kundli" got answered entirely
+# about Chandra Dosh and remedies, never mentioning a single planet —
+# with 15K+ chars of reference data (much of it dosha/yoga/remedy
+# framing with heavy "⚠ ACTIVE NOW" emphasis), the model defaulted to
+# the emotionally loudest content instead of the specific data asked
+# for. Same fix shape as _PERSONAL_INFO_FIELDS: point the LLM straight
+# at the right section instead of hoping it finds it unaided.
+_ASK_PLANETS_RE = re.compile(
+    # "posi\w*" (not "posit\w*") deliberately — the exact reported query
+    # had "posiitons" (typo for "positions"), which a "posit" prefix
+    # match misses entirely since "posit" isn't a substring of "posiit".
+    r"\b(planet\s*posi\w*|graha\s*posi\w*|planet\s*placement\w*|mere\s*grah|planets?\s*(ki|in)\s*(sthiti|position))\b",
+    re.IGNORECASE,
+)
+_ASK_HOUSES_RE = re.compile(
+    r"\b(my\s*houses?|bhava\s*(detail\w*|position\w*)|house\s*(detail\w*|position\w*|strength\w*))\b",
+    re.IGNORECASE,
+)
+_ASK_DASHA_RE = re.compile(
+    r"\b(dasha\s*period\w*|mahadasha|current\s*dasha|mera\s*dasha|meri\s*dasha)\b",
+    re.IGNORECASE,
+)
+_ASK_CHART_DETAILS_RE = re.compile(
+    r"\b(chart\s*detail\w*|kundli\s*(ke\s*)?detail\w*|give\s*me\s*(my|the)\s*(chart|kundli)\s*detail\w*|"
+    r"kundli\s*data|show\s*me\s*my\s*(chart|kundli))\b",
+    re.IGNORECASE,
+)
+
 
 def _personal_info_hint(query: str, chart: "Chart") -> str | None:
     for attr, rx, label in _PERSONAL_INFO_FIELDS:
@@ -319,6 +351,32 @@ def _personal_info_hint(query: str, chart: "Chart") -> str | None:
         return (
             f'The user is asking for today\'s date/day (not their birth date). Today is exactly '
             f'"{today_str}" — state this directly and clearly in your response.'
+        )
+    if _ASK_PLANETS_RE.search(query):
+        return (
+            'The user is asking to SEE their actual planet positions, not an interpretation, dosha, '
+            'or remedy commentary. Relay the specific facts from the PLANET POSITIONS section above '
+            '(each planet\'s sign, degree, nakshatra) in plain natural sentences — do not substitute '
+            'dosha/yoga/remedy talk for this direct data request.'
+        )
+    if _ASK_HOUSES_RE.search(query):
+        return (
+            'The user is asking to SEE their actual house/bhava details, not an interpretation. Relay '
+            'the specific facts from the HOUSE STRENGTHS (Bhava) section above in plain natural '
+            'sentences — do not substitute dosha/yoga/remedy talk for this direct data request.'
+        )
+    if _ASK_DASHA_RE.search(query):
+        return (
+            'The user is asking to SEE their actual current dasha period, not an interpretation. '
+            'State the specific MD/AD/PD from the CURRENT DASHA PERIODS section above in plain natural '
+            'sentences — do not substitute dosha/yoga/remedy talk for this direct data request.'
+        )
+    if _ASK_CHART_DETAILS_RE.search(query):
+        return (
+            'The user is asking for a general overview of their chart facts, not a themed '
+            'interpretation. Briefly relay a few concrete facts from the REFERENCE DATA above '
+            '(ascendant, a couple of planet placements, current dasha) in plain sentences — do not '
+            'default to dosha or remedy commentary unless they specifically asked about problems.'
         )
     return None
 
