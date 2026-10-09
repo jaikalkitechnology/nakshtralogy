@@ -247,9 +247,12 @@ def _off_topic_redirect(query: str, chat_engine_key: str) -> str | None:
 # track of a short factual question entirely and free-associate with
 # the astrology data instead (observed directly: "what is my name?" got
 # a reply about Raj Yoga and Saturn, never mentioning the name at all).
-# Answering these deterministically from the DB is both more reliable
-# (zero hallucination risk) and instant — same reasoning as the
-# smalltalk/gibberish short-circuits above.
+# Rather than bypass the LLM, this detects the question and hands
+# build_rich_prompt() an explicit, unambiguous hint with the correct
+# value, placed right next to the question in the FINAL INSTRUCTIONS
+# block — the LLM still generates the actual reply (so it comes out in
+# the right language, phrased naturally), it's just no longer expected
+# to find a single fact on its own inside 10K+ chars of chart data.
 _ASK_NAME_RE = re.compile(
     r"\b(what'?s?\s*is\s*my\s*name|what'?s\s*my\s*name|who\s*am\s*i|mera\s*naam\s*kya\s*hai|naam\s*kya\s*hai|naam\s*batao)\b",
     re.IGNORECASE,
@@ -267,53 +270,25 @@ _ASK_PLACE_RE = re.compile(
     re.IGNORECASE,
 )
 
-_PERSONAL_INFO_TEMPLATES = {
-    "name": {
-        "english": "Your name is {v}.", "hindi": "आपका नाम {v} है।", "hinglish": "Aapka naam {v} hai.",
-        "bengali": "আপনার নাম {v}।", "tamil": "உங்கள் பெயர் {v}.", "telugu": "మీ పేరు {v}.",
-        "kannada": "ನಿಮ್ಮ ಹೆಸರು {v}.", "malayalam": "നിങ്ങളുടെ പേര് {v} ആണ്.",
-        "gujarati": "તમારું નામ {v} છે.", "marathi": "तुमचे नाव {v} आहे.",
-        "punjabi": "ਤੁਹਾਡਾ ਨਾਮ {v} ਹੈ।", "odia": "ଆପଣଙ୍କ ନାମ {v}।",
-    },
-    "dob": {
-        "english": "Your date of birth is {v}.", "hindi": "आपकी जन्म तिथि {v} है।", "hinglish": "Aapki date of birth {v} hai.",
-        "bengali": "আপনার জন্ম তারিখ {v}।", "tamil": "உங்கள் பிறந்த தேதி {v}.", "telugu": "మీ పుట్టిన తేదీ {v}.",
-        "kannada": "ನಿಮ್ಮ ಹುಟ್ಟಿದ ದಿನಾಂಕ {v}.", "malayalam": "നിങ്ങളുടെ ജനനത്തീയതി {v} ആണ്.",
-        "gujarati": "તમારી જન્મ તારીખ {v} છે.", "marathi": "तुमची जन्मतारीख {v} आहे.",
-        "punjabi": "ਤੁਹਾਡੀ ਜਨਮ ਮਿਤੀ {v} ਹੈ।", "odia": "ଆପଣଙ୍କ ଜନ୍ମ ତାରିଖ {v}।",
-    },
-    "tob": {
-        "english": "You were born at {v}.", "hindi": "आपका जन्म {v} बजे हुआ था।", "hinglish": "Aapka janam {v} baje hua tha.",
-        "bengali": "আপনার জন্ম হয়েছিল {v} টায়।", "tamil": "நீங்கள் {v} மணிக்கு பிறந்தீர்கள்.", "telugu": "మీరు {v} గంటలకు జన్మించారు.",
-        "kannada": "ನೀವು {v} ಗಂಟೆಗೆ ಜನಿಸಿದಿರಿ.", "malayalam": "നിങ്ങൾ {v} മണിക്ക് ജനിച്ചു.",
-        "gujarati": "તમારો જન્મ {v} વાગ્યે થયો હતો.", "marathi": "तुमचा जन्म {v} वाजता झाला.",
-        "punjabi": "ਤੁਹਾਡਾ ਜਨਮ {v} ਵਜੇ ਹੋਇਆ ਸੀ।", "odia": "ଆପଣ {v} ଟାରେ ଜନ୍ମ ହୋଇଥିଲେ।",
-    },
-    "place": {
-        "english": "You were born in {v}.", "hindi": "आपका जन्म {v} में हुआ था।", "hinglish": "Aapka janam {v} mein hua tha.",
-        "bengali": "আপনার জন্ম হয়েছিল {v}-এ।", "tamil": "நீங்கள் {v}-ல் பிறந்தீர்கள்.", "telugu": "మీరు {v}లో జన్మించారు.",
-        "kannada": "ನೀವು {v} ನಲ್ಲಿ ಜನಿಸಿದಿರಿ.", "malayalam": "നിങ്ങൾ {v}-ൽ ജനിച്ചു.",
-        "gujarati": "તમારો જન્મ {v}માં થયો હતો.", "marathi": "तुमचा जन्म {v} येथे झाला.",
-        "punjabi": "ਤੁਹਾਡਾ ਜਨਮ {v} ਵਿੱਚ ਹੋਇਆ ਸੀ।", "odia": "ଆପଣ {v} ରେ ଜନ୍ମ ହୋଇଥିଲେ।",
-    },
-}
+_PERSONAL_INFO_FIELDS = (
+    ("name", _ASK_NAME_RE, "name"),
+    ("dob", _ASK_DOB_RE, "date of birth"),
+    ("tob", _ASK_TOB_RE, "time of birth"),
+    ("place", _ASK_PLACE_RE, "place of birth"),
+)
 
 
-def _personal_info_reply(query: str, chart: "Chart", language: str) -> str | None:
-    if _ASK_NAME_RE.search(query):
-        field, value = "name", chart.name
-    elif _ASK_DOB_RE.search(query):
-        field, value = "dob", chart.dob
-    elif _ASK_TOB_RE.search(query):
-        field, value = "tob", chart.tob
-    elif _ASK_PLACE_RE.search(query):
-        field, value = "place", chart.place
-    else:
-        return None
-    if not value:
-        return None
-    template = _PERSONAL_INFO_TEMPLATES[field].get(language, _PERSONAL_INFO_TEMPLATES[field]["english"])
-    return template.format(v=value)
+def _personal_info_hint(query: str, chart: "Chart") -> str | None:
+    for attr, rx, label in _PERSONAL_INFO_FIELDS:
+        if rx.search(query):
+            value = getattr(chart, attr, None)
+            if not value:
+                return None
+            return (
+                f'The user is asking for their {label}. Their {label} is exactly "{value}" — '
+                f'state this directly and clearly in your response, in your own natural words.'
+            )
+    return None
 
 
 # Short, friendly "thinking" captions streamed to the client WHILE the
@@ -742,13 +717,13 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                         smalltalk_text = _CLARIFY_REPLY.get(smalltalk_lang, _CLARIFY_REPLY["english"])
                         smalltalk_routing = "gibberish_clarify"
                     else:
-                        smalltalk_text = _personal_info_reply(query, chart, smalltalk_lang)
+                        # Personal-info questions (name/DOB/etc.) are NOT
+                        # short-circuited — they still go through the LLM
+                        # (see personal_info_hint below) so the answer comes
+                        # out in the right language and natural phrasing.
+                        smalltalk_text = _off_topic_redirect(query, chat.engine_key)
                         if smalltalk_text is not None:
-                            smalltalk_routing = "personal_info"
-                        else:
-                            smalltalk_text = _off_topic_redirect(query, chat.engine_key)
-                            if smalltalk_text is not None:
-                                smalltalk_routing = "off_topic_redirect"
+                            smalltalk_routing = "off_topic_redirect"
                 if smalltalk_text is not None:
                     import uuid as _uuid
                     smalltalk_message_id = str(_uuid.uuid4())
@@ -940,7 +915,11 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     logger.info("QUESTION MATCH (no template) score=%.2f → sharpened sub=%s qtype=%s",
                                 match_info["score"], match_info.get("sub_domain"), match_info.get("question_type"))
 
-                user_prompt = build_rich_prompt(query, chart_context, intent=result.get("intent"), topic_locked=bool(chat.engine_key), language=effective_lang)
+                personal_info_hint = _personal_info_hint(query, chart)
+                user_prompt = build_rich_prompt(
+                    query, chart_context, intent=result.get("intent"), topic_locked=bool(chat.engine_key),
+                    language=effective_lang, personal_info_hint=personal_info_hint,
+                )
 
                 # Personalize system prompt with chart holder's details + detected domain
                 chart_holder = {
@@ -1013,6 +992,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     pipeline, "prompt_built", "System + user prompt assembled for the LLM",
                     system_prompt_chars=len(system_prompt_text), user_prompt_chars=len(user_prompt),
                     history_turns=len(history), total_messages=len(messages), topic_locked=bool(chat.engine_key),
+                    personal_info_hint_given=bool(personal_info_hint),
                 )
 
                 logger.info("Context built in %.2fs, %d history turns, streaming via %s", time.time() - t1, len(history), provider_key)
