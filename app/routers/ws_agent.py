@@ -35,7 +35,7 @@ from app.models.model import User, Chart, AgentLog, AgentLogSection, AIChat, AIC
 from app.kundli import engine as nk_engine
 from app.kundli.helper import NakshtraEngine
 from app.agent.engine import NakshtraAgent, DOMAINS, detect_intent, apply_display_floor
-from app.agent.specialist_bridge import resolve_chat_engine, get_specialist_summary, get_forecast_summary, DOMAIN_TO_SPECIALIST
+from app.agent.specialist_bridge import resolve_chat_engine, get_specialist_summary, get_forecast_summary, DOMAIN_TO_SPECIALIST, EXTRA_CHAT_ENGINES, EXTRA_CHAT_ENGINE_META
 from app.agent.llm_service import (
     build_system_prompt,
     build_rich_prompt,
@@ -519,7 +519,7 @@ def _record_section_stat(
     row's last_question/last_answer snapshot (most-recent-turn preview,
     not an accumulated history — see the model's docstring)."""
     key = domain or "general"
-    label = DOMAINS.get(key, {}).get("label") if key != "general" else None
+    label = (DOMAINS.get(key, {}).get("label") or EXTRA_CHAT_ENGINE_META.get(key, (None,))[0]) if key != "general" else None
     label = label or "General / Other"
     row = log_db.query(AgentLogSection).filter(AgentLogSection.domain == key).first()
     if row is None:
@@ -990,6 +990,17 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # Pass UI language (english/hindi/hinglish) — detect_intent ignores "auto"
                 ui_lang = resolved_lang if resolved_lang in ("english", "hindi", "hinglish") else None
                 result = _agent.query(query, pdata, birth_jd, domain_override=domain, user_language=ui_lang)
+                # A chat locked to a chat-only topic (kundli, character, ...)
+                # has no domain to send as domain_override, so detect_intent
+                # falls back to "life_path_luck" for any question without
+                # domain keywords — which then mislabels the turn everywhere
+                # (badge, LLM's ANALYSIS line, AgentLog.domain, section stats).
+                # Pin the turn to the chat's own topic, the same way the 12
+                # domain-locked chats are pinned via domain_override.
+                if chat.engine_key in EXTRA_CHAT_ENGINES:
+                    result["domain"] = chat.engine_key
+                    result["label"], result["emoji"] = EXTRA_CHAT_ENGINE_META.get(
+                        chat.engine_key, (result["label"], result["emoji"]))
                 logger.info("Probability in %.2fs: %s %.0f%%", time.time() - t0, result["domain"], result["probability"])
                 _trace(
                     pipeline, "intent_detected", "Intent + probability detected from kundli",

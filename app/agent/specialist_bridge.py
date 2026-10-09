@@ -72,6 +72,15 @@ DOMAIN_TO_SPECIALIST = {
 # why each needs no SPECIALISTS entry of its own.
 EXTRA_CHAT_ENGINES = {"character", "past_life", "kundli", "daily_forecast"}
 
+# Display label/emoji for each EXTRA_CHAT_ENGINES topic (they have no DOMAINS
+# entry to read one from). Mirrors ai_agent_router._extra_chat_topics().
+EXTRA_CHAT_ENGINE_META = {
+    "character": ("Character Analysis", "🔍"),
+    "past_life": ("Past Life & Karma", "🔮"),
+    "daily_forecast": ("Today's Forecast", "🔮"),
+    "kundli": ("Kundli Specialist", "📜"),
+}
+
 CHAT_ENGINE_KEYS = set(DOMAIN_TO_SPECIALIST.values()) | EXTRA_CHAT_ENGINES
 
 # Fields every specialist's analyze() output carries that are about the
