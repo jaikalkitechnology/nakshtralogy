@@ -403,7 +403,7 @@ def detect_bare_language_switch(query: str) -> Optional[str]:
 _LANGUAGE_INSTRUCTIONS = {
     "english":    "Respond in clear, warm English.",
     "hindi":      "Respond in Hindi (Devanagari script, देवनागरी). Use proper Hindi throughout. Mix in transliterated planet names (Surya, Chandra, Shani) naturally.",
-    "hinglish":   "Respond in Hinglish (Hindi words in Roman/English script, mixed with English). Example: 'Aapki kundli mein Jupiter ka placement bahut strong hai. Shaadi ka yog October tak activate hoga.'",
+    "hinglish":   "Respond in Hinglish (Hindi words in Roman/English script, mixed with English). Every single word in Roman/English letters only — NEVER switch into Devanagari script (देवनागरी) for any word, even mid-sentence. Example: 'Aapki kundli mein Jupiter ka placement bahut strong hai. Shaadi ka yog October tak activate hoga.'",
     "bengali":    "Respond in Bengali (Bangla script, বাংলা). Use proper Bengali throughout.",
     "tamil":      "Respond in Tamil (தமிழ் script). Use proper Tamil throughout.",
     "telugu":     "Respond in Telugu (తెలుగు script). Use proper Telugu throughout.",
