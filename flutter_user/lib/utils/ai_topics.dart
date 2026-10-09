@@ -4,8 +4,8 @@
 /// A "topic" is what the user picks when starting a chat:
 ///  - the 12 probability domains (career, marriage, ...) — each also maps to
 ///    its own specialist engine for a richer, report-grade answer
-///  - 3 engine-only topics with no domain counterpart: character, past_life,
-///    daily_forecast
+///  - 4 engine-only topics with no domain counterpart: character, past_life,
+///    daily_forecast, kundli
 ///  - "General" (no domain, no engine) — the existing unscoped "ask anything"
 ///    path, unaffected by any topic selection
 ///
@@ -65,6 +65,7 @@ const List<AiTopic> kAiChatTopics = [
   AiTopic(engineKey: 'character', label: 'Character Analysis', emoji: '🔍'),
   AiTopic(engineKey: 'past_life', label: 'Past Life & Karma', emoji: '🔮'),
   AiTopic(engineKey: 'daily_forecast', label: "Today's Forecast", emoji: '✨'),
+  AiTopic(engineKey: 'kundli', label: 'Kundli Specialist', emoji: '📜'),
 ];
 
 /// Resolve a topic from a chat's stored `engine_key` (as returned by

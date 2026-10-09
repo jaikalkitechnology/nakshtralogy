@@ -61,6 +61,15 @@ def _extra_chat_topics() -> List[dict]:
         "key": "daily_forecast", "label": "Today's Forecast", "emoji": "🔮", "icon_name": "auto_awesome",
         "_default_status": "draft",
     })
+    # "kundli" has no SPECIALISTS entry (see app/agent/specialist_bridge.py's
+    # module docstring — it needs no separate specialist report; the
+    # generic chart context already built for every chat IS the kundli
+    # data), so unlike character/past_life above it's hardcoded here
+    # rather than read from SPECIALISTS.
+    out.append({
+        "key": "kundli", "label": "Kundli Specialist", "emoji": "📜", "icon_name": "auto_stories",
+        "_default_status": "draft",
+    })
     return out
 
 

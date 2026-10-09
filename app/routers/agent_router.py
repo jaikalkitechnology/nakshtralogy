@@ -22,7 +22,7 @@ from app.models.model import Chart, User, AgentLog, AgentLogSection, AIChat, AIC
 from app.kundli import engine as nk_engine
 from app.agent.engine import NakshtraAgent, DOMAINS, detect_intent
 from app.agent.llm_service import generate_llm_response, get_available_providers
-from app.agent.specialist_bridge import CHAT_ENGINE_KEYS, setting_key_for_chat_engine
+from app.agent.specialist_bridge import CHAT_ENGINE_KEYS, EXTRA_CHAT_ENGINES, setting_key_for_chat_engine
 
 
 def _utc_iso(dt) -> Optional[str]:
@@ -97,7 +97,7 @@ def submit_feedback(
 #  is the single source of truth (no Redis session memory).
 # ═══════════════════════════════════════════════════════════════════
 
-_VALID_ENGINE_KEYS = CHAT_ENGINE_KEYS | {"daily_forecast"}
+_VALID_ENGINE_KEYS = CHAT_ENGINE_KEYS
 
 
 def _check_engine_access(db: Session, user: User, engine_key: Optional[str]) -> None:
@@ -111,10 +111,14 @@ def _check_engine_access(db: Session, user: User, engine_key: Optional[str]) -> 
         return
     from app.models.model import AiAgentSetting, AiAgentUnlock
     s = db.query(AiAgentSetting).filter(AiAgentSetting.domain_key == setting_key).first()
-    # Chat-only topics (character/past_life/daily_forecast) default to draft
-    # when unconfigured; domain-mapped topics (career, marriage, ...) default
-    # to published, matching the long-standing AI Chat Agents admin screen.
-    default_status = "draft" if setting_key in ("character", "past_life", "daily_forecast") else "published"
+    # Chat-only topics (character/past_life/daily_forecast/kundli — i.e.
+    # EXTRA_CHAT_ENGINES, read directly rather than a hand-copied tuple so
+    # adding a new extra-topic agent here can't silently default it to
+    # "published"/open-to-everyone the way "kundli" briefly did) default to
+    # draft when unconfigured; domain-mapped topics (career, marriage, ...)
+    # default to published, matching the long-standing AI Chat Agents
+    # admin screen.
+    default_status = "draft" if setting_key in EXTRA_CHAT_ENGINES else "published"
     status = s.status if s else default_status
     if status == "published":
         visible = True
