@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { MessageSquare, RefreshCw, X, ChevronLeft, ChevronRight, Download, Copy, Braces, AlignLeft } from "lucide-react";
-import { adminAgentLogs, adminAgentLogDetail } from "@/services/api";
+import { MessageSquare, RefreshCw, X, ChevronLeft, ChevronRight, Download, Copy, Braces, AlignLeft, MessagesSquare, Bot, User as UserIcon } from "lucide-react";
+import { adminAgentLogs, adminAgentLogDetail, adminChatTranscript } from "@/services/api";
 import { toast } from "sonner";
 
 // The backend now sends created_at as an unambiguous UTC ISO string
@@ -75,6 +75,7 @@ interface LogRow {
   id: string;
   user_id?: string;
   user?: { name?: string; email?: string } | null;
+  chat_id?: string;
   provider?: string;
   domain?: string;
   language?: string;
@@ -108,6 +109,9 @@ export default function AiChatLogs() {
   const [detail, setDetail] = useState<any>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [transcript, setTranscript] = useState<any>(null);
+  const [transcriptOpen, setTranscriptOpen] = useState(false);
+  const [transcriptLoading, setTranscriptLoading] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -144,6 +148,15 @@ export default function AiChatLogs() {
     setDetailLoading(false);
     if (r.ok) setDetail(r.data);
     else { toast.error(r.data?.detail || "Failed to load log"); setDetailOpen(false); }
+  };
+
+  const openTranscript = async (chatId: string) => {
+    setTranscriptOpen(true);
+    setTranscriptLoading(true);
+    const r = await adminChatTranscript(chatId);
+    setTranscriptLoading(false);
+    if (r.ok) setTranscript(r.data);
+    else { toast.error(r.data?.detail || "Failed to load chat transcript"); setTranscriptOpen(false); }
   };
 
   const applySearch = () => { setOffset(0); setSearch(searchInput.trim()); };
@@ -210,7 +223,16 @@ export default function AiChatLogs() {
                   <td className="p-2.5"><Badge className={ROUTING_STYLE[l.routing || ""] || "bg-muted text-muted-foreground"}>{l.routing || "—"}</Badge></td>
                   <td className="p-2.5"><Badge className={STATUS_STYLE[l.status] || "bg-muted text-muted-foreground"}>{l.status}</Badge></td>
                   <td className="p-2.5 text-muted-foreground">{l.latency_ms != null ? `${l.latency_ms}ms` : "—"}</td>
-                  <td className="p-2.5 text-right"><Button size="sm" variant="outline" onClick={() => openDetail(l.id)}>View</Button></td>
+                  <td className="p-2.5 text-right">
+                    <div className="flex items-center justify-end gap-1.5">
+                      {l.chat_id && (
+                        <Button size="sm" variant="outline" onClick={() => openTranscript(l.chat_id!)} title="View the whole conversation this turn belongs to">
+                          <MessagesSquare className="w-3.5 h-3.5 mr-1" /> Chat
+                        </Button>
+                      )}
+                      <Button size="sm" variant="outline" onClick={() => openDetail(l.id)}>View</Button>
+                    </div>
+                  </td>
                 </tr>
               ))}
               {rows.length === 0 && !loading && (
@@ -232,6 +254,69 @@ export default function AiChatLogs() {
       </div>
 
       {detailOpen && <LogDetailModal data={detail} loading={detailLoading} onClose={() => { setDetailOpen(false); setDetail(null); }} />}
+      {transcriptOpen && <ChatTranscriptModal data={transcript} loading={transcriptLoading} onClose={() => { setTranscriptOpen(false); setTranscript(null); }} />}
+    </div>
+  );
+}
+
+// Consolidated view of a whole conversation (app/routers/agent_router.py
+// GET /agent/chats/{chat_id}/transcript): every message in order, each
+// assistant turn annotated with the intent/domain/routing/status that
+// turn's own AgentLog row recorded — built from data already saved
+// per-turn, just not previously readable as one conversation.
+function ChatTranscriptModal({ data, loading, onClose }: { data: any; loading: boolean; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
+      <div className="w-full max-w-3xl max-h-[85vh] overflow-hidden rounded-2xl border border-border bg-card shadow-xl flex flex-col" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between border-b border-border p-4">
+          <div>
+            <h3 className="font-display text-lg text-foreground flex items-center gap-2">
+              <MessagesSquare className="w-5 h-5 text-primary" /> {data?.title || "Chat transcript"}
+            </h3>
+            {!loading && data && (
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {data.user?.name || data.user?.email || "—"} · {data.engine_key || "general"} · {data.turn_count} message{data.turn_count === 1 ? "" : "s"}
+              </p>
+            )}
+          </div>
+          <div className="flex items-center gap-1.5">
+            {!loading && data && (
+              <>
+                <Button size="sm" variant="outline" onClick={() => copyJson(data)}><Copy className="w-3.5 h-3.5 mr-1" /> Copy</Button>
+                <Button size="sm" variant="outline" onClick={() => downloadJson(data, `ai-chat-${data.chat_id}.json`)}><Download className="w-3.5 h-3.5" /></Button>
+              </>
+            )}
+            <button onClick={onClose} className="text-muted-foreground hover:text-foreground ml-1"><X className="w-5 h-5" /></button>
+          </div>
+        </div>
+        <div className="overflow-y-auto p-4 space-y-3 text-sm">
+          {loading || !data ? (
+            <p className="text-center text-muted-foreground py-8">Loading…</p>
+          ) : data.turns.length === 0 ? (
+            <p className="text-center text-muted-foreground py-8">No messages in this chat.</p>
+          ) : (
+            data.turns.map((t: any, i: number) => (
+              <div key={t.message_id || i} className={`flex gap-2 ${t.role === "user" ? "justify-end" : "justify-start"}`}>
+                {t.role !== "user" && <Bot className="w-5 h-5 text-primary shrink-0 mt-1" />}
+                <div className={`max-w-[80%] rounded-xl p-3 ${t.role === "user" ? "bg-primary/15" : "bg-muted/30 border border-border"}`}>
+                  <p className="text-foreground whitespace-pre-wrap break-words">{t.content}</p>
+                  {t.role !== "user" && (t.domain || t.routing || t.status || t.intent) && (
+                    <div className="mt-2 flex flex-wrap gap-1.5 text-[10px]">
+                      {t.domain && <Badge className="bg-cosmic/15 text-foreground">{t.domain}</Badge>}
+                      {t.routing && <Badge className={ROUTING_STYLE[t.routing] || "bg-muted text-muted-foreground"}>{t.routing}</Badge>}
+                      {t.status && <Badge className={STATUS_STYLE[t.status] || "bg-muted text-muted-foreground"}>{t.status}</Badge>}
+                      {t.intent?.sub_domain && <Badge className="bg-cosmic/10 text-muted-foreground">{t.intent.sub_domain}</Badge>}
+                      {t.latency_ms != null && <Badge className="bg-cosmic/10 text-muted-foreground">{t.latency_ms}ms</Badge>}
+                    </div>
+                  )}
+                  <p className="mt-1 text-[10px] text-muted-foreground">{formatIST(t.created_at)}</p>
+                </div>
+                {t.role === "user" && <UserIcon className="w-5 h-5 text-muted-foreground shrink-0 mt-1" />}
+              </div>
+            ))
+          )}
+        </div>
+      </div>
     </div>
   );
 }

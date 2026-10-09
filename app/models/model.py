@@ -1188,6 +1188,13 @@ class AgentLog(Base):
     id = Column(String(36), primary_key=True, default=new_uuid)
     user_id = Column(String(36), nullable=True, index=True)
     chart_id = Column(String(36), nullable=True)
+    # The AIChat conversation this turn belongs to — previously only
+    # derivable indirectly via message_id -> AIChatMessage.chat_id (a
+    # fragile join relying on message_id always being set and matching).
+    # Direct + indexed so "every log for this chat" is a cheap, reliable
+    # lookup — used to build the admin panel's consolidated chat
+    # transcript (every turn's Q&A next to its own intent/domain/routing).
+    chat_id = Column(String(36), nullable=True, index=True)
     message_id = Column(String(36), nullable=True, index=True)
     provider = Column(String(40), nullable=False, index=True)
     domain = Column(String(40), nullable=True)

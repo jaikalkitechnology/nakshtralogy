@@ -805,7 +805,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                         log_db = SessionLocal()
                         try:
                             log_db.add(AgentLog(
-                                user_id=user.id, chart_id=chart_id, message_id=smalltalk_message_id,
+                                user_id=user.id, chart_id=chart_id, chat_id=chat.id, message_id=smalltalk_message_id,
                                 provider=smalltalk_routing, domain=domain, language=smalltalk_lang,
                                 raw_query=query[:2000], query=query[:500],
                                 routing=smalltalk_routing,
@@ -926,7 +926,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             intent_obj = result.get("intent") or {}
                             intent_json_str = json.dumps(intent_obj, ensure_ascii=False)[:2000]
                             log_entry = AgentLog(
-                                user_id=user.id, chart_id=chart_id, message_id=message_id,
+                                user_id=user.id, chart_id=chart_id, chat_id=chat.id, message_id=message_id,
                                 provider="template", domain=(result.get("domain") or domain), language=effective_lang,
                                 raw_query=query[:2000],
                                 query=query[:500], intent_json=intent_json_str,
@@ -1128,6 +1128,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                         log_entry = AgentLog(
                             user_id=user.id,
                             chart_id=chart_id,
+                            chat_id=chat.id,
                             message_id=message_id,
                             provider=provider_key,
                             domain=detected_domain,
