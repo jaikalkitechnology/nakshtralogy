@@ -602,15 +602,21 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     topic_locked=bool(chat.engine_key), engine_key=chat.engine_key,
                 )
 
-                # Resolve this turn's language, with stickiness: an explicit
-                # in-message request ("give me in hindi") always wins and
-                # becomes the new sticky default; otherwise an explicit
-                # (non-auto) dropdown pick wins and also becomes sticky;
-                # otherwise fall back to whatever this chat was last set to
-                # (so a language choice persists across turns instead of
-                # reverting to auto-detect-from-script on the very next
-                # message); only a chat with no sticky language yet falls
-                # through to per-message auto-detection.
+                # Resolve this turn's language. Only a DELIBERATE choice
+                # persists across turns — an explicit in-message request
+                # ("give me in hindi") or a non-auto dropdown pick — and
+                # becomes the chat's sticky default from then on. Without
+                # either, every message gets freshly auto-detected from its
+                # OWN text. Previously a plain auto-detected language was
+                # also written as sticky, which meant the FIRST message's
+                # script silently locked every later message to it — e.g.
+                # a user writing natively in Malayalam script, then
+                # switching to Manglish (Roman letters) the next message,
+                # kept getting replies in Malayalam script because that
+                # chat's `language` was still "malayalam" from turn one.
+                # `language_explicit` distinguishes a real sticky choice
+                # from a leftover auto-detection so only the former is ever
+                # read back here.
                 in_text_lang = detect_explicit_language_request(query)
                 if in_text_lang:
                     resolved_lang = in_text_lang
@@ -618,15 +624,17 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 elif language and language != "auto":
                     resolved_lang = language
                     lang_source = "dropdown_explicit"
-                elif chat.language:
+                elif chat.language and chat.language_explicit:
                     resolved_lang = chat.language
                     lang_source = "sticky_chat_default"
                 else:
                     resolved_lang = detect_language(query)
                     lang_source = "auto_detect_script"
-                if resolved_lang and resolved_lang != "auto" and chat.language != resolved_lang:
-                    chat.language = resolved_lang
-                    db.commit()
+                if lang_source in ("in_text_request", "dropdown_explicit") and resolved_lang and resolved_lang != "auto":
+                    if chat.language != resolved_lang or not chat.language_explicit:
+                        chat.language = resolved_lang
+                        chat.language_explicit = True
+                        db.commit()
                 _trace(
                     pipeline, "language", "Language resolved",
                     resolved_lang=resolved_lang, source=lang_source,
