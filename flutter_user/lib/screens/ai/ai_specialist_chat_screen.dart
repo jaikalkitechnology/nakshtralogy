@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -65,6 +66,12 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   // kundli…", "Preparing your answer…") shown ChatGPT-style while waiting
   // for the first token — see the 'stage' WS message type.
   String? _currentStage;
+  // Belt-and-suspenders against a silently-stuck request (dropped
+  // connection, proxy hiccup, or a server-side hang the backend's own
+  // timeout didn't catch) — reset on every WS frame received; if it ever
+  // fires, nothing has arrived in a while and we surface an error instead
+  // of leaving "Analyzing your chart…" spinning forever.
+  Timer? _watchdog;
 
   WebSocketChannel? _ws;
   bool _wsConnected = false;
@@ -162,10 +169,31 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
 
   @override
   void dispose() {
+    _watchdog?.cancel();
     _ws?.sink.close();
     _msgCtrl.dispose();
     _scrollCtrl.dispose();
     super.dispose();
+  }
+
+  void _armWatchdog() {
+    _watchdog?.cancel();
+    _watchdog = Timer(const Duration(seconds: 90), _onWatchdogFired);
+  }
+
+  void _onWatchdogFired() {
+    if (!mounted || !_sending) return;
+    setState(() {
+      _sending = false;
+      _currentStage = null;
+      if (_messages.isNotEmpty && _messages.last['streaming'] == true) {
+        _messages.last.remove('streaming');
+        if ((_messages.last['text'] ?? '').toString().isEmpty) {
+          _messages.removeLast();
+        }
+      }
+    });
+    _addBotMessage('⚠️ ${AppLocalizations.of(context)!.aiConnectionLost}');
   }
 
   void _connectWs() {
@@ -183,6 +211,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
       },
       onError: (e) {
         _wsConnected = false;
+        _watchdog?.cancel();
         if (mounted && _sending) {
           setState(() => _sending = false);
           _addBotMessage('⚠️ ${AppLocalizations.of(context)!.aiConnectionLost}');
@@ -194,6 +223,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
 
   void _handleWsMessage(Map<String, dynamic> msg) {
     final type = msg['type']?.toString();
+    if (_sending) _armWatchdog();  // any frame at all means the server is still alive
 
     if (type == 'stage') {
       final text = msg['text']?.toString();
@@ -249,9 +279,11 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           _sending = false;
           _currentStage = null;
         });
+        _watchdog?.cancel();
       }
     } else if (type == 'error') {
       setState(() { _sending = false; _currentStage = null; });
+      _watchdog?.cancel();
       _addBotMessage('⚠️ ${msg['text'] ?? AppLocalizations.of(context)!.aiSomethingWrong}');
     }
   }
@@ -286,6 +318,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
 
   void _stopGeneration() {
     if (!_sending) return;
+    _watchdog?.cancel();
     if (_wsConnected && _ws != null) {
       _ws!.sink.add(jsonEncode({'type': 'interrupt'}));
     }
@@ -330,6 +363,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
         'engine': _topic.engineKey,
         'language': _language,
       }));
+      _armWatchdog();
     } else {
       try {
         final resp = await _api.agentChat(

@@ -1014,7 +1014,15 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
     _send = _safe_send or (lambda d: websocket.send_json(d))
     try:
         async with httpx.AsyncClient(
-            timeout=httpx.Timeout(connect=5.0, read=None, write=10.0, pool=5.0)
+            # `read` bounds the gap between successive chunks, not the whole
+            # request — a healthy stream keeps producing tokens well under
+            # this. Without it (previously None/unlimited), a stalled Ollama
+            # (overloaded, stuck in its internal queue, model never starts)
+            # hangs this request forever with no exception ever raised, so
+            # the client sits on "Analyzing your chart…" indefinitely with
+            # no error, no done, nothing. This turns that into a visible
+            # "⚠️ Ollama offline/timeout" message instead.
+            timeout=httpx.Timeout(connect=5.0, read=120.0, write=10.0, pool=5.0)
         ) as client:
             async with client.stream(
                 "POST",
@@ -1136,7 +1144,7 @@ async def generate_llm_response(
     try:
         import httpx
         async with httpx.AsyncClient(
-            timeout=httpx.Timeout(connect=5.0, read=None, write=10.0, pool=5.0)
+            timeout=httpx.Timeout(connect=5.0, read=120.0, write=10.0, pool=5.0)
         ) as client:
             resp = await client.post(
                 f"{OLLAMA_URL}/api/chat",
