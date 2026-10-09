@@ -445,6 +445,9 @@ def get_agent_logs_summary(
                 "success_count": r.success_count,
                 "error_count": r.error_count,
                 "avg_latency_ms": round(r.total_latency_ms / r.total) if r.total else None,
+                "last_question": r.last_question,
+                "last_answer": r.last_answer,
+                "last_question_at": _utc_iso(r.last_question_at),
             }
             for r in section_rows
         ]
@@ -461,14 +464,33 @@ def get_agent_logs_summary(
             .group_by(AgentLog.domain)
             .all()
         )
+        # Latest question/answer per domain, for this user's own activity
+        # only — a most-recent-first scan rather than a window function,
+        # kept simple since this path is already scoped to one person.
+        latest_by_domain = {}
+        recent_logs = (
+            db.query(AgentLog.domain, AgentLog.raw_query, AgentLog.response_text, AgentLog.created_at)
+            .filter(AgentLog.user_id == current_user.id)
+            .order_by(AgentLog.created_at.desc())
+            .limit(500)
+            .all()
+        )
+        for d, raw_query, response_text, created_at in recent_logs:
+            if d not in latest_by_domain:
+                latest_by_domain[d] = (raw_query, response_text, created_at)
+
         sections = []
         for domain, total, success_count, avg_latency in rows:
             success_count = int(success_count or 0)
+            last_q, last_a, last_at = latest_by_domain.get(domain, (None, None, None))
             sections.append({
                 "domain": domain,
                 "label": DOMAINS.get(domain, {}).get("label", "General / Other") if domain else "General / Other",
                 "total": total,
                 "success_count": success_count,
+                "last_question": last_q,
+                "last_answer": last_a,
+                "last_question_at": _utc_iso(last_at),
                 "error_count": total - success_count,
                 "avg_latency_ms": round(avg_latency) if avg_latency is not None else None,
             })
