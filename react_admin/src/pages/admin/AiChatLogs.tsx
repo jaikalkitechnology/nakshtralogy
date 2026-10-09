@@ -335,6 +335,13 @@ function SectionsView({ sections, loading, onOpen }: { sections: any[]; loading:
                 {s.error_count > 0 && <Badge className="bg-destructive/15 text-destructive">{s.error_count} error ({errorRate}%)</Badge>}
                 {s.avg_latency_ms != null && <Badge className="bg-cosmic/10 text-muted-foreground">~{s.avg_latency_ms}ms avg</Badge>}
               </div>
+              {s.last_question && (
+                <div className="mt-3 border-t border-border pt-2 space-y-1">
+                  <p className="text-[10px] font-semibold text-muted-foreground">Last asked {s.last_question_at ? formatIST(s.last_question_at) : ""}</p>
+                  <p className="text-[11px] text-foreground line-clamp-2" title={s.last_question}>Q: {s.last_question}</p>
+                  {s.last_answer && <p className="text-[11px] text-muted-foreground line-clamp-2" title={s.last_answer}>A: {s.last_answer}</p>}
+                </div>
+              )}
             </button>
           );
         })}

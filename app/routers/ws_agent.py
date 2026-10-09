@@ -440,13 +440,18 @@ def _trace(pipeline: list, step: str, step_label: str, **detail) -> None:
     pipeline.append({"step": step, "label": step_label, "detail": detail})
 
 
-def _record_section_stat(log_db, domain: str | None, status: str, latency_ms: int | None) -> None:
+def _record_section_stat(
+    log_db, domain: str | None, status: str, latency_ms: int | None,
+    question: str = None, answer: str = None,
+) -> None:
     """Incrementally upsert the persisted section-wise summary table
     (AgentLogSection) — a real DB table with one row per domain, kept
     up to date on every turn, instead of a live GROUP BY query
     recomputed from scratch on every admin-panel view. Called on the
     same session as the AgentLog write for that turn, right before it
-    commits, so both land together."""
+    commits, so both land together. `question`/`answer` overwrite the
+    row's last_question/last_answer snapshot (most-recent-turn preview,
+    not an accumulated history — see the model's docstring)."""
     key = domain or "general"
     label = DOMAINS.get(key, {}).get("label") if key != "general" else None
     label = label or "General / Other"
@@ -461,6 +466,10 @@ def _record_section_stat(log_db, domain: str | None, status: str, latency_ms: in
     else:
         row.error_count += 1
     row.total_latency_ms += (latency_ms or 0)
+    if question is not None:
+        row.last_question = question[:2000]
+        row.last_answer = (answer or "")[:5000]
+        row.last_question_at = datetime.utcnow()
 
 
 # Response-length budget (Ollama's num_predict, i.e. max output tokens),
@@ -898,7 +907,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                                 latency_ms=_smalltalk_latency,
                                 prompt_chars=len(query),
                             ))
-                            _record_section_stat(log_db, domain, "success", _smalltalk_latency)
+                            _record_section_stat(log_db, domain, "success", _smalltalk_latency, question=query, answer=smalltalk_text)
                             log_db.commit()
                         finally:
                             log_db.close()
@@ -1026,7 +1035,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                                 prompt_chars=len(template_text),
                             )
                             log_db.add(log_entry)
-                            _record_section_stat(log_db, _template_domain, "success", _template_latency)
+                            _record_section_stat(log_db, _template_domain, "success", _template_latency, question=query, answer=template_text)
                             log_db.commit()
                         finally:
                             log_db.close()
@@ -1237,7 +1246,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             prompt_chars=len(user_prompt),
                         )
                         log_db.add(log_entry)
-                        _record_section_stat(log_db, detected_domain, log_status, _llm_latency)
+                        _record_section_stat(log_db, detected_domain, log_status, _llm_latency, question=query, answer=full_response)
                         log_db.commit()
                         logger.info("Agent log saved: id=%s, status=%s, latency=%dms", log_entry.id, log_status, _llm_latency)
                     finally:

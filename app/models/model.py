@@ -1239,6 +1239,14 @@ class AgentLogSection(Base):
     success_count = Column(Integer, default=0, nullable=False)
     error_count = Column(Integer, default=0, nullable=False)
     total_latency_ms = Column(BigInteger, default=0, nullable=False)  # / total = avg
+    # Snapshot of the most recent turn in this section — overwritten on
+    # every update, not accumulated. The full Q&A history already lives
+    # in AgentLog (one row per turn, drillable from the admin panel's
+    # "All Logs" view filtered to this domain); this is just a fast,
+    # no-drill-down preview of what was last asked here.
+    last_question = Column(Text, nullable=True)
+    last_answer = Column(Text, nullable=True)
+    last_question_at = Column(DateTime, nullable=True)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 
 
