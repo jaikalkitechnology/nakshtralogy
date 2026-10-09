@@ -21,6 +21,18 @@ Multi-chart engines (kundli_milan, relationship, child_probability,
 love_compatibility, karma_linkage) are intentionally NOT wired here — they
 need a second chart and a different request shape than the single-
 chart_id WS protocol supports today. See localAiChat/STATUS.md.
+
+"kundli" and "daily_forecast" ARE wired here (as of the 19 -> 21 agent
+expansion) even though neither has a SPECIALISTS entry: "kundli" needs no
+separate specialist_report at all — the generic chart facts ws_agent.py
+already builds for every chat (planets, bhava, shadbala, dasha,
+ashtakavarga, aspects, chakra_health, sade_sati, life_areas) ARE the
+kundli data, so get_specialist_summary("kundli", ...) correctly no-ops
+(SPECIALISTS has no "kundli" key) and that's by design, not a gap.
+"daily_forecast" has its own engine (daily_probability_forecast_specialist)
+with a different calling convention (needs dob/tob/place, not just
+pdata/birth_jd) — ws_agent.py branches to get_forecast_summary() for it
+specifically, same as before; only its REGISTRY membership changed here.
 """
 
 import logging
@@ -55,7 +67,10 @@ DOMAIN_TO_SPECIALIST = {
 # entry (DOMAINS has no house/planet-weight config for these — adding one
 # would mean inventing astrological weightings, which this bridge
 # deliberately does not do; it only reads engines that already exist).
-EXTRA_CHAT_ENGINES = {"character", "past_life"}
+# "kundli" and "daily_forecast" are here too (agents #20 and #21 of the
+# 19-engine "All Insights" set + these 2) — see the module docstring for
+# why each needs no SPECIALISTS entry of its own.
+EXTRA_CHAT_ENGINES = {"character", "past_life", "kundli", "daily_forecast"}
 
 CHAT_ENGINE_KEYS = set(DOMAIN_TO_SPECIALIST.values()) | EXTRA_CHAT_ENGINES
 
@@ -208,7 +223,7 @@ def setting_key_for_chat_engine(engine_key: Optional[str]) -> Optional[str]:
     """The AiAgentSetting.domain_key (admin publish/pricing control) that
     gates a given chat topic. A domain-mapped specialist (e.g. "career")
     reuses its matching domain's existing row ("career_job") — same topic,
-    just a different key namespace. "character", "past_life" and
+    just a different key namespace. "character", "past_life", "kundli" and
     "daily_forecast" have no domain counterpart, so they're gated by their
     own key directly (AiAgentSetting.domain_key is a plain string, reusable
     for any topic key, not an FK). Returns None for an unscoped/general
@@ -218,7 +233,7 @@ def setting_key_for_chat_engine(engine_key: Optional[str]) -> Optional[str]:
     for domain_key, spec_key in DOMAIN_TO_SPECIALIST.items():
         if spec_key == engine_key:
             return domain_key
-    if engine_key in EXTRA_CHAT_ENGINES or engine_key == "daily_forecast":
+    if engine_key in EXTRA_CHAT_ENGINES:
         return engine_key
     return None
 
@@ -230,8 +245,6 @@ def resolve_chat_engine(explicit_engine: Optional[str], domain_key: Optional[str
     question — ws_agent.py's existing generic context already covers that
     case well, so no specialist call is made (keeps the "ask anything"
     path fast and avoids running engines the question didn't ask about)."""
-    if explicit_engine == "daily_forecast":
-        return "daily_forecast"
     if explicit_engine in CHAT_ENGINE_KEYS:
         return explicit_engine
     if domain_key and domain_key in DOMAIN_TO_SPECIALIST:

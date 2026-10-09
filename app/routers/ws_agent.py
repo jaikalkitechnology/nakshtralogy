@@ -5,7 +5,8 @@ Flow:
 1. Client connects: ws://host/ws/agent/chat?token=<jwt>
 2. Client sends: {"chart_id", "query", "provider", "language", "domain", "engine"}
    `engine` is optional — an explicit specialist topic key (one of
-   app.agent.specialist_bridge.CHAT_ENGINE_KEYS, or "daily_forecast") set
+   app.agent.specialist_bridge.CHAT_ENGINE_KEYS — the 14 domain-mapped
+   specialists plus character/past_life/kundli/daily_forecast) set
    by an "Ask AI" entry point on that specific report screen. When set (or
    when the intent-detected `domain` maps to one), the matching specialist
    engine's own analysis is pulled into the prompt context alongside the
@@ -215,8 +216,8 @@ _SPECIALIST_TO_DOMAIN = {v: k for k, v in DOMAIN_TO_SPECIALIST.items()}
 
 
 def _off_topic_redirect(query: str, chat_engine_key: str) -> str | None:
-    """For a topic-locked chat (character/past_life/daily_forecast have no
-    domain to compare against and are skipped), deterministically catch a
+    """For a topic-locked chat (character/past_life/kundli/daily_forecast
+    have no domain to compare against and are skipped), deterministically catch a
     question that clearly belongs to a DIFFERENT domain and redirect by
     name — this is the same keyword-based detect_intent() already trusted
     elsewhere in the app (it's what computes the probability score itself),
