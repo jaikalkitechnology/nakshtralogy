@@ -167,7 +167,7 @@ _CLARIFY_REQ_RX = re.compile(
 _QUESTION_CUE_RX = re.compile(
     # Auxiliaries (is/are/will/can/...) only count at the START of a message
     # ("is this good") — see _QUESTION_START — not mid-sentence ("I am bored").
-    r"\?|\b(what|when|where|which|who|why|how|"
+    r"\?|\b(what|whats|wats|wat|wht|when|whens|where|wheres|which|who|whos|why|whys|how|hows|"
     r"kya|kab|kaise|kaisa|kaisi|kyu|kyun|kyon|kitna|kitni|kaun|kahan|kaha|konsa|kaunsa|tell|batao|bataye|"
     r"bataiye|explain|show|give|predict|suggest|help|madad|guide|advice|check|analy[sz]e|dikhao)\b"
     r"|क्या|कब|कैसे|कैसा|क्यों|कौन|कहाँ|बताओ|बताइए", re.IGNORECASE)
@@ -179,7 +179,8 @@ _ASTRO_VOCAB_RX = re.compile(
 
 
 _QUESTION_START = {"is", "are", "am", "will", "would", "should", "shall", "can", "could", "do", "does", "did",
-                   "what", "when", "where", "which", "who", "why", "how", "kya", "kab", "kaise", "kyu", "kyun"}
+                   "what", "whats", "wats", "wat", "when", "where", "wheres", "which", "who", "whos", "why",
+                   "how", "hows", "kya", "kab", "kaise", "kyu", "kyun"}
 
 
 def _norm_message(q: str) -> str:
@@ -189,20 +190,25 @@ def _norm_message(q: str) -> str:
 
 
 def classify_conversation(query: str, *, has_history: bool = False, last_assistant: str | None = None,
-                          domain_confidence: float = 0) -> dict:
+                          domain_confidence: float = 0, personal_info: bool = False) -> dict:
     """First stage for every message: {"intent", "confidence", "reason",
     "needs_chart"}. intent is one of greeting, acknowledgement, farewell,
-    casual, clarification_request, astrology. Only "astrology" (and a
-    clarification request about an earlier answer) goes on to task
-    classification / routing / chart retrieval."""
+    casual, clarification_request, personal_info, astrology. Only
+    "astrology", "personal_info" (name / date / time / place of birth,
+    today's date — answered from the chart record) and a clarification
+    request about an earlier answer go on to the LLM pipeline.
+    personal_info: set by the caller when the message asks for one of
+    those facts (ws_agent's _PERSONAL_INFO_FIELDS / date-time patterns)."""
     raw = (query or "").strip()
     q = _norm_message(raw)
     words = q.split()
 
     def out(intent, conf, reason, kind=None):
-        needs = intent == "astrology" or (intent == "clarification_request" and has_history)
+        needs = intent in ("astrology", "personal_info") or (intent == "clarification_request" and has_history)
         return {"intent": intent, "confidence": conf, "reason": reason, "needs_chart": needs, "kind": kind}
 
+    if personal_info:
+        return out("personal_info", 0.95, "asks for a fact from the birth record (name / date / time / place)")
     if raw and _POSITIVE_EMOJI_RX.match(raw):
         return out("acknowledgement", 0.9, "positive emoji only")
     if not q:
@@ -432,6 +438,9 @@ def route_task(task: dict, *, scored_domain: str, domain_confidence: float, engi
 
     engine "auto" = keep the existing specialist resolution for that domain."""
     t = task["task"]
+    if t == "personal_info":
+        return {"domain": locked_domain or engine_key or "general", "engine": None, "show_probability": False,
+                "reason": "fact from the birth record — no chart reading"}
     if t == "rephrase":
         # "I didn't understand" — re-explain the previous answer in the same
         # topic; no new specialist report, no badge.
@@ -643,8 +652,9 @@ _TASK_SECTIONS = {
     "daily_forecast": {"planets", "current_dasha", "current_dasha_moola", "gochar_today", "sade_sati",
                        "transits_today", "specialist_report"},
     "rephrase": {"planets", "bhava", "current_dasha", "current_dasha_moola"},
+    "personal_info": set(),
 }
-_ALWAYS = {"probability", "intent", "_validation"}
+_ALWAYS = {"probability", "intent", "_validation", "profile"}
 _HEALTH_DOMAINS = {"health_wellness", "mental_stress"}
 
 
@@ -1042,7 +1052,7 @@ def validate_response(text: str, ctx: dict, task: dict, language: str, roman_lan
         errors.append("Quotes chakra scores, which were withheld as unreliable")
 
     # ── Does it answer THIS question, in the required form? ──
-    if len(text.strip()) < 20:
+    if len(text.strip()) < 8:
         errors.append("The answer is empty or too short to answer the question")
     if _LEAKED_LABEL_RX.search(text):
         errors.append("Copies internal prompt labels into the answer — write only the natural answer")

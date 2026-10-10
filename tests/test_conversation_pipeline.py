@@ -349,3 +349,61 @@ def test_names_that_double_as_astrology_words_are_not_misread():
     assert not r["ok"] and r["bad_sentences"] == ["Ravi, do a Lakshmi pooja on Fridays."]
     r = v("Meena, your Sun in Pisces shines.", ["Meena"])                                           # Meena = Pisces
     assert not r["ok"] and "natal Sun is in Virgo" in r["errors"][0]
+
+
+# ── personal-info questions + birth profile ───────────────────────────────
+
+@pytest.mark.parametrize("q,intent", [
+    ("whats my name", "personal_info"), ("what is my date of birth", "personal_info"),
+    ("where was I born", "personal_info"), ("mera naam kya hai", "personal_info"),
+    ("whats up", "casual"), ("okay this nice", "acknowledgement"), ("whats my career like", "astrology"),
+    ("hows my health", "astrology"),
+])
+def test_personal_info_and_question_words(q, intent):
+    c = A.classify_conversation(q, has_history=True, last_assistant="Your Saturn is in Cancer.",
+                                domain_confidence=detect_intent(q)["domain_confidence"],
+                                personal_info=ws._is_personal_info_question(q))
+    assert c["intent"] == intent, c
+
+
+def test_e2e_whats_my_name_answers_from_birth_profile(env):
+    env["llm"].replies = ["Your name is Pooja. 😊\n---FOLLOWUPS---\nQ: What is my Lagna?"]
+    frames, _ = env["ask"]("whats my name", engine="kundli")
+    assert len(env["llm"].calls) == 1
+    prompt = env["llm"].calls[-1]["messages"][-1]["content"]
+    assert "BIRTH PROFILE" in prompt
+    assert "Name: Pooja | Gender: Female | Date of birth: 12/10/2004 | Time of birth: 13:55" in prompt
+    assert "Place of birth: Mumbai, Maharashtra, India" in prompt
+    assert 'Their name is exactly "pooja"' in prompt
+    assert "REPORT" not in prompt and "ANALYSIS:" not in prompt
+    assert next(f for f in frames if f["type"] == "prob")["data"]["probability"] is None
+    _, steps = _log(env["Session"])
+    assert steps["conversation_intent"]["intent"] == "personal_info"
+    assert steps["task_classified"]["task"] == "personal_info"
+    assert steps["routing"]["specialist_engine"] is None
+    assert steps["response_validation"]["action"] == "accepted"
+
+
+def test_e2e_okay_this_nice_is_ack(env, monkeypatch):
+    _no_chart_work(monkeypatch)
+    frames, _ = env["ask"]("okay this nice", engine="career")
+    assert env["llm"].calls == [] and _text(frames) == A._ACK_REPLY["english"]
+
+
+def test_e2e_birth_profile_marks_family_chart(env):
+    _set_owner(env["Session"], category="family")
+    env["llm"].replies = ["Rahul, Pooja's career grows through steady, skilled work at her job.\n---FOLLOWUPS---\nQ: When?"]
+    env["ask"]("How is her career this year?", engine="career")
+    prompt = env["llm"].calls[-1]["messages"][-1]["content"]
+    assert "Asked by: Rahul (the account holder) — this chart belongs to a family member" in prompt
+
+
+def test_admin_log_json_includes_chart_holder(env):
+    import app.routers.agent_router as ar
+    s = env["Session"]()
+    from app.models.model import Chart
+    ch = s.query(Chart).first()
+    holder = ar._chart_holder(s, ch.id)
+    s.close()
+    assert holder["name"] == "pooja" and holder["dob"] == "12/10/2004" and holder["tob"] == "13:55"
+    assert holder["place"] == "Mumbai, Maharashtra, India" and holder["gender"] == "F"

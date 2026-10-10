@@ -699,6 +699,9 @@ _TASK_LENGTH_RULES = {
         "Write 4-7 sentences: what this dosha/yoga is in simple words, then whether and why it is present in "
         "THEIR chart using only the chart factors given (and any cancellations). No daily predictions or time "
         "windows. Present it as a traditional astrological interpretation, not a scientific fact."),
+    "personal_info": (
+        "Answer in 1-2 short, friendly sentences with the exact value from the BIRTH PROFILE (or the value given "
+        "next to the question). No chart reading, no predictions, no remedies."),
     "rephrase": (
         "The user did not understand your previous answer. Re-explain THAT answer in 3-5 short, simple sentences, "
         "as if to someone new to astrology — same facts, no new predictions, no new topics, no remedies."),
@@ -769,6 +772,24 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
 
     def _inc(name: str) -> bool:
         return sections is None or name in sections
+
+    # Whose chart this is — always included (also answers "what's my name /
+    # date of birth / where was I born" with the exact stored values).
+    prof = chart_context.get("profile") or {}
+    if prof:
+        g = {"M": "Male", "F": "Female"}.get(str(prof.get("gender") or "").upper()[:1])
+        bits = [f"{label}: {val}" for label, val in (
+            ("Name", prof.get("name")), ("Gender", g), ("Date of birth", prof.get("dob")),
+            ("Time of birth", prof.get("tob")), ("Place of birth", prof.get("place")), ("Age", prof.get("age")),
+        ) if val not in (None, "")]
+        if bits:
+            parts.append("BIRTH PROFILE (whose chart this is — use these exact values if asked):")
+            parts.append("  " + " | ".join(bits))
+            if prof.get("is_users_own") is False:
+                who = prof.get("asked_by") or "The user"
+                parts.append(f"  Asked by: {who} (the account holder) — this chart belongs to "
+                             f"{prof.get('relation') or 'someone else'}, not to them")
+            parts.append("")
 
     # Planet positions with Shadbala strength
     planets = chart_context.get("planets", {})

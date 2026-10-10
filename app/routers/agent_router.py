@@ -25,6 +25,18 @@ from app.agent.llm_service import generate_llm_response, get_available_providers
 from app.agent.specialist_bridge import CHAT_ENGINE_KEYS, EXTRA_CHAT_ENGINES, EXTRA_CHAT_ENGINE_META, setting_key_for_chat_engine
 
 
+def _chart_holder(db, chart_id) -> Optional[dict]:
+    """The birth record a chat/log is about (who the chart belongs to) —
+    shown next to "user" (who asked) in the admin AI Chat Logs JSON."""
+    if not chart_id:
+        return None
+    ch = db.query(Chart).filter(Chart.id == chart_id).first()
+    if not ch:
+        return None
+    return {"name": ch.name, "gender": ch.gender, "dob": ch.dob, "tob": ch.tob, "place": ch.place,
+            "category": getattr(ch, "category", None), "is_primary": bool(getattr(ch, "is_primary", False))}
+
+
 def _utc_iso(dt) -> Optional[str]:
     """Serialize a DB datetime (stored UTC via func.now(), but naive — no
     tzinfo attached) as an unambiguous UTC ISO string. Plain str(dt) (e.g.
@@ -539,6 +551,7 @@ def get_agent_log_detail(
         "id": log.id,
         "user_id": log.user_id,
         "user": {"name": requester.name, "email": requester.email} if requester else None,
+        "chart_holder": _chart_holder(db, log.chart_id),
         "chart_id": log.chart_id,
         "chat_id": getattr(log, "chat_id", None),
         "provider": log.provider,
@@ -624,6 +637,7 @@ def get_chat_transcript(
         "language": chat.language,
         "chart_id": chat.chart_id,
         "user": {"name": requester.name, "email": requester.email} if requester else None,
+        "chart_holder": _chart_holder(db, chat.chart_id),
         "created_at": _utc_iso(chat.created_at),
         "updated_at": _utc_iso(chat.updated_at),
         "turns": turns,
