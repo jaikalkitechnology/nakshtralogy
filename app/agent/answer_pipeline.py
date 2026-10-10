@@ -211,8 +211,17 @@ _OFFTOPIC_RX = re.compile(
     r"\b(jokes?|poems?|poetry|story|stories|songs?|lyrics|recipes?|cook(ing)?|news|weather|cricket|football|"
     r"match\s*score|movies?|films?|capital\s*of|president|prime\s*minister|election|stock\s*price|share\s*price|"
     r"bitcoin|crypto(currency)?|math(s|ematics)?|equation|homework|essay|translat\w*|python|javascript|java|sql|"
-    r"html|css|programming|coding|code|api|algorithm|software|website|chatgpt|gemini|technology|technologies)\b",
+    r"html|css|programming|coding|code|api|algorithm|software|website|chatgpt|gemini|technology|technologies|"
+    # common non-person subjects ("why cat love boxs", "what color is a mirror")
+    r"cats?|kittens?|dogs?|pupp(y|ies)|animals?|birds?|fish|insects?|boxe?s?|mirrors?|colou?rs?|sky|ocean|sea|"
+    r"mountains?|rivers?|trees?|flowers?|rain|sun\s*rise|sunset|moon\s*landing|phones?|laptops?|computers?|"
+    r"internet|pizza|burger|chocolate|tea|coffee|science|physics|chemistry|biology|history|geography)\b",
     re.IGNORECASE)
+# Pronoun-less Hinglish life questions ("shaadi kab hogi", "naukri milegi?")
+# are about the user even without "my".
+_HINGLISH_SELF_Q_RX = re.compile(
+    r"\b(kab|kya|kaise|kaisa|kaisi|kitna|kitni|hogi|hoga|honge|milegi|milega|milenge|chalega|chalegi|"
+    r"karun|karu|karoon|karna|chahiye|sakta|sakti|hai\s*kya)\b", re.IGNORECASE)
 _GENERIC_TASK_RX = re.compile(r"^(please\s+)?(write|compose|code|draft|translate|summari[sz]e|solve|calculate|"
                               r"compute|debug|create\s+(a|an)\s+(app|website|program|script|api))\b")
 _FIRST_PERSON_RX = re.compile(
@@ -293,7 +302,7 @@ def classify_conversation(query: str, *, has_history: bool = False, last_assista
     if _FAREWELL_RX.match(q):
         return out("farewell", 0.95, "farewell phrase")
     if _AFFIRM_RX.match(q) and has_history and last_assistant and "?" in last_assistant.strip()[-160:]:
-        return out("astrology", 0.7, "affirmation of the assistant's previous offer")
+        return out("astrology", 0.7, "affirmation of the assistant's previous offer", kind="affirmation")
     if _CLARIFY_REQ_RX.search(q) and len(words) <= 10:
         return out("clarification_request", 0.85, "asks to re-explain / didn't understand")
     if _CASUAL_RX.match(q):
@@ -311,8 +320,16 @@ def classify_conversation(query: str, *, has_history: bool = False, last_assista
     first_person = bool(_FIRST_PERSON_RX.search(_POLITE_ME_RX.sub(" ", raw)))
     if not strong_astro and (_GENERIC_TASK_RX.match(q) or (_OFFTOPIC_RX.search(raw) and not first_person)):
         return out("out_of_scope", 0.85, "not an astrology question (general knowledge / task)", kind="general")
-    if strong_astro or domain_confidence > 15:
+    if strong_astro:
         return out("astrology", 0.85, "astrology vocabulary")
+    if domain_confidence > 15:
+        # A life-area keyword alone ("love" in "why cat love boxs") isn't
+        # enough — it must be about a person, else the LLM relevance check decides.
+        names_rx0 = [re.compile(r"\b" + re.escape(n) + r"\b", re.IGNORECASE) for n in (person_names or []) if n]
+        if (first_person or _THIRD_PERSON_RX.search(raw) or any(r.search(raw) for r in names_rx0)
+                or _HINGLISH_SELF_Q_RX.search(raw)):
+            return out("astrology", 0.85, "life-area question about a person")
+        return out("astrology", 0.5, "life-area keyword without a person — relevance unclear", uncertain=True)
     latin = sum(c.isascii() for c in raw) >= 0.6 * len(raw)
     names_rx = [re.compile(r"\b" + re.escape(n) + r"\b", re.IGNORECASE) for n in (person_names or []) if n]
     about_person = bool(_THIRD_PERSON_RX.search(raw)) or any(rx.search(raw) for rx in names_rx)
@@ -323,9 +340,9 @@ def classify_conversation(query: str, *, has_history: bool = False, last_assista
         if has_history and len(words) <= 6 and (_VAGUE_REF_RX.search(raw) or _FOLLOWUP_START_RX.match(q)):
             return out("astrology", 0.5, "short follow-up to the previous answer", uncertain=True)
         if _HELP_RX.search(raw):
-            return out("astrology", 0.5, "asks for help/advice — astrology app")
+            return out("astrology", 0.5, "asks for help/advice — astrology app", kind="help")
         if not has_history and (_VAGUE_REF_RX.search(raw) or (len(words) <= 3 and _FOLLOWUP_START_RX.match(q))):
-            return out("astrology", 0.5, "vague request — will be clarified")
+            return out("astrology", 0.5, "vague request — will be clarified", kind="vague")
         if about_person:
             return out("astrology", 0.5, "a question about a person's life (the chart holder)", uncertain=True)
         if not latin:
@@ -340,6 +357,38 @@ def classify_conversation(query: str, *, has_history: bool = False, last_assista
     if about_person or not latin:
         return out("astrology", 0.4, "longer message possibly about a person's life", uncertain=True)
     return out("out_of_scope", 0.5, "longer message unrelated to astrology or the user's life", kind="general")
+
+
+# Astrology decisions that don't need the LLM gate: "yes" to the
+# assistant's own offer, a bare "help", and a vague request that is
+# answered with a clarification anyway.
+_GATE_EXEMPT_KINDS = {"affirmation", "help", "vague"}
+
+
+def needs_relevance_check(conv: dict) -> bool:
+    """Every real question is put to the LLM relevance gate ("is this about
+    nakshatralogy / the user's life?"). Greetings, thanks, farewells, small
+    talk, birth-record questions, re-explain requests and meta probes are
+    answered deterministically and skip it."""
+    if conv["intent"] == "astrology":
+        return conv.get("kind") not in _GATE_EXEMPT_KINDS
+    return conv["intent"] == "out_of_scope" and conv.get("kind") == "general"
+
+
+def apply_relevance(conv: dict, relevant: bool | None) -> dict:
+    """Apply the LLM relevance gate: YES → answer as astrology, NO → polite
+    out-of-scope refusal, no answer (check failed) → keep the rule decision."""
+    if relevant is None or not needs_relevance_check(conv):
+        return conv
+    if relevant is False:
+        if conv["intent"] == "out_of_scope":
+            return conv
+        return {**conv, "intent": "out_of_scope", "kind": "general", "needs_chart": False, "confidence": 0.8,
+                "uncertain": False, "reason": "relevance check: not about nakshatralogy or the user's life"}
+    if conv["intent"] == "astrology":
+        return {**conv, "uncertain": False}
+    return {**conv, "intent": "astrology", "kind": None, "needs_chart": True, "confidence": 0.6,
+            "uncertain": False, "reason": "relevance check: about nakshatralogy or the user's life"}
 
 
 def relevance_overrule(conv: dict, relevant: bool | None) -> dict:

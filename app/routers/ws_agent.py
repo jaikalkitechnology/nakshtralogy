@@ -52,7 +52,7 @@ from app.agent.llm_service import (
 )
 from app.agent.answer_pipeline import (
     PROMPT_VERSION, CHART_TASKS, BUFFERED_TASKS, LISTING_TASKS,
-    classify_conversation, conversation_reply, context_requirements, classify_task, relevance_overrule,
+    classify_conversation, conversation_reply, context_requirements, classify_task, needs_relevance_check, apply_relevance,
     address_names, name_instruction, clean_first_name, clarification_text, route_task, validate_chart_context, select_context,
     wants_remedy, build_fact_sheet, validate_response, dedupe_sentences, drop_sentences,
     deterministic_answer,
@@ -1067,13 +1067,16 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     person_names=[clean_first_name(n, "hindi", ROMAN_SCRIPT_LANGUAGES)
                                   for n in (chart.name, getattr(user, "name", None))],
                 )
-                if conv.get("uncertain"):
-                    # Rules alone couldn't tell — one-word LLM check, with the
-                    # previous reply for follow-up context. NO → refuse politely.
+                if (needs_relevance_check(conv) and not _META_PROBE_RE.search(query)
+                        and not detect_bare_language_switch(query) and not _looks_gibberish(query)):
+                    # The LLM decides whether a question belongs to
+                    # nakshatralogy (one-word YES/NO, with the previous reply
+                    # for follow-up context). YES → answer, NO → refuse politely,
+                    # no answer → keep the rule-based decision.
                     _rel = await classify_relevance(query, _last_assistant)
-                    _trace(pipeline, "relevance_check", "LLM relevance check for an uncertain message",
-                           relevant=_rel, rule_reason=conv["reason"])
-                    conv = relevance_overrule(conv, _rel)
+                    _trace(pipeline, "relevance_check", "LLM relevance check — is this a nakshatralogy question?",
+                           relevant=_rel, rule_intent=conv["intent"], rule_reason=conv["reason"])
+                    conv = apply_relevance(conv, _rel)
                 _trace(
                     pipeline, "conversation_intent", "Conversation intent classified",
                     intent=conv["intent"], kind=conv.get("kind"), confidence=conv["confidence"],
