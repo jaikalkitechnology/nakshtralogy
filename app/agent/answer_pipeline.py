@@ -211,8 +211,17 @@ _OFFTOPIC_RX = re.compile(
     r"\b(jokes?|poems?|poetry|story|stories|songs?|lyrics|recipes?|cook(ing)?|news|weather|cricket|football|"
     r"match\s*score|movies?|films?|capital\s*of|president|prime\s*minister|election|stock\s*price|share\s*price|"
     r"bitcoin|crypto(currency)?|math(s|ematics)?|equation|homework|essay|translat\w*|python|javascript|java|sql|"
-    r"html|css|programming|coding|code|api|algorithm|software|website|chatgpt|gemini|technology|technologies)\b",
+    r"html|css|programming|coding|code|api|algorithm|software|website|chatgpt|gemini|technology|technologies|"
+    # common non-person subjects ("why cat love boxs", "what color is a mirror")
+    r"cats?|kittens?|dogs?|pupp(y|ies)|animals?|birds?|fish|insects?|boxe?s?|mirrors?|colou?rs?|sky|ocean|sea|"
+    r"mountains?|rivers?|trees?|flowers?|rain|sun\s*rise|sunset|moon\s*landing|phones?|laptops?|computers?|"
+    r"internet|pizza|burger|chocolate|tea|coffee|science|physics|chemistry|biology|history|geography)\b",
     re.IGNORECASE)
+# Pronoun-less Hinglish life questions ("shaadi kab hogi", "naukri milegi?")
+# are about the user even without "my".
+_HINGLISH_SELF_Q_RX = re.compile(
+    r"\b(kab|kya|kaise|kaisa|kaisi|kitna|kitni|hogi|hoga|honge|milegi|milega|milenge|chalega|chalegi|"
+    r"karun|karu|karoon|karna|chahiye|sakta|sakti|hai\s*kya)\b", re.IGNORECASE)
 _GENERIC_TASK_RX = re.compile(r"^(please\s+)?(write|compose|code|draft|translate|summari[sz]e|solve|calculate|"
                               r"compute|debug|create\s+(a|an)\s+(app|website|program|script|api))\b")
 _FIRST_PERSON_RX = re.compile(
@@ -311,8 +320,16 @@ def classify_conversation(query: str, *, has_history: bool = False, last_assista
     first_person = bool(_FIRST_PERSON_RX.search(_POLITE_ME_RX.sub(" ", raw)))
     if not strong_astro and (_GENERIC_TASK_RX.match(q) or (_OFFTOPIC_RX.search(raw) and not first_person)):
         return out("out_of_scope", 0.85, "not an astrology question (general knowledge / task)", kind="general")
-    if strong_astro or domain_confidence > 15:
+    if strong_astro:
         return out("astrology", 0.85, "astrology vocabulary")
+    if domain_confidence > 15:
+        # A life-area keyword alone ("love" in "why cat love boxs") isn't
+        # enough — it must be about a person, else the LLM relevance check decides.
+        names_rx0 = [re.compile(r"\b" + re.escape(n) + r"\b", re.IGNORECASE) for n in (person_names or []) if n]
+        if (first_person or _THIRD_PERSON_RX.search(raw) or any(r.search(raw) for r in names_rx0)
+                or _HINGLISH_SELF_Q_RX.search(raw)):
+            return out("astrology", 0.85, "life-area question about a person")
+        return out("astrology", 0.5, "life-area keyword without a person — relevance unclear", uncertain=True)
     latin = sum(c.isascii() for c in raw) >= 0.6 * len(raw)
     names_rx = [re.compile(r"\b" + re.escape(n) + r"\b", re.IGNORECASE) for n in (person_names or []) if n]
     about_person = bool(_THIRD_PERSON_RX.search(raw)) or any(rx.search(raw) for rx in names_rx)

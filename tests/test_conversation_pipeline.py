@@ -620,3 +620,50 @@ def test_e2e_greeting_in_hinglish(env, monkeypatch):
     _no_chart_work(monkeypatch)
     frames, _ = env["ask"]("hii", language="hinglish")
     assert _text(frames) == ws._GREETING_REPLY["hinglish"]
+
+
+# ── a life-area keyword alone doesn't make a question astrology ("why cat love boxs") ──
+
+@pytest.mark.parametrize("q", ["why cat love boxs", "why do dogs bark", "why do cats love boxes?"])
+@pytest.mark.parametrize("hist", [False, True])
+def test_keyword_about_animals_or_objects_is_out_of_scope(q, hist):
+    c = A.classify_conversation(q, has_history=hist, last_assistant="Your business grows." if hist else None,
+                                domain_confidence=detect_intent(q)["domain_confidence"],
+                                personal_info=ws._is_personal_info_question(q),
+                                meta_probe=bool(ws._META_PROBE_RE.search(q)), person_names=["Pooja"])
+    assert c["intent"] == "out_of_scope", c
+
+
+@pytest.mark.parametrize("q", ["what is love", "marriage timing?", "which career is best",
+                               "why do people fall in love"])
+def test_keyword_without_a_person_is_uncertain(q):
+    c = _conv_hist(q)
+    assert c["intent"] == "astrology" and c["uncertain"], c
+
+
+@pytest.mark.parametrize("q", ["shaadi kab hogi", "naukri milegi?", "will I get married", "does she love me",
+                               "when will Rahul get a job", "job kab lagegi", "what colour suits my career",
+                               "love life prediction", "my cat is sick, is it bad luck for me?"])
+def test_keyword_about_a_person_is_astrology(q):
+    c = _conv_hist(q)
+    assert c["intent"] == "astrology" and not c["uncertain"], c
+
+
+def test_e2e_cat_question_in_love_chat_is_refused(env, monkeypatch):
+    chat_id = _first_turn(env, engine="love")
+    calls = len(env["llm"].calls)
+    _no_chart_work(monkeypatch)
+    async def must_not_run(*a, **k):
+        raise AssertionError("no relevance check needed for a question about cats")
+    monkeypatch.setattr(ws, "classify_relevance", must_not_run)
+    frames, _ = env["ask"]("why cat love boxs", engine="love", chat_id=chat_id)
+    assert len(env["llm"].calls) == calls and _text(frames) == A._OUT_OF_SCOPE_REPLY["english"]
+    assert _log(env["Session"])[0].routing == "conv_out_of_scope"
+
+
+@pytest.mark.parametrize("lang", ["english", "hinglish", "hindi"])
+def test_prompt_ends_with_an_off_topic_second_check(lang):
+    from app.agent.llm_service import build_rich_prompt
+    p = build_rich_prompt("why is the sky blue", {"planets": {}}, language=lang, task="general")
+    tail = p[p.rfind("FINAL INSTRUCTIONS"):] if "FINAL INSTRUCTIONS" in p else p[-3000:]
+    assert "Second check" in tail and A._OUT_OF_SCOPE_REPLY[lang] in tail
