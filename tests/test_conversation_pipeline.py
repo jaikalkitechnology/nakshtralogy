@@ -496,3 +496,82 @@ def test_citation_rule_claims_are_checked_against_the_chart(env):
     assert v("Saturn sits in a kendra, the 7th house.")["ok"]
     assert v("Venus is not exalted in your chart.")["ok"]
     assert not v("Saturn is exalted here.")["ok"]
+
+
+# ── off-topic questions inside a topic chat with history ──────────────────
+
+def _conv_hist(q):
+    return A.classify_conversation(q, has_history=True, last_assistant="Raju's business path is steady.",
+                                   domain_confidence=detect_intent(q)["domain_confidence"],
+                                   personal_info=ws._is_personal_info_question(q),
+                                   meta_probe=bool(ws._META_PROBE_RE.search(q)), person_names=["Raju", "Rahul"])
+
+
+@pytest.mark.parametrize("q", ["What color is a mirror?", "What is the speed of light?",
+                               "what time is the meeting tomorrow"])
+def test_general_questions_are_out_of_scope_even_with_history(q):
+    c = _conv_hist(q)
+    assert c["intent"] == "out_of_scope" and not c["uncertain"]
+
+
+@pytest.mark.parametrize("q", ["why?", "when will it happen?", "aur batao", "Raju ke liye kaunsa kaam sahi hai?",
+                               "शादी कब होगी?", "how tall is mount everest"])
+def test_weak_signals_are_marked_uncertain(q):
+    c = _conv_hist(q)
+    assert c["intent"] == "astrology" and c["uncertain"]
+
+
+def test_relevance_overrule():
+    c = _conv_hist("how tall is mount everest")
+    assert A.relevance_overrule(c, False)["intent"] == "out_of_scope"
+    assert A.relevance_overrule(c, True)["intent"] == "astrology"
+    assert A.relevance_overrule(c, None)["intent"] == "astrology"        # check failed → keep
+    sure = _conv_hist("which business suits Raju?")
+    assert A.relevance_overrule(sure, False)["intent"] == "astrology"    # certain decisions aren't overruled
+
+
+def test_degree_claims_are_checked():
+    ctx = {"planets": {"Moon": {"sign_full": "Sagittarius", "sign_idx": 8, "degree": 20.4},
+                       "Venus": {"sign_full": "Capricorn", "sign_idx": 9, "degree": 18.6}}}
+    v = lambda t: A.validate_response(t, ctx, {"task": "general"}, "english", ROMAN_SCRIPT_LANGUAGES,
+                                      NON_LATIN_SCRIPT_RX, ignore_names=["Rahul", "Raju"])
+    r = v("Rahul, Raju's Moon is placed at 18.605 degrees, which aligns with Venus.")
+    assert not r["ok"] and "natal Moon is at 20.4°" in r["errors"][0]
+    assert v("Raju's Venus sits at 18.6° in Capricorn.")["ok"]
+
+
+def _first_turn(env, engine="business"):
+    env["llm"].replies = ["Your business path is steady with growth through partnerships at work.\n---FOLLOWUPS---\nQ: When?"]
+    frames, _ = env["ask"]("How is my business this year?", engine=engine)
+    return next(f for f in frames if f["type"] == "prob")["data"]["chat_id"]
+
+
+def test_e2e_mirror_question_in_business_chat_is_refused(env, monkeypatch):
+    chat_id = _first_turn(env)
+    calls = len(env["llm"].calls)
+    _no_chart_work(monkeypatch)
+    async def must_not_run(*a, **k):
+        raise AssertionError("no relevance check needed for a clear general question")
+    monkeypatch.setattr(ws, "classify_relevance", must_not_run)
+    frames, _ = env["ask"]("What color is a mirror?", engine="business", chat_id=chat_id)
+    assert len(env["llm"].calls) == calls and _text(frames) == A._OUT_OF_SCOPE_REPLY["english"]
+    assert _log(env["Session"])[0].routing == "conv_out_of_scope"
+
+
+@pytest.mark.parametrize("verdict,expect_llm", [(False, False), (True, True), (None, True)])
+def test_e2e_uncertain_message_uses_relevance_check(env, monkeypatch, verdict, expect_llm):
+    chat_id = _first_turn(env)
+    calls = len(env["llm"].calls)
+    seen = {}
+    async def fake_relevance(query, last_assistant=None, timeout=8.0):
+        seen["args"] = (query, last_assistant)
+        return verdict
+    monkeypatch.setattr(ws, "classify_relevance", fake_relevance)
+    env["llm"].replies = ["Your business work grows slowly but steadily.\n---FOLLOWUPS---\nQ: When will it grow?"]
+    frames, _ = env["ask"]("how tall is mount everest", engine="business", chat_id=chat_id)
+    assert seen["args"][1] and "business" in seen["args"][1]          # previous reply passed as context
+    assert (len(env["llm"].calls) > calls) == expect_llm
+    row, steps = _log(env["Session"])
+    assert steps["relevance_check"]["relevant"] is verdict
+    if not expect_llm:
+        assert row.routing == "conv_out_of_scope"

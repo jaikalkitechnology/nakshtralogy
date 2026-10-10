@@ -47,11 +47,12 @@ from app.agent.llm_service import (
     detect_bare_language_switch,
     _FOLLOWUPS_LOOSE_RX,
     NON_LATIN_SCRIPT_RX,
+    classify_relevance,
     ROMAN_SCRIPT_LANGUAGES,
 )
 from app.agent.answer_pipeline import (
     PROMPT_VERSION, CHART_TASKS, BUFFERED_TASKS, LISTING_TASKS,
-    classify_conversation, conversation_reply, context_requirements, classify_task,
+    classify_conversation, conversation_reply, context_requirements, classify_task, relevance_overrule,
     address_names, name_instruction, clean_first_name, clarification_text, route_task, validate_chart_context, select_context,
     wants_remedy, build_fact_sheet, validate_response, dedupe_sentences, drop_sentences,
     deterministic_answer,
@@ -1063,7 +1064,16 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     domain_confidence=_early_intent.get("domain_confidence", 0),
                     personal_info=_is_personal_info_question(query),
                     meta_probe=bool(_META_PROBE_RE.search(query)),
+                    person_names=[clean_first_name(n, "hindi", ROMAN_SCRIPT_LANGUAGES)
+                                  for n in (chart.name, getattr(user, "name", None))],
                 )
+                if conv.get("uncertain"):
+                    # Rules alone couldn't tell — one-word LLM check, with the
+                    # previous reply for follow-up context. NO → refuse politely.
+                    _rel = await classify_relevance(query, _last_assistant)
+                    _trace(pipeline, "relevance_check", "LLM relevance check for an uncertain message",
+                           relevant=_rel, rule_reason=conv["reason"])
+                    conv = relevance_overrule(conv, _rel)
                 _trace(
                     pipeline, "conversation_intent", "Conversation intent classified",
                     intent=conv["intent"], kind=conv.get("kind"), confidence=conv["confidence"],

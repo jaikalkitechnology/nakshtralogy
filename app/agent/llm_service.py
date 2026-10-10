@@ -1394,6 +1394,40 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
     return "\n".join(parts)
 
 
+async def classify_relevance(query: str, last_assistant: str | None = None, timeout: float = 8.0) -> bool | None:
+    """One-word LLM check, used only when the rule-based conversation stage
+    is unsure: is this message for the astrologer (astrology, the kundli,
+    the user's own life, or a follow-up to the previous reply)? Returns
+    True/False, or None if Ollama didn't give a clear answer."""
+    import httpx
+    ctx = f'The assistant\'s previous reply was: "{(last_assistant or "")[:400]}"\n' if last_assistant else ""
+    prompt = (
+        "You are a strict filter for a Vedic astrology app. Should the app's astrologer answer this message? "
+        "Answer YES only if it is about astrology, a horoscope or kundli/birth chart, planets, dasha or remedies, "
+        "or about the life of the user or the person whose chart it is (career, money, love, marriage, health, "
+        "family, education, future), or is a follow-up to the previous reply. Answer NO for general knowledge, "
+        "facts about objects or the world, science, technology, coding, news, sports, jokes or anything else.\n"
+        + ctx + f'User message: "{query}"\nAnswer with exactly one word: YES or NO.'
+    )
+    try:
+        async with httpx.AsyncClient(timeout=httpx.Timeout(connect=3.0, read=timeout, write=5.0, pool=3.0)) as client:
+            resp = await client.post(f"{OLLAMA_URL}/api/chat", json={
+                "model": OLLAMA_MODEL, "messages": [{"role": "user", "content": prompt}],
+                "stream": False, "think": False,
+                "options": {"temperature": 0, "num_predict": 3, "num_ctx": 1024},
+            })
+        if resp.status_code != 200:
+            return None
+        ans = (resp.json().get("message", {}).get("content") or "").strip().upper()
+        if ans.startswith("YES"):
+            return True
+        if ans.startswith("NO"):
+            return False
+    except Exception as e:
+        logger.warning("Relevance check failed: %s", e)
+    return None
+
+
 async def stream_provider(
     provider_key: str,
     messages: list,
