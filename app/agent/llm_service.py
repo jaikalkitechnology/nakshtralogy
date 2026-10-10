@@ -440,7 +440,7 @@ def detect_bare_language_switch(query: str) -> Optional[str]:
 _LANGUAGE_INSTRUCTIONS = {
     "english":    "Respond in clear, warm English.",
     "hindi":      "Respond in Hindi (Devanagari script, देवनागरी). Use proper Hindi throughout. Mix in transliterated planet names (Surya, Chandra, Shani) naturally.",
-    "hinglish":   "Respond in Hinglish (Hindi words in Roman/English script, mixed with English). Every single word in Roman/English letters only — NEVER switch into Devanagari script (देवनागरी) for any word, even mid-sentence. Example: 'Aapki kundli mein Jupiter ka placement bahut strong hai. Shaadi ka yog October tak activate hoga.'",
+    "hinglish":   "Respond in Hinglish (Hindi words in Roman/English script, mixed with English). Example: 'Aapki kundli mein Jupiter ka placement bahut strong hai. Shaadi ka yog October tak activate hoga.'",
     "bengali":    "Respond in Bengali (Bangla script, বাংলা). Use proper Bengali throughout.",
     "tamil":      "Respond in Tamil (தமிழ் script). Use proper Tamil throughout.",
     "telugu":     "Respond in Telugu (తెలుగు script). Use proper Telugu throughout.",
@@ -466,7 +466,47 @@ _LANGUAGE_INSTRUCTIONS = {
 }
 
 
+# Languages written in Roman/Latin letters: English plus every romanized
+# Indian variant.
+ROMAN_SCRIPT_LANGUAGES = {
+    "english", "hinglish", "tanglish", "tenglish", "kanglish", "manglish",
+    "banglish", "gujlish", "marlish", "punglish", "odialish",
+}
+_NATIVE_SCRIPT_NAMES = {
+    "hindi": "Devanagari (देवनागरी)", "marathi": "Devanagari (देवनागरी)",
+    "bengali": "Bengali (বাংলা)", "tamil": "Tamil (தமிழ்)", "telugu": "Telugu (తెలుగు)",
+    "kannada": "Kannada (ಕನ್ನಡ)", "malayalam": "Malayalam (മലയാളം)",
+    "gujarati": "Gujarati (ગુજરાતી)", "punjabi": "Gurmukhi (ਗੁਰਮੁਖੀ)", "odia": "Odia (ଓଡ଼ିଆ)",
+}
+# Characters that must never appear in a Roman-script reply: Indic scripts,
+# Cyrillic, CJK punctuation/ideographs. All three were observed leaking
+# into a single Hinglish answer.
+NON_LATIN_SCRIPT_RX = re.compile(r"[\u0400-\u04FF\u0900-\u0DFF\u3000-\u303F\u4E00-\u9FFF]")
+
+
+def _script_guard(language: str) -> str:
+    """Script rule appended to EVERY language instruction, including an
+    admin-edited one from the DB (AiLanguage.llm_instruction): a deployment's
+    DB text was found to be an older copy without this rule, so it
+    silently disappeared from production prompts."""
+    if language in ROMAN_SCRIPT_LANGUAGES:
+        return ("Write EVERY word in Roman/English letters only — never Devanagari or any other Indian "
+                "script, never Chinese or Cyrillic characters, even mid-sentence; end sentences with '.' "
+                "not '।'.")
+    script = _NATIVE_SCRIPT_NAMES.get(language)
+    if script:
+        return (f"Write the whole reply in {script} script — never switch to another script mid-reply "
+                "(planet names may stay in English).")
+    return ""
+
+
 def _resolve_language_instruction(language: str) -> str:
+    base = _resolve_language_instruction_base(language)
+    guard = _script_guard(language)
+    return f"{base} {guard}" if guard else base
+
+
+def _resolve_language_instruction_base(language: str) -> str:
     """The language instruction for a resolved (non-"auto") language code —
     DB-driven override when actually present, the hardcoded dict otherwise.
     `ai_cache.is_loaded` alone isn't enough to trust it (see note below);
@@ -1122,8 +1162,12 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
         f" After your answer, on its own new line write this exact literal text and nothing else on "
         f"that line: {FOLLOWUPS_MARKER} — no extra dashes, no blank line before it, no variation of "
         f"this text; copy it character-for-character. Then on the following lines write exactly 3 "
-        "short follow-up questions the user might ask next (each on its own line, under 60 chars, "
-        "relevant to this chart, formatted as 'Q: ...')."
+        "short follow-up questions the user might ask you next. Write them as the USER would ask about "
+        "their own chart ('my', 'meri/mera' — never 'your' or 'aapki'), in the same language and script "
+        "as your answer, simple and grammatical. Each must be a natural next step from the question "
+        "just asked, stay within this chat's topic, be answerable from the chart data above, and not "
+        "repeat anything already asked in this conversation. Each on its own line, under 60 chars, "
+        "formatted as 'Q: ...'."
     )
 
     if topic_locked:
@@ -1187,6 +1231,8 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
         f'remedies out entirely if none in the library fit.{health_disclaimer}{mental_disclaimer}'
         + (listing_reminder if data_listing else '') +
         f'{followup_rule}'
+        + (f' LANGUAGE REMINDER: the whole answer and the follow-up questions must be in '
+           f'{language.capitalize()}. {_script_guard(language)}' if language else '')
     )
     return "\n".join(parts)
 
@@ -1259,18 +1305,15 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                         # real headroom on top of that, not just a flat bump.
                         "num_ctx": 8192 if (num_predict or 0) >= 1500 else (4096 if num_predict else 2048),
                         "num_predict": num_predict or 300,  # Hard ceiling backing up the "be short" prompt rules
-                        # Ollama's own default (1.1) wasn't enough to stop the
-                        # model degenerating into an exact-phrase repetition
-                        # loop (observed on romanized-regional-language
-                        # replies — e.g. the same Malayalam/Manglish clause
-                        # repeated a dozen times until num_predict cut it
-                        # off) — a harder-to-trigger task for an 8B model
-                        # than plain English/Hindi. A stronger penalty over
-                        # a longer lookback window makes that loop much
-                        # less likely without noticeably hurting normal
-                        # answers.
-                        "repeat_penalty": 1.3,
-                        "repeat_last_n": 256,
+                        # Ollama's default (1.1) let romanized-language replies
+                        # loop on one clause; 1.3 over 256 tokens stopped that
+                        # but over-penalised the short function words Hinglish
+                        # repeats constantly (hai, ki, mein, aap), pushing the
+                        # model to their Devanagari forms and stray tokens
+                        # (a "。" and a Cyrillic "д" in one reply). 1.15 / 128
+                        # is the middle ground.
+                        "repeat_penalty": 1.15,
+                        "repeat_last_n": 128,
                     },
                 },
             ) as stream:
@@ -1393,7 +1436,7 @@ async def generate_llm_response(
                     ],
                     "stream": False,
                     "think": False,
-                    "options": {"temperature": 0.7, "num_predict": 300, "num_ctx": 2048, "repeat_penalty": 1.3, "repeat_last_n": 256},
+                    "options": {"temperature": 0.7, "num_predict": 300, "num_ctx": 2048, "repeat_penalty": 1.15, "repeat_last_n": 128},
                 },
             )
             if resp.status_code == 200:

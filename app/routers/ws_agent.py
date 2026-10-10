@@ -45,6 +45,8 @@ from app.agent.llm_service import (
     detect_explicit_language_request,
     detect_bare_language_switch,
     _FOLLOWUPS_LOOSE_RX,
+    NON_LATIN_SCRIPT_RX,
+    ROMAN_SCRIPT_LANGUAGES,
 )
 
 logger = logging.getLogger("ws_agent")
@@ -606,6 +608,75 @@ def _load_history(chat: AIChat, max_turns: int = _SESSION_MAX_TURNS) -> list:
             out.append({"q": pending_q, "a": m.content})
             pending_q = None
     return out
+
+
+def _history_for_language(history: list, language: str) -> list:
+    """For a Roman-script reply language, drop earlier-answer sentences
+    written in another script. The model imitates its own previous turns,
+    so one answer that drifted into Devanagari pulls the next one into it
+    too. Native-script languages are passed through unchanged."""
+    if language not in ROMAN_SCRIPT_LANGUAGES:
+        return history
+    out = []
+    for turn in history:
+        a = turn["a"].replace("।", ".").replace("。", ".")
+        if NON_LATIN_SCRIPT_RX.search(a):
+            kept = [x for x in re.split(r"(?<=[.!?।。])\s+|\n+", a) if x.strip() and not NON_LATIN_SCRIPT_RX.search(x)]
+            a = " ".join(kept)
+            if not a:
+                continue
+        out.append({"q": turn["q"], "a": a})
+    return out
+
+
+# Shown only when every model-written follow-up was filtered out.
+_FALLBACK_FOLLOWUPS = {
+    "english": ["When is the best time for this?", "Is there a simple remedy for this?",
+                "What should I focus on next?"],
+    "hinglish": ["Iske liye sabse accha time kab hai?", "Iske liye koi aasaan upay batayein?",
+                 "Mujhe aage kis cheez par dhyan dena chahiye?"],
+    "hindi": ["इसके लिए सबसे अच्छा समय कब है?", "इसके लिए कोई आसान उपाय बताइए?",
+              "मुझे आगे किस बात पर ध्यान देना चाहिए?"],
+}
+# Possessive second person = written from the astrologer's side ("Aapki
+# kundli mein...", "your Moon"), but a chip is sent as the USER's message.
+_FOLLOWUP_WRONG_VOICE_RX = re.compile(
+    r"\b(your|yours|aapki|aapka|aapke|apki|apka|apke|tumhari|tumhara|tumhare)\b|आपकी|आपका|आपके",
+    re.IGNORECASE,
+)
+
+
+def _followup_key(text: str) -> frozenset:
+    return frozenset(re.findall(r"\w+", text.lower()))
+
+
+def _clean_followups(items: list, language: str, query: str, history: list) -> list:
+    """Keep only follow-up chips worth tapping: right script for the reply
+    language, written in the user's voice, not a repeat of anything already
+    asked in this chat (or of each other), sensible length. Falls back to
+    simple generic ones when nothing survives."""
+    asked = [_followup_key(query)] + [_followup_key(t["q"]) for t in history]
+
+    def _repeats(k: frozenset, seen: list) -> bool:
+        return any(k and o and len(k & o) / len(k | o) >= 0.75 for o in seen)
+
+    out, seen = [], list(asked)
+    for q in items:
+        q = q.strip()
+        if not 8 <= len(q) <= 90:
+            continue
+        if language in ROMAN_SCRIPT_LANGUAGES and NON_LATIN_SCRIPT_RX.search(q):
+            continue
+        if _FOLLOWUP_WRONG_VOICE_RX.search(q):
+            continue
+        k = _followup_key(q)
+        if _repeats(k, seen):
+            continue
+        seen.append(k)
+        out.append(q)
+    if not out:
+        out = [q for q in _FALLBACK_FOLLOWUPS.get(language, []) if not _repeats(_followup_key(q), asked)]
+    return out[:3]
 
 
 def _append_message(db, chat: AIChat, role: str, content: str, language: str = None, message_id: str = None) -> None:
@@ -1213,7 +1284,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 logger.info("")
 
                 # Inject previous conversation as chat history (DB-backed)
-                history = _load_history(chat)
+                history = _history_for_language(_load_history(chat), effective_lang)
 
                 # This chat was deliberately started on one topic (e.g. "Career &
                 # Job") iff it has an engine_key — in that case every message
@@ -1305,10 +1376,11 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             q = line[2:].strip().strip("?.!").strip()
                             if q and len(q) <= 100:
                                 followups.append(q + "?" if not q.endswith("?") else q)
-                        elif line and len(followups) < 3 and 10 <= len(line) <= 100 and "?" in line:
+                        elif line and 10 <= len(line) <= 100 and "?" in line:
                             followups.append(line)
-                        if len(followups) >= 3:
+                        if len(followups) >= 6:
                             break
+                    followups = _clean_followups(followups, effective_lang, query, history)
                 _trace(
                     pipeline, "response_stored", "Final answer stored in DB",
                     message_id=message_id, chars=len(main_answer), followups=len(followups),
