@@ -696,6 +696,9 @@ _TASK_LENGTH_RULES = {
         "Write 4-7 sentences: what this dosha/yoga is in simple words, then whether and why it is present in "
         "THEIR chart using only the chart factors given (and any cancellations). No daily predictions or time "
         "windows. Present it as a traditional astrological interpretation, not a scientific fact."),
+    "rephrase": (
+        "The user did not understand your previous answer. Re-explain THAT answer in 3-5 short, simple sentences, "
+        "as if to someone new to astrology — same facts, no new predictions, no new topics, no remedies."),
     "remedy": (
         "Write 3-6 sentences: name the chart condition the remedy addresses (from the chart data), then at most "
         "1-2 remedies taken from the REMEDY LIBRARY. Present them as traditional practices that may help — "
@@ -1260,7 +1263,8 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
         "as your answer, simple and grammatical. Each must be a natural next step from the question "
         "just asked, stay within this chat's topic, be answerable from the chart data above, and not "
         "repeat anything already asked in this conversation. Each on its own line, under 60 chars, "
-        "formatted as 'Q: ...'."
+        "formatted as 'Q: ...'. Write these questions ONLY after the marker and only once — never inside "
+        "or at the end of your answer above it."
     )
 
     if topic_locked:

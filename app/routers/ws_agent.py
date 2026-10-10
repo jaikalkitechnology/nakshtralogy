@@ -51,7 +51,7 @@ from app.agent.llm_service import (
 )
 from app.agent.answer_pipeline import (
     PROMPT_VERSION, CHART_TASKS, BUFFERED_TASKS, LISTING_TASKS,
-    classify_task, clarification_text, route_task, validate_chart_context, select_context,
+    classify_conversation, conversation_reply, context_requirements, classify_task, clarification_text, route_task, validate_chart_context, select_context,
     wants_remedy, build_fact_sheet, validate_response, dedupe_sentences, drop_sentences,
     deterministic_answer,
 )
@@ -61,24 +61,14 @@ router = APIRouter()
 _agent = NakshtraAgent()
 _nk = NakshtraEngine()
 
-# Small talk — greetings, thanks, "ok", etc. — never worth a full chart
-# computation + specialist report + LLM call. Without this short-circuit,
-# a topic-scoped chat (e.g. "Health & Wellness") injects that specialist's
-# entire report into EVERY turn in the conversation, so even a bare "hi"
-# was drowning the model in chart data and it would just analyze the
-# chart instead of greeting back. Matched only when the ENTIRE message
-# (after stripping punctuation) is one of these — never a substring match,
-# so a real question that happens to start with "hi" isn't caught.
-_SMALLTALK_PHRASES = {
-    "hi", "hii", "hiii", "hiiii", "hey", "heyy", "heyyy", "hello", "helo", "hlo",
-    "namaste", "namaskar", "yo", "sup",
-    "good morning", "good afternoon", "good evening", "good night", "gm", "gn",
-    "thanks", "thank you", "thanks a lot", "thank u", "thx", "ty", "thankyou",
-    "ok", "okay", "k", "kk", "cool", "nice", "great", "good", "fine",
-    "bye", "goodbye", "see you", "cya", "tc",
-    "how are you", "how r u", "hows it going", "whats up", "what's up", "wassup",
+# Conversational messages (greetings, thanks, "this is nice", "how are you"…)
+# are recognised by answer_pipeline.classify_conversation() BEFORE any routing
+# and answered from these tables — never with a chart computation, specialist
+# report or LLM call. AgentLog.routing values (≤ 20 chars):
+_CONV_ROUTING = {
+    "greeting": "conv_greeting", "acknowledgement": "conv_ack", "farewell": "conv_farewell",
+    "casual": "conv_casual", "clarification_request": "conv_clarify",
 }
-
 
 # Localized canned replies — keyed by the same language codes used
 # throughout the app (see app/agent/llm_service.py _LANGUAGE_INSTRUCTIONS).
@@ -142,18 +132,6 @@ _LANG_SWITCH_ACK = {
     "punjabi": "ਠੀਕ ਹੈ, ਹੁਣ ਤੋਂ ਮੈਂ ਪੰਜਾਬੀ ਵਿੱਚ ਜਵਾਬ ਦੇਵਾਂਗਾ। ਤੁਸੀਂ ਕੀ ਜਾਣਨਾ ਚਾਹੁੰਦੇ ਹੋ?",
     "odia": "ଠିକ୍ ଅଛି, ବର୍ତ୍ତମାନଠାରୁ ମୁଁ ଓଡ଼ିଆରେ ଉତ୍ତର ଦେବି। ଆପଣ କଣ ଜାଣିବାକୁ ଚାହାଁନ୍ତି?",
 }
-
-
-def _smalltalk_reply(query: str, language: str = "english") -> str | None:
-    cleaned = re.sub(r"[^\w\s]", "", query.strip().lower())
-    cleaned = re.sub(r"\s+", " ", cleaned).strip()
-    if cleaned not in _SMALLTALK_PHRASES:
-        return None
-    if cleaned in ("thanks", "thank you", "thanks a lot", "thank u", "thx", "ty", "thankyou"):
-        return _THANKS_REPLY.get(language, _THANKS_REPLY["english"])
-    if cleaned in ("bye", "goodbye", "see you", "cya", "tc"):
-        return _BYE_REPLY.get(language, _BYE_REPLY["english"])
-    return _GREETING_REPLY.get(language, _GREETING_REPLY["english"])
 
 
 # Obvious keyboard-mashing / gibberish ("hdhdhdhdhdhd") — same problem as
@@ -401,23 +379,53 @@ class _NullSink:
         return None
 
 
+# "Q: ...", "- Q1: ...", "**Q:** ..." lines and "Follow-up questions:" headings
+# the model sometimes writes INSIDE the answer instead of after the marker.
+_BODY_Q_RX = re.compile(r"^\s*(?:[-•*]\s*)?(?:\*\*)?Q\d?\s*[:.)]\s*(?:\*\*)?\s*(.+?)\s*$", re.IGNORECASE)
+_FOLLOW_HEADING_RX = re.compile(
+    r"^\s*[-#*\s]*(follow[\s-]?ups?(\s*questions?)?|you\s*(may|might|can)\s*also\s*ask|related\s*questions)"
+    r"\s*:?\s*\**\s*$", re.IGNORECASE)
+
+
+def _q_item(text: str) -> str | None:
+    q = text.strip().strip("*").strip().strip("?.!").strip()
+    if not q or len(q) > 100:
+        return None
+    return q if q.endswith("?") else q + "?"
+
+
 def _split_followups(full_response: str) -> tuple:
-    """(answer, raw follow-up questions, marker_found)."""
+    """(answer, follow-up questions, any_found). Follow-ups come from ONE
+    place: the section after the marker. "Q:" lines written inside the answer
+    are always removed from it, and only used when the marker section is
+    empty — so the user never sees two sets."""
     m = _FOLLOWUPS_LOOSE_RX.search(full_response)
-    if not m:
-        return full_response, [], False
-    followups = []
-    for line in full_response[m.end():].strip().split("\n"):
+    body, tail = (full_response[:m.start()], full_response[m.end():]) if m else (full_response, "")
+    kept, body_qs = [], []
+    for line in body.split("\n"):
+        mq = _BODY_Q_RX.match(line)
+        if mq:
+            item = _q_item(mq.group(1))
+            if item:
+                body_qs.append(item)
+            continue
+        if _FOLLOW_HEADING_RX.match(line):
+            continue
+        kept.append(line)
+    tail_qs = []
+    for line in tail.strip().split("\n"):
         line = line.strip().lstrip("-•* ").lstrip()
-        if line.upper().startswith("Q:"):
-            q = line[2:].strip().strip("?.!").strip()
-            if q and len(q) <= 100:
-                followups.append(q + "?" if not q.endswith("?") else q)
+        mq = _BODY_Q_RX.match(line)
+        if mq:
+            item = _q_item(mq.group(1))
+            if item:
+                tail_qs.append(item)
         elif line and 10 <= len(line) <= 100 and "?" in line:
-            followups.append(line)
-        if len(followups) >= 6:
+            tail_qs.append(line)
+        if len(tail_qs) >= 6:
             break
-    return full_response[:m.start()], followups, True
+    items = tail_qs or body_qs
+    return "\n".join(kept).rstrip(), items[:6], bool(m) or bool(body_qs)
 
 
 def _correction_prompt(query: str, errors: list, language: str) -> str:
@@ -973,14 +981,34 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # attached (checked first — deterministic, not reliant on
                 # the LLM obeying or coping with a content-free "question").
                 smalltalk_lang = resolved_lang
-                # What is actually being asked — decided once, before any
-                # chart work, and reused for routing/context/validation.
+                # Stage 1 — is this an astrology question at all? Decided
+                # before any routing so a reaction like "this is nice" never
+                # becomes a chart reading in the chat's topic.
                 _early_intent = detect_intent(query)
-                task_info = classify_task(
-                    query, domain=_early_intent.get("domain"),
+                _last_assistant = next((m.content for m in reversed(chat.messages) if m.role == "assistant"), None)
+                conv = classify_conversation(
+                    query, has_history=bool(chat.messages), last_assistant=_last_assistant,
                     domain_confidence=_early_intent.get("domain_confidence", 0),
-                    engine_key=chat.engine_key, has_history=bool(chat.messages),
                 )
+                _trace(
+                    pipeline, "conversation_intent", "Conversation intent classified",
+                    intent=conv["intent"], kind=conv.get("kind"), confidence=conv["confidence"],
+                    reason=conv["reason"], needs_chart=conv["needs_chart"],
+                )
+                # Stage 2 — what is actually being asked — decided once, before
+                # any chart work, and reused for routing/context/validation.
+                if conv["needs_chart"]:
+                    task_info = classify_task(
+                        query, domain=_early_intent.get("domain"),
+                        domain_confidence=_early_intent.get("domain_confidence", 0),
+                        engine_key=chat.engine_key, has_history=bool(chat.messages),
+                    )
+                    if conv["intent"] == "clarification_request":
+                        task_info = {**task_info, "task": "rephrase", "confidence": conv["confidence"],
+                                     "reason": "asks to re-explain the previous answer", "needs_clarification": False}
+                else:
+                    task_info = {"task": "conversation", "confidence": conv["confidence"], "reason": conv["reason"],
+                                 "planet": None, "dosha_terms": [], "needs_clarification": False}
                 _trace(
                     pipeline, "task_classified", "User's task classified",
                     task=task_info["task"], confidence=task_info["confidence"], reason=task_info["reason"],
@@ -995,9 +1023,9 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     smalltalk_text = _META_PROBE_REPLY
                     smalltalk_routing = "meta_probe_refused"
                 else:
-                    smalltalk_text = _smalltalk_reply(query, smalltalk_lang)
+                    smalltalk_text = conversation_reply(conv, smalltalk_lang, _GREETING_REPLY, _THANKS_REPLY, _BYE_REPLY)
                     if smalltalk_text is not None:
-                        smalltalk_routing = "smalltalk"
+                        smalltalk_routing = _CONV_ROUTING[conv["intent"]]
                     elif _looks_gibberish(query):
                         smalltalk_text = _CLARIFY_REPLY.get(smalltalk_lang, _CLARIFY_REPLY["english"])
                         smalltalk_routing = "gibberish_clarify"
@@ -1019,10 +1047,19 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     import uuid as _uuid
                     smalltalk_message_id = str(_uuid.uuid4())
                     smalltalk_t0 = time.time()
+                    _req = context_requirements(conv, None, None)
+                    _trace(
+                        pipeline, "context_requirement", "Decided what data the answer needs",
+                        needs_chart=False, needs_specialist=False, needs_probability=False,
+                        reason=_req["reason"] if smalltalk_routing.startswith("conv_") else smalltalk_routing,
+                    )
                     _trace(
                         pipeline, "short_circuit", "Deterministic short-circuit matched — no chart/LLM call made",
                         routing=smalltalk_routing,
                     )
+                    # A conversational turn belongs to no astrology domain —
+                    # don't file "this is nice" under the chat's topic section.
+                    _sc_domain = None if smalltalk_routing.startswith("conv_") else domain
                     _append_message(db, chat, "user", query, language=smalltalk_lang)
                     await _send({
                         "type": "prob",
@@ -1052,7 +1089,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             _smalltalk_latency = int((time.time() - smalltalk_t0) * 1000)
                             log_db.add(AgentLog(
                                 user_id=user.id, chart_id=chart_id, chat_id=chat.id, message_id=smalltalk_message_id,
-                                provider=smalltalk_routing, domain=domain, language=smalltalk_lang,
+                                provider=smalltalk_routing, domain=_sc_domain, language=smalltalk_lang,
                                 raw_query=query[:2000], query=query[:500],
                                 routing=smalltalk_routing,
                                 pipeline_json=_pipeline_json(pipeline),
@@ -1061,7 +1098,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                                 latency_ms=_smalltalk_latency,
                                 prompt_chars=len(query),
                             ))
-                            _record_section_stat(log_db, domain, "success", _smalltalk_latency, question=query, answer=smalltalk_text)
+                            _record_section_stat(log_db, _sc_domain, "success", _smalltalk_latency, question=query, answer=smalltalk_text)
                             log_db.commit()
                         finally:
                             log_db.close()
@@ -1107,6 +1144,8 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     specialist_engine=route["engine"], show_probability=route["show_probability"],
                     reason=route["reason"],
                 )
+                _req = context_requirements(conv, task_info, route)
+                _trace(pipeline, "context_requirement", "Decided what data the answer needs", **_req)
                 # Display-only floor applied AFTER the true score is captured
                 # above in `pipeline` (admin trace keeps the real number).
                 # Everything downstream — the chat badge, the LLM prompt's
@@ -1409,16 +1448,26 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # so the pipeline trace reflects the actual stored answer length)
                 full_response = "".join(collected_tokens)
                 main_answer, followups, has_followups = _split_followups(full_response)
-                streamed_answer = main_answer
+                # What the client actually received while streaming: everything
+                # before the marker, INCLUDING any "Q:" lines the model put in
+                # the answer — those must be replaced away, not just dropped
+                # from the stored copy.
+                _sm = _FOLLOWUPS_LOOSE_RX.search(full_response)
+                streamed_answer = full_response[:_sm.start()] if _sm else full_response
 
                 # ── Response validation: placements / Lagna / dasha vs the
                 # validated chart, script, required facts; one corrective
                 # retry, then drop the offending sentences or fall back to the
                 # verified facts. Never an open-ended loop.
+                _val_kwargs = {
+                    "allow_remedies": "remedies" in prompt_sections,
+                    "domain_keywords": (DOMAINS.get(route["domain"], {}).get("keywords") or None)
+                    if task_info["task"] == "life_domain" else None,
+                }
                 if log_status == "success" and main_answer.strip():
                     main_answer = dedupe_sentences(main_answer)
                     check = validate_response(main_answer, chart_context, task_info, effective_lang,
-                                              ROMAN_SCRIPT_LANGUAGES, NON_LATIN_SCRIPT_RX)
+                                              ROMAN_SCRIPT_LANGUAGES, NON_LATIN_SCRIPT_RX, **_val_kwargs)
                     first_errors = check["errors"]
                     action = "accepted"
                     if not check["ok"]:
@@ -1436,7 +1485,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             r_main, r_followups, r_has = _split_followups("".join(retry_tokens))
                             r_main = dedupe_sentences(r_main)
                             r_check = validate_response(r_main, chart_context, task_info, effective_lang,
-                                                        ROMAN_SCRIPT_LANGUAGES, NON_LATIN_SCRIPT_RX)
+                                                        ROMAN_SCRIPT_LANGUAGES, NON_LATIN_SCRIPT_RX, **_val_kwargs)
                             if r_main.strip() and len(r_check["errors"]) < len(check["errors"]):
                                 main_answer, check = r_main, r_check
                                 if r_has:
@@ -1447,7 +1496,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                         if not check["ok"]:
                             cleaned = drop_sentences(main_answer, check["bad_sentences"])
                             still = validate_response(cleaned, chart_context, task_info, effective_lang,
-                                                      ROMAN_SCRIPT_LANGUAGES, NON_LATIN_SCRIPT_RX)
+                                                      ROMAN_SCRIPT_LANGUAGES, NON_LATIN_SCRIPT_RX, **_val_kwargs)
                             det = (deterministic_answer(chart_context, task_info, effective_lang)
                                    if task_info["task"] in CHART_TASKS else None)
                             if det and (not still["ok"] or len(cleaned) < 40):

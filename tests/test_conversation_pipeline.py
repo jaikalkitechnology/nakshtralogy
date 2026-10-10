@@ -1,0 +1,268 @@
+"""
+Regression tests for conversation-intent detection and routing in the AI
+chat (app/agent/answer_pipeline.classify_conversation + app/routers/ws_agent):
+greetings / acknowledgements / thanks must get a short conversational reply
+with NO chart retrieval, specialist report, probability or remedy; real
+astrology questions still go to the right specialist; follow-ups appear in
+exactly one place; validation checks relevance and format, not just facts.
+
+Run: pytest tests/test_conversation_pipeline.py -v
+"""
+import json
+
+import pytest
+
+import app.agent.answer_pipeline as A
+import app.routers.ws_agent as ws
+from app.agent.engine import detect_intent
+from app.agent.llm_service import ROMAN_SCRIPT_LANGUAGES, NON_LATIN_SCRIPT_RX
+from tests.test_ws_agent_pipeline import env  # noqa: F401  (pytest fixture)
+
+
+def conv(q, has_history=False, last_assistant=None):
+    return A.classify_conversation(q, has_history=has_history, last_assistant=last_assistant,
+                                   domain_confidence=detect_intent(q)["domain_confidence"])
+
+
+# ── unit: conversation intent ─────────────────────────────────────────────
+
+@pytest.mark.parametrize("q,intent", [
+    ("hello", "greeting"), ("Hi there!", "greeting"), ("namaste ji", "greeting"),
+    ("this is nice", "acknowledgement"), ("thank you", "acknowledgement"), ("okay", "acknowledgement"),
+    ("great", "acknowledgement"), ("I understand", "acknowledgement"), ("got it, thanks", "acknowledgement"),
+    ("accha", "acknowledgement"), ("theek hai", "acknowledgement"), ("👍", "acknowledgement"),
+    ("bye", "farewell"), ("good night", "farewell"),
+    ("how are you", "casual"), ("who are you", "casual"), ("i am bored", "casual"),
+    ("show my kundli chart", "astrology"), ("explain my Mars placement for career", "astrology"),
+    ("what is my daily forecast?", "astrology"), ("what is my Kaal Sarp Dosh?", "astrology"),
+    ("is this good", "astrology"), ("nice, but when will I get a job?", "astrology"),
+    ("will it happen?", "astrology"), ("help", "astrology"),
+])
+def test_conversation_intent(q, intent):
+    c = conv(q, has_history=True, last_assistant="Your Saturn is in Cancer.")
+    assert c["intent"] == intent, c
+    assert c["needs_chart"] == (intent == "astrology")
+
+
+def test_yes_continues_an_offer_but_is_an_ack_otherwise():
+    offer = "Would you like to know your best career timing?"
+    assert conv("yes", has_history=True, last_assistant=offer)["intent"] == "astrology"
+    assert conv("yes", has_history=True, last_assistant="Your Saturn is in Cancer.")["intent"] == "acknowledgement"
+
+
+def test_clarification_request_needs_history():
+    assert conv("what do you mean", has_history=True)["needs_chart"] is True
+    c = conv("what do you mean", has_history=False)
+    assert c["intent"] == "clarification_request" and c["needs_chart"] is False
+    reply = A.conversation_reply(c, "english", ws._GREETING_REPLY, ws._THANKS_REPLY, ws._BYE_REPLY)
+    assert reply and "explain" in reply
+
+
+def test_conversational_replies_carry_no_reading_or_remedy():
+    for q in ("hello", "this is nice", "thank you", "how are you", "bye", "i am bored"):
+        c = conv(q, has_history=True)
+        for lang in ("english", "hinglish", "hindi", "tamil"):
+            r = A.conversation_reply(c, lang, ws._GREETING_REPLY, ws._THANKS_REPLY, ws._BYE_REPLY)
+            assert r and len(r) < 300
+            assert not A.planets_mentioned(r)
+            assert not A._REMEDY_TERMS_RX.search(r) or c["intent"] == "greeting"  # greeting lists topics only
+
+
+def test_context_requirements():
+    c = conv("this is nice", has_history=True)
+    assert A.context_requirements(c, None, None)["needs_chart"] is False
+    c = conv("explain my Mars placement for career")
+    t = A.classify_task("explain my Mars placement for career", domain="career_job", domain_confidence=40)
+    r = A.route_task(t, scored_domain="career_job", domain_confidence=40, engine_key=None, locked_domain=None,
+                     life_domains=ws.DOMAINS)
+    req = A.context_requirements(c, t, r)
+    assert req["needs_chart"] and req["needs_specialist"] and req["needs_probability"]
+
+
+# ── unit: follow-ups come from one place ──────────────────────────────────
+
+def test_followups_inside_answer_are_moved_out():
+    raw = ("Your Mars in the 9th house suggests travel.\n\nQ: How can I use my Mars placement?\n"
+           "Q: Which roles fit my Sun-Mars combination?\n---FOLLOWUPS---\n")
+    body, items, found = ws._split_followups(raw)
+    assert "Q:" not in body and found
+    assert items == ["How can I use my Mars placement?", "Which roles fit my Sun-Mars combination?"]
+
+
+def test_marker_section_wins_over_body_questions():
+    raw = "Answer.\nFollow-up questions:\nQ: Body one?\n---FOLLOWUPS---\nQ: Tail one?\nQ: Tail two?"
+    body, items, _ = ws._split_followups(raw)
+    assert body == "Answer." and items == ["Tail one?", "Tail two?"]
+
+
+# ── unit: response validation beyond facts ────────────────────────────────
+
+def _v(text, task, **kw):
+    return A.validate_response(text, {"planets": {}}, task, "english", ROMAN_SCRIPT_LANGUAGES,
+                               NON_LATIN_SCRIPT_RX, **kw)
+
+
+def test_validation_relevance_format_and_remedies():
+    career = {"task": "life_domain"}
+    kws = ws.DOMAINS["career_job"]["keywords"]
+    assert _v("Your career looks steady this year with good growth at work.", career, domain_keywords=kws)["ok"]
+    assert not _v("Your marriage looks harmonious and loving this year.", career, domain_keywords=kws)["ok"]
+    r = _v("Your career is steady. Chant the Saturn mantra every Saturday.", career, allow_remedies=False,
+           domain_keywords=kws)
+    assert not r["ok"] and "did not ask" in r["errors"][0] and r["bad_sentences"]
+    assert not _v("VERIFIED FACTS for this question: career is fine and steady.", career)["ok"]
+    assert not _v("Career is fine and steady overall.\nQ: What next?", career)["ok"]
+    assert not _v("Your week ahead looks calm and balanced overall.", {"task": "daily_forecast"})["ok"]
+    assert not _v("Kaal Sarp Dosh means a karmic pattern in life.", {"task": "remedy"})["ok"]
+
+
+# ── end-to-end through the WebSocket handler ──────────────────────────────
+
+def _no_chart_work(monkeypatch):
+    def boom(*a, **k):
+        raise AssertionError("chart/specialist/probability work must not run for a conversational message")
+    monkeypatch.setattr(ws, "_get_chart_data", boom)
+    monkeypatch.setattr(ws._agent, "query", boom)
+    monkeypatch.setattr(ws, "get_specialist_summary", boom)
+    monkeypatch.setattr(ws, "get_forecast_summary", boom)
+
+
+def _log(Session):
+    from app.models.model import AgentLog
+    s = Session()
+    row = s.query(AgentLog).all()[-1]
+    s.close()
+    return row, {st["step"]: st["detail"] for st in json.loads(row.pipeline_json)}
+
+
+def _text(frames):
+    return "".join(f["text"] for f in frames if f["type"] == "token")
+
+
+def test_e2e_hello_is_a_greeting(env, monkeypatch):
+    _no_chart_work(monkeypatch)
+    frames, _ = env["ask"]("hello")
+    assert env["llm"].calls == []
+    assert _text(frames) == ws._GREETING_REPLY["english"]
+    prob = next(f for f in frames if f["type"] == "prob")["data"]
+    assert prob["probability"] is None and prob["domain"] is None
+    row, steps = _log(env["Session"])
+    assert row.routing == "conv_greeting" and row.domain is None
+    assert steps["conversation_intent"]["intent"] == "greeting"
+    assert steps["context_requirement"]["needs_chart"] is False
+
+
+def test_e2e_this_is_nice_in_career_chat_is_a_brief_ack(env, monkeypatch):
+    env["llm"].replies = ["Your career looks steady with good growth at work this year.\n---FOLLOWUPS---\nQ: When is my career peak?"]
+    frames, _ = env["ask"]("How is my career this year?", engine="career")
+    chat_id = next(f for f in frames if f["type"] == "prob")["data"]["chat_id"]
+    calls_before = len(env["llm"].calls)
+    _no_chart_work(monkeypatch)
+    frames, _ = env["ask"]("this is nice", engine="career", chat_id=chat_id)
+    assert len(env["llm"].calls) == calls_before                  # no LLM call
+    reply = _text(frames)
+    assert reply == A._ACK_REPLY["english"]
+    assert not A.planets_mentioned(reply) and not A._REMEDY_TERMS_RX.search(reply)
+    prob = next(f for f in frames if f["type"] == "prob")["data"]
+    assert prob["probability"] is None                            # no specialist probability
+    assert not [f for f in frames if f["type"] == "followups"]
+    row, steps = _log(env["Session"])
+    assert row.routing == "conv_ack" and row.domain is None       # not filed under career_job
+    assert steps["task_classified"]["task"] == "conversation"
+    assert "routing" not in steps and "chart_context" not in steps
+
+
+def test_e2e_thank_you_is_a_brief_ack(env, monkeypatch):
+    _no_chart_work(monkeypatch)
+    frames, _ = env["ask"]("thank you")
+    assert _text(frames) == ws._THANKS_REPLY["english"]
+    assert _log(env["Session"])[0].routing == "conv_ack"
+
+
+def test_e2e_show_kundli_chart(env):
+    env["llm"].replies = ["Here is your chart.\nSun – Virgo\nMoon – Virgo\nMars – Virgo\nMercury – Libra\nJupiter – Virgo\n"
+                          "Venus – Leo\nSaturn – Cancer\nRahu – Aries\nKetu – Libra\nLagna Capricorn.\n---FOLLOWUPS---\nQ: x?"]
+    env["ask"]("show my kundli chart")
+    _, steps = _log(env["Session"])
+    assert steps["conversation_intent"]["intent"] == "astrology"
+    assert steps["task_classified"]["task"] == "chart_display"
+    assert steps["routing"]["domain"] == "kundli" and steps["routing"]["specialist_engine"] is None
+
+
+def test_e2e_mars_for_career_goes_to_career_specialist(env):
+    env["llm"].replies = ["Your natal Mars is in Virgo in the 9th house, which gives your career a drive for skilled, "
+                          "precise work.\n---FOLLOWUPS---\nQ: Which industry suits me?"]
+    env["ask"]("explain my Mars placement for career")
+    _, steps = _log(env["Session"])
+    assert steps["task_classified"]["task"] == "life_domain"
+    assert steps["routing"]["domain"] == "career_job" and steps["routing"]["specialist_engine"] == "auto"
+    assert steps["context_requirement"]["needs_specialist"] is True
+    assert steps["chart_context"]["specialist_report_included"] is True
+    prompt = env["llm"].calls[-1]["messages"][-1]["content"]
+    assert "Mars: natal sign Virgo" in prompt and "REMEDY LIBRARY" not in prompt
+    assert steps["response_validation"]["action"] == "accepted"
+
+
+def test_e2e_daily_forecast_goes_to_forecast_specialist(env):
+    env["llm"].replies = ["Today is a steady day for planning and disciplined work.\n---FOLLOWUPS---\nQ: Best time today?"]
+    env["ask"]("what is my daily forecast?")
+    _, steps = _log(env["Session"])
+    assert steps["task_classified"]["task"] == "daily_forecast"
+    assert steps["routing"]["specialist_engine"] == "daily_forecast"
+
+
+def test_e2e_kaal_sarp_explanation(env):
+    env["llm"].replies = ["Kaal Sarp Dosh means all seven planets sit between Rahu and Ketu; in your chart Rahu is in "
+                          "Aries and Ketu in Libra with every planet between them.\n---FOLLOWUPS---\nQ: Is it cancelled?"]
+    env["ask"]("what is my Kaal Sarp Dosh?")
+    _, steps = _log(env["Session"])
+    assert steps["task_classified"]["task"] == "yoga_dosha"
+    prompt = env["llm"].calls[-1]["messages"][-1]["content"]
+    assert "Kaal Sarp Dosh: PRESENT" in prompt and "REMEDY LIBRARY" not in prompt
+    assert steps["response_validation"]["action"] == "accepted"
+
+
+def test_e2e_ambiguous_question_gets_clarification(env):
+    frames, _ = env["ask"]("when will this happen?")
+    assert env["llm"].calls == []
+    assert _log(env["Session"])[0].routing == "clarify_ambiguous"
+    assert "kundli" in _text(frames).lower()
+
+
+def test_e2e_single_followup_set(env):
+    env["llm"].replies = [
+        "Your career path grows through skilled work and steady effort at your job.\n\n"
+        "Q: How can I best use my Mars placement for work?\nQ: Which roles fit my chart?\n---FOLLOWUPS---\n"
+    ]
+    frames, _ = env["ask"]("How will my career grow?", engine="career")
+    final = next((f["text"] for f in frames if f["type"] == "replace"), _text(frames))
+    assert "Q:" not in final
+    fu = [f for f in frames if f["type"] == "followups"]
+    assert len(fu) == 1 and fu[0]["items"][0].startswith("How can I best use my Mars")
+    row, _ = _log(env["Session"])
+    assert row.response_text.count("Q:") == 2 and "When is the best time for this?" not in row.response_text
+
+
+def test_e2e_unrequested_remedy_is_retried(env):
+    env["llm"].replies = [
+        "Your career is steady at work. Wear a blue sapphire ring and chant the Shani mantra.\n---FOLLOWUPS---\nQ: x?",
+        "Your career is steady at work, with growth coming through patient effort.\n---FOLLOWUPS---\nQ: When will I grow?",
+    ]
+    frames, _ = env["ask"]("How is my career this year?", engine="career")
+    _, steps = _log(env["Session"])
+    assert steps["response_validation"]["action"] == "retried_ok"
+    final = next((f["text"] for f in frames if f["type"] == "replace"), _text(frames))
+    assert "sapphire" not in final and "mantra" not in final
+
+
+def test_e2e_didnt_understand_rephrases_previous_answer(env):
+    env["llm"].replies = ["Your career looks steady with growth at work.\n---FOLLOWUPS---\nQ: When?",
+                          "In simple words: your work life is stable and will keep growing slowly.\n---FOLLOWUPS---\nQ: How?"]
+    frames, _ = env["ask"]("How is my career this year?", engine="career")
+    chat_id = next(f for f in frames if f["type"] == "prob")["data"]["chat_id"]
+    frames, _ = env["ask"]("samajh nahi aaya", engine="career", chat_id=chat_id)
+    _, steps = _log(env["Session"])
+    assert steps["conversation_intent"]["intent"] == "clarification_request"
+    assert steps["task_classified"]["task"] == "rephrase"
+    assert steps["routing"]["specialist_engine"] is None and steps["routing"]["show_probability"] is False
+    assert next(f for f in frames if f["type"] == "prob")["data"]["probability"] is None

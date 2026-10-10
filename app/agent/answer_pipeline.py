@@ -4,6 +4,10 @@ Sits between the existing pieces — detect_intent() (12 life domains), the
 chart engines (source of truth for every placement/date/score) and the LLM —
 and adds what was missing:
 
+  classify_conversation()  greeting / acknowledgement / farewell / casual
+                           chat / clarification request vs. an actual
+                           astrology question — decided BEFORE any routing,
+                           so not every message is treated as astrology
   classify_task()          what the user is actually asking for (show the
                            kundli, a planet's position, the Lagna, dasha,
                            a dosha, a remedy, today's forecast, a life area)
@@ -106,6 +110,199 @@ def planets_mentioned(text: str) -> list:
 
 
 # ═══════════════════════════════════════════════════════════════════
+#  0. Conversation intent — is this an astrology question at all?
+# ═══════════════════════════════════════════════════════════════════
+
+# Intents answered with a short conversational reply: no chart, no
+# specialist report, no probability, no LLM reading.
+CONVERSATIONAL_INTENTS = {"greeting", "acknowledgement", "farewell", "casual"}
+
+_GREETING_RX = re.compile(
+    r"^(hi+|hey+|hello+|helo|hlo|hai|namaste|namaskar|namaskaram|pranam|yo|sup|hola|"
+    r"good\s*(morning|afternoon|evening|day)|gm|jai\s*shree\s*(krishna|ram)|ram\s*ram|sat\s*sri\s*akal|"
+    r"vanakkam|नमस्ते|नमस्कार|प्रणाम)"
+    r"(\s+(there|ji|sir|madam|maam|bro|dost|friend|everyone|all|again))*$")
+_FAREWELL_RX = re.compile(
+    r"^((ok(ay)?|thanks|thank\s*you)\s+)?(bye+|bye\s*bye|good\s*bye|goodbye|see\s*(you|ya)(\s*later)?|cya|tc|"
+    r"take\s*care|good\s*night|gn|alvida|phir\s*milenge|chalo\s*bye|फिर\s*मिलेंगे|अलविदा)"
+    r"(\s+(ji|sir|bro|dost|friend))*$")
+_CASUAL_RX = re.compile(
+    r"^(how\s*(are|r)\s*(you|u)(\s*doing)?|how'?s\s*it\s*going|hows\s*it\s*going|what'?s\s*up|whats\s*up|wassup|"
+    r"who\s*(are|r)\s*(you|u)|what\s*can\s*you\s*do|what\s*is\s*your\s*name|whats\s*your\s*name|"
+    r"kaise\s*ho|kaisi\s*ho|kya\s*haal\s*(hai|h)|aap\s*kaun\s*ho|tum\s*kaun\s*ho|kaun\s*ho)$")
+# Every word of an acknowledgement comes from here (fillers + reactions);
+# at least one word must be a real reaction word (_ACK_CORE).
+_ACK_CORE = {
+    "ok", "okay", "okk", "okey", "k", "kk", "cool", "nice", "great", "good", "fine", "awesome", "amazing", "wow",
+    "perfect", "excellent", "superb", "wonderful", "lovely", "beautiful", "interesting", "helpful", "useful",
+    "thanks", "thank", "thx", "ty", "thankyou", "dhanyavad", "dhanyawad", "dhanyavaad", "shukriya", "understood",
+    "understand", "got", "noted", "sure", "alright", "right", "hmm", "hm", "hmmm", "accha", "acha", "achha",
+    "theek", "thik", "badhiya", "badiya", "mast", "sahi", "samajh", "samjh", "samjha", "samajh gaya", "clear",
+    "makes", "sense", "true", "agreed", "correct", "brilliant", "fantastic", "loved", "love", "like", "liked",
+    "lol", "haha", "hahaha", "hehe",
+    "धन्यवाद", "शुक्रिया", "अच्छा", "ठीक", "बढ़िया", "सही",
+}
+_ACK_FILLER = {
+    "this", "that", "is", "it", "its", "it's", "was", "very", "so", "really", "much", "a", "lot", "the", "answer",
+    "reply", "response", "info", "information", "explanation", "ji", "sir", "bro", "yaar", "yar", "dost", "you",
+    "u", "for", "i", "see", "now", "all", "too", "quite", "pretty", "super", "bahut", "bohot", "hai", "he", "h",
+    "gaya", "gayi", "gya", "aaya", "aa", "laga", "lagi", "mujhe", "ab", "baat", "nice", "thats", "that's", "me",
+    "your", "help", "great", "job", "work", "done", "well", "and", "haan", "ha", "yes", "yeah", "yep", "oh", "ohh",
+    "wah", "waah", "kya", "baat", "hain", "है", "जी", "बहुत", "लगा", "समझ", "गया", "हाँ",
+}
+_THANKS_WORDS = {"thanks", "thank", "thx", "ty", "thankyou", "dhanyavad", "dhanyawad", "dhanyavaad", "shukriya",
+                 "धन्यवाद", "शुक्रिया"}
+_POSITIVE_EMOJI_RX = re.compile(r"^[\s👍🙏😊🙂😀😃😄😁❤️♥️💖💯👌✨🌟⭐🔥👏🤗😍🥰☺️\u2764\ufe0f]+$")
+# A "yes" to an offer the bot just made ("Would you like your best timing?")
+# is a request to continue, not an acknowledgement.
+_AFFIRM_RX = re.compile(r"^(yes|yeah|yep|yup|sure|please|ok\s*please|haan|ha|han|ji\s*haan|haan\s*ji|zaroor|"
+                        r"go\s*ahead|tell\s*me|batao|bataiye|haan\s*batao|yes\s*please|of\s*course)$")
+_CLARIFY_REQ_RX = re.compile(
+    r"\b(what\s*do\s*you\s*mean|what\s*does\s*(that|this|it)\s*mean|i\s*(do\s*not|don'?t|didn'?t|did\s*not)\s*"
+    r"(understand|get\s*it)|not\s*clear|unclear|explain\s*(again|simply|that|it|more\s*simply)|"
+    r"in\s*simple\s*(words|terms|language)|simple\s*(words|bhasha)\s*mein|samajh\s*nahi|samjh\s*nahi|"
+    r"samjha\s*nahi|samjhi\s*nahi|samajh\s*nhi|samjh\s*nhi|phir\s*se\s*(batao|samjhao)|dobara\s*(batao|samjhao)|"
+    r"matlab\s*(kya|samjhao)|kya\s*matlab|elaborate|rephrase|say\s*that\s*again)\b|समझ\s*नहीं", re.IGNORECASE)
+_QUESTION_CUE_RX = re.compile(
+    # Auxiliaries (is/are/will/can/...) only count at the START of a message
+    # ("is this good") — see _QUESTION_START — not mid-sentence ("I am bored").
+    r"\?|\b(what|when|where|which|who|why|how|"
+    r"kya|kab|kaise|kaisa|kaisi|kyu|kyun|kyon|kitna|kitni|kaun|kahan|kaha|konsa|kaunsa|tell|batao|bataye|"
+    r"bataiye|explain|show|give|predict|suggest|help|madad|guide|advice|check|analy[sz]e|dikhao)\b"
+    r"|क्या|कब|कैसे|कैसा|क्यों|कौन|कहाँ|बताओ|बताइए", re.IGNORECASE)
+_ASTRO_VOCAB_RX = re.compile(
+    r"\b(kundli|kundali|chart|horoscope|rashi|rashifal|nakshatra|planet\w*|graha?\w*|house|bhava|bhav|lagna|"
+    r"ascendant|dasha|mahadasha|antardasha|yog|yoga|dosh\w*|transit|gochar|future|prediction|predict|remed\w*|"
+    r"upa+y\w*|luck|bhagya|kismat|destiny|forecast|zodiac|sign|astrolog\w*|jyotish|muhurat|kaal\s*sarp|"
+    r"manglik|sade\s*sati|navamsa|d9|d10)\b|कुंडली|ग्रह|राशि|दशा|दोष|भाग्य", re.IGNORECASE)
+
+
+_QUESTION_START = {"is", "are", "am", "will", "would", "should", "shall", "can", "could", "do", "does", "did",
+                   "what", "when", "where", "which", "who", "why", "how", "kya", "kab", "kaise", "kyu", "kyun"}
+
+
+def _norm_message(q: str) -> str:
+    q = (q or "").strip().lower()
+    q = re.sub(r"[!.,;:~\-–—…'\"“”‘’()]+", " ", q)
+    return re.sub(r"\s+", " ", q).strip()
+
+
+def classify_conversation(query: str, *, has_history: bool = False, last_assistant: str | None = None,
+                          domain_confidence: float = 0) -> dict:
+    """First stage for every message: {"intent", "confidence", "reason",
+    "needs_chart"}. intent is one of greeting, acknowledgement, farewell,
+    casual, clarification_request, astrology. Only "astrology" (and a
+    clarification request about an earlier answer) goes on to task
+    classification / routing / chart retrieval."""
+    raw = (query or "").strip()
+    q = _norm_message(raw)
+    words = q.split()
+
+    def out(intent, conf, reason, kind=None):
+        needs = intent == "astrology" or (intent == "clarification_request" and has_history)
+        return {"intent": intent, "confidence": conf, "reason": reason, "needs_chart": needs, "kind": kind}
+
+    if raw and _POSITIVE_EMOJI_RX.match(raw):
+        return out("acknowledgement", 0.9, "positive emoji only")
+    if not q:
+        return out("casual", 0.5, "empty after normalisation")
+    if _GREETING_RX.match(q):
+        return out("greeting", 0.95, "greeting phrase")
+    if _FAREWELL_RX.match(q):
+        return out("farewell", 0.95, "farewell phrase")
+    if _AFFIRM_RX.match(q) and has_history and last_assistant and "?" in last_assistant.strip()[-160:]:
+        return out("astrology", 0.7, "affirmation of the assistant's previous offer")
+    if _CLARIFY_REQ_RX.search(q) and len(words) <= 10:
+        return out("clarification_request", 0.85, "asks to re-explain / didn't understand")
+    if _CASUAL_RX.match(q):
+        return out("casual", 0.9, "small talk addressed to the assistant", kind="about_assistant")
+    if (len(words) <= 8 and "?" not in raw and words[0] not in _QUESTION_START
+            and all(w in _ACK_CORE or w in _ACK_FILLER for w in words)
+            and any(w in _ACK_CORE for w in words)):
+        thanks = any(w in _THANKS_WORDS for w in words)
+        return out("acknowledgement", 0.9, "thanks" if thanks else "reaction with no question",
+                   kind="thanks" if thanks else "reaction")
+    if _AFFIRM_RX.match(q):
+        return out("acknowledgement", 0.7, "bare affirmation with no pending offer")
+    if domain_confidence > 15 or _ASTRO_VOCAB_RX.search(raw) or _PLANET_RX.search(raw) or _SIGN_RX.search(raw):
+        return out("astrology", 0.85, "astrology vocabulary")
+    if _QUESTION_CUE_RX.search(raw) or words[0] in _QUESTION_START:
+        return out("astrology", 0.6, "a question — assumed to be about the chart")
+    if len(words) <= 6:
+        return out("casual", 0.6, "short statement with no question or astrology content", kind="statement")
+    return out("astrology", 0.4, "longer message — treated as a chart question")
+
+
+_ACK_REPLY = {
+    "english": "Glad that was helpful! 😊 Ask me anything else about your chart whenever you like.",
+    "hindi": "खुशी हुई कि यह मददगार रहा! 😊 कुंडली से जुड़ा कुछ और जानना हो तो बेझिझक पूछिए।",
+    "hinglish": "Khushi hui ki yeh helpful laga! 😊 Kundli se judi koi aur baat jaanni ho toh zaroor poochiye.",
+    "bengali": "জেনে ভালো লাগল যে এটা কাজে লেগেছে! 😊 কুষ্ঠি নিয়ে আর কিছু জানতে চাইলে জিজ্ঞাসা করুন।",
+    "tamil": "இது உதவியாக இருந்ததில் மகிழ்ச்சி! 😊 ஜாதகம் பற்றி வேறு ஏதாவது தெரிந்துகொள்ள வேண்டுமானால் கேளுங்கள்.",
+    "telugu": "ఇది ఉపయోగపడినందుకు సంతోషం! 😊 జాతకం గురించి మరేదైనా తెలుసుకోవాలంటే అడగండి.",
+    "kannada": "ಇದು ಸಹಾಯವಾಯಿತು ಎಂದು ಖುಷಿ! 😊 ಜಾತಕದ ಬಗ್ಗೆ ಬೇರೇನಾದರೂ ತಿಳಿಯಬೇಕಿದ್ದರೆ ಕೇಳಿ.",
+    "malayalam": "ഇത് ഉപകാരപ്പെട്ടതിൽ സന്തോഷം! 😊 ജാതകത്തെക്കുറിച്ച് മറ്റെന്തെങ്കിലും അറിയണമെങ്കിൽ ചോദിക്കൂ.",
+    "gujarati": "આ ઉપયોગી લાગ્યું તે જાણીને આનંદ થયો! 😊 કુંડળી વિશે બીજું કંઈ જાણવું હોય તો પૂછો.",
+    "marathi": "हे उपयुक्त ठरलं याचा आनंद आहे! 😊 कुंडलीबद्दल आणखी काही जाणून घ्यायचं असल्यास विचारा.",
+    "punjabi": "ਖੁਸ਼ੀ ਹੋਈ ਕਿ ਇਹ ਮਦਦਗਾਰ ਰਿਹਾ! 😊 ਕੁੰਡਲੀ ਬਾਰੇ ਕੁਝ ਹੋਰ ਜਾਣਨਾ ਹੋਵੇ ਤਾਂ ਪੁੱਛੋ।",
+    "odia": "ଏହା ସାହାଯ୍ୟକାରୀ ହେଲା ଜାଣି ଖୁସି ଲାଗିଲା! 😊 କୁଣ୍ଡଳୀ ବିଷୟରେ ଆଉ କିଛି ଜାଣିବାକୁ ଚାହିଁଲେ ପଚାରନ୍ତୁ।",
+}
+_CASUAL_REPLY = {
+    "english": "I'm doing well, thanks for asking! 😊 I'm your Vedic astrology assistant — ask me about your kundli, "
+               "career, relationships, health or today's forecast.",
+    "hindi": "मैं ठीक हूँ, पूछने के लिए धन्यवाद! 😊 मैं आपका वैदिक ज्योतिष सहायक हूँ — अपनी कुंडली, करियर, रिश्ते, सेहत "
+             "या आज के राशिफल के बारे में पूछिए।",
+    "hinglish": "Main badhiya hoon, poochne ke liye thanks! 😊 Main aapka Vedic astrology assistant hoon — apni kundli, "
+                "career, relationships, health ya aaj ke forecast ke baare mein poochiye.",
+}
+_STATEMENT_REPLY = {
+    "english": "I hear you. Whenever you're ready, ask me a question — about your career, relationships, health or "
+               "today's forecast — and I'll look at what your chart says.",
+    "hindi": "मैं समझता हूँ। जब चाहें, कोई सवाल पूछिए — करियर, रिश्ते, सेहत या आज के राशिफल के बारे में — और मैं "
+             "आपकी कुंडली से बताऊँगा।",
+    "hinglish": "Samajh sakta hoon. Jab chahein, koi sawaal poochiye — career, relationships, health ya aaj ke forecast "
+                "ke baare mein — aur main aapki kundli se bataunga.",
+}
+_CLARIFY_NO_HISTORY = {
+    "english": "Sure! Which part would you like me to explain — your kundli, a planet, your dasha, or something else?",
+    "hindi": "ज़रूर! आप किस बारे में समझना चाहेंगे — अपनी कुंडली, कोई ग्रह, अपनी दशा, या कुछ और?",
+    "hinglish": "Zaroor! Aap kis baare mein samajhna chahenge — apni kundli, koi grah, apni dasha, ya kuch aur?",
+}
+
+
+def conversation_reply(conv: dict, language: str, greeting: dict, thanks: dict, bye: dict) -> str | None:
+    """Short deterministic reply for a conversational message (None = not
+    conversational; go on to the astrology pipeline). greeting/thanks/bye
+    are ws_agent's existing localized reply tables."""
+    intent = conv["intent"]
+    if intent == "greeting":
+        return greeting.get(language, greeting["english"])
+    if intent == "farewell":
+        return bye.get(language, bye["english"])
+    if intent == "acknowledgement":
+        if conv.get("kind") == "thanks":
+            return thanks.get(language, thanks["english"])
+        return _ACK_REPLY.get(language, _ACK_REPLY["english"])
+    if intent == "casual":
+        table = _STATEMENT_REPLY if conv.get("kind") == "statement" else _CASUAL_REPLY
+        return table.get(language) or greeting.get(language, greeting["english"])
+    if intent == "clarification_request" and not conv["needs_chart"]:
+        return _CLARIFY_NO_HISTORY.get(language, _CLARIFY_NO_HISTORY["english"])
+    return None
+
+
+def context_requirements(conv: dict, task: dict | None, route: dict | None) -> dict:
+    """Explicit decision, made before any chart work, of what the answer
+    needs: chart data, a specialist report, the domain probability."""
+    if not conv["needs_chart"] or task is None or route is None:
+        return {"needs_chart": False, "needs_specialist": False, "needs_probability": False,
+                "reason": f"conversational message ({conv['intent']}) — no chart data needed"}
+    return {"needs_chart": True, "needs_specialist": route["engine"] is not None,
+            "needs_probability": bool(route["show_probability"]),
+            "reason": f"astrology task {task['task']} → {route['reason']}"}
+
+
+# ═══════════════════════════════════════════════════════════════════
 #  1. Task classification
 # ═══════════════════════════════════════════════════════════════════
 
@@ -151,6 +348,10 @@ _SUMMARY_RX = re.compile(
     r"\b(summary|summar\w*|overview|saar|sankshep|analy[sz]\w*|reading|explain\s*my\s*(kundli|kundali|chart)|"
     r"about\s*my\s*(kundli|kundali|chart)|(kundli|kundali|chart)\s*(ke|ki)\s*(baare|bare)\s*mein|"
     r"what\s*does\s*my\s*(kundli|kundali|chart)\s*say)\b", re.IGNORECASE)
+
+
+# "Will it happen?", "kab hoga yeh?" — refers to something never named.
+_VAGUE_REF_RX = re.compile(r"\b(it|this|that|these|those|yeh|ye|woh|wo|vo|iska|uska)\b", re.IGNORECASE)
 
 
 def classify_task(query: str, *, domain: str | None = None, domain_confidence: float = 0,
@@ -199,7 +400,8 @@ def classify_task(query: str, *, domain: str | None = None, domain_confidence: f
         return out("daily_forecast", 0.6, "mentions today")
     if engine_key == "daily_forecast":
         return out("daily_forecast", 0.5, "topic default (Today's Forecast chat)")
-    ambiguous = (not engine_key) and (not has_history) and words <= 3
+    vague = bool(_VAGUE_REF_RX.search(q))
+    ambiguous = (not engine_key) and (not has_history) and (words <= 3 or vague)
     return out("general", 0.2, "no specific task detected", needs_clarification=ambiguous)
 
 
@@ -229,6 +431,11 @@ def route_task(task: dict, *, scored_domain: str, domain_confidence: float, engi
 
     engine "auto" = keep the existing specialist resolution for that domain."""
     t = task["task"]
+    if t == "rephrase":
+        # "I didn't understand" — re-explain the previous answer in the same
+        # topic; no new specialist report, no badge.
+        return {"domain": locked_domain or engine_key or "general", "engine": None, "show_probability": False,
+                "reason": "re-explain the previous answer"}
     if t in CHART_TASKS:
         domain = "kundli"
         if t == "remedy" and (domain_confidence > 15 or locked_domain) and scored_domain in life_domains:
@@ -434,6 +641,7 @@ _TASK_SECTIONS = {
     "remedy": {"planets", "active_doshas", "dosha_yoga_detail", "shadbala", "remedies", "domain_planets"},
     "daily_forecast": {"planets", "current_dasha", "current_dasha_moola", "gochar_today", "sade_sati",
                        "transits_today", "specialist_report"},
+    "rephrase": {"planets", "bhava", "current_dasha", "current_dasha_moola"},
 }
 _ALWAYS = {"probability", "intent", "_validation"}
 _HEALTH_DOMAINS = {"health_wellness", "mental_stress"}
@@ -543,6 +751,13 @@ def build_fact_sheet(ctx: dict, task: dict, target: date | None = None) -> str |
             lines.append(f"Lagna nakshatra: {lagna['nakshatra']} pada {lagna.get('pada')}")
         first = [p for p in PLANETS if p in planets and _house_of(planets[p], lagna) == 1]
         lines.append("Planets in the 1st house: " + (", ".join(first) if first else "none"))
+    if t == "life_domain" and task.get("planet") in planets:
+        p = task["planet"]
+        lines.append(_planet_line(p, planets[p], lagna, sb))
+        if lagna:
+            ruled = [n for n in range(1, 13) if SIGN_LORDS[(lagna["sign_idx"] + n - 1) % 12] == p]
+            if ruled:
+                lines.append(f"{p} rules house(s) {', '.join(map(str, ruled))} from Lagna — ruling is not placement")
     if t == "planet_detail":
         p = task.get("planet")
         if p and p in planets:
@@ -652,9 +867,22 @@ def dedupe_sentences(text: str) -> str:
     return re.sub(r"\n{3,}", "\n\n", "\n".join(out_lines)).strip()
 
 
+_LEAKED_LABEL_RX = re.compile(
+    r"VERIFIED FACTS|REFERENCE DATA|FINAL INSTRUCTIONS|NATAL PLANET POSITIONS|DATA WITHHELD|LANGUAGE REMINDER|"
+    r"REMEDY LIBRARY|CLASSICAL CITATIONS")
+_BODY_FOLLOWUP_RX = re.compile(r"(?im)^\s*(?:[-•*]\s*)?(?:\*\*)?Q\d?\s*:")
+_REMEDY_TERMS_RX = re.compile(
+    r"\b(remed\w*|upa+y\w*|mantras?|gem\s?stones?|ratna|puja|pooja|fasting|vrat|upvas|donat\w*|chant\w*|"
+    r"recit\w*|stotra|hanuman\s*chalisa|wear\s+(a|an)\s+\w*\s*(ring|stone|sapphire|ruby|pearl|emerald))\b"
+    r"|उपाय|मंत्र|रत्न|पूजा|व्रत", re.IGNORECASE)
+_FORECAST_WORDS_RX = re.compile(r"\b(today|today's|aaj|day|din|tonight)\b|आज|दिन", re.IGNORECASE)
+
+
 def validate_response(text: str, ctx: dict, task: dict, language: str, roman_languages,
-                      non_latin_rx) -> dict:
-    """Check an answer (without its follow-ups block) against the chart.
+                      non_latin_rx, *, allow_remedies: bool = True, domain_keywords=None) -> dict:
+    """Check an answer (without its follow-ups block) against the chart AND
+    against the question: factual claims, relevance to the task/domain,
+    unrequested remedies, language/script, and output format.
     Returns {"ok", "errors": [str], "bad_sentences": [str]}."""
     errors, bad = [], []
     planets = ctx.get("planets") or {}
@@ -733,6 +961,32 @@ def validate_response(text: str, ctx: dict, task: dict, language: str, roman_lan
         errors.append("Quotes Ashtakavarga/SAV numbers, which were withheld as unreliable")
     if "chakra_health" in excluded and re.search(r"\bchakra\b", text, re.IGNORECASE):
         errors.append("Quotes chakra scores, which were withheld as unreliable")
+
+    # ── Does it answer THIS question, in the required form? ──
+    if len(text.strip()) < 20:
+        errors.append("The answer is empty or too short to answer the question")
+    if _LEAKED_LABEL_RX.search(text):
+        errors.append("Copies internal prompt labels into the answer — write only the natural answer")
+    if _BODY_FOLLOWUP_RX.search(text):
+        errors.append("Puts follow-up questions inside the answer — they belong only after the ---FOLLOWUPS--- marker")
+    remedy_hit = _REMEDY_TERMS_RX.search(text)
+    if not allow_remedies and remedy_hit:
+        errors.append(f"Suggests a remedy ('{remedy_hit.group(0)}') although the user did not ask for one")
+        bad += [s for s in _sentences(text) if _REMEDY_TERMS_RX.search(s)]
+    roman = language in roman_languages
+    if t == "remedy" and not remedy_hit:
+        errors.append("The user asked for a remedy but the answer gives none from the REMEDY LIBRARY")
+    if t == "daily_forecast" and not _FORECAST_WORDS_RX.search(text):
+        errors.append("The user asked about today, but the answer does not talk about today")
+    if t == "yoga_dosha" and task.get("dosha_terms") and roman:
+        stem = task["dosha_terms"][0].lower().split()[0][:4]
+        if stem not in text.lower():
+            errors.append(f"Does not explain the dosha/yoga that was asked about ({task['dosha_terms'][0]})")
+    if t == "life_domain" and domain_keywords and roman:
+        low = text.lower()
+        if not any(re.search(r"\b" + re.escape(k.lower()), low) for k in domain_keywords if k):
+            errors.append("Does not address the topic of the question ("
+                          + ", ".join(list(domain_keywords)[:3]) + ")")
 
     # de-duplicate while preserving order
     errors = list(dict.fromkeys(errors))
