@@ -21,6 +21,7 @@ Flow:
 import json
 import logging
 import re
+import unicodedata
 import time
 import io
 import contextlib
@@ -158,6 +159,15 @@ def _smalltalk_reply(query: str, language: str = "english") -> str | None:
 # the LLM, which now has its own "ask for clarification" instruction.
 def _looks_gibberish(query: str) -> bool:
     q = query.strip()
+    # Symbol-only / mostly-symbol input ("<>?|}{:L\":\"::", "???") — the
+    # Latin-letter check below needs 6+ letters, so this slipped through to
+    # the LLM, which ignored its "ask to rephrase" rule and gave a reading.
+    # Letters/marks/digits of ANY script count (category L/M/N), so short
+    # Indic words with vowel signs ("हाँ") aren't misjudged.
+    non_space = re.sub(r"\s", "", q)
+    word_chars = sum(1 for c in non_space if unicodedata.category(c)[0] in "LMN")
+    if word_chars < 2 or (non_space and word_chars / len(non_space) < 0.3):
+        return True
     if " " in q:
         return False
     letters = re.sub(r"[^a-zA-Z]", "", q)
