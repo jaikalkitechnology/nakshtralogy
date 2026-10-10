@@ -3,18 +3,19 @@ Nakshatralogy — a 60 s and a 30 s video each for the user app and the
 astrologer app — into media/instagram/{user,astro}/.
 
 Frames are drawn with Pillow from the apps' own screenshots (media/play_console,
-media/instagram) and logos (flutter_user/assets/icon, flutter_astro/assets/logos), piped into ffmpeg, and muxed with a
-synthesized ambient soundtrack (no third-party audio).
+media/instagram) and logos (flutter_user/assets/icon, flutter_astro/assets/logos), piped into ffmpeg, and muxed with a voiceover
+read by the Piper neural TTS voice en-us-ryan-high (offline, MIT licence).
 
-    pip install pillow numpy imageio-ffmpeg
+    pip install pillow numpy imageio-ffmpeg piper-tts
     python3 scripts/marketing/make_instagram_reels.py            # all four
     python3 scripts/marketing/make_instagram_reels.py user_30    # one
 
 Poppins / Playfair fonts are fetched from github.com/google/fonts (OFL) into
 ~/.cache/nakshatralogy-fonts on first run; Liberation Sans is the fallback.
+The Piper voice is fetched from github.com/rhasspy/piper releases into
+~/.cache/nakshatralogy-voices. Edit VOICE_SCRIPT to change the narration.
 """
 import math
-import os
 import random
 import subprocess
 import sys
@@ -30,7 +31,6 @@ ROOT = Path(__file__).resolve().parents[2]
 MEDIA = ROOT / "media"
 OUT = MEDIA / "instagram"
 W, H, FPS = 1080, 1920, 30
-SR = 44100
 
 GOLD = (242, 193, 78)
 ORANGE = (232, 131, 58)
@@ -310,6 +310,15 @@ class Reel:
         self.icon_big = app_icon(theme["icon"], 300)
         self.mandala = mandala(theme["mandala"], 420)
         self.header = self._header()
+        self.cues = {}            # scene index -> [(start, dur)] of each voiceover sentence, scene-relative
+
+    def cue(self, scene, sentence, frac=0.0, default=0.0):
+        """Scene-relative time of a point inside a voiceover sentence."""
+        c = self.cues.get(scene)
+        if not c or sentence >= len(c):
+            return default
+        st, du = c[sentence]
+        return st + du * frac
 
     def _header(self):
         img = Image.new("RGBA", (W, 130), (0, 0, 0, 0))
@@ -386,24 +395,33 @@ def phone_scene(reel, runs, sub, chips, phone_img, *, size=92):
 
 
 # ── user-app scenes ──────────────────────────────────────────────────────
-def hook_scene(lines_spec, punch, punch_at):
-    """lines_spec: list of (runs, size, appear_time); punch: final gold line."""
+def hook_scene(reel, lines_spec, punch, punch_at, cues=None):
+    """lines_spec: list of (runs, size, appear_time); punch: final gold line.
+    cues: per line (+ punch last) the (sentence, fraction) of the voiceover it
+    appears on — overrides the fixed times once the voiceover is built."""
     built = [(rich_text(r, s, max_w=960, align="center")[0], s, at) for r, s, at in lines_spec]
     punch_lines, plh = rich_text(punch, 84, max_w=960)
 
+    def times():
+        ats = [at for _, _, at in built] + [punch_at]
+        if cues:
+            ats = [reel.cue(0, si, fr, default=d) - 0.05 for (si, fr), d in zip(cues, ats)]
+        return ats[:-1], ats[-1]
+
     def fn(img, t, dur):
         a = scene_alpha(t, dur, 0.2)
+        ats, p_at = times()
         total = sum(len(ls) * int(s * 1.12) for ls, s, _ in built) + 60 + len(punch_lines) * plh
         y = (H - total) // 2 - 80
-        for ls, s, at in built:
+        for (ls, s, _), at in zip(built, ats):
             for ln in ls:
                 p = ease_out(prog(t, at, at + 0.45))
-                fade = 1 - 0.55 * prog(t, punch_at, punch_at + 0.4)
+                fade = 1 - 0.55 * prog(t, p_at, p_at + 0.4)
                 put(img, ln, (W - ln.width) // 2, y + (1 - p) * 60, p * a * fade)
                 y += int(s * 1.12)
         y += 60
         for i, ln in enumerate(punch_lines):
-            p = back_out(prog(t, punch_at + i * 0.15, punch_at + 0.6 + i * 0.15))
+            p = back_out(prog(t, p_at + i * 0.15, p_at + 0.6 + i * 0.15))
             sc = 0.8 + 0.2 * clamp(p)
             if clamp(p) > 0:
                 lnr = ln.resize((max(1, int(ln.width * sc)), max(1, int(ln.height * sc))), Image.BILINEAR)
@@ -645,7 +663,7 @@ def earnings_scene(reel, runs, sub, chips):
     return fn
 
 
-def steps_scene(reel, runs, steps, chips=None):
+def steps_scene(reel, runs, steps, chips=None, scene=None, first_sentence=1):
     head = headline_block(runs, sub=None, chips=chips, y0=320)
     rows = []
     for i, s in enumerate(steps):
@@ -664,6 +682,8 @@ def steps_scene(reel, runs, steps, chips=None):
         y = max(bottom + 100, 820)
         for i, r in enumerate(rows):
             at = 0.7 + i * 0.9
+            if scene is not None:
+                at = reel.cue(scene, first_sentence + i, default=at) - 0.1
             p = ease_out(prog(t, at, at + 0.5))
             put(img, r, 70 + (1 - p) * 200, y, a * p)
             q = ease_out(prog(t, at + 0.5, at + 0.8))
@@ -733,79 +753,121 @@ def cta_scene(reel, runs, button, url, small, sub=None):
     return fn
 
 
-# ── soundtrack ───────────────────────────────────────────────────────────
-def note_hz(n):
-    return 440.0 * 2 ** ((n - 69) / 12)
+# ── voiceover ────────────────────────────────────────────────────────────
+VOICE_DIR = Path.home() / ".cache" / "nakshatralogy-voices"
+VOICE = "en-us-ryan-high"          # Piper neural voice (MIT), male, natural ad read
+VOICE_URL = "https://github.com/rhasspy/piper/releases/download/v0.0.2/voice-{}.tar.gz"
+NAME = "Nukshuttrology"            # spelt for the TTS: nuk-shuh-TRAH-luh-jee
+SENTENCE_GAP = 0.28
 
 
-def soundtrack(duration, cues, path, seed=7, key_shift=0):
-    rng = np.random.default_rng(seed)
-    n = int(duration * SR)
-    t = np.arange(n) / SR
-    L = np.zeros(n)
-    R = np.zeros(n)
-    chords = [[57, 60, 64, 69], [53, 57, 60, 65], [48, 52, 55, 60], [55, 59, 62, 67]]  # Am F C G
-    bar = 4.0
-    for ci in range(int(duration / bar) + 1):
-        notes = chords[ci % 4]
-        s0 = int(ci * bar * SR)
-        seg = min(n, s0 + int((bar + 1.5) * SR)) - s0
-        if seg <= 0:
-            continue
-        tt = np.arange(seg) / SR
-        env = np.minimum(1, tt / 1.2) * np.clip((bar + 1.5 - tt) / 1.5, 0, 1)
-        for k, m in enumerate(notes):
-            f = note_hz(m + key_shift)
-            for det, side in ((-0.6, L), (0.6, R)):
-                tone = (np.sin(2 * np.pi * (f + det) * tt) + 0.25 * np.sin(2 * np.pi * 2 * (f + det) * tt)
-                        + 0.08 * np.sin(2 * np.pi * 3 * (f + det) * tt))
-                side[s0:s0 + seg] += 0.045 * env * tone
-        bass = note_hz(notes[0] - 12 + key_shift)
-        b = 0.09 * env * np.sin(2 * np.pi * bass * tt)
-        L[s0:s0 + seg] += b
-        R[s0:s0 + seg] += b
-    # gentle pulse so it feels like it's moving
-    pulse = 0.85 + 0.15 * np.sin(2 * np.pi * t * 1.5) ** 2
-    L *= pulse
-    R *= pulse
-    # bell arpeggio sparkles on scene cues + a soft whoosh
-    pent = [81, 84, 86, 88, 91, 93, 96]
-    for ci, cue in enumerate(cues):
-        for j in range(4):
-            st = int((cue + j * 0.13) * SR)
-            if st >= n:
-                continue
-            ln = min(n - st, int(2.2 * SR))
-            tt = np.arange(ln) / SR
-            f = note_hz(pent[(ci * 2 + j) % len(pent)] + key_shift)
-            bell = np.sin(2 * np.pi * f * tt) * np.exp(-tt * 3.2) + 0.3 * np.sin(2 * np.pi * f * 2.76 * tt) * np.exp(-tt * 6)
-            pan = 0.5 + 0.35 * math.sin(ci + j)
-            L[st:st + ln] += 0.05 * bell * (1 - pan)
-            R[st:st + ln] += 0.05 * bell * pan
-        st = int(max(0, cue - 0.6) * SR)
-        ln = min(n - st, int(0.9 * SR))
-        if ln > 0:
-            noise = rng.standard_normal(ln)
-            noise = np.convolve(noise, np.ones(40) / 40, mode="same")
-            env = np.sin(np.linspace(0, np.pi, ln)) ** 2
-            L[st:st + ln] += 0.12 * noise * env
-            R[st:st + ln] += 0.12 * np.roll(noise, 50) * env
-    # simple feedback-delay reverb
-    for d_s, g in ((0.153, 0.32), (0.227, 0.26), (0.341, 0.2)):
-        d = int(d_s * SR)
-        for ch in (L, R):
-            ch[d:] += g * ch[:-d].copy()
-    fade = np.minimum(1, t / 1.0) * np.clip((duration - t) / 2.0, 0, 1)
-    L *= fade
-    R *= fade
-    peak = max(np.abs(L).max(), np.abs(R).max()) or 1
-    st = np.stack([L, R], axis=1) / peak * 0.7
-    pcm = (st * 32767).astype("<i2")
+@lru_cache(maxsize=None)
+def piper_voice(name=VOICE):
+    import tarfile
+    from piper import PiperVoice
+    model = VOICE_DIR / name / f"{name}.onnx"
+    if not model.exists():
+        (VOICE_DIR / name).mkdir(parents=True, exist_ok=True)
+        tgz = VOICE_DIR / f"{name}.tar.gz"
+        urllib.request.urlretrieve(VOICE_URL.format(name), tgz)
+        with tarfile.open(tgz) as tf:
+            tf.extractall(VOICE_DIR / name)
+        tgz.unlink()
+    return PiperVoice.load(str(model))
+
+
+def speak(text, length_scale):
+    """-> (sample_rate, [float32 array per sentence])"""
+    from piper import SynthesisConfig
+    cfg = SynthesisConfig(length_scale=length_scale, noise_scale=0.7, noise_w_scale=0.85)
+    chunks = list(piper_voice().synthesize(text, syn_config=cfg))
+    return chunks[0].sample_rate, [c.audio_float_array.astype(np.float32) for c in chunks]
+
+
+def voiceover(lines, plan, duration, path):
+    """lines: [(scene index, text)]. Each line starts shortly after its scene
+    begins (or after the previous line ends); a line that would run long into
+    the next scene is read a little faster. Writes a mono WAV and returns the
+    per-scene sentence cues {scene: [(start, dur)]} relative to the scene start."""
+    placed, cues, prev_end, sr = [], {}, 0.0, 22050
+    for li, (sc, text) in enumerate(lines):
+        start_at = plan[sc][0]
+        nxt = lines[li + 1][0] if li + 1 < len(lines) else None
+        limit = (plan[nxt][0] + 0.5) if nxt is not None else duration - 0.6
+        for ls in (0.92, 0.88, 0.84, 0.8, 0.76):
+            sr, sents = speak(text, ls)
+            total = sum(len(x) for x in sents) / sr + SENTENCE_GAP * (len(sents) - 1)
+            t0 = max(start_at + 0.25, prev_end + 0.2)
+            if t0 + total <= limit:
+                break
+        t = t0
+        cues[sc] = []
+        for x in sents:
+            placed.append((t, x))
+            cues[sc].append((t - start_at, len(x) / sr))
+            t += len(x) / sr + SENTENCE_GAP
+        prev_end = t - SENTENCE_GAP
+        print(f"  voice  scene {sc}  {t0:5.2f}-{prev_end:5.2f}s  (x{1 / ls:.2f})  {text[:60]}", flush=True)
+        if prev_end > duration - 0.3:
+            raise SystemExit(f"voiceover overruns the video: {text!r}")
+    track = np.zeros(int(duration * sr) + sr, dtype=np.float32)
+    for t, x in placed:
+        i = int(t * sr)
+        track[i:i + len(x)] += x
+    track = track[:int(duration * sr)]
+    track /= (np.abs(track).max() or 1)
     with wave.open(str(path), "wb") as w:
-        w.setnchannels(2)
+        w.setnchannels(1)
         w.setsampwidth(2)
-        w.setframerate(SR)
-        w.writeframes(pcm.tobytes())
+        w.setframerate(sr)
+        w.writeframes((track * 0.89 * 32767).astype("<i2").tobytes())
+    return cues
+
+
+# Narration per reel: (scene index in the plan, line). Brand / Sanskrit words
+# are spelt for the TTS voice; the on-screen text keeps the real spelling.
+VOICE_SCRIPT = {
+    "user_60": [
+        (0, "Career stuck? Marriage delayed? Money not stable? Your kundli has the answers."),
+        (1, f"Meet {NAME}. Vedic astrology, made personal."),
+        (2, "Talk to verified expert astrologers, twenty-four seven. On chat, call, or video, whenever you need them."),
+        (3, "Get your free kundli in seconds. Planets, nukshuttras, dushas, and all twenty divisional charts, "
+            "calculated to the degree."),
+        (4, "Unlock nineteen deep life reports. Career, wealth, marriage, love, and health, each built on over "
+            "two thousand data points."),
+        (5, "Got a question? Ask our A I astrologer. It reads your own chart, and answers in English, Hindi, "
+            "Hinglish, and more."),
+        (6, "And start every day with your personal forecast. Lucky colours and the best timings, made just for you."),
+        (7, f"Know your stars. Shape your future. Download {NAME} free, on Google Play, today."),
+    ],
+    "user_30": [
+        (0, "Career stuck? Marriage delayed? Money not stable? Your kundli has the answers."),
+        (1, f"Meet {NAME}."),
+        (2, "Talk to expert astrologers, twenty-four seven, on chat, call, or video."),
+        (3, "Unlock nineteen deep life reports, on career, wealth, love, and health."),
+        (4, "Or ask our A I astrologer. Answers from your own chart, in your language."),
+        (5, f"Know your stars. Download {NAME} free, today."),
+    ],
+    "astro_60": [
+        (0, "Are you an astrologer? Your wisdom deserves a bigger stage."),
+        (1, f"{NAME} Astro. Grow your astrology practice, online."),
+        (2, "Consult clients by chat, call, and video. Every session is metered automatically, so you never miss "
+            "a client."),
+        (3, "Go live. Host Q and A sessions, earn per minute, and receive gifts and super chats, in real time."),
+        (4, "And the best part? You keep seventy percent of every earning, and withdraw to your bank, anytime."),
+        (5, "Build a trusted profile with your experience, specialities, and ratings, and let clients find you."),
+        (6, "Getting started takes just three steps. Sign up free. Verify your K Y C. And go online."),
+        (7, f"Grow your practice online. Sign up free today, at astro dot {NAME} dot com."),
+    ],
+    "astro_30": [
+        (0, "Astrologer? Earn from your wisdom."),
+        (1, f"Meet {NAME} Astro."),
+        (2, "Consult clients by chat, call, and video, from anywhere."),
+        (3, "Keep seventy percent of every earning, and withdraw anytime."),
+        (4, "Sign up free. Verify your K Y C. Start earning."),
+        (5, f"Join {NAME} Astro today. Sign up free."),
+    ],
+}
 
 
 # ── reels ────────────────────────────────────────────────────────────────
@@ -830,13 +892,13 @@ ASTRO_SITE = "astro.nakshatralogy.com"
 
 
 def user_scenes(reel, long):
-    th = reel.theme
     consult = phone_crop(MEDIA / "play_console/user/02_consult.png", PC_BOX, 720)
     reports = phone_crop(MEDIA / "play_console/user/03_kundli.png", PC_BOX, 720)
     hook = hook_scene(
-        [([("Career stuck?", WHITE)], 96, 0.1), ([("Marriage delayed?", WHITE)], 96, 0.8),
-         ([("Money not stable?", WHITE)], 96, 1.5)],
-        [("Your ", WHITE), ("kundli", GOLD), ("has the answers.", WHITE)], 2.6 if long else 2.2)
+        reel, [([("Career stuck?", WHITE)], 96, 0.1), ([("Marriage delayed?", WHITE)], 96, 0.8),
+               ([("Money not stable?", WHITE)], 96, 1.5)],
+        [("Your ", WHITE), ("kundli", GOLD), ("has the answers.", WHITE)], 2.6,
+        cues=[(0, 0), (1, 0), (2, 0), (3, 0)])
     experts = phone_scene(reel, [("Talk to ", WHITE), ("expert astrologers", GOLD), ("24×7", WHITE)],
                           "Chat, call or video with verified Vedic, KP & Nadi astrologers.",
                           ["Chat", "Call", "Video"], consult)
@@ -863,7 +925,7 @@ def user_scenes(reel, long):
                 (10.5, 19, experts), (19, 27.5, kundli), (27.5, 36, reps), (36, 45, chat), (45, 52, fc),
                 (52, 60, cta)]
     else:
-        plan = [(0, 4.2, hook), (4.2, 7.5, logo_scene(reel, "Vedic astrology, made personal")),
+        plan = [(0, 4.8, hook), (4.8, 7.5, logo_scene(reel, "Vedic astrology, made personal")),
                 (7.5, 13.5, experts), (13.5, 19, reps), (19, 25, chat), (25, 30, cta)]
     return plan
 
@@ -873,9 +935,10 @@ def astro_scenes(reel, long):
     profile = phone_crop(MEDIA / "play_console/astrologer/04_earn70.png", PC_BOX, 720)
     golive = phone_crop(MEDIA / "instagram/01_join.png", IG_BOX, 720)
     hook = hook_scene(
-        [([("Astrologer?", WHITE)], 110, 0.1), ([("Your wisdom deserves", WHITE)], 80, 0.9)],
-        [("a bigger stage.", GOLD)], 1.8) if long else hook_scene(
-        [([("Astrologer?", WHITE)], 110, 0.1)], [("Earn from your ", WHITE), ("wisdom.", GOLD)], 1.0)
+        reel, [([("Astrologer?", WHITE)], 110, 0.1), ([("Your wisdom deserves", WHITE)], 80, 0.9)],
+        [("a bigger stage.", GOLD)], 1.8, cues=[(0, 0), (1, 0), (1, 0.55)]) if long else hook_scene(
+        reel, [([("Astrologer?", WHITE)], 110, 0.1)], [("Earn from your ", WHITE), ("wisdom.", GOLD)], 1.0,
+        cues=[(0, 0), (1, 0)])
     consult_s = phone_scene(reel, [("Chat, Call & Video", GOLD), ("consultations", WHITE)],
                             "Accept requests, run server-metered sessions and never miss a client.",
                             ["Chat", "Voice", "Video"], consult)
@@ -883,7 +946,8 @@ def astro_scenes(reel, long):
                           "Calls, chats, gifts & super chats — withdraw to your bank anytime.",
                           ["70% payout", "Only 10% TDS", "Instant statements"])
     steps = steps_scene(reel, [("Start earning in ", WHITE), ("3 steps", GOLD)],
-                        ["Sign up free in minutes", "Verify KYC — PAN / GST + bank", "Go online & start earning"])
+                        ["Sign up free in minutes", "Verify KYC — PAN / GST + bank", "Go online & start earning"],
+                        scene=6 if long else 4, first_sentence=1 if long else 0)
     cta = cta_scene(reel, [("Grow your practice ", WHITE), ("online.", GOLD)], "Sign up free →", ASTRO_SITE,
                     "Nakshatralogy Astro · Google Play", sub="Reach seekers across India — on your schedule.")
     logo = logo_scene(reel, "Grow your astrology practice", pill="For Astrologers")
@@ -924,20 +988,25 @@ def build(key, preview_at=None):
     plan = scenes_fn(reel, long)
     for a, b, fn in plan:
         reel.add(a, b, fn)
-    if preview_at is not None:
-        return reel.render_frame(preview_at)
     out_dir = OUT / folder
     out_dir.mkdir(parents=True, exist_ok=True)
-    wav = out_dir / (fname + ".wav")
-    soundtrack(dur, [a for a, _, _ in plan[1:]], wav, seed=len(key), key_shift=0 if folder == "user" else -2)
+    wav = out_dir / (fname + ".voice.wav")
+    reel.cues = voiceover(VOICE_SCRIPT[key], plan, dur, wav)
+    if preview_at is not None:
+        wav.unlink(missing_ok=True)
+        return reel.render_frame(preview_at)
     out = out_dir / fname
+    # voice polish: trim rumble, a touch of presence, gentle compression, broadcast loudness
+    voice_fx = ("highpass=f=85,equalizer=f=180:t=q:w=1:g=2,equalizer=f=3200:t=q:w=1.2:g=3,"
+                "acompressor=threshold=-20dB:ratio=3:attack=5:release=160:makeup=2,"
+                "loudnorm=I=-14:TP=-1.5:LRA=7,aresample=44100")
     cmd = [ffmpeg_exe(), "-y", "-loglevel", "error",
            "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
            "-i", str(wav),
            "-c:v", "libx264", "-preset", "medium", "-crf", "21", "-pix_fmt", "yuv420p", "-profile:v", "high",
            "-r", str(FPS), "-g", str(FPS * 2),
-           "-c:a", "aac", "-b:a", "160k", "-ar", str(SR),
-           "-movflags", "+faststart", "-shortest", str(out)]
+           "-af", voice_fx, "-ac", "2", "-c:a", "aac", "-b:a", "160k",
+           "-movflags", "+faststart", "-t", str(dur), str(out)]
     proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     total = int(dur * FPS)
     for i in range(total):
