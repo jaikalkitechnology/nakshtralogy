@@ -36,7 +36,7 @@ from app.models.model import User, Chart, AgentLog, AgentLogSection, AIChat, AIC
 from app.kundli import engine as nk_engine
 from app.kundli.helper import NakshtraEngine
 from app.agent.engine import NakshtraAgent, DOMAINS, detect_intent, apply_display_floor
-from app.agent.specialist_bridge import resolve_chat_engine, get_specialist_summary, get_forecast_summary, DOMAIN_TO_SPECIALIST, EXTRA_CHAT_ENGINES, EXTRA_CHAT_ENGINE_META
+from app.agent.specialist_bridge import resolve_chat_engine, get_specialist_summary, get_forecast_summary, DOMAIN_TO_SPECIALIST, EXTRA_CHAT_ENGINE_META
 from app.agent.llm_service import (
     build_system_prompt,
     build_rich_prompt,
@@ -48,6 +48,12 @@ from app.agent.llm_service import (
     _FOLLOWUPS_LOOSE_RX,
     NON_LATIN_SCRIPT_RX,
     ROMAN_SCRIPT_LANGUAGES,
+)
+from app.agent.answer_pipeline import (
+    PROMPT_VERSION, CHART_TASKS, BUFFERED_TASKS, LISTING_TASKS,
+    classify_task, clarification_text, route_task, validate_chart_context, select_context,
+    wants_remedy, build_fact_sheet, validate_response, dedupe_sentences, drop_sentences,
+    deterministic_answer,
 )
 
 logger = logging.getLogger("ws_agent")
@@ -310,86 +316,9 @@ _ASK_TODAY_DATE_RE = re.compile(
     re.IGNORECASE,
 )
 
-# A direct request to SEE specific chart facts already sitting in the
-# REFERENCE DATA block (planet positions, houses, dasha periods, a
-# general "show me my chart" ask) — as opposed to asking for an
-# interpretation/analysis of them. Observed failure: "give me the
-# details and planet positions from the kundli" got answered entirely
-# about Chandra Dosh and remedies, never mentioning a single planet —
-# with 15K+ chars of reference data (much of it dosha/yoga/remedy
-# framing with heavy "⚠ ACTIVE NOW" emphasis), the model defaulted to
-# the emotionally loudest content instead of the specific data asked
-# for. Same fix shape as _PERSONAL_INFO_FIELDS: point the LLM straight
-# at the right section instead of hoping it finds it unaided.
-_ASK_PLANETS_RE = re.compile(
-    # "pos\w*" deliberately loose — real queries have arrived as
-    # "posiitons", "possition" and "postion"; any stricter prefix
-    # ("posit", "posi") missed at least one of them.
-    r"\b(planets?\s*(ki|ka|ke|in|of)?\s*(pos\w*|placement\w*|sthiti)|"
-    r"grah(a|as|on|o)?\s*(ki\s*)?(pos\w*|sthiti|placement\w*)|mere\s*grah\w*|sab(hi)?\s*grah\w*|"
-    r"navagraha\s*(pos\w*|sthiti)?|where\s*(are|is)\s*my\s*planets?)\b"
-    # Devanagari kept outside \b: Python's \w doesn't count matras as word
-    # characters, so a \b-wrapped Devanagari alternative never matches.
-    r"|ग्रह\S*\s*(की\s*)?स्थिति",
-    re.IGNORECASE,
-)
-_ASK_HOUSES_RE = re.compile(
-    r"\b(my\s*houses?|bhava\s*(detail\w*|position\w*)|house\s*(detail\w*|position\w*|strength\w*))\b",
-    re.IGNORECASE,
-)
-_ASK_DASHA_RE = re.compile(
-    r"\b(dasha\s*period\w*|mahadasha|current\s*dasha|mera\s*dasha|meri\s*dasha)\b",
-    re.IGNORECASE,
-)
-_ASK_CHART_DETAILS_RE = re.compile(
-    r"\b(chart\s*detail\w*|kundli\s*(ke\s*)?detail\w*|give\s*me\s*(my|the)\s*(chart|kundli)\s*detail\w*|"
-    r"kundli\s*data|show\s*me\s*my\s*(chart|kundli))\b",
-    re.IGNORECASE,
-)
-
-
-def _format_planets_compact(chart_context: dict) -> str:
-    planets = chart_context.get("planets", {}) if chart_context else {}
-    bits = []
-    for name, p in planets.items():
-        if name == "Lagna":
-            continue
-        bits.append(f"{name} in {p.get('sign_full','?')} at {p.get('degree',0):.1f}° ({p.get('nakshatra','?')})")
-    return "; ".join(bits)
-
-
-def _format_houses_compact(chart_context: dict) -> str:
-    bhava = chart_context.get("bhava", {}) if chart_context else {}
-    bits = []
-    for hkey in sorted(bhava.keys()):
-        h = bhava[hkey]
-        occ = ", ".join(h.get("occupants", [])) or "empty"
-        bits.append(f"House {h.get('house',0)} is {h.get('sign','')} (lord {h.get('lord','')}, occupants: {occ})")
-    return "; ".join(bits)
-
-
-def _format_dasha_compact(chart_context: dict) -> str:
-    vim = chart_context.get("current_dasha", {}) if chart_context else {}
-    moola = chart_context.get("current_dasha_moola", {}) if chart_context else {}
-    bits = []
-    if vim:
-        bits.append(f"Vimshottari Mahadasha is {vim.get('md','')} (Antardasha {vim.get('ad','')})")
-    if moola:
-        bits.append(f"Moola Dasha Mahadasha is {moola.get('md','')} (Antardasha {moola.get('ad','')})")
-    return "; ".join(bits)
-
-
-def _is_chart_listing_request(query: str) -> bool:
-    """True when the question asks to SEE a full list of chart facts
-    (every planet, every house) — build_rich_prompt then swaps its usual
-    "cover at most 2-3 factors / pick ONE detail" rules, which otherwise
-    make the model mention one or two planets and stop."""
-    if any(rx.search(query) for _, rx, _ in _PERSONAL_INFO_FIELDS):
-        return False
-    return bool(_ASK_PLANETS_RE.search(query) or _ASK_HOUSES_RE.search(query))
-
-
-def _personal_info_hint(query: str, chart: "Chart", chart_context: dict = None) -> str | None:
+def _personal_info_hint(query: str, chart: "Chart") -> str | None:
+    """Name/DOB/birth time/place and the current date/time. Chart facts
+    (planets, Lagna, houses, dasha...) come from answer_pipeline.build_fact_sheet."""
     for attr, rx, label in _PERSONAL_INFO_FIELDS:
         if rx.search(query):
             value = getattr(chart, attr, None)
@@ -410,69 +339,6 @@ def _personal_info_hint(query: str, chart: "Chart", chart_context: dict = None) 
         return (
             f'The user is asking for today\'s date/day (not their birth date). Today is exactly '
             f'"{today_str}" — state this directly and clearly in your response.'
-        )
-    if _ASK_PLANETS_RE.search(query):
-        facts = _format_planets_compact(chart_context)
-        if facts:
-            count = facts.count(";") + 1
-            return (
-                'The user is asking to SEE their actual planet positions, not an interpretation, dosha, '
-                f'or remedy commentary. These are their EXACT positions for all {count} planets — use ONLY '
-                f'these values, never different ones you recall or infer: {facts}. List EVERY ONE of these '
-                f'{count} planets (sign, degree, nakshatra) — not just one or two — and do not substitute '
-                'dosha/yoga/remedy or transit talk for this direct data request.'
-            )
-        return (
-            'The user is asking to SEE their actual planet positions, not an interpretation, dosha, '
-            'or remedy commentary. Relay the specific facts from the PLANET POSITIONS section above '
-            '(each planet\'s sign, degree, nakshatra) in plain natural sentences — do not substitute '
-            'dosha/yoga/remedy talk for this direct data request.'
-        )
-    if _ASK_HOUSES_RE.search(query):
-        facts = _format_houses_compact(chart_context)
-        if facts:
-            return (
-                'The user is asking to SEE their actual house/bhava details, not an interpretation. '
-                f'These are their EXACT facts for all 12 houses — use ONLY these values, never different ones '
-                f'you recall or infer: {facts}. List EVERY ONE of the 12 houses — not just a few — and do not '
-                'substitute dosha/yoga/remedy talk for this direct data request.'
-            )
-        return (
-            'The user is asking to SEE their actual house/bhava details, not an interpretation. Relay '
-            'the specific facts from the HOUSE STRENGTHS (Bhava) section above in plain natural '
-            'sentences — do not substitute dosha/yoga/remedy talk for this direct data request.'
-        )
-    if _ASK_DASHA_RE.search(query):
-        facts = _format_dasha_compact(chart_context)
-        if facts:
-            return (
-                'The user is asking to SEE their actual current dasha period, not an interpretation. '
-                f'This is their EXACT current dasha — use ONLY this, never a different period you recall '
-                f'or infer: {facts}. State it in plain natural sentences — do not substitute dosha/yoga/'
-                'remedy talk for this direct data request.'
-            )
-        return (
-            'The user is asking to SEE their actual current dasha period, not an interpretation. '
-            'State the specific MD/AD/PD from the CURRENT DASHA PERIODS section above in plain natural '
-            'sentences — do not substitute dosha/yoga/remedy talk for this direct data request.'
-        )
-    if _ASK_CHART_DETAILS_RE.search(query):
-        planet_facts = _format_planets_compact(chart_context)
-        dasha_facts = _format_dasha_compact(chart_context)
-        if planet_facts or dasha_facts:
-            facts = "; ".join(f for f in (planet_facts, dasha_facts) if f)
-            return (
-                'The user is asking for a general overview of their chart facts, not a themed '
-                f'interpretation. These are EXACT facts from their chart — use ONLY these values, never '
-                f'different ones you recall or infer, and pick a few to mention: {facts}. State them in '
-                'plain sentences — do not default to dosha or remedy commentary unless they specifically '
-                'asked about problems.'
-            )
-        return (
-            'The user is asking for a general overview of their chart facts, not a themed '
-            'interpretation. Briefly relay a few concrete facts from the REFERENCE DATA above '
-            '(ascendant, a couple of planet placements, current dasha) in plain sentences — do not '
-            'default to dosha or remedy commentary unless they specifically asked about problems.'
         )
     return None
 
@@ -513,12 +379,106 @@ _STAGE_TEXTS = {
         "punjabi": "ਤੁਹਾਡਾ ਜਵਾਬ ਤਿਆਰ ਕਰ ਰਿਹਾ ਹਾਂ…",
         "odia": "ଆପଣଙ୍କ ଉତ୍ତର ପ୍ରସ୍ତୁତ କରୁଛି…",
     },
+    "checking": {
+        "english": "Double-checking with your chart…",
+        "hindi": "आपकी कुंडली से दोबारा मिला रहा हूँ…",
+        "hinglish": "Aapki kundli se dobara check kar raha hoon…",
+    },
 }
 
 
 def _stage_text(key: str, language: str) -> str:
     bucket = _STAGE_TEXTS.get(key, {})
     return bucket.get(language, bucket.get("english", ""))
+
+
+class _NullSink:
+    """Stands in for the websocket when an answer must be generated in full
+    (and validated) before the user sees it — stream_provider only calls
+    send_json, and the text is collected via token_collector."""
+
+    async def send_json(self, data: dict) -> None:
+        return None
+
+
+def _split_followups(full_response: str) -> tuple:
+    """(answer, raw follow-up questions, marker_found)."""
+    m = _FOLLOWUPS_LOOSE_RX.search(full_response)
+    if not m:
+        return full_response, [], False
+    followups = []
+    for line in full_response[m.end():].strip().split("\n"):
+        line = line.strip().lstrip("-•* ").lstrip()
+        if line.upper().startswith("Q:"):
+            q = line[2:].strip().strip("?.!").strip()
+            if q and len(q) <= 100:
+                followups.append(q + "?" if not q.endswith("?") else q)
+        elif line and 10 <= len(line) <= 100 and "?" in line:
+            followups.append(line)
+        if len(followups) >= 6:
+            break
+    return full_response[:m.start()], followups, True
+
+
+def _correction_prompt(query: str, errors: list, language: str) -> str:
+    return (
+        "Your previous answer has these problems:\n- " + "\n- ".join(errors) + "\n"
+        f'Rewrite the COMPLETE answer to the question "{query}", fixing every problem. Use only the '
+        "VERIFIED FACTS and reference data from my earlier message — natal signs, the Lagna, houses, today's "
+        "transits and each dasha system are different things; never mix them. Keep the same language "
+        f"({language}) and format rules, and end with the ---FOLLOWUPS--- section as before. Do not mention "
+        "these corrections."
+    )
+
+
+def _domain_display(domain_key: str) -> tuple:
+    """(label, emoji) for a routed domain — one of the 12 life domains, a
+    chat-only topic (kundli, daily_forecast, ...) or "general"."""
+    if domain_key in DOMAINS:
+        return DOMAINS[domain_key]["label"], DOMAINS[domain_key]["emoji"]
+    if domain_key in EXTRA_CHAT_ENGINE_META:
+        return EXTRA_CHAT_ENGINE_META[domain_key]
+    return "General", "🔮"
+
+
+def _dosha_yoga_detail(pdata: dict) -> list:
+    """Full engine dosha + yoga analysis (description, factors,
+    cancellations) for explain-this-dosha / remedy questions."""
+    import importlib
+    eng = importlib.import_module("app.kundli.engine")
+    out = []
+    try:
+        with contextlib.redirect_stdout(io.StringIO()):
+            doshas = eng.analyze_all_dosh(pdata)
+            yogas = eng.analyze_all_yoga(pdata)
+        for d in doshas:
+            out.append({"kind": "dosha", "name": d.get("name"), "present": bool(d.get("present")),
+                        "severity": d.get("severity"), "score": d.get("score"),
+                        "description": d.get("description"), "factors": d.get("factors") or [],
+                        "cancels": d.get("cancels") or []})
+        for y in yogas:
+            out.append({"kind": "yoga", "name": y.get("name"), "present": bool(y.get("present")),
+                        "severity": y.get("strength"), "score": y.get("score"),
+                        "description": y.get("description"), "factors": y.get("factors") or [],
+                        "cancels": y.get("reducers") or []})
+    except Exception as e:
+        logger.warning("dosha/yoga detail failed: %s", e)
+    return out
+
+
+def _pipeline_json(pipeline: list, limit: int = 20000) -> str:
+    """Serialise the trace for AgentLog.pipeline_json without ever cutting it
+    into invalid JSON (the admin panel parses it): oversized detail values
+    are shortened first."""
+    text = json.dumps(pipeline, ensure_ascii=False, default=str)
+    if len(text) <= limit:
+        return text
+    slim = [{**st, "detail": {k: (v if len(json.dumps(v, ensure_ascii=False, default=str)) < 600
+                                   else str(v)[:300] + "…")
+                              for k, v in (st.get("detail") or {}).items()}} for st in pipeline]
+    text = json.dumps(slim, ensure_ascii=False, default=str)
+    return text if len(text) <= limit else json.dumps(
+        [{"step": st.get("step"), "label": st.get("label")} for st in pipeline], ensure_ascii=False)
 
 
 def _trace(pipeline: list, step: str, step_label: str, **detail) -> None:
@@ -727,8 +687,12 @@ def _get_chart_data(chart: Chart) -> dict:
     return result
 
 
-def _build_chart_context(data: dict, result: dict, chart: Chart = None, explicit_engine: str = None) -> dict:
-    """Build rich context from chart data for the LLM prompt."""
+def _build_chart_context(data: dict, result: dict, chart: Chart = None, explicit_engine: str = None,
+                         specialist_engine: str | None = "auto") -> dict:
+    """Build rich context from chart data for the LLM prompt.
+    specialist_engine: "auto" resolves the specialist report from the
+    topic/domain as before; otherwise the routed engine key, or None for no
+    specialist report (chart-data questions)."""
     pdata = data["_pdata"]
     birth_jd = data["birth_jd"]
     planets = data.get("planets", {})
@@ -805,6 +769,12 @@ def _build_chart_context(data: dict, result: dict, chart: Chart = None, explicit
         _buf = io.StringIO()
         with contextlib.redirect_stdout(_buf):
             transit = get_all_positions(jd)
+        _SIGN_NAMES = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces']
+        ctx["transits_today"] = {
+            p: {"sign": _SIGN_NAMES[int(transit[p]["lon"] // 30) % 12], "degree": round(transit[p]["lon"] % 30, 2)}
+            for p in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu")
+            if isinstance(transit.get(p, {}).get("lon"), (int, float))
+        }
         saturn_sign = int(transit.get("Saturn", {}).get("lon", 0) / 30)
         moon_sign = pdata.get("Moon", {}).get("rashi_idx", 0)
         offset = (saturn_sign - moon_sign) % 12  # 0..11 from Moon
@@ -865,7 +835,8 @@ def _build_chart_context(data: dict, result: dict, chart: Chart = None, explicit
     # by the intent-detected domain), ground the answer in that engine's
     # own analysis instead of just the generic facts above. No-op (and no
     # extra engine call) for an unscoped "ask anything" question.
-    engine_key = resolve_chat_engine(explicit_engine, domain_key)
+    engine_key = (resolve_chat_engine(explicit_engine, domain_key) if specialist_engine == "auto"
+                  else specialist_engine)
     if engine_key and chart is not None:
         try:
             if engine_key == "daily_forecast":
@@ -1002,6 +973,19 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # attached (checked first — deterministic, not reliant on
                 # the LLM obeying or coping with a content-free "question").
                 smalltalk_lang = resolved_lang
+                # What is actually being asked — decided once, before any
+                # chart work, and reused for routing/context/validation.
+                _early_intent = detect_intent(query)
+                task_info = classify_task(
+                    query, domain=_early_intent.get("domain"),
+                    domain_confidence=_early_intent.get("domain_confidence", 0),
+                    engine_key=chat.engine_key, has_history=bool(chat.messages),
+                )
+                _trace(
+                    pipeline, "task_classified", "User's task classified",
+                    task=task_info["task"], confidence=task_info["confidence"], reason=task_info["reason"],
+                    planet=task_info["planet"], needs_clarification=task_info["needs_clarification"],
+                )
                 bare_lang_switch = detect_bare_language_switch(query)
                 smalltalk_routing = None
                 if bare_lang_switch:
@@ -1022,9 +1006,15 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                         # short-circuited — they still go through the LLM
                         # (see personal_info_hint below) so the answer comes
                         # out in the right language and natural phrasing.
-                        smalltalk_text = _off_topic_redirect(query, chat.engine_key)
+                        # A chart-data / forecast question is answered in any
+                        # topic chat — only a different LIFE AREA is redirected.
+                        if task_info["task"] not in CHART_TASKS and task_info["task"] != "daily_forecast":
+                            smalltalk_text = _off_topic_redirect(query, chat.engine_key)
                         if smalltalk_text is not None:
                             smalltalk_routing = "off_topic_redirect"
+                        elif task_info["needs_clarification"] and not _personal_info_hint(query, chart):
+                            smalltalk_text = clarification_text(smalltalk_lang)
+                            smalltalk_routing = "clarify_ambiguous"
                 if smalltalk_text is not None:
                     import uuid as _uuid
                     smalltalk_message_id = str(_uuid.uuid4())
@@ -1065,7 +1055,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                                 provider=smalltalk_routing, domain=domain, language=smalltalk_lang,
                                 raw_query=query[:2000], query=query[:500],
                                 routing=smalltalk_routing,
-                                pipeline_json=json.dumps(pipeline, ensure_ascii=False)[:8000],
+                                pipeline_json=_pipeline_json(pipeline),
                                 response_text=smalltalk_text[:5000],
                                 status="success", response_tokens=1,
                                 latency_ms=_smalltalk_latency,
@@ -1088,23 +1078,34 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # Pass UI language (english/hindi/hinglish) — detect_intent ignores "auto"
                 ui_lang = resolved_lang if resolved_lang in ("english", "hindi", "hinglish") else None
                 result = _agent.query(query, pdata, birth_jd, domain_override=domain, user_language=ui_lang)
-                # A chat locked to a chat-only topic (kundli, character, ...)
-                # has no domain to send as domain_override, so detect_intent
-                # falls back to "life_path_luck" for any question without
-                # domain keywords — which then mislabels the turn everywhere
-                # (badge, LLM's ANALYSIS line, AgentLog.domain, section stats).
-                # Pin the turn to the chat's own topic, the same way the 12
-                # domain-locked chats are pinned via domain_override.
-                if chat.engine_key in EXTRA_CHAT_ENGINES:
-                    result["domain"] = chat.engine_key
-                    result["label"], result["emoji"] = EXTRA_CHAT_ENGINE_META.get(
-                        chat.engine_key, (result["label"], result["emoji"]))
+                _intent = result.get("intent") or {}
+                _intent["task"] = task_info["task"]
+                result["intent"] = _intent
+                # Domain, persona, specialist engine, log/section key and the
+                # probability badge all follow the classified task — so
+                # detect_intent's "life_path_luck" fallback (no domain keyword
+                # matched) or a chat's topic can't override what was asked.
+                locked_domain = domain if domain in DOMAINS else _SPECIALIST_TO_DOMAIN.get(chat.engine_key)
+                route = route_task(
+                    task_info, scored_domain=result["domain"],
+                    domain_confidence=_intent.get("domain_confidence", 0),
+                    engine_key=chat.engine_key, locked_domain=locked_domain, life_domains=DOMAINS,
+                )
+                if route["domain"] != result["domain"]:
+                    result["domain"] = route["domain"]
+                    result["label"], result["emoji"] = _domain_display(route["domain"])
                 logger.info("Probability in %.2fs: %s %.0f%%", time.time() - t0, result["domain"], result["probability"])
                 _trace(
                     pipeline, "intent_detected", "Intent + probability detected from kundli",
                     domain=result.get("domain"), label=result.get("label"),
                     probability=result.get("probability"), band=result.get("band"),
                     intent=result.get("intent"),
+                )
+                _trace(
+                    pipeline, "routing", "Domain / agent / engine selected for the task",
+                    task=task_info["task"], domain=route["domain"], agent=route["domain"],
+                    specialist_engine=route["engine"], show_probability=route["show_probability"],
+                    reason=route["reason"],
                 )
                 # Display-only floor applied AFTER the true score is captured
                 # above in `pipeline` (admin trace keeps the real number).
@@ -1130,9 +1131,11 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                         "domain": result["domain"],
                         "label": result["label"],
                         "emoji": result["emoji"],
-                        "probability": result["probability"],
-                        "band": result["band"],
-                        "breakdown": result["breakdown"],
+                        # No badge when the domain probability doesn't apply to
+                        # the question (chart facts, forecast, no domain).
+                        "probability": result["probability"] if route["show_probability"] else None,
+                        "band": result["band"] if route["show_probability"] else None,
+                        "breakdown": result["breakdown"] if route["show_probability"] else {},
                         "active_yogas": result["active_yogas"],
                         "active_doshas": result["active_doshas"],
                         "detected_language": effective_lang,
@@ -1143,11 +1146,30 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
 
                 # Build rich kundli context + session memory
                 t1 = time.time()
-                chart_context = _build_chart_context(data, result, chart=chart, explicit_engine=explicit_engine)
+                chart_context = _build_chart_context(data, result, chart=chart, explicit_engine=explicit_engine,
+                                                     specialist_engine=route["engine"])
+                if task_info["task"] in ("yoga_dosha", "remedy"):
+                    chart_context["dosha_yoga_detail"] = _dosha_yoga_detail(pdata)
+                # Engines compute dasha/transits for the server's date.today();
+                # validate against the same date.
+                target_date = date.today()
+                chart_context, data_report = validate_chart_context(chart_context, target_date)
+                if data_report["warnings"]:
+                    logger.warning("Chart data validation (chart=%s): %s", chart_id, data_report["warnings"])
+                prompt_ctx, prompt_sections = select_context(
+                    chart_context, task_info["task"], domain=route["domain"],
+                    show_probability=route["show_probability"], wants_remedy=wants_remedy(query),
+                )
+                fact_sheet = build_fact_sheet(chart_context, task_info, target_date)
                 _trace(
-                    pipeline, "chart_context", "Kundli data pulled for prompt context",
-                    sections=list(chart_context.keys()),
-                    specialist_report_included="specialist_report" in chart_context,
+                    pipeline, "chart_context", "Kundli data pulled, validated and selected for the prompt",
+                    chart_id=chart_id, target_date=target_date.strftime("%d/%m/%Y"),
+                    available=sorted(k for k in chart_context.keys() if not k.startswith("_")),
+                    selected=prompt_sections,
+                    specialist_report_included="specialist_report" in prompt_ctx,
+                    fact_sheet_lines=fact_sheet.count("\n") if fact_sheet else 0,
+                    validation_warnings=data_report["warnings"], withheld=data_report["excluded"],
+                    missing=data_report["missing"],
                 )
 
                 # ⭐️ TEMPLATE-FIRST ROUTING — check templates before LLM
@@ -1209,7 +1231,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                                 matched_question_id=match_info.get("question_id") if match_info else None,
                                 match_score=match_info.get("score") if match_info else None,
                                 routing="template",
-                                pipeline_json=json.dumps(pipeline, ensure_ascii=False)[:8000],
+                                pipeline_json=_pipeline_json(pipeline),
                                 response_text=template_text[:5000],
                                 status="success", response_tokens=1,
                                 latency_ms=_template_latency,
@@ -1238,12 +1260,16 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     logger.info("QUESTION MATCH (no template) score=%.2f → sharpened sub=%s qtype=%s",
                                 match_info["score"], match_info.get("sub_domain"), match_info.get("question_type"))
 
-                personal_info_hint = _personal_info_hint(query, chart, chart_context)
-                chart_listing = bool(personal_info_hint) and _is_chart_listing_request(query)
+                personal_info_hint = _personal_info_hint(query, chart)
+                data_listing = task_info["task"] in LISTING_TASKS
+                # Topic lock only applies to life-area questions; a chart-data
+                # or forecast question is answered whatever the chat's topic.
+                topic_locked_eff = bool(chat.engine_key) and task_info["task"] in ("general", "life_domain")
                 user_prompt = build_rich_prompt(
-                    query, chart_context, intent=result.get("intent"), topic_locked=bool(chat.engine_key),
+                    query, prompt_ctx, intent=result.get("intent"), topic_locked=topic_locked_eff,
                     language=effective_lang, personal_info_hint=personal_info_hint,
-                    data_listing=chart_listing,
+                    data_listing=data_listing, task=task_info["task"], sections=prompt_sections,
+                    fact_sheet=fact_sheet,
                 )
 
                 # Personalize system prompt with chart holder's details + detected domain
@@ -1303,7 +1329,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # stays free to answer whatever the question actually is.
                 system_prompt_text = build_system_prompt(
                     effective_lang, domain=detected_domain, user=chart_holder, query=query,
-                    topic_locked=bool(chat.engine_key),
+                    topic_locked=topic_locked_eff,
                 )
                 messages = [{"role": "system", "content": system_prompt_text}]
                 for turn in history:
@@ -1316,8 +1342,9 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 _trace(
                     pipeline, "prompt_built", "System + user prompt assembled for the LLM",
                     system_prompt_chars=len(system_prompt_text), user_prompt_chars=len(user_prompt),
-                    history_turns=len(history), total_messages=len(messages), topic_locked=bool(chat.engine_key),
-                    personal_info_hint_given=bool(personal_info_hint),
+                    history_turns=len(history), total_messages=len(messages), topic_locked=topic_locked_eff,
+                    personal_info_hint_given=bool(personal_info_hint), prompt_version=PROMPT_VERSION,
+                    task=task_info["task"], persona=detected_domain, data_listing=data_listing,
                 )
 
                 logger.info("Context built in %.2fs, %d history turns, streaming via %s", time.time() - t1, len(history), provider_key)
@@ -1348,12 +1375,17 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 num_predict_override = _NUM_PREDICT_BY_DEPTH.get(
                     (result.get("intent") or {}).get("response_depth"), _NUM_PREDICT_BY_DEPTH["moderate"],
                 )
-                if chart_listing:
+                if data_listing:
                     # 9 planets / 12 houses, one line each, plus follow-ups —
                     # a "brief"/"moderate" budget would cut the list off.
                     num_predict_override = max(num_predict_override, _NUM_PREDICT_BY_DEPTH["detailed"])
+                # Factual chart answers are generated in full and validated
+                # before the user sees them, so a wrong placement is never
+                # shown and then replaced; other answers stream as before.
+                buffered = task_info["task"] in BUFFERED_TASKS
                 try:
-                    await stream_provider(provider_key, messages, websocket, token_collector=collected_tokens, num_predict=num_predict_override)
+                    await stream_provider(provider_key, messages, _NullSink() if buffered else websocket,
+                                          token_collector=collected_tokens, num_predict=num_predict_override)
                     # Check if tokens contain error markers
                     joined = "".join(collected_tokens)
                     if joined.startswith("⚠️") and len(collected_tokens) <= 2:
@@ -1364,7 +1396,8 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     log_status = "error"
                     log_error = str(e)[:500]
                     fallback = _fallback_response(query, result, language)
-                    await _send({"type": "token", "text": fallback})
+                    if not buffered:
+                        await _send({"type": "token", "text": fallback})
                     collected_tokens.append(fallback)
                 _trace(
                     pipeline, "llm_call", "LLM streamed the answer",
@@ -1375,22 +1408,67 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # Parse follow-up suggestions from end of response (before logging,
                 # so the pipeline trace reflects the actual stored answer length)
                 full_response = "".join(collected_tokens)
-                followups = []
-                main_answer = full_response
-                _fm = _FOLLOWUPS_LOOSE_RX.search(full_response)
-                if _fm:
-                    main_answer, tail = full_response[:_fm.start()], full_response[_fm.end():]
-                    for line in tail.strip().split("\n"):
-                        line = line.strip().lstrip("-•* ").lstrip()
-                        if line.upper().startswith("Q:"):
-                            q = line[2:].strip().strip("?.!").strip()
-                            if q and len(q) <= 100:
-                                followups.append(q + "?" if not q.endswith("?") else q)
-                        elif line and 10 <= len(line) <= 100 and "?" in line:
-                            followups.append(line)
-                        if len(followups) >= 6:
-                            break
+                main_answer, followups, has_followups = _split_followups(full_response)
+                streamed_answer = main_answer
+
+                # ── Response validation: placements / Lagna / dasha vs the
+                # validated chart, script, required facts; one corrective
+                # retry, then drop the offending sentences or fall back to the
+                # verified facts. Never an open-ended loop.
+                if log_status == "success" and main_answer.strip():
+                    main_answer = dedupe_sentences(main_answer)
+                    check = validate_response(main_answer, chart_context, task_info, effective_lang,
+                                              ROMAN_SCRIPT_LANGUAGES, NON_LATIN_SCRIPT_RX)
+                    first_errors = check["errors"]
+                    action = "accepted"
+                    if not check["ok"]:
+                        await _send({"type": "stage", "text": _stage_text("checking", effective_lang)})
+                        retry_tokens: list = []
+                        try:
+                            await stream_provider(
+                                provider_key,
+                                messages + [
+                                    {"role": "assistant", "content": main_answer},
+                                    {"role": "user", "content": _correction_prompt(query, check["errors"], effective_lang)},
+                                ],
+                                _NullSink(), token_collector=retry_tokens, num_predict=num_predict_override,
+                            )
+                            r_main, r_followups, r_has = _split_followups("".join(retry_tokens))
+                            r_main = dedupe_sentences(r_main)
+                            r_check = validate_response(r_main, chart_context, task_info, effective_lang,
+                                                        ROMAN_SCRIPT_LANGUAGES, NON_LATIN_SCRIPT_RX)
+                            if r_main.strip() and len(r_check["errors"]) < len(check["errors"]):
+                                main_answer, check = r_main, r_check
+                                if r_has:
+                                    followups, has_followups = r_followups, True
+                                action = "retried_ok" if r_check["ok"] else "retried_partial"
+                        except Exception as re_err:
+                            logger.warning("Validation retry failed: %s", re_err)
+                        if not check["ok"]:
+                            cleaned = drop_sentences(main_answer, check["bad_sentences"])
+                            still = validate_response(cleaned, chart_context, task_info, effective_lang,
+                                                      ROMAN_SCRIPT_LANGUAGES, NON_LATIN_SCRIPT_RX)
+                            det = (deterministic_answer(chart_context, task_info, effective_lang)
+                                   if task_info["task"] in CHART_TASKS else None)
+                            if det and (not still["ok"] or len(cleaned) < 40):
+                                main_answer, action = det, "deterministic_fallback"
+                            elif cleaned.strip():
+                                main_answer, action = cleaned, "dropped_bad_sentences"
+                            else:
+                                main_answer, action = clarification_text(effective_lang), "clarification_fallback"
+                            check = still
+                    _trace(
+                        pipeline, "response_validation", "Answer checked against the validated chart",
+                        ok=not first_errors, errors=first_errors, action=action,
+                        remaining_errors=[] if action in ("accepted", "retried_ok", "deterministic_fallback")
+                        else check["errors"],
+                    )
+                if has_followups:
                     followups = _clean_followups(followups, effective_lang, query, history)
+                if buffered:
+                    await _send({"type": "token", "text": main_answer})
+                elif " ".join(main_answer.split()) != " ".join(streamed_answer.split()):
+                    await _send({"type": "replace", "text": main_answer})
                 _trace(
                     pipeline, "response_stored", "Final answer stored in DB",
                     message_id=message_id, chars=len(main_answer), followups=len(followups),
@@ -1407,7 +1485,6 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             intent_json_str = json.dumps(intent_obj, ensure_ascii=False)[:2000]
                         except Exception:
                             intent_json_str = None
-                        full_response = "".join(collected_tokens)
                         routing_type = "sharpened_llm" if match_info else "llm"
                         _llm_latency = int((time.time() - stream_t0) * 1000)
                         log_entry = AgentLog(
@@ -1424,8 +1501,9 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             matched_question_id=match_info.get("question_id") if match_info else None,
                             match_score=match_info.get("score") if match_info else None,
                             routing=routing_type,
-                            pipeline_json=json.dumps(pipeline, ensure_ascii=False)[:8000],
-                            response_text=full_response[:5000],
+                            pipeline_json=_pipeline_json(pipeline),
+                            response_text=(main_answer + ("\n---FOLLOWUPS---\n" + "\n".join(f"Q: {f}" for f in followups)
+                                                          if followups else ""))[:5000],
                             status=log_status,
                             error_message=log_error,
                             http_status=log_http,
@@ -1434,7 +1512,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             prompt_chars=len(user_prompt),
                         )
                         log_db.add(log_entry)
-                        _record_section_stat(log_db, detected_domain, log_status, _llm_latency, question=query, answer=full_response)
+                        _record_section_stat(log_db, detected_domain, log_status, _llm_latency, question=query, answer=main_answer)
                         log_db.commit()
                         logger.info("Agent log saved: id=%s, status=%s, latency=%dms", log_entry.id, log_status, _llm_latency)
                     finally:

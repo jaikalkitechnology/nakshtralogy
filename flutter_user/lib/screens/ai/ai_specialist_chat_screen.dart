@@ -261,6 +261,13 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
         });
         _scrollToBottom();
       }
+    } else if (type == 'replace') {
+      // The server re-checked the streamed answer against the chart and
+      // corrected it — show the corrected version instead.
+      final text = msg['text']?.toString() ?? '';
+      if (text.isNotEmpty && _messages.isNotEmpty && _messages.last['role'] == 'bot') {
+        setState(() => _messages.last['text'] = text);
+      }
     } else if (type == 'followups') {
       final items = (msg['items'] as List?) ?? [];
       setState(() {

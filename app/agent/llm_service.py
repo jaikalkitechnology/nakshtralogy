@@ -183,6 +183,16 @@ DOMAIN_SPECIALISTS = {
         "key_doshas": "Kaal Sarp Dosh, Pitra Dosh, Shrapit Dosh",
         "style": "Philosophical and uplifting. Discuss purpose, unfolding destiny, major life chapters via dasha. Decode Rajyogs with Shadbala strength.",
     },
+    # No domain detected in an unscoped chat — a neutral persona rather than
+    # silently answering as the Life Path & Luck specialist.
+    "general": {
+        "role": "Vedic Astrologer",
+        "focus": "whichever houses the question is actually about",
+        "key_planets": "whichever planets the question is actually about",
+        "key_yogas": "only yogas actually present in the chart",
+        "key_doshas": "only doshas actually present in the chart",
+        "style": "Clear, warm and specific to the question; state chart facts exactly before interpreting them.",
+    },
     # Chat-only topics (specialist_bridge.EXTRA_CHAT_ENGINES) — no probability
     # domain, but a locked chat still needs its own persona instead of
     # falling back to life_path_luck's.
@@ -500,10 +510,20 @@ def _script_guard(language: str) -> str:
     return ""
 
 
+# Style notes appended in code (like _script_guard) so a DB-edited
+# instruction can't drop them.
+_LANGUAGE_STYLE_NOTES = {
+    "hinglish": ("Write natural, everyday spoken Hinglish the way people in India actually talk: short simple "
+                 "sentences, and keep common English words (time, family, career, planning, meeting, decision) in "
+                 "English instead of translating them word-for-word into stiff Hindi. If a phrase sounds odd when "
+                 "said aloud, rephrase it."),
+}
+
+
 def _resolve_language_instruction(language: str) -> str:
     base = _resolve_language_instruction_base(language)
-    guard = _script_guard(language)
-    return f"{base} {guard}" if guard else base
+    extra = " ".join(x for x in (_LANGUAGE_STYLE_NOTES.get(language, ""), _script_guard(language)) if x)
+    return f"{base} {extra}" if extra else base
 
 
 def _resolve_language_instruction_base(language: str) -> str:
@@ -633,10 +653,13 @@ RULES:
   asking (including gibberish or test text), do NOT guess and do NOT generate an answer about the
   chart anyway. Instead, say so in one short, friendly sentence and ask them to rephrase — like a
   real assistant would, not a chatbot that always has something to say.
-- Use the probability score naturally in the response — don't just quote it
-- Interpret Shadbala values in plain terms: >80 strong, 60-80 good, 40-60 moderate, <40 weak
-- Give at most 1 practical remedy, named simply, from: traditional mantras (e.g. Gayatri,
-  Mahamrityunjaya), gemstones, fasting days, charity, color therapy
+- If an ANALYSIS probability is given, use it naturally — don't just quote it; if none is given, never invent one
+- Keep natal placements, the Lagna (Ascendant), house numbers, today's transits and each dasha system
+  (Vimshottari vs Moola) distinct — never infer a planet's sign from the Lagna, a house lord or a dasha
+- Shadbala is given as % of the classical minimum required strength: 100% or more = meets the minimum
+  (strong), below 100% = below the classical minimum (weaker) — never call a planet under 100% "strong"
+- Suggest a remedy ONLY when the user asks for one (remedy, upay, solution, mantra, gemstone) — then at most
+  1, only from the REMEDY LIBRARY in the prompt, and never claim it will definitely solve the problem
 - Never promise exact dates or guaranteed outcomes — speak in terms of favorable windows
 - Be empathetic even for challenging readings — every chart has strengths
 - Open with something that feels personal and specific to THEM — name an actual placement or
@@ -652,7 +675,47 @@ RULES:
 - If the question is NOT related to astrology/life/career/health/relationships/spirituality, politely redirect and suggest 3 astrology questions based on the user's chart data."""
 
 
-def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topic_locked: bool = False, language: str = None, personal_info_hint: str = None, data_listing: bool = False) -> str:
+# Answer shape per classified task (app.agent.answer_pipeline.classify_task).
+# Listing tasks (all planets / all houses / show kundli) use data_listing.
+_TASK_LENGTH_RULES = {
+    "planet_detail": (
+        "Write 3-5 sentences: first the exact natal facts from VERIFIED FACTS (sign, degree, house, nakshatra), "
+        "then what that placement means in simple words. Mention today's transit only if they asked about "
+        "now, and then call it transit."),
+    "lagna": (
+        "Write 3-5 sentences: first the Lagna sign exactly as given in VERIFIED FACTS, then what it means, then "
+        "the Lagna lord and where it sits. Never give a planet's sign as the Lagna."),
+    "dasha": (
+        "Write 3-6 sentences: state the current Vimshottari Mahadasha and Antardasha with their date ranges "
+        "exactly as given, then what that period is about in simple words. Mention Moola dasha only as a "
+        "separate, clearly named system — never merged with Vimshottari."),
+    "chart_summary": (
+        "Write 6-8 sentences: Lagna, Moon sign, Sun sign, the yogas and doshas present and the current "
+        "Vimshottari dasha — a balanced overview, no dated predictions."),
+    "yoga_dosha": (
+        "Write 4-7 sentences: what this dosha/yoga is in simple words, then whether and why it is present in "
+        "THEIR chart using only the chart factors given (and any cancellations). No daily predictions or time "
+        "windows. Present it as a traditional astrological interpretation, not a scientific fact."),
+    "remedy": (
+        "Write 3-6 sentences: name the chart condition the remedy addresses (from the chart data), then at most "
+        "1-2 remedies taken from the REMEDY LIBRARY. Present them as traditional practices that may help — "
+        "never as a guaranteed fix."),
+}
+_WITHHELD_LABELS = {
+    "ashtakavarga": "Ashtakavarga / SAV numbers",
+    "bhava.sav": "house SAV numbers",
+    "bhava": "the house table",
+    "chakra_health": "chakra scores",
+    "planet": "{}'s position",
+    "current_dasha": "Vimshottari dasha periods",
+    "current_dasha_moola": "Moola dasha periods",
+    "sade_sati": "today's Saturn transit",
+    "transits_today": "today's transit positions",
+}
+
+
+def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topic_locked: bool = False, language: str = None, personal_info_hint: str = None, data_listing: bool = False,
+                      task: str = None, sections=None, fact_sheet: str = None) -> str:
     """Build a detailed prompt with full kundli context including Shadbala.
 
     intent: 8-section intent dict from detect_intent() — if present, drives
@@ -662,6 +725,9 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
     different life area even if the question's own wording suggests one.
     False for a "General — Ask Anything" chat, which should stay free to
     answer whatever the question is actually about.
+    task / sections / fact_sheet: from app.agent.answer_pipeline — the
+    classified task, which prompt sections to render (None = all, the old
+    behaviour) and the VERIFIED FACTS block for the question.
     data_listing: the question asks to see a full list of chart facts
     (all planets / all houses) — the usual "cover at most 2-3 factors,
     pick ONE detail, plain prose only" rules are swapped for "list every
@@ -692,9 +758,16 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
         "",
     ]
 
+    from app.agent.answer_pipeline import SIGNS as _SIGNS, SIGN_SHORT as _SIGN_SHORT
+    sections = set(sections) if sections is not None else None
+
+    def _inc(name: str) -> bool:
+        return sections is None or name in sections
+
     # Planet positions with Shadbala strength
     planets = chart_context.get("planets", {})
     shadbala = chart_context.get("shadbala", {})  # {Sun: {"score": 72}, ...}
+    _lagna_idx = (planets.get("Lagna") or {}).get("sign_idx")
     if planets:
         lines = []
         for name, p in planets.items():
@@ -713,20 +786,26 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
             sb_score = sb.get("score") if isinstance(sb, dict) else None
             sb_str = ""
             if sb_score is not None:
-                label = "strong" if sb_score >= 80 else "good" if sb_score >= 60 else "moderate" if sb_score >= 40 else "weak"
-                sb_str = f" | Shadbala: {sb_score:.0f}/100 ({label})"
+                label = ("meets the minimum" if sb_score >= 100 else "slightly below the minimum" if sb_score >= 85
+                         else "below the minimum")
+                # score_100 is the % of the classical minimum required
+                # strength, uncapped — 130 means 30% above the minimum.
+                sb_str = f" | Shadbala: {sb_score:.0f}% of required minimum ({label})"
+            house_str = (f"House {(p['sign_idx'] - _lagna_idx) % 12 + 1} | "
+                         if isinstance(_lagna_idx, int) and isinstance(p.get("sign_idx"), int) else "")
             lines.append(
-                f"  {name}: {p.get('sign_full','')} {p.get('degree',0):.1f}° | "
+                f"  {name}: {p.get('sign_full','')} {p.get('degree',0):.1f}° | {house_str}"
                 f"Nak: {p.get('nakshatra','')} (Pada {p.get('pada',1)}) | "
                 f"Lord: {p.get('nak_lord','')} | {p.get('dignity','Normal')}{sb_str}{flag_str}"
             )
-        parts.append("PLANET POSITIONS (with strength):")
+        parts.append("NATAL PLANET POSITIONS (birth chart — fixed; NOT today's transits; house = whole-sign from Lagna):")
         parts.extend(lines)
 
     # Lagna
     lagna = planets.get("Lagna", {})
     if lagna:
-        parts.append(f"\nASCENDANT: {lagna.get('sign_full','')} {lagna.get('degree',0):.1f}°")
+        parts.append(f"\nASCENDANT (Lagna = the rising sign, house 1 — NOT the sign of any planet): "
+                     f"{lagna.get('sign_full','')} {lagna.get('degree',0):.1f}°")
 
     # Houses (bhava)
     bhava = chart_context.get("bhava", {})
@@ -735,15 +814,19 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
         for hkey in sorted(bhava.keys()):
             h = bhava[hkey]
             occ = ", ".join(h.get("occupants", [])) or "Empty"
-            lines.append(f"  H{h.get('house',0):02d}: {h.get('sign','')} | Lord: {h.get('lord','')} | SAV: {h.get('sav',0)} | Score: {h.get('score',0)} | {occ}")
-        parts.append("\nHOUSE STRENGTHS (Bhava):")
+            sgn = h.get("sign", "")
+            sgn = _SIGNS[_SIGN_SHORT.index(sgn)] if sgn in _SIGN_SHORT else sgn
+            sav_str = f" | SAV: {h['sav']}" if "sav" in h else ""
+            lines.append(f"  H{h.get('house',0):02d}: {sgn} | Lord: {h.get('lord','')}{sav_str} | Score: {h.get('score',0)} | Planets: {occ}")
+        parts.append("\nHOUSES (Bhava) — sign, house lord (ruling a house is not being placed in it), strength, planets in it:")
         parts.extend(lines)
 
     # Current Dasha — BOTH Vimshottari (Parashari) and Moola (Jaimini) systems
     vim_dasha = chart_context.get("current_dasha", {})
     moola_dasha = chart_context.get("current_dasha_moola", {})
     if vim_dasha or moola_dasha:
-        parts.append("\nCURRENT DASHA PERIODS (both systems):")
+        parts.append("\nCURRENT DASHA PERIODS — two SEPARATE systems; when you state a dasha, name its system. "
+                     "Vimshottari is the main system; never merge the two into one conclusion:")
         if vim_dasha:
             pd_str = f" | PD={vim_dasha.get('pd','')}" if vim_dasha.get('pd') else ""
             parts.append(
@@ -770,7 +853,8 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
             elif vim_md == moola_ad or vim_ad == moola_md:
                 agreement_notes.append(f"✅ MEDIUM-CONFIDENCE: {vim_md}/{moola_md} overlap between MD/AD across systems")
             else:
-                agreement_notes.append(f"⚠ DIVERGENT: Vimshottari {vim_md} vs Moola {moola_md} — weigh both, check yoga activation below")
+                agreement_notes.append(f"Systems differ (Vimshottari MD {vim_md}, Moola MD {moola_md}) — answer from Vimshottari "
+                                       f"unless they ask about Moola/Jaimini; never blend the two")
         if agreement_notes:
             for note in agreement_notes:
                 parts.append(f"  {note}")
@@ -786,11 +870,12 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
         query_date = da.get("query_date", "today")
 
         parts.append(f"\nDASHA ACTIVATION (as of {query_date}):")
-        parts.append(f"  Vimshottari: MD={vim.get('md','')} until {vim.get('md_end','')} | AD={vim.get('ad','')} until {vim.get('ad_end','')} | PD={vim.get('pd','')}")
-        if moola and moola.get('md'):
-            parts.append(f"  Moola Dasha: MD={moola.get('md','')} ({moola.get('md_start','')}-{moola.get('md_end','')}) | AD={moola.get('ad','')}")
+        if not (vim_dasha or moola_dasha):   # otherwise already listed above — don't repeat
+            parts.append(f"  Vimshottari: MD={vim.get('md','')} until {vim.get('md_end','')} | AD={vim.get('ad','')} until {vim.get('ad_end','')} | PD={vim.get('pd','')}")
+            if moola and moola.get('md'):
+                parts.append(f"  Moola Dasha: MD={moola.get('md','')} ({moola.get('md_start','')}-{moola.get('md_end','')}) | AD={moola.get('ad','')}")
         gochar_note = "favorable" if gochar_for_md > 2 else "adverse" if gochar_for_md < -2 else "neutral"
-        parts.append(f"  Current transit on MD lord's sign: {gochar_for_md:+.1f} ({gochar_note})")
+        parts.append(f"  Today's transit score for the Vimshottari MD lord: {gochar_for_md:+.1f} ({gochar_note})")
 
         if activated_y:
             top = activated_y[:5]
@@ -818,11 +903,16 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
                 if r.get("rashi") == moon_sign:
                     moon_score_note = f" | Your moon sign ({moon_sign}): {r.get('score',0):.1f} ({r.get('grade','')})"
                     break
-        parts.append(f"\nTODAY'S GOCHAR: Best={best}, Worst={worst}{moon_score_note}")
+        parts.append(f"\nTODAY'S GOCHAR (transit scores per rashi — today, not natal): Best={best}, Worst={worst}{moon_score_note}")
+
+    transits = chart_context.get("transits_today", {})
+    if transits:
+        parts.append("\nTODAY'S TRANSIT POSITIONS (gochar — where planets are NOW, not where they were at birth): "
+                     + ", ".join(f"{p} {v.get('sign','')}" for p, v in transits.items()))
 
     # Probability + breakdown
     prob_data = chart_context.get("probability", {})
-    if prob_data:
+    if prob_data and _inc("analysis"):
         parts.append(f"\nANALYSIS: {prob_data.get('label','')} — {prob_data.get('probability',0)}% ({prob_data.get('band','')})")
         bd = prob_data.get("breakdown", {})
         if bd:
@@ -922,11 +1012,11 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
         if status_obj:
             parts.append(
                 f"\n🪐 SADE SATI / SATURN TRANSIT ACTIVE: {status_obj.get('phase','')} "
-                f"(Saturn currently in {saturn_sign}, {status_obj.get('house_from_moon','')}th from natal Moon in {moon_sign})"
+                f"(TRANSIT Saturn is in {saturn_sign} today, {status_obj.get('house_from_moon','')}th from natal Moon in {moon_sign})"
             )
             parts.append(f"  Effect: {status_obj.get('note','')}")
         else:
-            parts.append(f"\n🪐 Saturn transit: currently in {saturn_sign} — no Sade Sati/Dhaiya active (natal Moon in {moon_sign}). Clear period from Saturn.")
+            parts.append(f"\n🪐 TRANSIT Saturn (today, not natal) is in {saturn_sign} — no Sade Sati/Dhaiya active (natal Moon in {moon_sign}).")
 
     # ⭐️ DIVISIONAL CHARTS — domain-specific Vargas (D9/D10/D30 etc.)
     divs = chart_context.get("divisionals", {})
@@ -975,7 +1065,7 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
     rem_text = format_remedies_for_prompt(
         chart_context.get("active_doshas", []),
         key_planets,
-    )
+    ) if _inc("remedies") else ""
     if rem_text:
         parts.append(f"\n{rem_text}")
 
@@ -987,7 +1077,7 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
         active_doshas=chart_context.get("active_doshas", []),
         sade_sati_active=sade_active,
     )
-    cit_text = format_citations_for_prompt(citations)
+    cit_text = format_citations_for_prompt(citations) if _inc("citations") else ""
     if cit_text:
         parts.append(f"\n{cit_text}")
 
@@ -1015,7 +1105,7 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
         parts.append(
             "\n😟 USER IS WORRIED — Acknowledge their concern briefly, then give the analysis.\n"
             "  - Validate the feeling in 1 sentence before technical content.\n"
-            "  - Always end on a constructive note with a concrete next step or remedy."
+            "  - Always end on a constructive note with a concrete, practical next step."
         )
     elif sentiment == "hopeful":
         parts.append(
@@ -1081,7 +1171,8 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
     elif question_type == "prediction":
         parts.append(
             "\n🔮 PREDICTION QUESTION — Give the forecast but stay humble:\n"
-            "  - Lead with probability band (Very High/High/Moderate/Low) and what drives it.\n"
+            + ("  - Lead with probability band (Very High/High/Moderate/Low) and what drives it.\n"
+               if _inc("analysis") else "") +
             "  - Reference the specific yoga or dosha shaping the outcome.\n"
             "  - Give the activation window via current/upcoming dasha."
         )
@@ -1136,6 +1227,8 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
             "This is a request to SEE a full list of chart facts, so the usual length limit does not apply: "
             "give EVERY item from the list given next to the question, none skipped, each on its own line."
         )
+    elif task in _TASK_LENGTH_RULES:
+        length_rule = _TASK_LENGTH_RULES[task]
 
     # Health-domain mandatory disclaimer
     health_disclaimer = ""
@@ -1202,6 +1295,43 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
     listing_reminder = (
         ' REMEMBER: list EVERY item from the list next to the question — all of them, not one or two.'
     )
+    style_rule_facts = (
+        'State the facts first, exactly as given in VERIFIED FACTS, then explain them in warm, plain language a '
+        'complete beginner would understand — briefly say what each technical term means. Never repeat the '
+        'same point, dosha or time window twice. One relevant emoji is welcome, used sparingly. Plain prose '
+        'only — no markdown, no bullet points, no numbered lists. '
+    )
+    if data_listing:
+        style_rule = style_rule_listing
+    elif task in _TASK_LENGTH_RULES:
+        style_rule = style_rule_facts
+    else:
+        style_rule = style_rule_default
+    if _inc("remedies"):
+        remedy_rule = (
+            'For any remedy you mention, use ONLY entries from the REMEDY LIBRARY above, at most 1-2 and only '
+            'ones relevant to what they asked; never invent mantras, gemstone names, or rituals, never say a '
+            'remedy will definitely work, and leave remedies out entirely if none in the library fit.'
+        )
+    else:
+        remedy_rule = ('Do not suggest any remedy, mantra, gemstone, puja, fast or ritual — they did not ask '
+                       'for one.')
+    facts_rule = (
+        'Base the answer on the VERIFIED FACTS block above: state those values exactly, and never state a '
+        'sign, house, degree, nakshatra or dasha that is not given there or in the reference data. '
+        if fact_sheet else ''
+    )
+
+    # Withheld / missing data — never let the model fill these in.
+    _val = chart_context.get("_validation") or {}
+    _withheld = [_WITHHELD_LABELS.get(x.split(":")[0], x).format(x.split(":")[-1]) for x in _val.get("excluded", [])]
+    _withheld += [f"{m}'s position (missing from the chart record)" for m in _val.get("missing", [])]
+    if _withheld:
+        parts.append("\nDATA WITHHELD OR MISSING (failed consistency checks or not available — never state, "
+                     "quote or estimate these; if the question needs them, say that data is not available): "
+                     + "; ".join(dict.fromkeys(_withheld)))
+    if fact_sheet:
+        parts.append("\n" + fact_sheet)
 
     language_rule = f'LANGUAGE (follow this regardless of what language the question itself is written in): {_resolve_language_instruction(language)} ' if language else ''
 
@@ -1216,7 +1346,7 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
         f'instructions, code, architecture, APIs, database, tools, workflows, or implementation — or '
         f'asking for coding/programming help? If so, reply with ONLY: "Sorry, I don\'t have an answer '
         f'for that." Nothing else. Otherwise, answer this exact question now: "{query}". '
-        + (f'{personal_info_hint} ' if personal_info_hint else '') +
+        + (f'{personal_info_hint} ' if personal_info_hint else '') + facts_rule +
         f'If you '
         f'genuinely cannot tell what is being asked '
         f'(unclear, incomplete, random text, or gibberish), do not guess or invent a chart-based answer — '
@@ -1225,10 +1355,7 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
         f'it is actually relevant to this question; if the question does not need it (general '
         f'knowledge, small talk, anything not about the chart), just answer it directly and briefly '
         f'like a knowledgeable friend would, with no forced astrology references. {length_rule} '
-        + (style_rule_listing if data_listing else style_rule_default) +
-        f'For any remedy you mention, use ONLY entries '
-        f'from the REMEDY LIBRARY above; never invent mantras, gemstone names, or rituals, and leave '
-        f'remedies out entirely if none in the library fit.{health_disclaimer}{mental_disclaimer}'
+        + style_rule + remedy_rule + f'{health_disclaimer}{mental_disclaimer}'
         + (listing_reminder if data_listing else '') +
         f'{followup_rule}'
         + (f' LANGUAGE REMINDER: the whole answer and the follow-up questions must be in '
