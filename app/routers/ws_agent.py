@@ -51,7 +51,8 @@ from app.agent.llm_service import (
 )
 from app.agent.answer_pipeline import (
     PROMPT_VERSION, CHART_TASKS, BUFFERED_TASKS, LISTING_TASKS,
-    classify_conversation, conversation_reply, context_requirements, classify_task, clarification_text, route_task, validate_chart_context, select_context,
+    classify_conversation, conversation_reply, context_requirements, classify_task,
+    address_names, name_instruction, clean_first_name, clarification_text, route_task, validate_chart_context, select_context,
     wants_remedy, build_fact_sheet, validate_response, dedupe_sentences, drop_sentences,
     deterministic_answer,
 )
@@ -1304,11 +1305,20 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # Topic lock only applies to life-area questions; a chart-data
                 # or forecast question is answered whatever the chat's topic.
                 topic_locked_eff = bool(chat.engine_key) and task_info["task"] in ("general", "life_domain")
+                # Address the person by first name (human, personal reply): the
+                # chart holder for their own chart, or the asking user — with the
+                # chart holder named in third person — for a family/friend chart.
+                names = address_names(
+                    user_name=getattr(user, "name", None), chart_name=chart.name,
+                    chart_category=getattr(chart, "category", None),
+                    chart_is_primary=getattr(chart, "is_primary", False),
+                    language=effective_lang, roman_languages=ROMAN_SCRIPT_LANGUAGES,
+                )
                 user_prompt = build_rich_prompt(
                     query, prompt_ctx, intent=result.get("intent"), topic_locked=topic_locked_eff,
                     language=effective_lang, personal_info_hint=personal_info_hint,
                     data_listing=data_listing, task=task_info["task"], sections=prompt_sections,
-                    fact_sheet=fact_sheet,
+                    fact_sheet=fact_sheet, address_hint=name_instruction(names),
                 )
 
                 # Personalize system prompt with chart holder's details + detected domain
@@ -1384,6 +1394,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     history_turns=len(history), total_messages=len(messages), topic_locked=topic_locked_eff,
                     personal_info_hint_given=bool(personal_info_hint), prompt_version=PROMPT_VERSION,
                     task=task_info["task"], persona=detected_domain, data_listing=data_listing,
+                    address_name=names["address"], chart_is_users_own=names["is_self"],
                 )
 
                 logger.info("Context built in %.2fs, %d history turns, streaming via %s", time.time() - t1, len(history), provider_key)
@@ -1460,6 +1471,8 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # retry, then drop the offending sentences or fall back to the
                 # verified facts. Never an open-ended loop.
                 _val_kwargs = {
+                    "ignore_names": [names["address"], names["holder"],
+                                     clean_first_name(chart.name, effective_lang, ROMAN_SCRIPT_LANGUAGES)],
                     "allow_remedies": "remedies" in prompt_sections,
                     "domain_keywords": (DOMAINS.get(route["domain"], {}).get("keywords") or None)
                     if task_info["task"] == "life_domain" else None,
@@ -1509,6 +1522,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     _trace(
                         pipeline, "response_validation", "Answer checked against the validated chart",
                         ok=not first_errors, errors=first_errors, action=action,
+                        name_used=bool(names["address"]) and names["address"].lower() in main_answer.lower(),
                         remaining_errors=[] if action in ("accepted", "retried_ok", "deterministic_fallback")
                         else check["errors"],
                     )

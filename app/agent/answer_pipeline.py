@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import importlib
 import re
+import unicodedata
 from datetime import date, datetime
 
 PROMPT_VERSION = "task-v1"
@@ -827,6 +828,67 @@ def deterministic_answer(ctx: dict, task: dict, language: str) -> str | None:
 
 
 # ═══════════════════════════════════════════════════════════════════
+#  5b. Addressing the user by name
+# ═══════════════════════════════════════════════════════════════════
+
+_NOT_A_NAME = {"me", "my", "self", "myself", "test", "testing", "user", "guest", "admin", "unknown", "na", "n/a",
+               "none", "null", "kundli", "chart", "mine", "papa", "mummy", "mom", "dad", "baby"}
+
+
+def clean_first_name(raw: str | None, language: str, roman_languages) -> str | None:
+    """First word of a stored name, fit to say in a reply — None if it isn't
+    a real name, or if it's in another script than a Roman-script reply
+    (that would fail the reply's script check)."""
+    if not raw:
+        return None
+    first = re.split(r"[\s,._@/-]+", raw.strip())[0].strip("'\"")
+    if not 2 <= len(first) <= 20 or first.lower() in _NOT_A_NAME:
+        return None
+    if not all(unicodedata.category(c)[0] in "LM" for c in first):
+        return None
+    if language in roman_languages and not first.isascii():
+        return None
+    return first[:1].upper() + first[1:].lower() if first.isascii() else first
+
+
+def address_names(*, user_name, chart_name, chart_category, chart_is_primary, language, roman_languages) -> dict:
+    """Who to address and whose chart it is. A chart is the user's own when
+    its category is "self", or (no category) it's their primary chart or
+    carries their first name; family/friend/other charts are someone else's —
+    then the user is addressed and the chart holder is talked about by name."""
+    user_first = clean_first_name(user_name, language, roman_languages)
+    holder_first = clean_first_name(chart_name, language, roman_languages)
+    cat = (chart_category or "").lower()
+    if cat == "self":
+        is_self = True
+    elif cat in ("family", "friend", "other"):
+        is_self = False
+    else:
+        is_self = bool(chart_is_primary) or not user_first or not holder_first or \
+            user_first.lower() == holder_first.lower()
+    if is_self:
+        return {"address": holder_first or user_first, "holder": None, "is_self": True, "relation": None}
+    relation = {"family": "a family member", "friend": "a friend"}.get(cat, "someone else")
+    return {"address": user_first, "holder": holder_first, "is_self": False, "relation": relation}
+
+
+def name_instruction(names: dict) -> str | None:
+    a, h = names.get("address"), names.get("holder")
+    parts = []
+    if h:
+        parts.append(f"This is {h}'s chart, not the user's own: talk about it as {h}'s chart "
+                     f"(\"{h}'s Saturn...\", \"{h} may find...\"), never \"your Saturn\".")
+    elif names.get("is_self") is False:
+        parts.append(f"This chart belongs to {names.get('relation') or 'someone else'}, not the user: talk about "
+                     f"it as their chart (\"their Saturn...\"), never \"your Saturn\".")
+    if a and a != h:
+        parts.append(f"Address the user by their first name, {a}, once — naturally, in the first sentence "
+                     f"(for example \"{a}, ...\") — like a friendly astrologer would; don't repeat the name in "
+                     f"every sentence.")
+    return " ".join(parts) or None
+
+
+# ═══════════════════════════════════════════════════════════════════
 #  6. Response validation
 # ═══════════════════════════════════════════════════════════════════
 
@@ -878,19 +940,36 @@ _REMEDY_TERMS_RX = re.compile(
 _FORECAST_WORDS_RX = re.compile(r"\b(today|today's|aaj|day|din|tonight)\b|आज|दिन", re.IGNORECASE)
 
 
+def _mask_names(text: str, names) -> str:
+    """Replace each given name with same-length filler so it can't be read
+    as a planet, sign or remedy word."""
+    for n in {n for n in (names or []) if n and len(n) >= 2}:
+        text = re.sub(r"(?<![\w\u0900-\u0DFF])" + re.escape(n) + r"(?![\w\u0900-\u0DFF])",
+                      lambda m: "x" * len(m.group(0)), text, flags=re.IGNORECASE)
+    return text
+
+
 def validate_response(text: str, ctx: dict, task: dict, language: str, roman_languages,
-                      non_latin_rx, *, allow_remedies: bool = True, domain_keywords=None) -> dict:
+                      non_latin_rx, *, allow_remedies: bool = True, domain_keywords=None,
+                      ignore_names=None) -> dict:
     """Check an answer (without its follow-ups block) against the chart AND
     against the question: factual claims, relevance to the task/domain,
     unrequested remedies, language/script, and output format.
-    Returns {"ok", "errors": [str], "bad_sentences": [str]}."""
+    ignore_names: the people's own names used in the answer — masked before
+    checking, since common names double as astrology words ("Pooja" = a
+    ritual, "Ravi" = Sun, "Meena" = Pisces, "Guru" = Jupiter).
+    Returns {"ok", "errors": [str], "bad_sentences": [str]} (sentences as
+    they appear in the original text)."""
     errors, bad = [], []
     planets = ctx.get("planets") or {}
     lagna = planets.get("Lagna")
     transits = ctx.get("transits_today") or {}
     vim, moola = ctx.get("current_dasha") or {}, ctx.get("current_dasha_moola") or {}
+    masked = _mask_names(text, ignore_names)
+    # Masking keeps lengths/punctuation, so both split into the same sentences.
+    pairs = list(zip(_sentences(masked), _sentences(text)))
 
-    for s in _sentences(text):
+    for s, s_orig in pairs:
         claims = list(_CLAIM_RX.finditer(s)) + list(_CLAIM_HI_RX.finditer(s))
         for m in claims:
             p = _PLANET_BY_ALIAS[m.group(1).lower()]
@@ -901,7 +980,7 @@ def validate_response(text: str, ctx: dict, task: dict, language: str, roman_lan
                 if not (sign == tsign and _TRANSIT_MARK_RX.search(s)):
                     errors.append(f"States {p} in {sign}, but natal {p}'s position is not available — say it is "
                                   "unavailable")
-                    bad.append(s)
+                    bad.append(s_orig)
                 continue
             if sign == natal:
                 continue
@@ -913,7 +992,7 @@ def validate_response(text: str, ctx: dict, task: dict, language: str, roman_lan
             else:
                 errors.append(f"States {p} in {sign}, but natal {p} is in {natal}"
                               + (f" (today's transit: {tsign})" if tsign else ""))
-            bad.append(s)
+            bad.append(s_orig)
         if lagna:
             for m in _LAGNA_CLAIM_RX.finditer(s):
                 if _LORD_WORDS_RX.search(m.group(0)):
@@ -921,7 +1000,7 @@ def validate_response(text: str, ctx: dict, task: dict, language: str, roman_lan
                 sign = _SIGN_BY_ALIAS[m.group(2).lower()]
                 if sign != lagna["sign_full"]:
                     errors.append(f"States Lagna/Ascendant {sign}, but it is {lagna['sign_full']}")
-                    bad.append(s)
+                    bad.append(s_orig)
         for rx, field, label in ((_MD_RX, "md", "Mahadasha"), (_AD_RX, "ad", "Antardasha")):
             ok_lords = {d.get(field) for d in (vim, moola) if d.get(field)}
             if not ok_lords:
@@ -935,31 +1014,31 @@ def validate_response(text: str, ctx: dict, task: dict, language: str, roman_lan
                     errors.append(f"States {p} {label}, but the current {label} is "
                                   + " / ".join(f"{d[field]} ({n})" for d, n in ((vim, 'Vimshottari'), (moola, 'Moola'))
                                                if d.get(field)))
-                    bad.append(s)
+                    bad.append(s_orig)
 
-    if language in roman_languages and non_latin_rx.search(text):
+    if language in roman_languages and non_latin_rx.search(masked):
         errors.append(f"Contains non-Roman script; the whole answer must be in {language} written in Roman letters")
 
     t = task["task"]
-    named = set(planets_mentioned(text))
+    named = set(planets_mentioned(masked))
     if t in ("planet_positions", "chart_display"):
         expected = [p for p in PLANETS if p in planets]
         missing = [p for p in expected if p not in named]
         if len(missing) > 1:
             errors.append(f"The user asked for all planets; missing: {', '.join(missing)}")
     if t == "lagna" and lagna:
-        if not any(_SIGN_BY_ALIAS[m.group(1).lower()] == lagna["sign_full"] for m in _SIGN_RX.finditer(text)):
+        if not any(_SIGN_BY_ALIAS[m.group(1).lower()] == lagna["sign_full"] for m in _SIGN_RX.finditer(masked)):
             errors.append(f"Does not state the Lagna ({lagna['sign_full']})")
     if t == "planet_detail" and task.get("planet") in planets:
         p = task["planet"]
-        if not any(_SIGN_BY_ALIAS[m.group(1).lower()] == planets[p]["sign_full"] for m in _SIGN_RX.finditer(text)):
+        if not any(_SIGN_BY_ALIAS[m.group(1).lower()] == planets[p]["sign_full"] for m in _SIGN_RX.finditer(masked)):
             errors.append(f"Does not state natal {p}'s sign ({planets[p]['sign_full']})")
     if t == "dasha" and vim.get("md") and vim["md"] not in named:
         errors.append(f"Does not state the current Vimshottari Mahadasha ({vim['md']})")
     excluded = (ctx.get("_validation") or {}).get("excluded", [])
-    if "ashtakavarga" in excluded and re.search(r"\b(sav|ashtakavarga|bindu\w*)\b", text, re.IGNORECASE):
+    if "ashtakavarga" in excluded and re.search(r"\b(sav|ashtakavarga|bindu\w*)\b", masked, re.IGNORECASE):
         errors.append("Quotes Ashtakavarga/SAV numbers, which were withheld as unreliable")
-    if "chakra_health" in excluded and re.search(r"\bchakra\b", text, re.IGNORECASE):
+    if "chakra_health" in excluded and re.search(r"\bchakra\b", masked, re.IGNORECASE):
         errors.append("Quotes chakra scores, which were withheld as unreliable")
 
     # ── Does it answer THIS question, in the required form? ──
@@ -969,21 +1048,21 @@ def validate_response(text: str, ctx: dict, task: dict, language: str, roman_lan
         errors.append("Copies internal prompt labels into the answer — write only the natural answer")
     if _BODY_FOLLOWUP_RX.search(text):
         errors.append("Puts follow-up questions inside the answer — they belong only after the ---FOLLOWUPS--- marker")
-    remedy_hit = _REMEDY_TERMS_RX.search(text)
+    remedy_hit = _REMEDY_TERMS_RX.search(masked)
     if not allow_remedies and remedy_hit:
         errors.append(f"Suggests a remedy ('{remedy_hit.group(0)}') although the user did not ask for one")
-        bad += [s for s in _sentences(text) if _REMEDY_TERMS_RX.search(s)]
+        bad += [so for sm, so in pairs if _REMEDY_TERMS_RX.search(sm)]
     roman = language in roman_languages
     if t == "remedy" and not remedy_hit:
         errors.append("The user asked for a remedy but the answer gives none from the REMEDY LIBRARY")
-    if t == "daily_forecast" and not _FORECAST_WORDS_RX.search(text):
+    if t == "daily_forecast" and not _FORECAST_WORDS_RX.search(masked):
         errors.append("The user asked about today, but the answer does not talk about today")
     if t == "yoga_dosha" and task.get("dosha_terms") and roman:
         stem = task["dosha_terms"][0].lower().split()[0][:4]
-        if stem not in text.lower():
+        if stem not in masked.lower():
             errors.append(f"Does not explain the dosha/yoga that was asked about ({task['dosha_terms'][0]})")
     if t == "life_domain" and domain_keywords and roman:
-        low = text.lower()
+        low = masked.lower()
         if not any(re.search(r"\b" + re.escape(k.lower()), low) for k in domain_keywords if k):
             errors.append("Does not address the topic of the question ("
                           + ", ".join(list(domain_keywords)[:3]) + ")")

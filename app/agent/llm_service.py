@@ -574,7 +574,7 @@ def build_system_prompt(language: str = "english", domain: str = None, user: dic
         gender = user.get("gender") or "person"
         bits = []
         if name:
-            bits.append(f"The person you are reading for is **{name}**")
+            bits.append(f"This chart belongs to **{name}**")
         if gender:
             bits.append(f"({gender})")
         if dob and tob:
@@ -582,7 +582,10 @@ def build_system_prompt(language: str = "english", domain: str = None, user: dic
         if place:
             bits.append(f"in {place}")
         if bits:
-            user_intro = " ".join(bits) + ". Address them by their first name once naturally in the response.\n\n"
+            # Who to address by name (the chart holder, or the asking user when
+            # it's a family member's chart) is decided per turn and stated in
+            # build_rich_prompt's final instructions — see address_hint.
+            user_intro = " ".join(bits) + ".\n\n"
 
     if topic_locked:
         topic_framing = (
@@ -718,7 +721,7 @@ _WITHHELD_LABELS = {
 
 
 def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topic_locked: bool = False, language: str = None, personal_info_hint: str = None, data_listing: bool = False,
-                      task: str = None, sections=None, fact_sheet: str = None) -> str:
+                      task: str = None, sections=None, fact_sheet: str = None, address_hint: str = None) -> str:
     """Build a detailed prompt with full kundli context including Shadbala.
 
     intent: 8-section intent dict from detect_intent() — if present, drives
@@ -1362,6 +1365,7 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None, topi
         + style_rule + remedy_rule + f'{health_disclaimer}{mental_disclaimer}'
         + (listing_reminder if data_listing else '') +
         f'{followup_rule}'
+        + (f' {address_hint}' if address_hint else '')
         + (f' LANGUAGE REMINDER: the whole answer and the follow-up questions must be in '
            f'{language.capitalize()}. {_script_guard(language)}' if language else '')
     )
