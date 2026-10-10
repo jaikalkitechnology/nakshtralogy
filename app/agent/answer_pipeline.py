@@ -123,12 +123,19 @@ _GREETING_RX = re.compile(
     r"good\s*(morning|afternoon|evening|day)|gm|jai\s*shree\s*(krishna|ram)|ram\s*ram|sat\s*sri\s*akal|"
     r"vanakkam|नमस्ते|नमस्कार|प्रणाम)"
     r"(\s+(there|ji|sir|madam|maam|bro|dost|friend|everyone|all|again))*$")
+# Leading greeting words/phrases ("hii", "hello ji", "hi pooja", "hey there,
+# good morning") — stripped before classifying the rest of the message.
+_GREETING_PREFIX_RX = re.compile(
+    r"^((hi+|hey+|hello+|helo+|hlo+|hy|hai|hiya|namaste|namaskar|namaskaram|pranam|pranaam|yo|hola|gm|"
+    r"good\s*(morning|afternoon|evening|day)|jai\s*shree\s*(krishna|ram)|ram\s*ram|radhe\s*radhe|"
+    r"sat\s*sri\s*akal|vanakkam|नमस्ते|नमस्कार|प्रणाम|there|ji|sir|madam|maam|mam|bro|dost|friend|everyone|all|"
+    r"again|dear|buddy)(\s+|$))+")
 _FAREWELL_RX = re.compile(
     r"^((ok(ay)?|thanks|thank\s*you)\s+)?(bye+|bye\s*bye|good\s*bye|goodbye|see\s*(you|ya)(\s*later)?|cya|tc|"
     r"take\s*care|good\s*night|gn|alvida|phir\s*milenge|chalo\s*bye|फिर\s*मिलेंगे|अलविदा)"
     r"(\s+(ji|sir|bro|dost|friend))*$")
 _CASUAL_RX = re.compile(
-    r"^(how\s*(are|r)\s*(you|u)(\s*doing)?|how'?s\s*it\s*going|hows\s*it\s*going|what'?s\s*up|whats\s*up|wassup|"
+    r"^(how\s*(are|r)\s*(you|u)(\s*doing)?(\s*(today|now))?|how\s*do\s*you\s*do|kya\s*haal\s*chaal|kaise\s*ho\s*(aap|ap|tum)|aap\s*kaise\s*(ho|hain|hai)|how'?s\s*it\s*going|hows\s*it\s*going|what'?s\s*up|whats\s*up|wassup|"
     r"who\s*(are|r)\s*(you|u)|what\s*can\s*you\s*do|what\s*is\s*your\s*name|whats\s*your\s*name|"
     r"kaise\s*ho|kaisi\s*ho|kya\s*haal\s*(hai|h)|aap\s*kaun\s*ho|tum\s*kaun\s*ho|kaun\s*ho)$")
 # Every word of an acknowledgement comes from here (fillers + reactions);
@@ -153,6 +160,7 @@ _ACK_FILLER = {
 }
 _THANKS_WORDS = {"thanks", "thank", "thx", "ty", "thankyou", "dhanyavad", "dhanyawad", "dhanyavaad", "shukriya",
                  "धन्यवाद", "शुक्रिया"}
+_WAVE_EMOJI_RX = re.compile(r"^[\s👋🙋🙋‍♂️🙋‍♀️\u200d\u2640\u2642\ufe0f]+$")
 _POSITIVE_EMOJI_RX = re.compile(r"^[\s👍🙏😊🙂😀😃😄😁❤️♥️💖💯👌✨🌟⭐🔥👏🤗😍🥰☺️\u2764\ufe0f]+$")
 # A "yes" to an offer the bot just made ("Would you like your best timing?")
 # is a request to continue, not an acknowledgement.
@@ -176,6 +184,21 @@ _ASTRO_VOCAB_RX = re.compile(
     r"ascendant|dasha|mahadasha|antardasha|yog|yoga|dosh\w*|transit|gochar|future|prediction|predict|remed\w*|"
     r"upa+y\w*|luck|bhagya|kismat|destiny|forecast|zodiac|sign|astrolog\w*|jyotish|muhurat|kaal\s*sarp|"
     r"manglik|sade\s*sati|navamsa|d9|d10)\b|कुंडली|ग्रह|राशि|दशा|दोष|भाग्य", re.IGNORECASE)
+
+
+def _strip_greeting(q: str, names) -> tuple[str, bool]:
+    """(rest of the message, whether it started with a greeting). Names of
+    the chart holder / user right after a greeting ("hii pooja") go too."""
+    m = _GREETING_PREFIX_RX.match(q)
+    if not m or not re.search(r"[a-z\u0900-\u097F]", m.group(0)) or m.group(0).strip() in (
+            "there", "ji", "sir", "all", "again", "dear", "friend", "everyone"):
+        return q, False
+    rest = q[m.end():].strip()
+    for n in names or []:
+        if n and re.match(re.escape(n.lower()) + r"(\s+|$)", rest):
+            rest = rest[len(n):].strip()
+            rest = _GREETING_PREFIX_RX.sub("", rest).strip()
+    return rest, True
 
 
 _QUESTION_START = {"is", "are", "am", "will", "would", "should", "shall", "can", "could", "do", "does", "did",
@@ -209,7 +232,10 @@ _THIRD_PERSON_RX = re.compile(r"\b(he|she|his|her|him|their|them|uska|uski|uske|
 
 def _norm_message(q: str) -> str:
     q = (q or "").strip().lower()
-    q = re.sub(r"[!.,;:~\-–—…'\"“”‘’()]+", " ", q)
+    # Drop emoji/symbols (👋 🙏 ✨) — Unicode "So"/"Sk"; keeps letters and
+    # Indic vowel signs, unlike a \w-based strip.
+    q = "".join(" " if unicodedata.category(c) in ("So", "Sk") or c in "\ufe0f\u200d" else c for c in q)
+    q = re.sub(r"[!?.,;:~\-–—…'\"“”‘’()]+", " ", q)
     return re.sub(r"\s+", " ", q).strip()
 
 
@@ -244,12 +270,26 @@ def classify_conversation(query: str, *, has_history: bool = False, last_assista
         return out("out_of_scope", 0.95, "asks about the assistant's internals or for coding help", kind="meta")
     if personal_info:
         return out("personal_info", 0.95, "asks for a fact from the birth record (name / date / time / place)")
+    if raw and _WAVE_EMOJI_RX.match(raw):
+        return out("greeting", 0.9, "greeting emoji")
     if raw and _POSITIVE_EMOJI_RX.match(raw):
         return out("acknowledgement", 0.9, "positive emoji only")
     if not q:
         return out("casual", 0.5, "empty after normalisation")
     if _GREETING_RX.match(q):
         return out("greeting", 0.95, "greeting phrase")
+    rest, greeted = _strip_greeting(q, person_names)
+    if greeted:
+        if not rest:
+            return out("greeting", 0.95, "greeting (with name / filler)")
+        if _CASUAL_RX.match(rest):
+            return out("casual", 0.9, "greeting + how-are-you", kind="about_assistant")
+        inner = classify_conversation(rest, has_history=has_history, last_assistant=last_assistant,
+                                      domain_confidence=domain_confidence, personal_info=personal_info,
+                                      meta_probe=meta_probe, person_names=person_names)
+        if inner["intent"] in ("casual", "greeting") and inner.get("kind") != "about_assistant":
+            return out("greeting", 0.9, "greeting + small talk")
+        return {**inner, "reason": "after greeting: " + inner["reason"]}
     if _FAREWELL_RX.match(q):
         return out("farewell", 0.95, "farewell phrase")
     if _AFFIRM_RX.match(q) and has_history and last_assistant and "?" in last_assistant.strip()[-160:]:
@@ -284,7 +324,7 @@ def classify_conversation(query: str, *, has_history: bool = False, last_assista
             return out("astrology", 0.5, "short follow-up to the previous answer", uncertain=True)
         if _HELP_RX.search(raw):
             return out("astrology", 0.5, "asks for help/advice — astrology app")
-        if not has_history and _VAGUE_REF_RX.search(raw):
+        if not has_history and (_VAGUE_REF_RX.search(raw) or (len(words) <= 3 and _FOLLOWUP_START_RX.match(q))):
             return out("astrology", 0.5, "vague request — will be clarified")
         if about_person:
             return out("astrology", 0.5, "a question about a person's life (the chart holder)", uncertain=True)

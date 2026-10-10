@@ -575,3 +575,48 @@ def test_e2e_uncertain_message_uses_relevance_check(env, monkeypatch, verdict, e
     assert steps["relevance_check"]["relevant"] is verdict
     if not expect_llm:
         assert row.routing == "conv_out_of_scope"
+
+
+# ── greetings in all their forms ──────────────────────────────────────────
+
+@pytest.mark.parametrize("q,intent", [
+    ("hii", "greeting"), ("hello", "greeting"), ("Hi!", "greeting"), ("hy", "greeting"), ("👋", "greeting"),
+    ("hii 👋", "greeting"), ("namaste 🙏", "greeting"), ("hii good morning", "greeting"),
+    ("hello sir good evening", "greeting"), ("hii pooja", "greeting"), ("hello rahul", "greeting"),
+    ("hello ji namaste", "greeting"), ("hi?", "greeting"),
+    ("hi how are you", "casual"), ("hello how are you?", "casual"), ("hey whats up", "casual"),
+    ("hi, kaise ho", "casual"), ("hello aap kaise ho", "casual"), ("how are you?", "casual"),
+    ("hi i want to know my career", "astrology"), ("hello, can you help me?", "astrology"),
+    ("hi, what is the capital of France?", "out_of_scope"), ("hii mera birthday kab hai", "personal_info"),
+    ("Hii, this is nice", "acknowledgement"),
+])
+@pytest.mark.parametrize("hist", [False, True])
+def test_greeting_forms(q, intent, hist):
+    c = A.classify_conversation(q, has_history=hist, last_assistant="Your Saturn is in Cancer." if hist else None,
+                                domain_confidence=detect_intent(q)["domain_confidence"],
+                                personal_info=ws._is_personal_info_question(q),
+                                meta_probe=bool(ws._META_PROBE_RE.search(q)), person_names=["Pooja", "Rahul"])
+    assert c["intent"] == intent, c
+
+
+def test_bare_why_first_message_is_clarified_not_refused():
+    c = A.classify_conversation("why?", has_history=False, domain_confidence=15)
+    assert c["intent"] == "astrology"
+
+
+def test_e2e_greeting_mid_chat(env, monkeypatch):
+    chat_id = _first_turn(env)
+    calls = len(env["llm"].calls)
+    _no_chart_work(monkeypatch)
+    for q, reply, routing in [("hii", ws._GREETING_REPLY["english"], "conv_greeting"),
+                              ("hello pooja", ws._GREETING_REPLY["english"], "conv_greeting"),
+                              ("hi how are you?", A._CASUAL_REPLY["english"], "conv_casual")]:
+        frames, _ = env["ask"](q, engine="business", chat_id=chat_id)
+        assert _text(frames) == reply and _log(env["Session"])[0].routing == routing
+    assert len(env["llm"].calls) == calls
+
+
+def test_e2e_greeting_in_hinglish(env, monkeypatch):
+    _no_chart_work(monkeypatch)
+    frames, _ = env["ask"]("hii", language="hinglish")
+    assert _text(frames) == ws._GREETING_REPLY["hinglish"]
