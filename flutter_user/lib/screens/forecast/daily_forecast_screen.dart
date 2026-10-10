@@ -5,6 +5,7 @@ import '../../utils/forecast_labels.dart';
 import '../../utils/kundli_names.dart';
 import '../../services/api_service.dart';
 import '../kundli/widgets/kundli_ui.dart';
+import '../ai/ai_specialist_chat_screen.dart';
 
 /// Today Forecast — premium, beginner-friendly redesign.
 ///
@@ -76,7 +77,7 @@ class _S extends State<DailyForecastScreen> {
         foregroundColor: AppColors.midnight,
         icon: const Text('✨', style: TextStyle(fontSize: 16)),
         label: Text(l.fdAskAi, style: const TextStyle(fontWeight: FontWeight.w800)),
-        onPressed: _showAskAi,
+        onPressed: _openForecastAi,
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
@@ -856,85 +857,15 @@ class _S extends State<DailyForecastScreen> {
     _infoSheet(l.fdExplainToday, '✨', parts);
   }
 
-  void _showAskAi() {
-    final l = AppLocalizations.of(context)!;
-    final questions = <List<String>>[
-      [l.fdQ1, _answerCareer(l)],
-      [l.fdQ2, _answerBestTime(l)],
-      [l.fdQ3, _answerMoney(l)],
-      [l.fdQ4, _answerTravel(l)],
-      [l.fdQ5, _answerAvoid(l)],
-    ];
-    showModalBottomSheet(context: context, isScrollControlled: true,
-      backgroundColor: AppColors.background,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-      builder: (ctx) {
-        int? open;
-        return StatefulBuilder(builder: (ctx, setInner) => ListView(shrinkWrap: true, padding: const EdgeInsets.fromLTRB(18, 12, 18, 28), children: [
-          Center(child: Container(width: 42, height: 4, margin: const EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2)))),
-          Row(children: [const Text('✨', style: TextStyle(fontSize: 20)), const SizedBox(width: 8),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(l.fdAskAi, style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w800)),
-              Text(l.fdAskAiSub, style: const TextStyle(color: AppColors.smoke, fontSize: 11.5)),
-            ]))]),
-          const SizedBox(height: 14),
-          ...List.generate(questions.length, (idx) {
-            final q = questions[idx];
-            final isOpen = open == idx;
-            return Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              decoration: BoxDecoration(color: AppColors.card.withOpacity(0.4), borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.gold.withOpacity(isOpen ? 0.4 : 0.15))),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                InkWell(
-                  borderRadius: BorderRadius.circular(14),
-                  onTap: () => setInner(() => open = isOpen ? null : idx),
-                  child: Padding(padding: const EdgeInsets.all(14), child: Row(children: [
-                    Expanded(child: Text(q[0], style: const TextStyle(color: AppColors.ivory, fontSize: 13.5, fontWeight: FontWeight.w700))),
-                    Icon(isOpen ? Icons.remove_circle_outline : Icons.add_circle_outline, size: 18, color: AppColors.gold),
-                  ])),
-                ),
-                if (isOpen) Padding(padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-                  child: Text(q[1], style: const TextStyle(color: AppColors.parchment, fontSize: 12.5, height: 1.5))),
-              ]),
-            );
-          }),
-        ]));
-      },
-    );
-  }
-
-  String _answerCareer(AppLocalizations l) {
-    final score = _conf(10);
-    final expl = (_confluence['10'] as Map?)?['explanation']?.toString() ?? '';
-    final ev = (_houseEvents['10'] as Map?)?['h10_event_signature']?.toString() ?? '';
-    return '${_areaName(10, l)}: ${score.toStringAsFixed(0)}% · ${_status(score, l)}.\n${[ev, expl].where((s) => s.isNotEmpty).join('\n')}';
-  }
-  String _answerBestTime(AppLocalizations l) {
-    final w = _bestWindowMap();
-    if (w == null) return l.fdNoActions;
-    final acts = ((w['favoured_actions'] as List?) ?? []).map((e) => _prettyEvent(e.toString(), l)).join(', ');
-    return '⭐ ${w['window']}\n$acts';
-  }
-  String _answerMoney(AppLocalizations l) {
-    final data = (_d?['income_vs_expense'] as Map?)?.cast<String, dynamic>() ?? {};
-    final expl = data['explanation']?.toString() ?? '';
-    final advice = (data['net_financial_balance_today'] as Map?)?['financial_advice']?.toString() ?? '';
-    return [expl, advice].where((s) => s.isNotEmpty).join('\n\n');
-  }
-  String _answerTravel(AppLocalizations l) {
-    final score = _conf(9);
-    final ev = (_houseEvents['9'] as Map?)?['h9_event_signature']?.toString() ?? '';
-    final expl = (_confluence['9'] as Map?)?['explanation']?.toString() ?? '';
-    return '${_areaName(9, l)}: ${score.toStringAsFixed(0)}% · ${_status(score, l)}.\n${[ev, expl].where((s) => s.isNotEmpty).join('\n')}';
-  }
-  String _answerAvoid(AppLocalizations l) {
-    final risk = ((_d?['opportunities_vs_risks'] as Map?)?['risks_today'] as Map?)?.cast<String, dynamic>() ?? {};
-    final protect = risk['recommended_protective_action']?.toString() ?? '';
-    final worst = ((_d?['timing_windows'] as Map?)?['worst_time_windows'] as List?) ?? [];
-    final worstLine = worst.whereType<Map>().isNotEmpty
-        ? '🔴 ${worst.whereType<Map>().first['window']}' : '';
-    return [protect, worstLine].where((s) => s.isNotEmpty).join('\n');
+  /// Opens the "Today's Forecast" AI chat for this chart (the same topic
+  /// as AI Chat → New Chat → Today's Forecast) instead of fixed answers.
+  void _openForecastAi() {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => AiSpecialistChatScreen(
+        chartId: widget.chartId, engineKey: 'daily_forecast',
+        label: "Today's Forecast", emoji: '✨',
+      ),
+    ));
   }
 
   void _infoSheet(String title, String emoji, List<String> paragraphs) {
