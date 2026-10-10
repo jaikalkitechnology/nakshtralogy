@@ -183,6 +183,23 @@ _QUESTION_START = {"is", "are", "am", "will", "would", "should", "shall", "can",
                    "how", "hows", "kya", "kab", "kaise", "kyu", "kyun"}
 
 
+# Not astrology and not about the user's life → polite "can't answer".
+_OFFTOPIC_RX = re.compile(
+    r"\b(jokes?|poems?|poetry|story|stories|songs?|lyrics|recipes?|cook(ing)?|news|weather|cricket|football|"
+    r"match\s*score|movies?|films?|capital\s*of|president|prime\s*minister|election|stock\s*price|share\s*price|"
+    r"bitcoin|crypto(currency)?|math(s|ematics)?|equation|homework|essay|translat\w*|python|javascript|java|sql|"
+    r"html|css|programming|coding|code|api|algorithm|software|website|chatgpt|gemini|technology|technologies)\b",
+    re.IGNORECASE)
+_GENERIC_TASK_RX = re.compile(r"^(please\s+)?(write|compose|code|draft|translate|summari[sz]e|solve|calculate|"
+                              r"compute|debug|create\s+(a|an)\s+(app|website|program|script|api))\b")
+_FIRST_PERSON_RX = re.compile(
+    r"\b(i|me|my|mine|myself|i'?m|i'?ve|mera|meri|mere|mujhe|mujhko|mujh|main|mai|hum|hamara|hamari|humara|"
+    r"apna|apni|apne|our|we)\b|मेरा|मेरी|मेरे|मुझे|मैं|हमारा", re.IGNORECASE)
+_POLITE_ME_RX = re.compile(r"\b(tell|give|show|send|help|let)\s+me\b", re.IGNORECASE)
+_ADDRESSES_ASSISTANT_RX = re.compile(r"\b(you|your|yourself|aap|aapko|aapka|tum|tumhara)\b", re.IGNORECASE)
+_HELP_RX = re.compile(r"\b(help|madad|guide|advice|suggest\w*)\b", re.IGNORECASE)
+
+
 def _norm_message(q: str) -> str:
     q = (q or "").strip().lower()
     q = re.sub(r"[!.,;:~\-–—…'\"“”‘’()]+", " ", q)
@@ -190,10 +207,14 @@ def _norm_message(q: str) -> str:
 
 
 def classify_conversation(query: str, *, has_history: bool = False, last_assistant: str | None = None,
-                          domain_confidence: float = 0, personal_info: bool = False) -> dict:
+                          domain_confidence: float = 0, personal_info: bool = False,
+                          meta_probe: bool = False) -> dict:
     """First stage for every message: {"intent", "confidence", "reason",
     "needs_chart"}. intent is one of greeting, acknowledgement, farewell,
-    casual, clarification_request, personal_info, astrology. Only
+    casual, clarification_request, personal_info, out_of_scope, astrology.
+    out_of_scope = not astrology and not about the user's own life (general
+    knowledge, coding, questions about the assistant itself) — answered with
+    a fixed "I can only help with astrology" reply. Only
     "astrology", "personal_info" (name / date / time / place of birth,
     today's date — answered from the chart record) and a clarification
     request about an earlier answer go on to the LLM pipeline.
@@ -207,6 +228,8 @@ def classify_conversation(query: str, *, has_history: bool = False, last_assista
         needs = intent in ("astrology", "personal_info") or (intent == "clarification_request" and has_history)
         return {"intent": intent, "confidence": conf, "reason": reason, "needs_chart": needs, "kind": kind}
 
+    if meta_probe:
+        return out("out_of_scope", 0.95, "asks about the assistant's internals or for coding help", kind="meta")
     if personal_info:
         return out("personal_info", 0.95, "asks for a fact from the birth record (name / date / time / place)")
     if raw and _POSITIVE_EMOJI_RX.match(raw):
@@ -231,13 +254,27 @@ def classify_conversation(query: str, *, has_history: bool = False, last_assista
                    kind="thanks" if thanks else "reaction")
     if _AFFIRM_RX.match(q):
         return out("acknowledgement", 0.7, "bare affirmation with no pending offer")
-    if domain_confidence > 15 or _ASTRO_VOCAB_RX.search(raw) or _PLANET_RX.search(raw) or _SIGN_RX.search(raw):
+
+    strong_astro = bool(_ASTRO_VOCAB_RX.search(raw) or _PLANET_RX.search(raw) or _SIGN_RX.search(raw))
+    first_person = bool(_FIRST_PERSON_RX.search(_POLITE_ME_RX.sub(" ", raw)))
+    if not strong_astro and (_GENERIC_TASK_RX.match(q) or (_OFFTOPIC_RX.search(raw) and not first_person)):
+        return out("out_of_scope", 0.85, "not an astrology question (general knowledge / task)", kind="general")
+    if strong_astro or domain_confidence > 15:
         return out("astrology", 0.85, "astrology vocabulary")
-    if _QUESTION_CUE_RX.search(raw) or words[0] in _QUESTION_START:
-        return out("astrology", 0.6, "a question — assumed to be about the chart")
+    latin = sum(c.isascii() for c in raw) >= 0.6 * len(raw)
+    is_question = bool(_QUESTION_CUE_RX.search(raw)) or words[0] in _QUESTION_START
+    if is_question:
+        if (first_person or _VAGUE_REF_RX.search(raw) or _HELP_RX.search(raw)
+                or (has_history and len(words) <= 6) or not latin):
+            return out("astrology", 0.6, "a question about the user's own life / chart")
+        if _ADDRESSES_ASSISTANT_RX.search(raw):
+            return out("out_of_scope", 0.75, "a question about the assistant, not astrology", kind="about_assistant")
+        return out("out_of_scope", 0.6, "a general question unrelated to astrology or the user's life", kind="general")
     if len(words) <= 6:
         return out("casual", 0.6, "short statement with no question or astrology content", kind="statement")
-    return out("astrology", 0.4, "longer message — treated as a chart question")
+    if first_person or not latin:
+        return out("astrology", 0.4, "longer message about the user's own life — treated as a chart question")
+    return out("out_of_scope", 0.5, "longer message unrelated to astrology or the user's life", kind="general")
 
 
 _ACK_REPLY = {
@@ -270,6 +307,32 @@ _STATEMENT_REPLY = {
     "hinglish": "Samajh sakta hoon. Jab chahein, koi sawaal poochiye — career, relationships, health ya aaj ke forecast "
                 "ke baare mein — aur main aapki kundli se bataunga.",
 }
+_OUT_OF_SCOPE_REPLY = {
+    "english": "Sorry, I can only answer questions related to astrology and your kundli — like career, marriage, "
+               "health, dasha or today's forecast. Please ask me something about your chart. 🙏",
+    "hindi": "क्षमा करें, मैं केवल ज्योतिष और आपकी कुंडली से जुड़े सवालों का जवाब दे सकता हूँ — जैसे करियर, विवाह, "
+             "सेहत, दशा या आज का राशिफल। कृपया अपनी कुंडली से जुड़ा कोई सवाल पूछिए। 🙏",
+    "hinglish": "Sorry, main sirf astrology aur aapki kundli se jude sawaalon ka jawab de sakta hoon — jaise career, "
+                "shaadi, health, dasha ya aaj ka forecast. Please apni kundli se juda koi sawaal poochiye. 🙏",
+    "bengali": "দুঃখিত, আমি শুধু জ্যোতিষ ও আপনার কুষ্ঠি সম্পর্কিত প্রশ্নের উত্তর দিতে পারি — যেমন কর্মজীবন, বিবাহ, "
+               "স্বাস্থ্য, দশা বা আজকের রাশিফল। 🙏",
+    "tamil": "மன்னிக்கவும், ஜோதிடம் மற்றும் உங்கள் ஜாதகம் தொடர்பான கேள்விகளுக்கு மட்டுமே என்னால் பதிலளிக்க முடியும் — "
+             "தொழில், திருமணம், ஆரோக்கியம், தசை அல்லது இன்றைய பலன். 🙏",
+    "telugu": "క్షమించండి, జ్యోతిషం మరియు మీ జాతకానికి సంబంధించిన ప్రశ్నలకు మాత్రమే నేను సమాధానం ఇవ్వగలను — "
+              "కెరీర్, వివాహం, ఆరోగ్యం, దశ లేదా ఈరోజు ఫలితం. 🙏",
+    "kannada": "ಕ್ಷಮಿಸಿ, ಜ್ಯೋತಿಷ್ಯ ಮತ್ತು ನಿಮ್ಮ ಜಾತಕಕ್ಕೆ ಸಂಬಂಧಿಸಿದ ಪ್ರಶ್ನೆಗಳಿಗೆ ಮಾತ್ರ ನಾನು ಉತ್ತರಿಸಬಲ್ಲೆ — ವೃತ್ತಿ, ವಿವಾಹ, "
+               "ಆರೋಗ್ಯ, ದಶೆ ಅಥವಾ ಇಂದಿನ ಭವಿಷ್ಯ. 🙏",
+    "malayalam": "ക്ഷമിക്കണം, ജ്യോതിഷവും നിങ്ങളുടെ ജാതകവുമായി ബന്ധപ്പെട്ട ചോദ്യങ്ങൾക്ക് മാത്രമേ എനിക്ക് മറുപടി നൽകാൻ "
+                 "കഴിയൂ — കരിയർ, വിവാഹം, ആരോഗ്യം, ദശ അല്ലെങ്കിൽ ഇന്നത്തെ ഫലം. 🙏",
+    "gujarati": "માફ કરશો, હું ફક્ત જ્યોતિષ અને તમારી કુંડળી સંબંધિત પ્રશ્નોના જ જવાબ આપી શકું છું — જેમ કે કારકિર્દી, "
+                "લગ્ન, આરોગ્ય, દશા અથવા આજનું ભવિષ્ય. 🙏",
+    "marathi": "क्षमस्व, मी फक्त ज्योतिष आणि तुमच्या कुंडलीशी संबंधित प्रश्नांची उत्तरे देऊ शकतो — जसे करिअर, विवाह, "
+               "आरोग्य, दशा किंवा आजचे भविष्य. 🙏",
+    "punjabi": "ਮਾਫ਼ ਕਰਨਾ, ਮੈਂ ਸਿਰਫ਼ ਜੋਤਿਸ਼ ਅਤੇ ਤੁਹਾਡੀ ਕੁੰਡਲੀ ਨਾਲ ਜੁੜੇ ਸਵਾਲਾਂ ਦੇ ਜਵਾਬ ਦੇ ਸਕਦਾ ਹਾਂ — ਜਿਵੇਂ ਕਰੀਅਰ, ਵਿਆਹ, "
+               "ਸਿਹਤ, ਦਸ਼ਾ ਜਾਂ ਅੱਜ ਦਾ ਰਾਸ਼ੀਫਲ। 🙏",
+    "odia": "କ୍ଷମା କରିବେ, ମୁଁ କେବଳ ଜ୍ୟୋତିଷ ଓ ଆପଣଙ୍କ କୁଣ୍ଡଳୀ ସମ୍ବନ୍ଧୀୟ ପ୍ରଶ୍ନର ଉତ୍ତର ଦେଇପାରିବି — ଯେପରି କ୍ୟାରିୟର, ବିବାହ, "
+            "ସ୍ୱାସ୍ଥ୍ୟ, ଦଶା କିମ୍ବା ଆଜିର ରାଶିଫଳ। 🙏",
+}
 _CLARIFY_NO_HISTORY = {
     "english": "Sure! Which part would you like me to explain — your kundli, a planet, your dasha, or something else?",
     "hindi": "ज़रूर! आप किस बारे में समझना चाहेंगे — अपनी कुंडली, कोई ग्रह, अपनी दशा, या कुछ और?",
@@ -293,6 +356,8 @@ def conversation_reply(conv: dict, language: str, greeting: dict, thanks: dict, 
     if intent == "casual":
         table = _STATEMENT_REPLY if conv.get("kind") == "statement" else _CASUAL_REPLY
         return table.get(language) or greeting.get(language, greeting["english"])
+    if intent == "out_of_scope" and conv.get("kind") != "meta":   # meta → ws_agent's fixed refusal
+        return _OUT_OF_SCOPE_REPLY.get(language, _OUT_OF_SCOPE_REPLY["english"])
     if intent == "clarification_request" and not conv["needs_chart"]:
         return _CLARIFY_NO_HISTORY.get(language, _CLARIFY_NO_HISTORY["english"])
     return None
@@ -939,6 +1004,45 @@ def dedupe_sentences(text: str) -> str:
     return re.sub(r"\n{3,}", "\n\n", "\n".join(out_lines)).strip()
 
 
+# Kendra/trikona and exalted/own/debilitated claims about a planet — checked at
+# sign level against the engine's own tables (classical rules quoted from a
+# citation were being asserted for planets that don't meet them).
+_KENDRA_HOUSES, _TRIKONA_HOUSES = {1, 4, 7, 10}, {1, 5, 9}
+_PLACEMENT_CLAIM_RX = re.compile(
+    _PLANET_RX.pattern + r"(?:['’]s)?((?:\s+\S+){0,5}?)\s+"
+    r"(kendra\s*/\s*trikona|kendra|trikona|angular\s*house|trine|exalted|exaltation|uchcha|uch|own\s*(sign|house)|"
+    r"swakshetra|svakshetra|debilitated|debilitation|neecha|neech)(?![\w])", re.IGNORECASE)
+_NEGATION_RX = re.compile(r"\b(not|isn'?t|is\s*n't|no|nahi|nahin|na|never)\b", re.IGNORECASE)
+
+
+def _placement_claim_error(planet: str, term: str, planets: dict) -> str | None:
+    p, lagna = planets.get(planet), planets.get("Lagna")
+    if not p:
+        return None
+    t = term.lower().replace(" ", "")
+    if t.startswith(("kendra", "angular", "trikona", "trine")):
+        if not lagna:
+            return None
+        h = (p["sign_idx"] - lagna["sign_idx"]) % 12 + 1
+        ok = (h in _KENDRA_HOUSES | _TRIKONA_HOUSES if t.startswith("kendra/") else
+              h in _KENDRA_HOUSES if t.startswith(("kendra", "angular")) else h in _TRIKONA_HOUSES)
+        return None if ok else (f"Says {planet} is in a {term}, but natal {planet} is in house {h} "
+                                f"({p['sign_full']}) — that is not a {term}")
+    exalt, debil, own = getattr(_E, "EXALT_DEG", {}), getattr(_E, "DEBIL_DEG", {}), getattr(_E, "OWN_SIGN", {})
+    if t.startswith(("exalt", "uch")):
+        ok = planet in exalt and int(exalt[planet] // 30) % 12 == p["sign_idx"]
+        kind = "exalted"
+    elif t.startswith(("debil", "neech")):
+        ok = planet in debil and int(debil[planet] // 30) % 12 == p["sign_idx"]
+        kind = "debilitated"
+    else:
+        ok = p["sign_idx"] in own.get(planet, set())
+        kind = "in its own sign"
+    if planet not in exalt and planet not in own:   # Rahu/Ketu: no agreed table here
+        return None
+    return None if ok else f"Says {planet} is {kind}, but natal {planet} is in {p['sign_full']}, where it is not {kind}"
+
+
 _LEAKED_LABEL_RX = re.compile(
     r"VERIFIED FACTS|REFERENCE DATA|FINAL INSTRUCTIONS|NATAL PLANET POSITIONS|DATA WITHHELD|LANGUAGE REMINDER|"
     r"REMEDY LIBRARY|CLASSICAL CITATIONS")
@@ -1003,6 +1107,13 @@ def validate_response(text: str, ctx: dict, task: dict, language: str, roman_lan
                 errors.append(f"States {p} in {sign}, but natal {p} is in {natal}"
                               + (f" (today's transit: {tsign})" if tsign else ""))
             bad.append(s_orig)
+        for m in _PLACEMENT_CLAIM_RX.finditer(s):
+            if _NEGATION_RX.search(m.group(2) or ""):
+                continue
+            err = _placement_claim_error(_PLANET_BY_ALIAS[m.group(1).lower()], m.group(3), planets)
+            if err:
+                errors.append(err)
+                bad.append(s_orig)
         if lagna:
             for m in _LAGNA_CLAIM_RX.finditer(s):
                 if _LORD_WORDS_RX.search(m.group(0)):

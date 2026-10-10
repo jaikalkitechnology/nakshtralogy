@@ -374,7 +374,7 @@ def test_e2e_whats_my_name_answers_from_birth_profile(env):
     assert "BIRTH PROFILE" in prompt
     assert "Name: Pooja | Gender: Female | Date of birth: 12/10/2004 | Time of birth: 13:55" in prompt
     assert "Place of birth: Mumbai, Maharashtra, India" in prompt
-    assert 'Their name is exactly "pooja"' in prompt
+    assert "The answer is Pooja." in prompt and 'is exactly "pooja"' not in prompt
     assert "REPORT" not in prompt and "ANALYSIS:" not in prompt
     assert next(f for f in frames if f["type"] == "prob")["data"]["probability"] is None
     _, steps = _log(env["Session"])
@@ -407,3 +407,92 @@ def test_admin_log_json_includes_chart_holder(env):
     s.close()
     assert holder["name"] == "pooja" and holder["dob"] == "12/10/2004" and holder["tob"] == "13:55"
     assert holder["place"] == "Mumbai, Maharashtra, India" and holder["gender"] == "F"
+
+
+# ── only astrology questions are answered ─────────────────────────────────
+
+def _conv_full(q, has_history=True):
+    return A.classify_conversation(q, has_history=has_history, last_assistant="Your Saturn is in Cancer.",
+                                   domain_confidence=detect_intent(q)["domain_confidence"],
+                                   personal_info=ws._is_personal_info_question(q),
+                                   meta_probe=bool(ws._META_PROBE_RE.search(q)))
+
+
+@pytest.mark.parametrize("q,intent,kind", [
+    ("Which technology was used to build you?", "out_of_scope", "meta"),
+    ("who made you", "out_of_scope", "meta"),
+    ("Write Python code to create a login API.", "out_of_scope", "meta"),
+    ("what is the capital of France?", "out_of_scope", "general"),
+    ("tell me a joke", "out_of_scope", "general"),
+    ("who won the cricket match yesterday", "out_of_scope", "general"),
+    ("write a poem about love", "out_of_scope", "general"),
+    ("mera birthday kab", "personal_info", None), ("when is my birthday", "personal_info", None),
+    ("how old am i", "personal_info", None), ("janam kitne baje hua", "personal_info", None),
+    ("should I move to Canada?", "astrology", None), ("shaadi kab hogi", "astrology", None),
+    ("Are there any special qualities linked to my name?", "astrology", None),
+    ("can you predict my future", "astrology", None), ("शादी कब होगी?", "astrology", None),
+])
+def test_scope(q, intent, kind):
+    c = _conv_full(q)
+    assert (c["intent"], c["kind"]) == (intent, kind), c
+
+
+def test_e2e_off_topic_question_is_refused_without_llm(env, monkeypatch):
+    _no_chart_work(monkeypatch)
+    frames, _ = env["ask"]("what is the capital of France?")
+    assert env["llm"].calls == [] and _text(frames) == A._OUT_OF_SCOPE_REPLY["english"]
+    row, steps = _log(env["Session"])
+    assert row.routing == "conv_out_of_scope" and steps["conversation_intent"]["intent"] == "out_of_scope"
+
+
+def test_e2e_technology_question_gets_meta_refusal(env, monkeypatch):
+    _no_chart_work(monkeypatch)
+    frames, _ = env["ask"]("Which technology was used to build you?", language="hinglish")
+    assert env["llm"].calls == [] and _text(frames) == ws._META_PROBE_REPLY
+    row, steps = _log(env["Session"])
+    assert row.routing == "meta_probe_refused" and steps["conversation_intent"]["kind"] == "meta"
+
+
+def test_e2e_birthday_question_gets_dob_and_next_birthday(env):
+    from datetime import datetime as _dt
+    env["llm"].replies = ["Aapka birthday 12 October ko hai — bas kuch hi din mein! 🎂\n---FOLLOWUPS---\nQ: Mera Lagna kya hai?"]
+    env["ask"]("mera birthday kab", engine="love", language="hinglish")
+    prompt = env["llm"].calls[-1]["messages"][-1]["content"]
+    assert "The answer is 12/10/2004" in prompt
+    nxt = ws._next_birthday("12/10/2004", _dt.now(ws._IST).date())
+    assert f"Their next birthday is {nxt}" in prompt
+    assert "REPORT" not in prompt and "ANALYSIS:" not in prompt
+    _, steps = _log(env["Session"])
+    assert steps["task_classified"]["task"] == "personal_info"
+    assert steps["routing"]["specialist_engine"] is None and steps["routing"]["show_probability"] is False
+
+
+def test_e2e_birthday_on_family_chart_is_not_passed_off_as_users(env):
+    _set_owner(env["Session"], category="family")
+    env["llm"].replies = ["Rahul, aapki apni date of birth record mein nahi hai; Pooja ka birthday 12/10/2004 hai.\n"
+                          "---FOLLOWUPS---\nQ: Pooja ka Lagna kya hai?"]
+    env["ask"]("mera birthday kab", language="hinglish")
+    prompt = env["llm"].calls[-1]["messages"][-1]["content"]
+    assert "the user's own date of birth is not on record" in prompt and "Pooja's date of birth instead: 12/10/2004" in prompt
+
+
+def test_next_birthday_text():
+    from datetime import date as _d
+    assert ws._next_birthday("12/10/2004", _d(2026, 10, 10)) == "Monday, 12 October 2026 (in 2 days)"
+    assert ws._next_birthday("10/10/2004", _d(2026, 10, 10)).endswith("(today)")
+    assert ws._next_birthday("01/01/2004", _d(2026, 10, 10)).startswith("Friday, 01 January 2027")
+    assert ws._next_birthday("29/02/2004", _d(2026, 10, 10)) == "Monday, 01 March 2027 (in 142 days)"
+
+
+def test_citation_rule_claims_are_checked_against_the_chart(env):
+    import json as _json
+    from tests.test_answer_pipeline import CHART
+    data = ws._get_chart_data(CHART)
+    ctx = {"planets": data["planets"]}
+    v = lambda t: A.validate_response(t, ctx, {"task": "general"}, "english", ROMAN_SCRIPT_LANGUAGES,
+                                      NON_LATIN_SCRIPT_RX, ignore_names=["Pooja"])
+    r = v("Yes, Pooja, your chart shows Venus placed in Kendra/Trikona, own sign or exaltation.")
+    assert not r["ok"] and "not a Kendra/Trikona" in r["errors"][0]
+    assert v("Saturn sits in a kendra, the 7th house.")["ok"]
+    assert v("Venus is not exalted in your chart.")["ok"]
+    assert not v("Saturn is exalted here.")["ok"]

@@ -68,7 +68,7 @@ _nk = NakshtraEngine()
 # report or LLM call. AgentLog.routing values (≤ 20 chars):
 _CONV_ROUTING = {
     "greeting": "conv_greeting", "acknowledgement": "conv_ack", "farewell": "conv_farewell",
-    "casual": "conv_casual", "clarification_request": "conv_clarify",
+    "casual": "conv_casual", "clarification_request": "conv_clarify", "out_of_scope": "conv_out_of_scope",
 }
 
 # Localized canned replies — keyed by the same language codes used
@@ -200,7 +200,12 @@ _META_PROBE_RE = re.compile(
     r"what\s*(language|framework|stack)\s*(are\s*you|is\s*this)\s*(written|built|made|coded)\s*in|"
     r"show\s*me\s*your\s*(prompt|code|instructions|system)|"
     r"reveal\s*your\s*(prompt|instructions|system)|"
-    r"write\s*(me\s*)?(a\s*|some\s*)?(code|python|javascript|a\s*function|a\s*script)"
+    r"write\s*(me\s*)?(a\s*|some\s*)?(code|python|javascript|a\s*function|a\s*script)|"
+    r"(which|what)\s+(technology|technologies|tech|tech\s*stack|stack|framework|programming\s*language|"
+    r"model|llm|database|platform)\b[^?]{0,40}\b(you|this\s*app|this\s*bot|this\s*chat)|"
+    r"(who|which\s*company)\s+(made|built|created|developed|trained|owns|programmed)\s+(you|this)|"
+    r"(built|made|created|developed|trained|coded|programmed)\s+(you|this\s*app|this\s*bot)|"
+    r"how\s*(do|does)\s*(you|this\s*(app|bot))\s*work"
     r")\b",
     re.IGNORECASE,
 )
@@ -252,19 +257,32 @@ def _off_topic_redirect(query: str, chat_engine_key: str) -> str | None:
 # the right language, phrased naturally), it's just no longer expected
 # to find a single fact on its own inside 10K+ chars of chart data.
 _ASK_NAME_RE = re.compile(
-    r"\b(what'?s?\s*is\s*my\s*name|what'?s\s*my\s*name|who\s*am\s*i|mera\s*naam\s*kya\s*hai|naam\s*kya\s*hai|naam\s*batao)\b",
+    r"\b(what'?s?\s*(is\s*)?my\s*name|who\s*am\s*i|(mera|mra)\s*naam|naam\s*(kya\s*hai|batao|bataiye)|"
+    r"(know|tell\s*me)\s*my\s*name|my\s*name\s*(kya|is\s*what))\b|मेरा\s*नाम",
     re.IGNORECASE,
 )
 _ASK_DOB_RE = re.compile(
-    r"\b(my\s*(date\s*of\s*birth|dob|birth\s*date|birthday)|when\s*was\s*i\s*born|mera\s*janam\s*kab\s*hua|meri\s*janam\s*tithi)\b",
+    r"\b((my|mera|meri|mere)\s*(date\s*of\s*birth|dob|birth\s*date|birth\s*day|birthday|bday|janam\s*din|"
+    r"janamdin|janmdin|janam\s*tithi|janm\s*tithi)|(birthday|bday|janamdin|janam\s*din|janmdin|"
+    r"date\s*of\s*birth|dob)\s*(kab|kb|when|kya|hai|kaun\s*si|konsi)|when\s*(was\s*i\s*born|is\s*my\s*(birthday|bday))|"
+    r"(mera|main|mai)\s*(janam|paida)\s*kab|kab\s*paida\s*hu(a|i)|janam\s*kab\s*hua)\b|जन्मदिन|जन्म\s*तिथि|जन्मतिथि",
     re.IGNORECASE,
 )
 _ASK_TOB_RE = re.compile(
-    r"\b(what\s*time\s*was\s*i\s*born|my\s*birth\s*time|kitne\s*baje\s*janam)\b",
+    r"\b(what\s*time\s*was\s*i\s*born|(my|mera|meri)\s*(birth\s*time|time\s*of\s*birth|janam\s*ka\s*samay)|"
+    r"(birth\s*time|time\s*of\s*birth)\s*(kya|kab|what)|kitne\s*baje\s*(janam|paida)|(janam|paida)\s*kitne\s*baje)\b"
+    r"|जन्म\s*का\s*समय",
     re.IGNORECASE,
 )
 _ASK_PLACE_RE = re.compile(
-    r"\b(where\s*was\s*i\s*born|my\s*birth\s*place|my\s*birthplace|kahan\s*janam\s*hua)\b",
+    r"\b(where\s*was\s*i\s*born|(my|mera|meri)\s*(birth\s*place|birthplace|place\s*of\s*birth|janam\s*sthan|"
+    r"janm\s*sthan)|(birth\s*place|birthplace|place\s*of\s*birth)\s*(kya|kaha|kahan|where)|"
+    r"(janam|paida)\s*(kahan|kaha)\s*hu(a|i)|kahan\s*(janam|paida))\b|जन्म\s*स्थान",
+    re.IGNORECASE,
+)
+_ASK_AGE_RE = re.compile(
+    r"\b(how\s*old\s*am\s*i|what'?s?\s*(is\s*)?my\s*age|(my|meri)\s*(age|umar|umr|umra)|"
+    r"(age|umar|umr)\s*(kitni|kya)|kitne\s*saal\s*(ka|ki)\s*(hu|hoon|hun))\b|मेरी\s*उम्र",
     re.IGNORECASE,
 )
 
@@ -273,6 +291,7 @@ _PERSONAL_INFO_FIELDS = (
     ("dob", _ASK_DOB_RE, "date of birth"),
     ("tob", _ASK_TOB_RE, "time of birth"),
     ("place", _ASK_PLACE_RE, "place of birth"),
+    ("age", _ASK_AGE_RE, "age"),
 )
 
 # The CURRENT real-world date/time (as opposed to _ASK_TOB_RE/_ASK_DOB_RE
@@ -310,18 +329,55 @@ def _age_on(dob: str | None, today: date) -> int | None:
     return today.year - d.year - ((today.month, today.day) < (d.month, d.day))
 
 
-def _personal_info_hint(query: str, chart: "Chart") -> str | None:
-    """Name/DOB/birth time/place and the current date/time. Chart facts
-    (planets, Lagna, houses, dasha...) come from answer_pipeline.build_fact_sheet."""
+def _next_birthday(dob: str | None, today: date) -> str | None:
+    try:
+        d = datetime.strptime(dob or "", "%d/%m/%Y").date()
+    except ValueError:
+        return None
+    def on(year):
+        try:
+            return date(year, d.month, d.day)
+        except ValueError:          # 29 Feb in a non-leap year
+            return date(year, 3, 1)
+    nxt = on(today.year) if on(today.year) >= today else on(today.year + 1)
+    days = (nxt - today).days
+    when = "today" if days == 0 else "tomorrow" if days == 1 else f"in {days} days"
+    return f"{nxt:%A, %d %B %Y} ({when})"
+
+
+def _personal_info_hint(query: str, chart: "Chart", user=None, names: dict | None = None) -> str | None:
+    """Name/DOB/birth time/place/age and the current date/time. Chart facts
+    (planets, Lagna, houses, dasha...) come from answer_pipeline.build_fact_sheet.
+    For a family/friend chart the user's own birth details aren't on record —
+    the hint says so instead of passing the chart holder's off as theirs."""
+    is_self = names is None or names.get("is_self", True)
+    raw_holder = (chart.name or "").strip()
+    holder = raw_holder.title() if raw_holder.isascii() and raw_holder.islower() else raw_holder
+    today = datetime.now(_IST).date()
     for attr, rx, label in _PERSONAL_INFO_FIELDS:
-        if rx.search(query):
+        if not rx.search(query):
+            continue
+        if attr == "name":
+            value = holder if is_self else (getattr(user, "name", None) or None)
+        elif attr == "age":
+            value = _age_on(chart.dob, today)
+            value = f"{value} years" if value is not None else None
+        else:
             value = getattr(chart, attr, None)
-            if not value:
-                return None
-            return (
-                f'The user is asking for their {label}. Their {label} is exactly "{value}" — '
-                f'state this directly and clearly in your response, in your own natural words.'
-            )
+        if attr != "name" and not is_self:
+            return (f"The user is asking about their OWN {label}, but this chart belongs to {holder} — the user's own "
+                    f"{label} is not on record. Say that kindly, and offer {holder}'s {label} instead: "
+                    f"{value or 'not available'}.")
+        if not value:
+            return None
+        extra = ""
+        if attr == "dob":
+            nxt = _next_birthday(chart.dob, today)
+            if nxt:
+                extra = f" Their next birthday is {nxt} — mention it warmly."
+        return (f"The user is asking for their {label}. The answer is {value}. Tell them in one or two friendly "
+                f"sentences (for example: \"Your {label} is {value}.\") — don't call it \"exact\" and don't "
+                f"mention any profile or record.{extra}")
     if _ASK_CURRENT_TIME_RE.search(query):
         now = datetime.now(_IST).strftime("%I:%M %p IST")
         return (
@@ -1006,6 +1062,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     query, has_history=bool(chat.messages), last_assistant=_last_assistant,
                     domain_confidence=_early_intent.get("domain_confidence", 0),
                     personal_info=_is_personal_info_question(query),
+                    meta_probe=bool(_META_PROBE_RE.search(query)),
                 )
                 _trace(
                     pipeline, "conversation_intent", "Conversation intent classified",
@@ -1338,7 +1395,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     logger.info("QUESTION MATCH (no template) score=%.2f → sharpened sub=%s qtype=%s",
                                 match_info["score"], match_info.get("sub_domain"), match_info.get("question_type"))
 
-                personal_info_hint = _personal_info_hint(query, chart)
+                personal_info_hint = _personal_info_hint(query, chart, user=user, names=names)
                 data_listing = task_info["task"] in LISTING_TASKS
                 # Topic lock only applies to life-area questions; a chart-data
                 # or forecast question is answered whatever the chat's topic.
