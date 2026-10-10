@@ -180,7 +180,8 @@ def format_citations_for_prompt(citations: list) -> str:
     """Format citations compactly for the LLM prompt."""
     if not citations:
         return ""
-    lines = ["CLASSICAL CITATIONS (cite VERBATIM when contextually relevant):"]
+    lines = ["CLASSICAL CITATIONS (general classical rules — quote one VERBATIM only if the chart data above "
+             "shows its condition is actually met for this person; never say a rule applies without that):"]
     for c in citations:
         lines.append(f"  📜 {c['source']}:")
         lines.append(f"     Sanskrit: \"{c['text']}\"")
