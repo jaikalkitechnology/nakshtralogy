@@ -546,14 +546,23 @@ def _first_turn(env, engine="business"):
     return next(f for f in frames if f["type"] == "prob")["data"]["chat_id"]
 
 
-def test_e2e_mirror_question_in_business_chat_is_refused(env, monkeypatch):
+def _relevance(monkeypatch, verdict):
+    seen = []
+    async def fake(query, last_assistant=None, timeout=8.0):
+        seen.append(query)
+        return verdict
+    monkeypatch.setattr(ws, "classify_relevance", fake)
+    return seen
+
+
+@pytest.mark.parametrize("verdict", [False, None])
+def test_e2e_mirror_question_in_business_chat_is_refused(env, monkeypatch, verdict):
     chat_id = _first_turn(env)
     calls = len(env["llm"].calls)
     _no_chart_work(monkeypatch)
-    async def must_not_run(*a, **k):
-        raise AssertionError("no relevance check needed for a clear general question")
-    monkeypatch.setattr(ws, "classify_relevance", must_not_run)
+    seen = _relevance(monkeypatch, verdict)
     frames, _ = env["ask"]("What color is a mirror?", engine="business", chat_id=chat_id)
+    assert seen == ["What color is a mirror?"]                     # the LLM is asked
     assert len(env["llm"].calls) == calls and _text(frames) == A._OUT_OF_SCOPE_REPLY["english"]
     assert _log(env["Session"])[0].routing == "conv_out_of_scope"
 
@@ -649,13 +658,12 @@ def test_keyword_about_a_person_is_astrology(q):
     assert c["intent"] == "astrology" and not c["uncertain"], c
 
 
-def test_e2e_cat_question_in_love_chat_is_refused(env, monkeypatch):
+@pytest.mark.parametrize("verdict", [False, None])
+def test_e2e_cat_question_in_love_chat_is_refused(env, monkeypatch, verdict):
     chat_id = _first_turn(env, engine="love")
     calls = len(env["llm"].calls)
     _no_chart_work(monkeypatch)
-    async def must_not_run(*a, **k):
-        raise AssertionError("no relevance check needed for a question about cats")
-    monkeypatch.setattr(ws, "classify_relevance", must_not_run)
+    _relevance(monkeypatch, verdict)
     frames, _ = env["ask"]("why cat love boxs", engine="love", chat_id=chat_id)
     assert len(env["llm"].calls) == calls and _text(frames) == A._OUT_OF_SCOPE_REPLY["english"]
     assert _log(env["Session"])[0].routing == "conv_out_of_scope"
@@ -667,3 +675,48 @@ def test_prompt_ends_with_an_off_topic_second_check(lang):
     p = build_rich_prompt("why is the sky blue", {"planets": {}}, language=lang, task="general")
     tail = p[p.rfind("FINAL INSTRUCTIONS"):] if "FINAL INSTRUCTIONS" in p else p[-3000:]
     assert "Second check" in tail and A._OUT_OF_SCOPE_REPLY[lang] in tail
+
+
+# ── the LLM decides relevance for every real question ─────────────────────
+
+def test_relevance_gate_rules():
+    astro = _conv_hist("Where is my Saturn placed?")
+    general = _conv_hist("What color is a mirror?")
+    assert A.needs_relevance_check(astro) and A.needs_relevance_check(general)
+    assert A.apply_relevance(astro, False)["intent"] == "out_of_scope"
+    assert A.apply_relevance(astro, True)["intent"] == "astrology"
+    assert A.apply_relevance(general, True)["intent"] == "astrology"
+    assert A.apply_relevance(general, True)["needs_chart"]
+    assert A.apply_relevance(astro, None) == astro and A.apply_relevance(general, None) == general
+    for q in ["hii", "thank you", "bye", "how are you?", "whats my name", "help"]:
+        assert not A.needs_relevance_check(_conv_hist(q)), q
+    meta = A.classify_conversation("which llm model are you", has_history=False, meta_probe=True)
+    assert not A.needs_relevance_check(meta)
+
+
+@pytest.mark.parametrize("verdict,answered", [(True, True), (False, False), (None, True)])
+def test_e2e_astrology_question_follows_the_llm_verdict(env, monkeypatch, verdict, answered):
+    seen = _relevance(monkeypatch, verdict)
+    env["llm"].replies = ["Your Saturn sits in your chart's career house.\n---FOLLOWUPS---\nQ: When?"]
+    frames, _ = env["ask"]("Where is my Saturn placed?")
+    assert seen == ["Where is my Saturn placed?"]
+    assert bool(env["llm"].calls) == answered
+    if not answered:
+        assert _text(frames) == A._OUT_OF_SCOPE_REPLY["english"]
+    row, steps = _log(env["Session"])
+    assert steps["relevance_check"]["relevant"] is verdict
+
+
+def test_e2e_llm_yes_lets_a_rule_refused_question_through(env, monkeypatch):
+    _relevance(monkeypatch, True)
+    env["llm"].replies = ["Your chart favours calm colours for your work.\n---FOLLOWUPS---\nQ: Which colour?"]
+    env["ask"]("What color is a mirror?")
+    assert env["llm"].calls and _log(env["Session"])[0].routing != "conv_out_of_scope"
+
+
+@pytest.mark.parametrize("q", ["hii", "thank you", "whats my name", "bye"])
+def test_e2e_conversational_turns_skip_the_relevance_llm(env, monkeypatch, q):
+    seen = _relevance(monkeypatch, False)
+    env["llm"].replies = ["Your name is on record.\n---FOLLOWUPS---\nQ: More?"]
+    env["ask"](q)
+    assert seen == []

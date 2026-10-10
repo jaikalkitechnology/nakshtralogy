@@ -302,7 +302,7 @@ def classify_conversation(query: str, *, has_history: bool = False, last_assista
     if _FAREWELL_RX.match(q):
         return out("farewell", 0.95, "farewell phrase")
     if _AFFIRM_RX.match(q) and has_history and last_assistant and "?" in last_assistant.strip()[-160:]:
-        return out("astrology", 0.7, "affirmation of the assistant's previous offer")
+        return out("astrology", 0.7, "affirmation of the assistant's previous offer", kind="affirmation")
     if _CLARIFY_REQ_RX.search(q) and len(words) <= 10:
         return out("clarification_request", 0.85, "asks to re-explain / didn't understand")
     if _CASUAL_RX.match(q):
@@ -340,9 +340,9 @@ def classify_conversation(query: str, *, has_history: bool = False, last_assista
         if has_history and len(words) <= 6 and (_VAGUE_REF_RX.search(raw) or _FOLLOWUP_START_RX.match(q)):
             return out("astrology", 0.5, "short follow-up to the previous answer", uncertain=True)
         if _HELP_RX.search(raw):
-            return out("astrology", 0.5, "asks for help/advice — astrology app")
+            return out("astrology", 0.5, "asks for help/advice — astrology app", kind="help")
         if not has_history and (_VAGUE_REF_RX.search(raw) or (len(words) <= 3 and _FOLLOWUP_START_RX.match(q))):
-            return out("astrology", 0.5, "vague request — will be clarified")
+            return out("astrology", 0.5, "vague request — will be clarified", kind="vague")
         if about_person:
             return out("astrology", 0.5, "a question about a person's life (the chart holder)", uncertain=True)
         if not latin:
@@ -357,6 +357,38 @@ def classify_conversation(query: str, *, has_history: bool = False, last_assista
     if about_person or not latin:
         return out("astrology", 0.4, "longer message possibly about a person's life", uncertain=True)
     return out("out_of_scope", 0.5, "longer message unrelated to astrology or the user's life", kind="general")
+
+
+# Astrology decisions that don't need the LLM gate: "yes" to the
+# assistant's own offer, a bare "help", and a vague request that is
+# answered with a clarification anyway.
+_GATE_EXEMPT_KINDS = {"affirmation", "help", "vague"}
+
+
+def needs_relevance_check(conv: dict) -> bool:
+    """Every real question is put to the LLM relevance gate ("is this about
+    nakshatralogy / the user's life?"). Greetings, thanks, farewells, small
+    talk, birth-record questions, re-explain requests and meta probes are
+    answered deterministically and skip it."""
+    if conv["intent"] == "astrology":
+        return conv.get("kind") not in _GATE_EXEMPT_KINDS
+    return conv["intent"] == "out_of_scope" and conv.get("kind") == "general"
+
+
+def apply_relevance(conv: dict, relevant: bool | None) -> dict:
+    """Apply the LLM relevance gate: YES → answer as astrology, NO → polite
+    out-of-scope refusal, no answer (check failed) → keep the rule decision."""
+    if relevant is None or not needs_relevance_check(conv):
+        return conv
+    if relevant is False:
+        if conv["intent"] == "out_of_scope":
+            return conv
+        return {**conv, "intent": "out_of_scope", "kind": "general", "needs_chart": False, "confidence": 0.8,
+                "uncertain": False, "reason": "relevance check: not about nakshatralogy or the user's life"}
+    if conv["intent"] == "astrology":
+        return {**conv, "uncertain": False}
+    return {**conv, "intent": "astrology", "kind": None, "needs_chart": True, "confidence": 0.6,
+            "uncertain": False, "reason": "relevance check: about nakshatralogy or the user's life"}
 
 
 def relevance_overrule(conv: dict, relevant: bool | None) -> dict:

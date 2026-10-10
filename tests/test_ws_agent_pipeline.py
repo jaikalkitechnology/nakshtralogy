@@ -53,6 +53,10 @@ def env(monkeypatch):
     fake = FakeLLM()
     monkeypatch.setattr(ws, "stream_provider", fake)
 
+    async def no_relevance_verdict(query, last_assistant=None, timeout=8.0):
+        return None                      # Ollama unavailable → rule-based decision stands
+    monkeypatch.setattr(ws, "classify_relevance", no_relevance_verdict)
+
     db = Session()
     user = User(id=str(uuid.uuid4()), email=f"{uuid.uuid4()}@example.com")
     db.add(user)
