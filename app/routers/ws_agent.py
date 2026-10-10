@@ -51,7 +51,8 @@ from app.agent.llm_service import (
 )
 from app.agent.answer_pipeline import (
     PROMPT_VERSION, CHART_TASKS, BUFFERED_TASKS, LISTING_TASKS,
-    classify_conversation, conversation_reply, context_requirements, classify_task, clarification_text, route_task, validate_chart_context, select_context,
+    classify_conversation, conversation_reply, context_requirements, classify_task,
+    address_names, name_instruction, clean_first_name, clarification_text, route_task, validate_chart_context, select_context,
     wants_remedy, build_fact_sheet, validate_response, dedupe_sentences, drop_sentences,
     deterministic_answer,
 )
@@ -293,6 +294,21 @@ _ASK_TODAY_DATE_RE = re.compile(
     r"what\s*day\s*is\s*(it|today)|which\s*day\s*is\s*today|aaj\s*ki\s*tareekh|aaj\s*kaun\s*sa\s*din\s*hai)\b",
     re.IGNORECASE,
 )
+
+def _is_personal_info_question(query: str) -> bool:
+    """Asks for a fact from the birth record or the current date/time —
+    answered from stored data, never a canned small-talk reply."""
+    return (any(rx.search(query) for _, rx, _ in _PERSONAL_INFO_FIELDS)
+            or bool(_ASK_CURRENT_TIME_RE.search(query)) or bool(_ASK_TODAY_DATE_RE.search(query)))
+
+
+def _age_on(dob: str | None, today: date) -> int | None:
+    try:
+        d = datetime.strptime(dob or "", "%d/%m/%Y").date()
+    except ValueError:
+        return None
+    return today.year - d.year - ((today.month, today.day) < (d.month, d.day))
+
 
 def _personal_info_hint(query: str, chart: "Chart") -> str | None:
     """Name/DOB/birth time/place and the current date/time. Chart facts
@@ -989,6 +1005,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 conv = classify_conversation(
                     query, has_history=bool(chat.messages), last_assistant=_last_assistant,
                     domain_confidence=_early_intent.get("domain_confidence", 0),
+                    personal_info=_is_personal_info_question(query),
                 )
                 _trace(
                     pipeline, "conversation_intent", "Conversation intent classified",
@@ -1006,6 +1023,9 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     if conv["intent"] == "clarification_request":
                         task_info = {**task_info, "task": "rephrase", "confidence": conv["confidence"],
                                      "reason": "asks to re-explain the previous answer", "needs_clarification": False}
+                    elif conv["intent"] == "personal_info":
+                        task_info = {**task_info, "task": "personal_info", "confidence": conv["confidence"],
+                                     "reason": conv["reason"], "needs_clarification": False}
                 else:
                     task_info = {"task": "conversation", "confidence": conv["confidence"], "reason": conv["reason"],
                                  "planet": None, "dosha_terms": [], "needs_clarification": False}
@@ -1146,6 +1166,15 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 )
                 _req = context_requirements(conv, task_info, route)
                 _trace(pipeline, "context_requirement", "Decided what data the answer needs", **_req)
+                # Address the person by first name (human, personal reply): the
+                # chart holder for their own chart, or the asking user — with the
+                # chart holder named in third person — for a family/friend chart.
+                names = address_names(
+                    user_name=getattr(user, "name", None), chart_name=chart.name,
+                    chart_category=getattr(chart, "category", None),
+                    chart_is_primary=getattr(chart, "is_primary", False),
+                    language=resolved_lang, roman_languages=ROMAN_SCRIPT_LANGUAGES,
+                )
                 # Display-only floor applied AFTER the true score is captured
                 # above in `pipeline` (admin trace keeps the real number).
                 # Everything downstream — the chat badge, the LLM prompt's
@@ -1189,6 +1218,16 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                                                      specialist_engine=route["engine"])
                 if task_info["task"] in ("yoga_dosha", "remedy"):
                     chart_context["dosha_yoga_detail"] = _dosha_yoga_detail(pdata)
+                # The birth record itself — whose chart, DOB, time, place, age —
+                # sent with every prompt (and shown in the logged prompt).
+                _holder_name = (chart.name or "").strip()
+                chart_context["profile"] = {
+                    "name": _holder_name.title() if _holder_name.isascii() and _holder_name.islower() else _holder_name,
+                    "gender": chart.gender, "dob": chart.dob, "tob": chart.tob, "place": chart.place,
+                    "age": _age_on(chart.dob, date.today()),
+                    "is_users_own": names["is_self"], "asked_by": names["address"] if not names["is_self"] else None,
+                    "relation": names.get("relation"),
+                }
                 # Engines compute dasha/transits for the server's date.today();
                 # validate against the same date.
                 target_date = date.today()
@@ -1308,7 +1347,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     query, prompt_ctx, intent=result.get("intent"), topic_locked=topic_locked_eff,
                     language=effective_lang, personal_info_hint=personal_info_hint,
                     data_listing=data_listing, task=task_info["task"], sections=prompt_sections,
-                    fact_sheet=fact_sheet,
+                    fact_sheet=fact_sheet, address_hint=name_instruction(names),
                 )
 
                 # Personalize system prompt with chart holder's details + detected domain
@@ -1384,6 +1423,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     history_turns=len(history), total_messages=len(messages), topic_locked=topic_locked_eff,
                     personal_info_hint_given=bool(personal_info_hint), prompt_version=PROMPT_VERSION,
                     task=task_info["task"], persona=detected_domain, data_listing=data_listing,
+                    address_name=names["address"], chart_is_users_own=names["is_self"],
                 )
 
                 logger.info("Context built in %.2fs, %d history turns, streaming via %s", time.time() - t1, len(history), provider_key)
@@ -1460,6 +1500,8 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # retry, then drop the offending sentences or fall back to the
                 # verified facts. Never an open-ended loop.
                 _val_kwargs = {
+                    "ignore_names": [names["address"], names["holder"],
+                                     clean_first_name(chart.name, effective_lang, ROMAN_SCRIPT_LANGUAGES)],
                     "allow_remedies": "remedies" in prompt_sections,
                     "domain_keywords": (DOMAINS.get(route["domain"], {}).get("keywords") or None)
                     if task_info["task"] == "life_domain" else None,
@@ -1509,6 +1551,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     _trace(
                         pipeline, "response_validation", "Answer checked against the validated chart",
                         ok=not first_errors, errors=first_errors, action=action,
+                        name_used=bool(names["address"]) and names["address"].lower() in main_answer.lower(),
                         remaining_errors=[] if action in ("accepted", "retried_ok", "deterministic_fallback")
                         else check["errors"],
                     )

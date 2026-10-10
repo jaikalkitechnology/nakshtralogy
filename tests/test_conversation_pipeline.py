@@ -266,3 +266,144 @@ def test_e2e_didnt_understand_rephrases_previous_answer(env):
     assert steps["task_classified"]["task"] == "rephrase"
     assert steps["routing"]["specialist_engine"] is None and steps["routing"]["show_probability"] is False
     assert next(f for f in frames if f["type"] == "prob")["data"]["probability"] is None
+
+
+# ── addressing the user by name ───────────────────────────────────────────
+
+def _names(**kw):
+    base = dict(user_name="Rahul Kumar", chart_name="pooja", chart_category=None, chart_is_primary=False,
+                language="english", roman_languages=ROMAN_SCRIPT_LANGUAGES)
+    base.update(kw)
+    return A.address_names(**base)
+
+
+def test_own_chart_is_addressed_by_its_first_name():
+    for kw in ({"chart_category": "self"}, {"chart_is_primary": True}, {"chart_name": "Rahul K"}, {"user_name": None}):
+        n = _names(**kw)
+        assert n["is_self"] and n["holder"] is None
+    assert _names(chart_category="self")["address"] == "Pooja"
+    instr = A.name_instruction(_names(chart_category="self"))
+    assert "first name, Pooja, once" in instr and "your Saturn" not in instr
+
+
+def test_someone_elses_chart_addresses_the_user_and_names_the_holder():
+    n = _names(chart_category="family")
+    assert (n["address"], n["holder"], n["is_self"]) == ("Rahul", "Pooja", False)
+    instr = A.name_instruction(n)
+    assert "This is Pooja's chart" in instr and "never \"your Saturn\"" in instr and "first name, Rahul" in instr
+
+
+def test_name_in_another_script_is_not_forced_into_a_roman_reply():
+    n = _names(chart_name="पूजा", chart_category="family", language="hinglish")
+    assert n["holder"] is None and n["address"] == "Rahul"
+    assert "belongs to a family member" in A.name_instruction(n)
+    assert _names(chart_name="पूजा", chart_category="family", language="hindi")["holder"] == "पूजा"
+
+
+def test_placeholder_names_are_not_used():
+    n = _names(user_name="test user", chart_name="me")
+    assert n["address"] is None and A.name_instruction(n) is None
+
+
+def _set_owner(Session, **chart_fields):
+    from app.models.model import Chart, User
+    s = Session()
+    ch = s.query(Chart).first()
+    for k, v in chart_fields.items():
+        setattr(ch, k, v)
+    s.query(User).first().name = "Rahul Kumar"
+    s.commit()
+    s.close()
+
+
+def test_e2e_own_chart_answer_is_addressed_by_name(env):
+    _set_owner(env["Session"], category="self")
+    env["llm"].replies = ["Pooja, your career grows through steady, skilled work at your job.\n---FOLLOWUPS---\nQ: When?"]
+    env["ask"]("How is my career this year?", engine="career")
+    call = env["llm"].calls[-1]["messages"]
+    assert "first name, Pooja, once" in call[-1]["content"]
+    assert "Address them by their first name" not in call[0]["content"]      # old buried rule removed
+    _, steps = _log(env["Session"])
+    assert steps["prompt_built"]["address_name"] == "Pooja" and steps["prompt_built"]["chart_is_users_own"]
+    assert steps["response_validation"]["name_used"] is True
+
+
+def test_e2e_family_chart_names_holder_and_addresses_user(env):
+    _set_owner(env["Session"], category="family")
+    env["llm"].replies = ["Rahul, Pooja's career grows through steady, skilled work at her job.\n---FOLLOWUPS---\nQ: When?"]
+    env["ask"]("How is her career this year?", engine="career")
+    prompt = env["llm"].calls[-1]["messages"][-1]["content"]
+    assert "This is Pooja's chart" in prompt and "first name, Rahul" in prompt
+    _, steps = _log(env["Session"])
+    assert steps["prompt_built"]["address_name"] == "Rahul" and not steps["prompt_built"]["chart_is_users_own"]
+
+
+def test_names_that_double_as_astrology_words_are_not_misread():
+    ctx = {"planets": {"Sun": {"sign_full": "Virgo", "sign_idx": 5}, "Saturn": {"sign_full": "Cancer", "sign_idx": 3}}}
+    t = {"task": "general"}
+    v = lambda text, names, **kw: A.validate_response(text, ctx, t, "english", ROMAN_SCRIPT_LANGUAGES,
+                                                      NON_LATIN_SCRIPT_RX, ignore_names=names, **kw)
+    assert v("Pooja, your career looks steady this year.", ["Pooja"], allow_remedies=False)["ok"]   # pooja = ritual
+    assert v("Ravi your Saturn is in Cancer, a steady placement.", ["Ravi"])["ok"]                 # Ravi = Sun
+    r = v("Ravi, do a Lakshmi pooja on Fridays.", ["Ravi"], allow_remedies=False)
+    assert not r["ok"] and r["bad_sentences"] == ["Ravi, do a Lakshmi pooja on Fridays."]
+    r = v("Meena, your Sun in Pisces shines.", ["Meena"])                                           # Meena = Pisces
+    assert not r["ok"] and "natal Sun is in Virgo" in r["errors"][0]
+
+
+# ── personal-info questions + birth profile ───────────────────────────────
+
+@pytest.mark.parametrize("q,intent", [
+    ("whats my name", "personal_info"), ("what is my date of birth", "personal_info"),
+    ("where was I born", "personal_info"), ("mera naam kya hai", "personal_info"),
+    ("whats up", "casual"), ("okay this nice", "acknowledgement"), ("whats my career like", "astrology"),
+    ("hows my health", "astrology"),
+])
+def test_personal_info_and_question_words(q, intent):
+    c = A.classify_conversation(q, has_history=True, last_assistant="Your Saturn is in Cancer.",
+                                domain_confidence=detect_intent(q)["domain_confidence"],
+                                personal_info=ws._is_personal_info_question(q))
+    assert c["intent"] == intent, c
+
+
+def test_e2e_whats_my_name_answers_from_birth_profile(env):
+    env["llm"].replies = ["Your name is Pooja. 😊\n---FOLLOWUPS---\nQ: What is my Lagna?"]
+    frames, _ = env["ask"]("whats my name", engine="kundli")
+    assert len(env["llm"].calls) == 1
+    prompt = env["llm"].calls[-1]["messages"][-1]["content"]
+    assert "BIRTH PROFILE" in prompt
+    assert "Name: Pooja | Gender: Female | Date of birth: 12/10/2004 | Time of birth: 13:55" in prompt
+    assert "Place of birth: Mumbai, Maharashtra, India" in prompt
+    assert 'Their name is exactly "pooja"' in prompt
+    assert "REPORT" not in prompt and "ANALYSIS:" not in prompt
+    assert next(f for f in frames if f["type"] == "prob")["data"]["probability"] is None
+    _, steps = _log(env["Session"])
+    assert steps["conversation_intent"]["intent"] == "personal_info"
+    assert steps["task_classified"]["task"] == "personal_info"
+    assert steps["routing"]["specialist_engine"] is None
+    assert steps["response_validation"]["action"] == "accepted"
+
+
+def test_e2e_okay_this_nice_is_ack(env, monkeypatch):
+    _no_chart_work(monkeypatch)
+    frames, _ = env["ask"]("okay this nice", engine="career")
+    assert env["llm"].calls == [] and _text(frames) == A._ACK_REPLY["english"]
+
+
+def test_e2e_birth_profile_marks_family_chart(env):
+    _set_owner(env["Session"], category="family")
+    env["llm"].replies = ["Rahul, Pooja's career grows through steady, skilled work at her job.\n---FOLLOWUPS---\nQ: When?"]
+    env["ask"]("How is her career this year?", engine="career")
+    prompt = env["llm"].calls[-1]["messages"][-1]["content"]
+    assert "Asked by: Rahul (the account holder) — this chart belongs to a family member" in prompt
+
+
+def test_admin_log_json_includes_chart_holder(env):
+    import app.routers.agent_router as ar
+    s = env["Session"]()
+    from app.models.model import Chart
+    ch = s.query(Chart).first()
+    holder = ar._chart_holder(s, ch.id)
+    s.close()
+    assert holder["name"] == "pooja" and holder["dob"] == "12/10/2004" and holder["tob"] == "13:55"
+    assert holder["place"] == "Mumbai, Maharashtra, India" and holder["gender"] == "F"
