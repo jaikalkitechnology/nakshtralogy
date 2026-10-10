@@ -123,12 +123,19 @@ _GREETING_RX = re.compile(
     r"good\s*(morning|afternoon|evening|day)|gm|jai\s*shree\s*(krishna|ram)|ram\s*ram|sat\s*sri\s*akal|"
     r"vanakkam|नमस्ते|नमस्कार|प्रणाम)"
     r"(\s+(there|ji|sir|madam|maam|bro|dost|friend|everyone|all|again))*$")
+# Leading greeting words/phrases ("hii", "hello ji", "hi pooja", "hey there,
+# good morning") — stripped before classifying the rest of the message.
+_GREETING_PREFIX_RX = re.compile(
+    r"^((hi+|hey+|hello+|helo+|hlo+|hy|hai|hiya|namaste|namaskar|namaskaram|pranam|pranaam|yo|hola|gm|"
+    r"good\s*(morning|afternoon|evening|day)|jai\s*shree\s*(krishna|ram)|ram\s*ram|radhe\s*radhe|"
+    r"sat\s*sri\s*akal|vanakkam|नमस्ते|नमस्कार|प्रणाम|there|ji|sir|madam|maam|mam|bro|dost|friend|everyone|all|"
+    r"again|dear|buddy)(\s+|$))+")
 _FAREWELL_RX = re.compile(
     r"^((ok(ay)?|thanks|thank\s*you)\s+)?(bye+|bye\s*bye|good\s*bye|goodbye|see\s*(you|ya)(\s*later)?|cya|tc|"
     r"take\s*care|good\s*night|gn|alvida|phir\s*milenge|chalo\s*bye|फिर\s*मिलेंगे|अलविदा)"
     r"(\s+(ji|sir|bro|dost|friend))*$")
 _CASUAL_RX = re.compile(
-    r"^(how\s*(are|r)\s*(you|u)(\s*doing)?|how'?s\s*it\s*going|hows\s*it\s*going|what'?s\s*up|whats\s*up|wassup|"
+    r"^(how\s*(are|r)\s*(you|u)(\s*doing)?(\s*(today|now))?|how\s*do\s*you\s*do|kya\s*haal\s*chaal|kaise\s*ho\s*(aap|ap|tum)|aap\s*kaise\s*(ho|hain|hai)|how'?s\s*it\s*going|hows\s*it\s*going|what'?s\s*up|whats\s*up|wassup|"
     r"who\s*(are|r)\s*(you|u)|what\s*can\s*you\s*do|what\s*is\s*your\s*name|whats\s*your\s*name|"
     r"kaise\s*ho|kaisi\s*ho|kya\s*haal\s*(hai|h)|aap\s*kaun\s*ho|tum\s*kaun\s*ho|kaun\s*ho)$")
 # Every word of an acknowledgement comes from here (fillers + reactions);
@@ -153,6 +160,7 @@ _ACK_FILLER = {
 }
 _THANKS_WORDS = {"thanks", "thank", "thx", "ty", "thankyou", "dhanyavad", "dhanyawad", "dhanyavaad", "shukriya",
                  "धन्यवाद", "शुक्रिया"}
+_WAVE_EMOJI_RX = re.compile(r"^[\s👋🙋🙋‍♂️🙋‍♀️\u200d\u2640\u2642\ufe0f]+$")
 _POSITIVE_EMOJI_RX = re.compile(r"^[\s👍🙏😊🙂😀😃😄😁❤️♥️💖💯👌✨🌟⭐🔥👏🤗😍🥰☺️\u2764\ufe0f]+$")
 # A "yes" to an offer the bot just made ("Would you like your best timing?")
 # is a request to continue, not an acknowledgement.
@@ -178,6 +186,21 @@ _ASTRO_VOCAB_RX = re.compile(
     r"manglik|sade\s*sati|navamsa|d9|d10)\b|कुंडली|ग्रह|राशि|दशा|दोष|भाग्य", re.IGNORECASE)
 
 
+def _strip_greeting(q: str, names) -> tuple[str, bool]:
+    """(rest of the message, whether it started with a greeting). Names of
+    the chart holder / user right after a greeting ("hii pooja") go too."""
+    m = _GREETING_PREFIX_RX.match(q)
+    if not m or not re.search(r"[a-z\u0900-\u097F]", m.group(0)) or m.group(0).strip() in (
+            "there", "ji", "sir", "all", "again", "dear", "friend", "everyone"):
+        return q, False
+    rest = q[m.end():].strip()
+    for n in names or []:
+        if n and re.match(re.escape(n.lower()) + r"(\s+|$)", rest):
+            rest = rest[len(n):].strip()
+            rest = _GREETING_PREFIX_RX.sub("", rest).strip()
+    return rest, True
+
+
 _QUESTION_START = {"is", "are", "am", "will", "would", "should", "shall", "can", "could", "do", "does", "did",
                    "what", "whats", "wats", "wat", "when", "where", "wheres", "which", "who", "whos", "why",
                    "how", "hows", "kya", "kab", "kaise", "kyu", "kyun"}
@@ -198,23 +221,37 @@ _FIRST_PERSON_RX = re.compile(
 _POLITE_ME_RX = re.compile(r"\b(tell|give|show|send|help|let)\s+me\b", re.IGNORECASE)
 _ADDRESSES_ASSISTANT_RX = re.compile(r"\b(you|your|yourself|aap|aapko|aapka|tum|tumhara)\b", re.IGNORECASE)
 _HELP_RX = re.compile(r"\b(help|madad|guide|advice|suggest\w*)\b", re.IGNORECASE)
+# A short message that only makes sense as a follow-up to the previous reply.
+_FOLLOWUP_START_RX = re.compile(
+    r"^(why|how\s*come|how|when|kyun|kyu|kyon|kab|kaise|kaisa|kitna|really|sure|then|so|and|aur|matlab|meaning|"
+    r"explain|details?|more|example|isliye|toh|to)\b", re.IGNORECASE)
+# Third person — about someone's life (the chart holder), not general knowledge.
+_THIRD_PERSON_RX = re.compile(r"\b(he|she|his|her|him|their|them|uska|uski|uske|unka|unki|unke|inka|inki|inke|"
+                              r"iska|iski|iske|woh|wo|vo)\b", re.IGNORECASE)
 
 
 def _norm_message(q: str) -> str:
     q = (q or "").strip().lower()
-    q = re.sub(r"[!.,;:~\-–—…'\"“”‘’()]+", " ", q)
+    # Drop emoji/symbols (👋 🙏 ✨) — Unicode "So"/"Sk"; keeps letters and
+    # Indic vowel signs, unlike a \w-based strip.
+    q = "".join(" " if unicodedata.category(c) in ("So", "Sk") or c in "\ufe0f\u200d" else c for c in q)
+    q = re.sub(r"[!?.,;:~\-–—…'\"“”‘’()]+", " ", q)
     return re.sub(r"\s+", " ", q).strip()
 
 
 def classify_conversation(query: str, *, has_history: bool = False, last_assistant: str | None = None,
                           domain_confidence: float = 0, personal_info: bool = False,
-                          meta_probe: bool = False) -> dict:
+                          meta_probe: bool = False, person_names=None) -> dict:
     """First stage for every message: {"intent", "confidence", "reason",
     "needs_chart"}. intent is one of greeting, acknowledgement, farewell,
     casual, clarification_request, personal_info, out_of_scope, astrology.
     out_of_scope = not astrology and not about the user's own life (general
     knowledge, coding, questions about the assistant itself) — answered with
-    a fixed "I can only help with astrology" reply. Only
+    a fixed "I can only help with astrology" reply. "uncertain": True marks
+    an astrology decision made only on weak signals (a bare follow-up, a
+    third-person or non-Latin question) — ws_agent double-checks those
+    with a one-word LLM relevance check. person_names: the chart holder's
+    / user's names (a question naming them is about a person's life). Only
     "astrology", "personal_info" (name / date / time / place of birth,
     today's date — answered from the chart record) and a clarification
     request about an earlier answer go on to the LLM pipeline.
@@ -224,20 +261,35 @@ def classify_conversation(query: str, *, has_history: bool = False, last_assista
     q = _norm_message(raw)
     words = q.split()
 
-    def out(intent, conf, reason, kind=None):
+    def out(intent, conf, reason, kind=None, uncertain=False):
         needs = intent in ("astrology", "personal_info") or (intent == "clarification_request" and has_history)
-        return {"intent": intent, "confidence": conf, "reason": reason, "needs_chart": needs, "kind": kind}
+        return {"intent": intent, "confidence": conf, "reason": reason, "needs_chart": needs, "kind": kind,
+                "uncertain": uncertain}
 
     if meta_probe:
         return out("out_of_scope", 0.95, "asks about the assistant's internals or for coding help", kind="meta")
     if personal_info:
         return out("personal_info", 0.95, "asks for a fact from the birth record (name / date / time / place)")
+    if raw and _WAVE_EMOJI_RX.match(raw):
+        return out("greeting", 0.9, "greeting emoji")
     if raw and _POSITIVE_EMOJI_RX.match(raw):
         return out("acknowledgement", 0.9, "positive emoji only")
     if not q:
         return out("casual", 0.5, "empty after normalisation")
     if _GREETING_RX.match(q):
         return out("greeting", 0.95, "greeting phrase")
+    rest, greeted = _strip_greeting(q, person_names)
+    if greeted:
+        if not rest:
+            return out("greeting", 0.95, "greeting (with name / filler)")
+        if _CASUAL_RX.match(rest):
+            return out("casual", 0.9, "greeting + how-are-you", kind="about_assistant")
+        inner = classify_conversation(rest, has_history=has_history, last_assistant=last_assistant,
+                                      domain_confidence=domain_confidence, personal_info=personal_info,
+                                      meta_probe=meta_probe, person_names=person_names)
+        if inner["intent"] in ("casual", "greeting") and inner.get("kind") != "about_assistant":
+            return out("greeting", 0.9, "greeting + small talk")
+        return {**inner, "reason": "after greeting: " + inner["reason"]}
     if _FAREWELL_RX.match(q):
         return out("farewell", 0.95, "farewell phrase")
     if _AFFIRM_RX.match(q) and has_history and last_assistant and "?" in last_assistant.strip()[-160:]:
@@ -262,19 +314,41 @@ def classify_conversation(query: str, *, has_history: bool = False, last_assista
     if strong_astro or domain_confidence > 15:
         return out("astrology", 0.85, "astrology vocabulary")
     latin = sum(c.isascii() for c in raw) >= 0.6 * len(raw)
+    names_rx = [re.compile(r"\b" + re.escape(n) + r"\b", re.IGNORECASE) for n in (person_names or []) if n]
+    about_person = bool(_THIRD_PERSON_RX.search(raw)) or any(rx.search(raw) for rx in names_rx)
     is_question = bool(_QUESTION_CUE_RX.search(raw)) or words[0] in _QUESTION_START
     if is_question:
-        if (first_person or _VAGUE_REF_RX.search(raw) or _HELP_RX.search(raw)
-                or (has_history and len(words) <= 6) or not latin):
-            return out("astrology", 0.6, "a question about the user's own life / chart")
+        if first_person:
+            return out("astrology", 0.7, "a question about the user's own life")
+        if has_history and len(words) <= 6 and (_VAGUE_REF_RX.search(raw) or _FOLLOWUP_START_RX.match(q)):
+            return out("astrology", 0.5, "short follow-up to the previous answer", uncertain=True)
+        if _HELP_RX.search(raw):
+            return out("astrology", 0.5, "asks for help/advice — astrology app")
+        if not has_history and (_VAGUE_REF_RX.search(raw) or (len(words) <= 3 and _FOLLOWUP_START_RX.match(q))):
+            return out("astrology", 0.5, "vague request — will be clarified")
+        if about_person:
+            return out("astrology", 0.5, "a question about a person's life (the chart holder)", uncertain=True)
+        if not latin:
+            return out("astrology", 0.5, "non-Latin question without clear astrology words", uncertain=True)
         if _ADDRESSES_ASSISTANT_RX.search(raw):
             return out("out_of_scope", 0.75, "a question about the assistant, not astrology", kind="about_assistant")
-        return out("out_of_scope", 0.6, "a general question unrelated to astrology or the user's life", kind="general")
+        return out("out_of_scope", 0.7, "a general question unrelated to astrology or the user's life", kind="general")
     if len(words) <= 6:
         return out("casual", 0.6, "short statement with no question or astrology content", kind="statement")
-    if first_person or not latin:
+    if first_person:
         return out("astrology", 0.4, "longer message about the user's own life — treated as a chart question")
+    if about_person or not latin:
+        return out("astrology", 0.4, "longer message possibly about a person's life", uncertain=True)
     return out("out_of_scope", 0.5, "longer message unrelated to astrology or the user's life", kind="general")
+
+
+def relevance_overrule(conv: dict, relevant: bool | None) -> dict:
+    """Apply the LLM relevance check to an uncertain astrology decision:
+    NO → out_of_scope; YES or no answer (check failed) → keep."""
+    if conv["intent"] != "astrology" or not conv.get("uncertain") or relevant is not False:
+        return conv
+    return {**conv, "intent": "out_of_scope", "kind": "general", "needs_chart": False, "confidence": 0.7,
+            "reason": "relevance check: not about astrology or the user's life"}
 
 
 _ACK_REPLY = {
@@ -1012,6 +1086,9 @@ _PLACEMENT_CLAIM_RX = re.compile(
     _PLANET_RX.pattern + r"(?:['’]s)?((?:\s+\S+){0,5}?)\s+"
     r"(kendra\s*/\s*trikona|kendra|trikona|angular\s*house|trine|exalted|exaltation|uchcha|uch|own\s*(sign|house)|"
     r"swakshetra|svakshetra|debilitated|debilitation|neecha|neech)(?![\w])", re.IGNORECASE)
+_DEGREE_CLAIM_RX = re.compile(
+    _PLANET_RX.pattern + r"(?:['’]s)?(?:\s+\S+){0,5}?\s+(\d{1,2}(?:\.\d+)?)\s*(?:°|degrees?|deg)(?![\w])",
+    re.IGNORECASE)
 _NEGATION_RX = re.compile(r"\b(not|isn'?t|is\s*n't|no|nahi|nahin|na|never)\b", re.IGNORECASE)
 
 
@@ -1106,6 +1183,18 @@ def validate_response(text: str, ctx: dict, task: dict, language: str, roman_lan
             else:
                 errors.append(f"States {p} in {sign}, but natal {p} is in {natal}"
                               + (f" (today's transit: {tsign})" if tsign else ""))
+            bad.append(s_orig)
+        for m in _DEGREE_CLAIM_RX.finditer(s):
+            p = _PLANET_BY_ALIAS[m.group(1).lower()]
+            said = float(m.group(2))
+            natal_deg = planets.get(p, {}).get("degree")
+            tr_deg = transits.get(p, {}).get("degree")
+            if natal_deg is None or abs(said - natal_deg) <= 1.0:
+                continue
+            if tr_deg is not None and abs(said - tr_deg) <= 1.0 and _TRANSIT_MARK_RX.search(s):
+                continue
+            errors.append(f"States {p} at {m.group(2)}°, but natal {p} is at {natal_deg:.1f}° "
+                          f"in {planets[p].get('sign_full', '')}")
             bad.append(s_orig)
         for m in _PLACEMENT_CLAIM_RX.finditer(s):
             if _NEGATION_RX.search(m.group(2) or ""):
