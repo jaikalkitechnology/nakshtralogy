@@ -4,9 +4,10 @@ astrologer app, in English and Hindi — into media/instagram/{user,astro}/.
 
 Frames are drawn with Pillow from the apps' own screenshots (media/play_console,
 media/instagram) and logos (flutter_user/assets/icon, flutter_astro/assets/logos), piped into ffmpeg, and muxed with a voiceover
-read by Piper neural TTS voices (offline): en-us-ryan-high / hi_IN-rohan-medium.
+read by offline neural TTS voices: Piper en-us-ryan-high (English, male) and
+Kokoro v1.0 hf_beta (Hindi, female) via sherpa-onnx.
 
-    pip install pillow numpy imageio-ffmpeg piper-tts
+    pip install pillow numpy imageio-ffmpeg piper-tts sherpa-onnx
     python3 scripts/marketing/make_instagram_reels.py            # all four
     python3 scripts/marketing/make_instagram_reels.py user_30    # one
     python3 scripts/marketing/make_instagram_reels.py user_60_hi astro_60_hi   # Hindi cuts
@@ -790,49 +791,82 @@ def cta_scene(reel, runs, button, sub=None):
 
 # ── voiceover ────────────────────────────────────────────────────────────
 VOICE_DIR = Path.home() / ".cache" / "nakshatralogy-voices"
-# Piper neural voices (offline). English: en-us-ryan-high (MIT). Hindi:
-# hi_IN-rohan-medium, trained on IIT Madras' IndicTTS Hindi male dataset —
-# check that dataset's licence before paid promotion.
+# Offline neural voices.
+#   en       Piper en-us-ryan-high (MIT), male
+#   hi       Kokoro v1.0 hf_beta (Apache-2.0), female Hindi  ← used for the Hindi reels
+#   hi_male  Piper hi_IN-rohan-medium (IIT Madras IndicTTS data — check its licence), male Hindi
 VOICES = {
-    "en": dict(dir="en-us-ryan-high", model="en-us-ryan-high.onnx",
+    "en": dict(engine="piper", dir="en-us-ryan-high", model="en-us-ryan-high.onnx",
                url="https://github.com/rhasspy/piper/releases/download/v0.0.2/voice-en-us-ryan-high.tar.gz",
-               into="en-us-ryan-high"),
-    "hi": dict(dir="vits-piper-hi_IN-rohan-medium", model="hi_IN-rohan-medium.onnx",
-               url="https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/"
-                   "vits-piper-hi_IN-rohan-medium.tar.bz2",
-               into=""),
+               into="en-us-ryan-high", pace=0.92),
+    "hi": dict(engine="kokoro", dir="kokoro-multi-lang-v1_0", sid=32, lang="hi",
+               url="https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/kokoro-multi-lang-v1_0.tar.bz2",
+               into="", pace=0.97),
+    "hi_male": dict(engine="piper", dir="vits-piper-hi_IN-rohan-medium", model="hi_IN-rohan-medium.onnx",
+                    url="https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/"
+                        "vits-piper-hi_IN-rohan-medium.tar.bz2",
+                    into="", pace=0.86),
 }
+HINDI_VOICE = "hi"                 # set to "hi_male" for the male Hindi read
 NAME = "Nukshuttrology"            # spelt for the English TTS: nuk-shuh-TRAH-luh-jee
 NAME_HI = "नक्षत्रालॉजी"
 SENTENCE_GAP = 0.28
-VOICE_PACE = {"en": 0.92, "hi": 0.86}    # Piper length_scale; Rohan reads slowly, so a little brisker
 
 
-@lru_cache(maxsize=None)
-def piper_voice(lang):
+def _fetch_voice(v):
     import tarfile
-    from piper import PiperVoice
-    v = VOICES[lang]
-    model = VOICE_DIR / v["dir"] / v["model"]
-    if not model.exists():
+    if not (VOICE_DIR / v["dir"]).exists():
         VOICE_DIR.mkdir(parents=True, exist_ok=True)
         arc = VOICE_DIR / v["url"].rsplit("/", 1)[1]
         urllib.request.urlretrieve(v["url"], arc)
         with tarfile.open(arc) as tf:
             tf.extractall(VOICE_DIR / v["into"])
         arc.unlink()
-    return PiperVoice.load(str(model))
+    return VOICE_DIR / v["dir"]
 
 
-def speak(text, length_scale, lang):
-    """-> (sample_rate, [float32 array per sentence])"""
-    from piper import SynthesisConfig
-    cfg = SynthesisConfig(length_scale=length_scale, noise_scale=0.7, noise_w_scale=0.85)
-    chunks = list(piper_voice(lang).synthesize(text, syn_config=cfg))
-    return chunks[0].sample_rate, [c.audio_float_array.astype(np.float32) for c in chunks]
+@lru_cache(maxsize=None)
+def tts_engine(voice):
+    v = VOICES[voice]
+    d = _fetch_voice(v)
+    if v["engine"] == "piper":
+        from piper import PiperVoice
+        return PiperVoice.load(str(d / v["model"]))
+    import sherpa_onnx
+    k = sherpa_onnx.OfflineTtsKokoroModelConfig(
+        model=str(d / "model.onnx"), voices=str(d / "voices.bin"), tokens=str(d / "tokens.txt"),
+        data_dir=str(d / "espeak-ng-data"), lexicon="", lang=v["lang"])
+    return sherpa_onnx.OfflineTts(sherpa_onnx.OfflineTtsConfig(
+        model=sherpa_onnx.OfflineTtsModelConfig(kokoro=k, num_threads=2, provider="cpu")))
 
 
-def voiceover(lines, plan, duration, path, lang="en"):
+def _trim(x, sr, thr=0.012):
+    """Drop the silence padding around a synthesized sentence."""
+    idx = np.flatnonzero(np.abs(x) > thr)
+    if not len(idx):
+        return x
+    pad = int(0.03 * sr)
+    return x[max(0, idx[0] - pad):idx[-1] + pad]
+
+
+def speak(text, length_scale, voice):
+    """-> (sample_rate, [float32 array per sentence]); length_scale < 1 reads faster."""
+    v = VOICES[voice]
+    if v["engine"] == "piper":
+        from piper import SynthesisConfig
+        cfg = SynthesisConfig(length_scale=length_scale, noise_scale=0.7, noise_w_scale=0.85)
+        chunks = list(tts_engine(voice).synthesize(text, syn_config=cfg))
+        return chunks[0].sample_rate, [c.audio_float_array.astype(np.float32) for c in chunks]
+    import re
+    out, sr = [], 24000
+    for sent in [p for p in re.split(r"(?<=[।?!.])\s+", text.strip()) if p]:
+        a = tts_engine(voice).generate(sent, sid=v["sid"], speed=1.0 / length_scale)
+        sr = a.sample_rate
+        out.append(_trim(np.asarray(a.samples, dtype=np.float32), sr))
+    return sr, out
+
+
+def voiceover(lines, plan, duration, path, voice="en"):
     """lines: [(scene index, text)]. Each line starts shortly after its scene
     begins (or after the previous line ends); a line that would run long into
     the next scene is read a little faster. Writes a mono WAV and returns the
@@ -842,9 +876,9 @@ def voiceover(lines, plan, duration, path, lang="en"):
         start_at = plan[sc][0]
         nxt = lines[li + 1][0] if li + 1 < len(lines) else None
         limit = (plan[nxt][0] + 0.5) if nxt is not None else duration - 0.6
-        base = VOICE_PACE[lang]
+        base = VOICES[voice]["pace"]
         for ls in (base, base - 0.04, base - 0.08, base - 0.12, base - 0.16):
-            sr, sents = speak(text, ls, lang)
+            sr, sents = speak(text, ls, voice)
             total = sum(len(x) for x in sents) / sr + SENTENCE_GAP * (len(sents) - 1)
             t0 = max(start_at + 0.25, prev_end + 0.2)
             if t0 + total <= limit:
@@ -1148,7 +1182,7 @@ def build(key, preview_at=None):
     out_dir = OUT / folder
     out_dir.mkdir(parents=True, exist_ok=True)
     wav = out_dir / (fname + ".voice.wav")
-    reel.cues = voiceover(VOICE_SCRIPT[key], plan, dur, wav, lang)
+    reel.cues = voiceover(VOICE_SCRIPT[key], plan, dur, wav, HINDI_VOICE if lang == "hi" else lang)
     if preview_at is not None:
         wav.unlink(missing_ok=True)
         return reel.render_frame(preview_at)
