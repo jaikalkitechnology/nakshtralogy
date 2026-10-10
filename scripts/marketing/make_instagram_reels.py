@@ -1,18 +1,19 @@
 """Render the Instagram Reels (1080x1920, 30 fps, MP4/H.264 + AAC) for
 Nakshatralogy — a 60 s and a 30 s video each for the user app and the
-astrologer app — into media/instagram/{user,astro}/.
+astrologer app, in English and Hindi — into media/instagram/{user,astro}/.
 
 Frames are drawn with Pillow from the apps' own screenshots (media/play_console,
 media/instagram) and logos (flutter_user/assets/icon, flutter_astro/assets/logos), piped into ffmpeg, and muxed with a voiceover
-read by the Piper neural TTS voice en-us-ryan-high (offline, MIT licence).
+read by Piper neural TTS voices (offline): en-us-ryan-high / hi_IN-rohan-medium.
 
     pip install pillow numpy imageio-ffmpeg piper-tts
     python3 scripts/marketing/make_instagram_reels.py            # all four
     python3 scripts/marketing/make_instagram_reels.py user_30    # one
+    python3 scripts/marketing/make_instagram_reels.py user_60_hi astro_60_hi   # Hindi cuts
 
 Poppins / Playfair fonts are fetched from github.com/google/fonts (OFL) into
 ~/.cache/nakshatralogy-fonts on first run; Liberation Sans is the fallback.
-The Piper voice is fetched from github.com/rhasspy/piper releases into
+The Piper voices are fetched from GitHub releases (rhasspy/piper, k2-fsa/sherpa-onnx) into
 ~/.cache/nakshatralogy-voices. Edit VOICE_SCRIPT to change the narration.
 """
 import math
@@ -154,6 +155,8 @@ def glow(w, h, color, radius, alpha=160):
 def rich_text(runs, size, max_w=940, weight=XB, line_gap=1.12, align="left", shadow=True):
     """runs: list of (text, color[, font_name]). Word-wrapped, multi-colour.
     Returns a list of RGBA line images (so lines can be animated one by one)."""
+    if any("\u0900" <= ch <= "\u097f" for run in runs for ch in run[0]):
+        line_gap = max(line_gap, 1.3)          # Devanagari matras need more room above / below
     words = []
     for run in runs:
         text, color = run[0], run[1]
@@ -219,6 +222,42 @@ def chip(text, size=34, color=WHITE, border=(120, 110, 170), fill=(30, 26, 70, 2
 
 def chips_row(labels, size=34, gap=18, dot=None):
     return [chip(t, size, dot=dot) for t in labels], gap
+
+
+# ── UI labels inside the drawn mock-ups, per language ────────────────────
+LABELS = {
+    "en": dict(
+        ai_name="AI Astrologer", ai_sub="Reads your own kundli",
+        fc_title="TODAY'S FORECAST", fc_sub="Your day, read from your chart",
+        fc_bars=["Career", "Love", "Health", "Money"], fc_tip="Lucky colour: Yellow  ·  Good time: 10:30 – 12:00",
+        earn_title="THIS MONTH  ·  YOUR 70%",
+        earn_rows=["Chat earning — 70% of ₹299", "Call earning — 70% of ₹450", "Live gift — 70% of ₹200"],
+        keep="You keep 70%", keep_sub="Every call, chat, gift & super chat",
+        play_small="DOWNLOAD IT FROM THE", play_big="Play Store"),
+    "hi": dict(
+        ai_name="AI ज्योतिषी", ai_sub="आपकी अपनी कुंडली पढ़ता है",
+        fc_title="आज का राशिफल", fc_sub="आपका दिन, आपकी कुंडली से",
+        fc_bars=["करियर", "प्रेम", "स्वास्थ्य", "धन"], fc_tip="शुभ रंग: पीला  ·  शुभ समय: 10:30 – 12:00",
+        earn_title="इस महीने  ·  आपका 70%",
+        earn_rows=["चैट कमाई — ₹299 का 70%", "कॉल कमाई — ₹450 का 70%", "लाइव गिफ़्ट — ₹200 का 70%"],
+        keep="70% आपका", keep_sub="हर कॉल, चैट, गिफ़्ट और सुपर चैट पर",
+        play_small="अभी डाउनलोड करें", play_big="Play Store से"),
+}
+
+
+def play_badge(lang):
+    """'Download it from the Play Store' pill (generic play icon, not the store logo)."""
+    lb = LABELS[lang]
+    fs, fb = font(MED, 26), font(BOLD, 52)
+    tw = int(max(fs.getlength(lb["play_small"]), fb.getlength(lb["play_big"])))
+    w, h = tw + 190, 132
+    img = rounded(w, h, 30, fill=(10, 8, 24, 245), outline=(205, 200, 230, 255), width=3)
+    d = ImageDraw.Draw(img)
+    d.ellipse((30, 26, 110, 106), fill=GOLD + (255,))
+    d.polygon([(60, 46), (60, 86), (93, 66)], fill=(20, 12, 4, 255))
+    d.text((138, 44), lb["play_small"], font=fs, fill=(215, 210, 235, 255), anchor="lm")
+    d.text((136, 90), lb["play_big"], font=fb, fill=WHITE + (255,), anchor="lm")
+    return img
 
 
 # ── background ───────────────────────────────────────────────────────────
@@ -302,8 +341,9 @@ def scene_alpha(t, dur, fade_in=0.35, fade_out=0.4):
 
 
 class Reel:
-    def __init__(self, kind, duration, theme, seed):
-        self.kind, self.duration, self.theme = kind, duration, theme
+    def __init__(self, kind, duration, theme, seed, lang="en"):
+        self.kind, self.duration, self.theme, self.lang = kind, duration, theme, lang
+        self.L = LABELS[lang]
         self.bg = Background(theme, seed)
         self.scenes = []
         self.icon_small = app_icon(theme["icon"], 84)
@@ -324,7 +364,7 @@ class Reel:
         img = Image.new("RGBA", (W, 130), (0, 0, 0, 0))
         img.paste(self.icon_small, (60, 23), self.icon_small)
         ImageDraw.Draw(img).text((162, 65), "Nakshatralogy", font=font(BOLD, 44), fill=GOLD + (255,), anchor="lm")
-        pill = chip(self.theme["pill"], 30, border=(150, 140, 200))
+        pill = chip(self.theme["pill"][self.lang], 30, border=(150, 140, 200))
         img.paste(pill, (W - 60 - pill.width, 65 - pill.height // 2), pill)
         return img
 
@@ -519,8 +559,8 @@ def chat_scene(reel, runs, sub, chips, user_q, ai_a):
     d = ImageDraw.Draw(card)
     d.ellipse((34, 30, 104, 100), fill=(60, 45, 120, 255))
     d.text((69, 65), "AI", font=font(BOLD, 28), fill=GOLD + (255,), anchor="mm")
-    d.text((124, 48), "AI Astrologer", font=font(BOLD, 34), fill=WHITE + (255,), anchor="lm")
-    d.text((124, 86), "Reads your own kundli", font=font(REG, 24), fill=MUTED + (255,), anchor="lm")
+    d.text((124, 48), reel.L["ai_name"], font=font(BOLD, 34), fill=WHITE + (255,), anchor="lm")
+    d.text((124, 88), reel.L["ai_sub"], font=font(REG, 24), fill=MUTED + (255,), anchor="lm")
     d.ellipse((CW - 70, 56, CW - 52, 74), fill=GREEN + (255,))
     d.line((30, 125, CW - 30, 125), fill=(70, 60, 120, 255), width=2)
     uq_lines, _ = rich_text([(user_q, (30, 20, 10), SEMI)], 34, max_w=560, weight=SEMI, shadow=False)
@@ -554,7 +594,7 @@ def chat_scene(reel, runs, sub, chips, user_q, ai_a):
         typing_start, text_start = 1.6, 2.5
         if t >= typing_start:
             n = int(clamp((t - text_start) / 3.6) * total_chars)
-            bub_h = (len(lines) * 46 + 44) if n > 0 else 90
+            bub_h = (len(lines) * 52 + 44) if n > 0 else 90
             bub_w = 760 if n > 0 else 160
             bub = rounded(bub_w, bub_h, 30, fill=(48, 40, 100, 255), outline=(95, 80, 160, 255), width=2)
             bd = ImageDraw.Draw(bub)
@@ -567,7 +607,8 @@ def chat_scene(reel, runs, sub, chips, user_q, ai_a):
                 for i, l in enumerate(lines):
                     if left <= 0:
                         break
-                    bd.text((26, 22 + i * 46), l[:left], font=af, fill=WHITE + (255,))
+                    part = l if left >= len(l) else l[:left].rsplit(" ", 1)[0]   # whole words only
+                    bd.text((26, 22 + i * 52), part, font=af, fill=WHITE + (255,))
                     left -= len(l)
             put(img, bub, cx + 34, ay, a * ease_out(prog(t, typing_start, typing_start + 0.3)))
     return fn
@@ -578,9 +619,9 @@ def forecast_scene(reel, runs, sub, chips):
     CW, CH = 900, 680
     card = rounded(CW, CH, 40, fill=(20, 16, 48, 235), outline=(105, 90, 160, 255), width=2)
     d = ImageDraw.Draw(card)
-    d.text((44, 56), "TODAY'S FORECAST", font=font(SEMI, 26), fill=GOLD + (255,), anchor="lm")
-    d.text((44, 100), "Your day, read from your chart", font=font(REG, 28), fill=MUTED + (255,), anchor="lm")
-    bars = [("Career", 82, GOLD), ("Love", 68, (236, 120, 170)), ("Health", 74, GREEN), ("Money", 77, ORANGE)]
+    d.text((44, 56), reel.L["fc_title"], font=font(SEMI, 28), fill=GOLD + (255,), anchor="lm")
+    d.text((44, 102), reel.L["fc_sub"], font=font(REG, 28), fill=MUTED + (255,), anchor="lm")
+    bars = list(zip(reel.L["fc_bars"], [82, 68, 74, 77], [GOLD, (236, 120, 170), GREEN, ORANGE]))
 
     def fn(img, t, dur):
         a = scene_alpha(t, dur)
@@ -604,11 +645,11 @@ def forecast_scene(reel, runs, sub, chips):
             yy = 200 + i * 66
             dd.text((bx, yy), lab, font=font(SEMI, 28), fill=WHITE + (255,), anchor="lm")
             qq = ease_out(prog(t, 1.2 + i * 0.2, 2.2 + i * 0.2))
-            dd.rounded_rectangle((bx + 130, yy - 9, bx + 470, yy + 9), 9, fill=(55, 48, 105, 255))
+            dd.rounded_rectangle((bx + 150, yy - 9, bx + 470, yy + 9), 9, fill=(55, 48, 105, 255))
             if qq > 0:
-                dd.rounded_rectangle((bx + 130, yy - 9, bx + 130 + int(340 * val / 100 * qq), yy + 9), 9,
+                dd.rounded_rectangle((bx + 150, yy - 9, bx + 150 + int(320 * val / 100 * qq), yy + 9), 9,
                                      fill=col + (255,))
-        tip = "Lucky colour: Yellow  ·  Good time: 10:30 – 12:00"
+        tip = reel.L["fc_tip"]
         qq = prog(t, 2.6, 3.2)
         dd.rounded_rectangle((44, 500, CW - 44, 600), 24, fill=(48, 40, 100, int(255 * qq)))
         dd.text((CW // 2, 550), tip, font=font(MED, 28), fill=WHITE + (int(255 * qq),), anchor="mm")
@@ -622,9 +663,8 @@ def earnings_scene(reel, runs, sub, chips):
     CW, CH = 900, 560
     card_base = rounded(CW, CH, 44, grad=((240, 180, 70), (226, 120, 60)))
     d = ImageDraw.Draw(card_base)
-    d.text((54, 64), "THIS MONTH  ·  YOUR 70%", font=font(SEMI, 28), fill=(70, 40, 10, 255), anchor="lm")
-    rows = [("Chat earning — 70% of ₹299", "+₹209.3"), ("Call earning — 70% of ₹450", "+₹315.0"),
-            ("Live gift — 70% of ₹200", "+₹140.0")]
+    d.text((54, 64), reel.L["earn_title"], font=font(SEMI, 28), fill=(70, 40, 10, 255), anchor="lm")
+    rows = list(zip(reel.L["earn_rows"], ["+₹209.3", "+₹315.0", "+₹140.0"]))
 
     def fn(img, t, dur):
         a = scene_alpha(t, dur)
@@ -655,10 +695,9 @@ def earnings_scene(reel, runs, sub, chips):
             bd.rounded_rectangle((0, 70, int((CW - 1) * 0.7 * sq), 150), 40, fill=GOLD + (255,))
             lq = prog(t, 3.2, 3.6)          # label once the gold fill has passed it
             if lq > 0:
-                bd.text((34, 110), "You keep 70%", font=font(BOLD, 36), fill=(40, 22, 6, int(255 * lq)), anchor="lm")
+                bd.text((34, 110), reel.L["keep"], font=font(BOLD, 36), fill=(40, 22, 6, int(255 * lq)), anchor="lm")
             bd.text((CW - 30, 110), "30%", font=font(SEMI, 30), fill=LAVENDER + (255,), anchor="rm")
-            bd.text((0, 26), "Every call, chat, gift & super chat", font=font(MED, 30), fill=LAVENDER + (255,),
-                    anchor="lm")
+            bd.text((0, 26), reel.L["keep_sub"], font=font(MED, 30), fill=LAVENDER + (255,), anchor="lm")
             put(img, bar, cx, cy + CH + 40, a * sq)
     return fn
 
@@ -696,7 +735,7 @@ def steps_scene(reel, runs, steps, chips=None, scene=None, first_sentence=1):
     return fn
 
 
-def cta_scene(reel, runs, button, url, small, sub=None):
+def cta_scene(reel, runs, button, sub=None):
     lines, lh = rich_text(runs, 88, max_w=960)
     sub_l = rich_text([(sub, LAVENDER, REG)], 40, max_w=900, weight=REG, shadow=False)[0] if sub else []
     bf = font(BOLD, 52)
@@ -712,8 +751,7 @@ def cta_scene(reel, runs, button, url, small, sub=None):
         bd.line((ax, 66, ax + 40, 66), fill=(35, 18, 6, 255), width=7)
         bd.line((ax + 24, 50, ax + 41, 66, ax + 24, 82), fill=(35, 18, 6, 255), width=7, joint="curve")
     bg_, boff = glow(bw, 128, ORANGE, 40, 150)
-    url_img = rich_text([(url, GOLD, SEMI)], 46, max_w=1000, weight=SEMI, shadow=False)[0][0]
-    small_img = chip(small, 30, border=(150, 140, 200), dot=GREEN)
+    badge = play_badge(reel.lang)
     g, off = glow(220, 220, reel.theme["glow"], 70, 150)
     icon = app_icon(reel.theme["icon"], 220)
 
@@ -744,47 +782,57 @@ def cta_scene(reel, runs, button, url, small, sub=None):
                            Image.BILINEAR)
             put(img, bg_, (W - bw) // 2 - boff, y - boff, a * clamp(q) * 0.55)
             put(img, b, (W - b.width) // 2, y + (128 - b.height) // 2, a * clamp(q))
-        y += 170
-        q = ease_out(prog(t, 1.3, 1.8))
-        put(img, url_img, (W - url_img.width) // 2, y, a * q)
-        y += 90
-        q = ease_out(prog(t, 1.6, 2.1))
-        put(img, small_img, (W - small_img.width) // 2, y, a * q)
+        y += 180
+        q = back_out(prog(t, 1.3, 1.8))
+        put(img, badge, (W - badge.width) // 2, y + (1 - clamp(q)) * 40, a * clamp(q))
     return fn
 
 
 # ── voiceover ────────────────────────────────────────────────────────────
 VOICE_DIR = Path.home() / ".cache" / "nakshatralogy-voices"
-VOICE = "en-us-ryan-high"          # Piper neural voice (MIT), male, natural ad read
-VOICE_URL = "https://github.com/rhasspy/piper/releases/download/v0.0.2/voice-{}.tar.gz"
-NAME = "Nukshuttrology"            # spelt for the TTS: nuk-shuh-TRAH-luh-jee
+# Piper neural voices (offline). English: en-us-ryan-high (MIT). Hindi:
+# hi_IN-rohan-medium, trained on IIT Madras' IndicTTS Hindi male dataset —
+# check that dataset's licence before paid promotion.
+VOICES = {
+    "en": dict(dir="en-us-ryan-high", model="en-us-ryan-high.onnx",
+               url="https://github.com/rhasspy/piper/releases/download/v0.0.2/voice-en-us-ryan-high.tar.gz",
+               into="en-us-ryan-high"),
+    "hi": dict(dir="vits-piper-hi_IN-rohan-medium", model="hi_IN-rohan-medium.onnx",
+               url="https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/"
+                   "vits-piper-hi_IN-rohan-medium.tar.bz2",
+               into=""),
+}
+NAME = "Nukshuttrology"            # spelt for the English TTS: nuk-shuh-TRAH-luh-jee
+NAME_HI = "नक्षत्रालॉजी"
 SENTENCE_GAP = 0.28
+VOICE_PACE = {"en": 0.92, "hi": 0.86}    # Piper length_scale; Rohan reads slowly, so a little brisker
 
 
 @lru_cache(maxsize=None)
-def piper_voice(name=VOICE):
+def piper_voice(lang):
     import tarfile
     from piper import PiperVoice
-    model = VOICE_DIR / name / f"{name}.onnx"
+    v = VOICES[lang]
+    model = VOICE_DIR / v["dir"] / v["model"]
     if not model.exists():
-        (VOICE_DIR / name).mkdir(parents=True, exist_ok=True)
-        tgz = VOICE_DIR / f"{name}.tar.gz"
-        urllib.request.urlretrieve(VOICE_URL.format(name), tgz)
-        with tarfile.open(tgz) as tf:
-            tf.extractall(VOICE_DIR / name)
-        tgz.unlink()
+        VOICE_DIR.mkdir(parents=True, exist_ok=True)
+        arc = VOICE_DIR / v["url"].rsplit("/", 1)[1]
+        urllib.request.urlretrieve(v["url"], arc)
+        with tarfile.open(arc) as tf:
+            tf.extractall(VOICE_DIR / v["into"])
+        arc.unlink()
     return PiperVoice.load(str(model))
 
 
-def speak(text, length_scale):
+def speak(text, length_scale, lang):
     """-> (sample_rate, [float32 array per sentence])"""
     from piper import SynthesisConfig
     cfg = SynthesisConfig(length_scale=length_scale, noise_scale=0.7, noise_w_scale=0.85)
-    chunks = list(piper_voice().synthesize(text, syn_config=cfg))
+    chunks = list(piper_voice(lang).synthesize(text, syn_config=cfg))
     return chunks[0].sample_rate, [c.audio_float_array.astype(np.float32) for c in chunks]
 
 
-def voiceover(lines, plan, duration, path):
+def voiceover(lines, plan, duration, path, lang="en"):
     """lines: [(scene index, text)]. Each line starts shortly after its scene
     begins (or after the previous line ends); a line that would run long into
     the next scene is read a little faster. Writes a mono WAV and returns the
@@ -794,8 +842,9 @@ def voiceover(lines, plan, duration, path):
         start_at = plan[sc][0]
         nxt = lines[li + 1][0] if li + 1 < len(lines) else None
         limit = (plan[nxt][0] + 0.5) if nxt is not None else duration - 0.6
-        for ls in (0.92, 0.88, 0.84, 0.8, 0.76):
-            sr, sents = speak(text, ls)
+        base = VOICE_PACE[lang]
+        for ls in (base, base - 0.04, base - 0.08, base - 0.12, base - 0.16):
+            sr, sents = speak(text, ls, lang)
             total = sum(len(x) for x in sents) / sr + SENTENCE_GAP * (len(sents) - 1)
             t0 = max(start_at + 0.25, prev_end + 0.2)
             if t0 + total <= limit:
@@ -838,7 +887,7 @@ VOICE_SCRIPT = {
         (5, "Got a question? Ask our A I astrologer. It reads your own chart, and answers in English, Hindi, "
             "Hinglish, and more."),
         (6, "And start every day with your personal forecast. Lucky colours and the best timings, made just for you."),
-        (7, f"Know your stars. Shape your future. Download {NAME} free, on Google Play, today."),
+        (7, f"Know your stars. Shape your future. Download {NAME} free, from the Play Store, today."),
     ],
     "user_30": [
         (0, "Career stuck? Marriage delayed? Money not stable? Your kundli has the answers."),
@@ -846,7 +895,7 @@ VOICE_SCRIPT = {
         (2, "Talk to expert astrologers, twenty-four seven, on chat, call, or video."),
         (3, "Unlock nineteen deep life reports, on career, wealth, love, and health."),
         (4, "Or ask our A I astrologer. Answers from your own chart, in your language."),
-        (5, f"Know your stars. Download {NAME} free, today."),
+        (5, f"Know your stars. Download {NAME} free, from the Play Store."),
     ],
     "astro_60": [
         (0, "Are you an astrologer? Your wisdom deserves a bigger stage."),
@@ -857,7 +906,7 @@ VOICE_SCRIPT = {
         (4, "And the best part? You keep seventy percent of every earning, and withdraw to your bank, anytime."),
         (5, "Build a trusted profile with your experience, specialities, and ratings, and let clients find you."),
         (6, "Getting started takes just three steps. Sign up free. Verify your K Y C. And go online."),
-        (7, f"Grow your practice online. Sign up free today, at astro dot {NAME} dot com."),
+        (7, f"Grow your practice online. Download {NAME} Astro from the Play Store, and sign up free."),
     ],
     "astro_30": [
         (0, "Astrologer? Earn from your wisdom."),
@@ -865,20 +914,58 @@ VOICE_SCRIPT = {
         (2, "Consult clients by chat, call, and video, from anywhere."),
         (3, "Keep seventy percent of every earning, and withdraw anytime."),
         (4, "Sign up free. Verify your K Y C. Start earning."),
-        (5, f"Join {NAME} Astro today. Sign up free."),
+        (5, f"Download {NAME} Astro from the Play Store today."),
+    ],
+    "user_60_hi": [
+        (0, "करियर रुका है? शादी में देरी? पैसों की तंगी? जवाब आपकी कुंडली में है।"),
+        (1, f"पेश है {NAME_HI}। वैदिक ज्योतिष, आपके लिए।"),
+        (2, "अनुभवी ज्योतिषियों से बात कीजिए, चैट, कॉल या वीडियो पर, जब चाहें।"),
+        (3, "सेकंडों में पाइए अपनी मुफ़्त कुंडली। ग्रह, नक्षत्र, दशाएँ, सब कुछ एकदम सटीक।"),
+        (4, "उन्नीस गहरी जीवन रिपोर्ट। करियर, धन, विवाह, प्रेम और सेहत, सब पर विस्तार से।"),
+        (5, "कोई सवाल है? हमारे ए आई ज्योतिषी से पूछिए। यह आपकी कुंडली पढ़कर, आपकी भाषा में जवाब देता है।"),
+        (6, "और रोज़ पाइए अपना दैनिक राशिफल, शुभ रंग और शुभ समय के साथ।"),
+        (7, f"सितारों को जानिए, भविष्य संवारिए। आज ही प्ले स्टोर से {NAME_HI} मुफ़्त डाउनलोड कीजिए।"),
+    ],
+    "user_30_hi": [
+        (0, "करियर रुका है? शादी में देरी? पैसों की तंगी? जवाब आपकी कुंडली में है।"),
+        (1, f"पेश है {NAME_HI}।"),
+        (2, "अनुभवी ज्योतिषियों से बात कीजिए, चैट, कॉल या वीडियो पर।"),
+        (3, "उन्नीस गहरी जीवन रिपोर्ट, करियर, धन, प्रेम और स्वास्थ्य पर।"),
+        (4, "या पूछिए हमारे ए आई ज्योतिषी से, अपनी भाषा में।"),
+        (5, f"आज ही प्ले स्टोर से {NAME_HI} डाउनलोड कीजिए।"),
+    ],
+    "astro_60_hi": [
+        (0, "क्या आप ज्योतिषी हैं? आपके ज्ञान को चाहिए, एक बड़ा मंच।"),
+        (1, f"{NAME_HI} एस्ट्रो। अपनी ज्योतिष प्रैक्टिस, ऑनलाइन बढ़ाइए।"),
+        (2, "चैट, कॉल और वीडियो पर परामर्श दीजिए। हर सेशन अपने आप मीटर होता है, ताकि कोई क्लाइंट न छूटे।"),
+        (3, "लाइव जाइए। सवाल-जवाब कीजिए, प्रति मिनट कमाइए, और रियल टाइम में गिफ़्ट और सुपर चैट पाइए।"),
+        (4, "और सबसे अच्छी बात? हर कमाई का सत्तर प्रतिशत आपका, और जब चाहें बैंक में निकालिए।"),
+        (5, "अपने अनुभव, विशेषज्ञता और रेटिंग के साथ भरोसेमंद प्रोफ़ाइल बनाइए, ताकि क्लाइंट्स आपको ढूँढें।"),
+        (6, "शुरुआत सिर्फ़ तीन स्टेप में। मुफ़्त साइन अप कीजिए। के वाई सी पूरा कीजिए। और ऑनलाइन आइए।"),
+        (7, f"अपनी प्रैक्टिस ऑनलाइन बढ़ाइए। आज ही प्ले स्टोर से {NAME_HI} एस्ट्रो डाउनलोड कीजिए।"),
+    ],
+    "astro_30_hi": [
+        (0, "ज्योतिषी हैं? अपने ज्ञान से कमाइए।"),
+        (1, f"पेश है {NAME_HI} एस्ट्रो।"),
+        (2, "चैट, कॉल और वीडियो पर परामर्श दीजिए, कहीं से भी।"),
+        (3, "हर कमाई का सत्तर प्रतिशत आपका, कभी भी निकालिए।"),
+        (4, "मुफ़्त साइन अप। के वाई सी। और कमाई शुरू।"),
+        (5, f"आज ही प्ले स्टोर से {NAME_HI} एस्ट्रो डाउनलोड कीजिए।"),
     ],
 }
 
 
 # ── reels ────────────────────────────────────────────────────────────────
 USER_THEME = dict(
-    bg_top=(30, 22, 72), bg_bottom=(9, 8, 30), glow=(150, 90, 220), pill="Free Kundli",
+    bg_top=(30, 22, 72), bg_bottom=(9, 8, 30), glow=(150, 90, 220),
+    pill={"en": "Free Kundli", "hi": "मुफ़्त कुंडली"},
     icon=ROOT / "flutter_user/assets/icon/app_icon.png",
     mandala=ROOT / "flutter_user/assets/icon/ic_launcher_foreground.png",
     nebulae=[(150, 250, 520, (95, 60, 180), 150), (1050, 1700, 560, (170, 60, 120), 130),
              (300, 1300, 380, (60, 40, 140), 90)])
 ASTRO_THEME = dict(
-    bg_top=(32, 20, 58), bg_bottom=(9, 8, 28), glow=(240, 150, 60), pill="For Astrologers",
+    bg_top=(32, 20, 58), bg_bottom=(9, 8, 28), glow=(240, 150, 60),
+    pill={"en": "For Astrologers", "hi": "ज्योतिषियों के लिए"},
     icon=MEDIA / "play_console/astrologer/00_app_icon_512.png",
     mandala=ROOT / "flutter_astro/assets/logos/nakshatralogy-astrologer-logos/nakshatralogy-astrologer-logos/"
                    "nakshatralogy-astrologer-mandala-transparent-1024.png",
@@ -887,77 +974,142 @@ ASTRO_THEME = dict(
 
 PC_BOX = (560, 1640, 1600, 3670)
 IG_BOX = (250, 525, 830, 1265)
-USER_SITE = "nakshatralogy.com"
-ASTRO_SITE = "astro.nakshatralogy.com"
+
+# On-screen copy. Runs are (text, colour); GOLD marks the highlighted words.
+USER_COPY = {
+    "en": dict(
+        hook=["Career stuck?", "Marriage delayed?", "Money not stable?"],
+        punch=[("Your ", WHITE), ("kundli", GOLD), ("has the answers.", WHITE)],
+        tagline="Vedic astrology, made personal",
+        experts=([("Talk to ", WHITE), ("expert astrologers", GOLD), ("24×7", WHITE)],
+                 "Chat, call or video with verified Vedic, KP & Nadi astrologers.", ["Chat", "Call", "Video"]),
+        kundli=([("Your ", WHITE), ("free Kundli", GOLD), ("in seconds", WHITE)],
+                "Planets, nakshatras, dashas & all 20 divisional charts — to the degree.",
+                ["D1–D60", "Vimshottari", "Doshas & yogas"]),
+        reports=([("19 ", GOLD), ("deep life reports", WHITE)],
+                 "Career, wealth, marriage, love, health & more — 2,000+ data points each.",
+                 ["19 engines", "AI-powered", "Instant"]),
+        chat=([("Ask our ", WHITE), ("AI astrologer", GOLD)],
+              "Answers from your own chart — in English, Hindi, Hinglish & more.",
+              ["11 languages", "Your chart", "24×7"]),
+        chat_q="When will I get a new job?",
+        chat_a="Rahul, Jupiter's period that begins next year activates your 10th house of career — "
+               "a strong window for a new role. Keep sharpening your skills till then.",
+        forecast=([("Start every day with your ", WHITE), ("daily forecast", GOLD)],
+                  "Personal scores, lucky colour and good timings — from your own chart.",
+                  ["Daily", "Personal", "Transits"]),
+        cta=[("Know your stars.", WHITE), ("\n", WHITE), ("Shape your future.", GOLD)],
+        button="Download free", cta_sub="Free Kundli · Expert astrologers · AI answers"),
+    "hi": dict(
+        hook=["करियर रुका है?", "शादी में देरी?", "पैसों की तंगी?"],
+        punch=[("जवाब आपकी ", WHITE), ("कुंडली", GOLD), ("में है।", WHITE)],
+        tagline="वैदिक ज्योतिष, सिर्फ़ आपके लिए",
+        experts=([("अनुभवी ज्योतिषियों", GOLD), ("से बात करें 24×7", WHITE)],
+                 "सत्यापित वैदिक, KP और नाड़ी ज्योतिषियों से चैट, कॉल या वीडियो पर।", ["चैट", "कॉल", "वीडियो"]),
+        kundli=([("आपकी ", WHITE), ("मुफ़्त कुंडली", GOLD), ("सेकंडों में", WHITE)],
+                "ग्रह, नक्षत्र, दशाएँ और सभी 20 वर्ग कुंडलियाँ — डिग्री तक सटीक।",
+                ["D1–D60", "विंशोत्तरी", "दोष और योग"]),
+        reports=([("19 ", GOLD), ("गहरी जीवन रिपोर्ट", WHITE)],
+                 "करियर, धन, विवाह, प्रेम, स्वास्थ्य और बहुत कुछ — हर रिपोर्ट में 2,000+ डेटा पॉइंट।",
+                 ["19 इंजन", "AI-आधारित", "तुरंत"]),
+        chat=([("हमारे ", WHITE), ("AI ज्योतिषी", GOLD), ("से पूछें", WHITE)],
+              "आपकी अपनी कुंडली से जवाब — हिंदी, English, Hinglish और कई भाषाओं में।",
+              ["11 भाषाएँ", "आपकी कुंडली", "24×7"]),
+        chat_q="मेरी नई नौकरी कब लगेगी?",
+        chat_a="राहुल, अगले साल से शुरू हो रही गुरु की दशा आपके दसवें भाव (करियर) को सक्रिय करती है — "
+               "नई नौकरी के लिए मज़बूत समय। तब तक अपनी स्किल्स निखारते रहिए।",
+        forecast=([("हर दिन की शुरुआत ", WHITE), ("दैनिक राशिफल", GOLD), ("के साथ", WHITE)],
+                  "निजी स्कोर, शुभ रंग और शुभ समय — आपकी अपनी कुंडली से।", ["रोज़ाना", "निजी", "गोचर"]),
+        cta=[("सितारों को जानिए।", WHITE), ("\n", WHITE), ("भविष्य संवारिए।", GOLD)],
+        button="मुफ़्त डाउनलोड करें", cta_sub="मुफ़्त कुंडली · अनुभवी ज्योतिषी · AI जवाब"),
+}
+
+ASTRO_COPY = {
+    "en": dict(
+        hook60=["Astrologer?", "Your wisdom deserves"], punch60=[("a bigger stage.", GOLD)],
+        hook30=["Astrologer?"], punch30=[("Earn from your ", WHITE), ("wisdom.", GOLD)],
+        tagline="Grow your astrology practice", pill="For Astrologers",
+        consult=([("Chat, Call & Video", GOLD), ("consultations", WHITE)],
+                 "Accept requests, run server-metered sessions and never miss a client.", ["Chat", "Voice", "Video"]),
+        live=([("Go Live", GOLD), ("& receive gifts", WHITE)],
+              "Host live Q&A — earn per minute, gifts and super chats in real time.",
+              ["Per-minute", "Live gifts", "Super chat"]),
+        earn=([("Keep ", WHITE), ("70%", GOLD), ("of every earning", WHITE)],
+              "Calls, chats, gifts & super chats — withdraw to your bank anytime.",
+              ["70% payout", "Only 10% TDS", "Instant statements"]),
+        profile=([("Your ", WHITE), ("trusted", GOLD), ("astrologer profile", WHITE)],
+                 "Show your experience, specialities and ratings — build client trust.",
+                 ["Verified", "Ratings", "Specialities"]),
+        steps=([("Start earning in ", WHITE), ("3 steps", GOLD)],
+               ["Sign up free in minutes", "Verify KYC — PAN / GST + bank", "Go online & start earning"]),
+        cta=[("Grow your practice ", WHITE), ("online.", GOLD)], button="Sign up free →",
+        cta_sub="Reach seekers across India — on your schedule."),
+    "hi": dict(
+        hook60=["ज्योतिषी हैं?", "आपके ज्ञान को चाहिए"], punch60=[("एक बड़ा मंच।", GOLD)],
+        hook30=["ज्योतिषी हैं?"], punch30=[("अपने ", WHITE), ("ज्ञान", GOLD), ("से कमाइए।", WHITE)],
+        tagline="अपनी ज्योतिष प्रैक्टिस बढ़ाइए", pill="ज्योतिषियों के लिए",
+        consult=([("चैट, कॉल और वीडियो", GOLD), ("परामर्श", WHITE)],
+                 "अनुरोध स्वीकारें, सर्वर-मीटर्ड सेशन चलाएँ और कोई क्लाइंट न छूटे।", ["चैट", "वॉइस", "वीडियो"]),
+        live=([("लाइव", GOLD), ("जाएँ और गिफ़्ट पाएँ", WHITE)],
+              "लाइव Q&A करें — प्रति मिनट कमाई, गिफ़्ट और सुपर चैट, रियल टाइम में।",
+              ["प्रति मिनट", "लाइव गिफ़्ट", "सुपर चैट"]),
+        earn=([("हर कमाई का ", WHITE), ("70%", GOLD), ("आपका", WHITE)],
+              "कॉल, चैट, गिफ़्ट और सुपर चैट — कभी भी बैंक में निकालें।",
+              ["70% भुगतान", "सिर्फ़ 10% TDS", "तुरंत स्टेटमेंट"]),
+        profile=([("आपकी ", WHITE), ("भरोसेमंद", GOLD), ("ज्योतिषी प्रोफ़ाइल", WHITE)],
+                 "अपना अनुभव, विशेषज्ञता और रेटिंग दिखाइए — क्लाइंट का भरोसा बनाइए।",
+                 ["सत्यापित", "रेटिंग", "विशेषज्ञता"]),
+        steps=([("कमाई शुरू करें ", WHITE), ("3 आसान स्टेप", GOLD), ("में", WHITE)],
+               ["मिनटों में मुफ़्त साइन अप", "KYC सत्यापन — PAN / GST + बैंक", "ऑनलाइन आएँ और कमाएँ"]),
+        cta=[("अपनी प्रैक्टिस ", WHITE), ("ऑनलाइन", GOLD), ("बढ़ाइए।", WHITE)], button="मुफ़्त साइन अप →",
+        cta_sub="पूरे भारत के लोगों तक पहुँचिए — अपने समय पर।"),
+}
 
 
 def user_scenes(reel, long):
+    c = USER_COPY[reel.lang]
     consult = phone_crop(MEDIA / "play_console/user/02_consult.png", PC_BOX, 720)
     reports = phone_crop(MEDIA / "play_console/user/03_kundli.png", PC_BOX, 720)
     hook = hook_scene(
-        reel, [([("Career stuck?", WHITE)], 96, 0.1), ([("Marriage delayed?", WHITE)], 96, 0.8),
-               ([("Money not stable?", WHITE)], 96, 1.5)],
-        [("Your ", WHITE), ("kundli", GOLD), ("has the answers.", WHITE)], 2.6,
-        cues=[(0, 0), (1, 0), (2, 0), (3, 0)])
-    experts = phone_scene(reel, [("Talk to ", WHITE), ("expert astrologers", GOLD), ("24×7", WHITE)],
-                          "Chat, call or video with verified Vedic, KP & Nadi astrologers.",
-                          ["Chat", "Call", "Video"], consult)
-    reps = phone_scene(reel, [("19 ", GOLD), ("deep life reports", WHITE)],
-                       "Career, wealth, marriage, love, health & more — 2,000+ data points each.",
-                       ["19 engines", "AI-powered", "Instant"], reports)
-    chat = chat_scene(reel, [("Ask our ", WHITE), ("AI astrologer", GOLD)],
-                      "Answers from your own chart — in English, Hindi, Hinglish & more.",
-                      ["11 languages", "Your chart", "24×7"],
-                      "When will I get a new job?",
-                      "Rahul, Jupiter's period that begins next year activates your 10th house of career — "
-                      "a strong window for a new role. Keep sharpening your skills till then.")
-    cta = cta_scene(reel, [("Know your stars.", WHITE), ("\n", WHITE), ("Shape your future.", GOLD)],
-                    "Download free", USER_SITE, "Get it on Google Play",
-                    sub="Free Kundli · Expert astrologers · AI answers")
+        reel, [([(c["hook"][0], WHITE)], 96, 0.1), ([(c["hook"][1], WHITE)], 96, 0.8),
+               ([(c["hook"][2], WHITE)], 96, 1.5)],
+        c["punch"], 2.6, cues=[(0, 0), (1, 0), (2, 0), (3, 0)])
+    experts = phone_scene(reel, *c["experts"], consult)
+    reps = phone_scene(reel, *c["reports"], reports)
+    chat = chat_scene(reel, *c["chat"], c["chat_q"], c["chat_a"])
+    cta = cta_scene(reel, c["cta"], c["button"], sub=c["cta_sub"])
+    logo = logo_scene(reel, c["tagline"])
     if long:
-        kundli = kundli_scene(reel, [("Your ", WHITE), ("free Kundli", GOLD), ("in seconds", WHITE)],
-                              "Planets, nakshatras, dashas & all 20 divisional charts — to the degree.",
-                              ["D1–D60", "Vimshottari", "Doshas & yogas"])
-        fc = forecast_scene(reel, [("Start every day with your ", WHITE), ("daily forecast", GOLD)],
-                            "Personal scores, lucky colour and good timings — from your own chart.",
-                            ["Daily", "Personal", "Transits"])
-        plan = [(0, 5.5, hook), (5.5, 10.5, logo_scene(reel, "Vedic astrology, made personal")),
-                (10.5, 19, experts), (19, 27.5, kundli), (27.5, 36, reps), (36, 45, chat), (45, 52, fc),
-                (52, 60, cta)]
+        kundli = kundli_scene(reel, *c["kundli"])
+        fc = forecast_scene(reel, *c["forecast"])
+        h, l_end = (7.2, 11.8) if reel.lang == "hi" else (5.5, 10.5)    # the Hindi read is longer
+        plan = [(0, h, hook), (h, l_end, logo), (l_end, 19, experts),
+                (19, 27.5, kundli), (27.5, 36, reps), (36, 45, chat), (45, 52, fc), (52, 60, cta)]
     else:
-        plan = [(0, 4.8, hook), (4.8, 7.5, logo_scene(reel, "Vedic astrology, made personal")),
-                (7.5, 13.5, experts), (13.5, 19, reps), (19, 25, chat), (25, 30, cta)]
+        h, l_end = (6.8, 8.8) if reel.lang == "hi" else (4.8, 7.5)
+        plan = [(0, h, hook), (h, l_end, logo), (l_end, 13.5, experts), (13.5, 19, reps), (19, 25, chat),
+                (25, 30, cta)]
     return plan
 
 
 def astro_scenes(reel, long):
+    c = ASTRO_COPY[reel.lang]
     consult = phone_crop(MEDIA / "play_console/astrologer/02_consult.png", PC_BOX, 720)
     profile = phone_crop(MEDIA / "play_console/astrologer/04_earn70.png", PC_BOX, 720)
     golive = phone_crop(MEDIA / "instagram/01_join.png", IG_BOX, 720)
-    hook = hook_scene(
-        reel, [([("Astrologer?", WHITE)], 110, 0.1), ([("Your wisdom deserves", WHITE)], 80, 0.9)],
-        [("a bigger stage.", GOLD)], 1.8, cues=[(0, 0), (1, 0), (1, 0.55)]) if long else hook_scene(
-        reel, [([("Astrologer?", WHITE)], 110, 0.1)], [("Earn from your ", WHITE), ("wisdom.", GOLD)], 1.0,
-        cues=[(0, 0), (1, 0)])
-    consult_s = phone_scene(reel, [("Chat, Call & Video", GOLD), ("consultations", WHITE)],
-                            "Accept requests, run server-metered sessions and never miss a client.",
-                            ["Chat", "Voice", "Video"], consult)
-    earn = earnings_scene(reel, [("Keep ", WHITE), ("70%", GOLD), ("of every earning", WHITE)],
-                          "Calls, chats, gifts & super chats — withdraw to your bank anytime.",
-                          ["70% payout", "Only 10% TDS", "Instant statements"])
-    steps = steps_scene(reel, [("Start earning in ", WHITE), ("3 steps", GOLD)],
-                        ["Sign up free in minutes", "Verify KYC — PAN / GST + bank", "Go online & start earning"],
-                        scene=6 if long else 4, first_sentence=1 if long else 0)
-    cta = cta_scene(reel, [("Grow your practice ", WHITE), ("online.", GOLD)], "Sign up free →", ASTRO_SITE,
-                    "Nakshatralogy Astro · Google Play", sub="Reach seekers across India — on your schedule.")
-    logo = logo_scene(reel, "Grow your astrology practice", pill="For Astrologers")
     if long:
-        live = phone_scene(reel, [("Go Live", GOLD), ("& receive gifts", WHITE)],
-                           "Host live Q&A — earn per minute, gifts and super chats in real time.",
-                           ["Per-minute", "Live gifts", "Super chat"], golive)
-        prof = phone_scene(reel, [("Your ", WHITE), ("trusted", GOLD), ("astrologer profile", WHITE)],
-                           "Show your experience, specialities and ratings — build client trust.",
-                           ["Verified", "Ratings", "Specialities"], profile)
+        hook = hook_scene(reel, [([(c["hook60"][0], WHITE)], 110, 0.1), ([(c["hook60"][1], WHITE)], 80, 0.9)],
+                          c["punch60"], 1.8, cues=[(0, 0), (1, 0), (1, 0.55)])
+    else:
+        hook = hook_scene(reel, [([(c["hook30"][0], WHITE)], 110, 0.1)], c["punch30"], 1.0, cues=[(0, 0), (1, 0)])
+    consult_s = phone_scene(reel, *c["consult"], consult)
+    earn = earnings_scene(reel, *c["earn"])
+    steps = steps_scene(reel, *c["steps"], scene=6 if long else 4, first_sentence=1 if long else 0)
+    cta = cta_scene(reel, c["cta"], c["button"], sub=c["cta_sub"])
+    logo = logo_scene(reel, c["tagline"], pill=c["pill"])
+    if long:
+        live = phone_scene(reel, *c["live"], golive)
+        prof = phone_scene(reel, *c["profile"], profile)
         plan = [(0, 5.5, hook), (5.5, 10.5, logo), (10.5, 19, consult_s), (19, 27, live), (27, 36, earn),
                 (36, 44, prof), (44, 52, steps), (52, 60, cta)]
     else:
@@ -966,11 +1118,16 @@ def astro_scenes(reel, long):
     return plan
 
 
+# key: (folder, seconds, theme, scenes, long cut, language, file name)
 REELS = {
-    "user_60": ("user", 60, USER_THEME, user_scenes, True, "nakshatralogy_user_60s.mp4"),
-    "user_30": ("user", 30, USER_THEME, user_scenes, False, "nakshatralogy_user_30s.mp4"),
-    "astro_60": ("astro", 60, ASTRO_THEME, astro_scenes, True, "nakshatralogy_astro_60s.mp4"),
-    "astro_30": ("astro", 30, ASTRO_THEME, astro_scenes, False, "nakshatralogy_astro_30s.mp4"),
+    "user_60": ("user", 60, USER_THEME, user_scenes, True, "en", "nakshatralogy_user_60s.mp4"),
+    "user_30": ("user", 30, USER_THEME, user_scenes, False, "en", "nakshatralogy_user_30s.mp4"),
+    "astro_60": ("astro", 60, ASTRO_THEME, astro_scenes, True, "en", "nakshatralogy_astro_60s.mp4"),
+    "astro_30": ("astro", 30, ASTRO_THEME, astro_scenes, False, "en", "nakshatralogy_astro_30s.mp4"),
+    "user_60_hi": ("user", 60, USER_THEME, user_scenes, True, "hi", "nakshatralogy_user_60s_hindi.mp4"),
+    "user_30_hi": ("user", 30, USER_THEME, user_scenes, False, "hi", "nakshatralogy_user_30s_hindi.mp4"),
+    "astro_60_hi": ("astro", 60, ASTRO_THEME, astro_scenes, True, "hi", "nakshatralogy_astro_60s_hindi.mp4"),
+    "astro_30_hi": ("astro", 30, ASTRO_THEME, astro_scenes, False, "hi", "nakshatralogy_astro_30s_hindi.mp4"),
 }
 
 
@@ -983,15 +1140,15 @@ def ffmpeg_exe():
 
 
 def build(key, preview_at=None):
-    folder, dur, theme, scenes_fn, long, fname = REELS[key]
-    reel = Reel(folder, dur, theme, seed=hash(key) % 1000)
+    folder, dur, theme, scenes_fn, long, lang, fname = REELS[key]
+    reel = Reel(folder, dur, theme, seed=sum(map(ord, key)) % 1000, lang=lang)
     plan = scenes_fn(reel, long)
     for a, b, fn in plan:
         reel.add(a, b, fn)
     out_dir = OUT / folder
     out_dir.mkdir(parents=True, exist_ok=True)
     wav = out_dir / (fname + ".voice.wav")
-    reel.cues = voiceover(VOICE_SCRIPT[key], plan, dur, wav)
+    reel.cues = voiceover(VOICE_SCRIPT[key], plan, dur, wav, lang)
     if preview_at is not None:
         wav.unlink(missing_ok=True)
         return reel.render_frame(preview_at)
