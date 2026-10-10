@@ -635,7 +635,9 @@ def earnings_scene(reel, runs, sub, chips):
             bd = ImageDraw.Draw(bar)
             bd.rounded_rectangle((0, 70, CW - 1, 150), 40, fill=(45, 38, 95, 255))
             bd.rounded_rectangle((0, 70, int((CW - 1) * 0.7 * sq), 150), 40, fill=GOLD + (255,))
-            bd.text((34, 110), "You keep 70%", font=font(BOLD, 36), fill=(40, 22, 6, 255), anchor="lm")
+            lq = prog(t, 3.2, 3.6)          # label once the gold fill has passed it
+            if lq > 0:
+                bd.text((34, 110), "You keep 70%", font=font(BOLD, 36), fill=(40, 22, 6, int(255 * lq)), anchor="lm")
             bd.text((CW - 30, 110), "30%", font=font(SEMI, 30), fill=LAVENDER + (255,), anchor="rm")
             bd.text((0, 26), "Every call, chat, gift & super chat", font=font(MED, 30), fill=LAVENDER + (255,),
                     anchor="lm")
