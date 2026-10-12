@@ -383,15 +383,11 @@ class _HomeTabState extends State<HomeTab> {
               ]),
             ),
             if (locked)
+              // Lock only — the prices (one-time or time plans) are in the buy popup.
               Positioned(top: 4, right: 4, child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                decoration: BoxDecoration(color: AppColors.gold, borderRadius: BorderRadius.circular(8)),
-                child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  const Icon(Icons.lock, size: 9, color: AppColors.midnight),
-                  const SizedBox(width: 2),
-                  // "Unlock" — the real prices (one-time or time plans) are in the buy popup.
-                  Text(AppLocalizations.of(context)!.unlock, style: const TextStyle(color: AppColors.midnight, fontSize: 8, fontWeight: FontWeight.bold)),
-                ]),
+                padding: const EdgeInsets.all(4),
+                decoration: const BoxDecoration(color: AppColors.gold, shape: BoxShape.circle),
+                child: const Icon(Icons.lock, size: 10, color: AppColors.midnight),
               )),
           ]));
         },

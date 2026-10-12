@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
-import '../../l10n/gen/app_localizations.dart';
 import '../../services/api_service.dart';
 import '../../utils/ai_topics.dart';
 import '../../widgets/ai_agent_paywall.dart';
@@ -177,15 +176,12 @@ class _AiChatListScreenState extends State<AiChatListScreen> {
                             ]),
                           ),
                           if (locked)
-                            Positioned(top: 6, right: 6, child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                              decoration: BoxDecoration(color: AppColors.gold, borderRadius: BorderRadius.circular(8)),
-                              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                                const Icon(Icons.lock, size: 9, color: AppColors.midnight),
-                                const SizedBox(width: 2),
-                                Text(AppLocalizations.of(context)!.unlock,
-                                    style: const TextStyle(color: AppColors.midnight, fontSize: 8, fontWeight: FontWeight.bold)),
-                              ]),
+                            const Positioned(top: 6, right: 6, child: DecoratedBox(
+                              decoration: BoxDecoration(color: AppColors.gold, shape: BoxShape.circle),
+                              child: Padding(
+                                padding: EdgeInsets.all(4),
+                                child: Icon(Icons.lock, size: 10, color: AppColors.midnight),
+                              ),
                             )),
                         ]),
                       ),
