@@ -3426,7 +3426,7 @@
   "password": "Kata Sandi",
   "confirmPassword": "Konfirmasi Kata Sandi",
   "fullName": "Nama Lengkap",
-  "phone": "Telepon (opsional)",
+  "phone": "Telepon",
   "forgotPassword": "Lupa Kata Sandi?",
   "sendResetLink": "Kirim Tautan Reset",
   "backToSignIn": "Kembali ke Masuk",

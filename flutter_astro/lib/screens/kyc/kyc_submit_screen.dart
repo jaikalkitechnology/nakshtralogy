@@ -137,9 +137,9 @@ class _KycSubmitScreenState extends State<KycSubmitScreen> {
   }
 
   void _submit() {
-    if (_docNumberCtrl.text.trim().isEmpty || _frontUrl == null) {
+    if (_docNumberCtrl.text.trim().isEmpty || _frontUrl == null || _backUrl == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Document number and front image are required')),
+        const SnackBar(content: Text('Document number, front image and back image are required')),
       );
       return;
     }
@@ -269,7 +269,7 @@ class _KycSubmitScreenState extends State<KycSubmitScreen> {
                   const Text('Upload Documents', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                   const SizedBox(height: 8),
                   _uploadButton('Front Image *', 'front', _frontFileName),
-                  _uploadButton('Back Image (optional)', 'back', _backFileName),
+                  _uploadButton('Back Image *', 'back', _backFileName),
                   _uploadButton('Selfie with Document (optional)', 'selfie', _selfieFileName),
                   if (_uploading)
                     const Padding(

@@ -10775,7 +10775,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get fullName => 'Полное имя';
 
   @override
-  String get phone => 'Телефон (необязательно)';
+  String get phone => 'Телефон';
 
   @override
   String get forgotPassword => 'Забыли пароль?';

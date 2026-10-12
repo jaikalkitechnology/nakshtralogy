@@ -1077,9 +1077,12 @@ def submit_my_kyc(
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
 ):
-    """Submit or re-submit KYC documents. Creates a new KycDocument row."""
+    """Submit or re-submit KYC documents. Creates a new KycDocument row.
+    Document number, front image and back image are all mandatory."""
     if current_user.role != "astrologer":
         raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
+    if not all(v and v.strip() for v in (req.doc_number, req.front_url, req.back_url)):
+        raise HTTPException(status_code=422, detail=t("err.kyc_documents_required", lang))
 
     kyc = _Kyc(
         user_id=current_user.id,

@@ -3426,7 +3426,7 @@
   "password": "كلمة المرور",
   "confirmPassword": "تأكيد كلمة المرور",
   "fullName": "الاسم الكامل",
-  "phone": "الهاتف (اختياري)",
+  "phone": "الهاتف",
   "forgotPassword": "نسيت كلمة المرور؟",
   "sendResetLink": "إرسال رابط إعادة التعيين",
   "backToSignIn": "العودة إلى تسجيل الدخول",

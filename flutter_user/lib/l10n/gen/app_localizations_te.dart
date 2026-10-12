@@ -10736,7 +10736,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get fullName => 'పూర్తి పేరు';
 
   @override
-  String get phone => 'ఫోన్ (ఐచ్ఛికం)';
+  String get phone => 'ఫోన్';
 
   @override
   String get forgotPassword => 'పాస్‌వర్డ్ మర్చిపోయారా?';

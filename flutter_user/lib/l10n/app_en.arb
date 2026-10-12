@@ -4696,7 +4696,7 @@
   "password": "Password",
   "confirmPassword": "Confirm Password",
   "fullName": "Full Name",
-  "phone": "Phone (optional)",
+  "phone": "Phone",
   "forgotPassword": "Forgot Password?",
   "sendResetLink": "Send Reset Link",
   "backToSignIn": "Back to Sign In",

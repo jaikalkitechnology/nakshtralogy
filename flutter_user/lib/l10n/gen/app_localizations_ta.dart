@@ -10764,7 +10764,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get fullName => 'முழு பெயர்';
 
   @override
-  String get phone => 'தொலைபேசி (விருப்பம்)';
+  String get phone => 'தொலைபேசி';
 
   @override
   String get forgotPassword => 'கடவுச்சொல் மறந்துவிட்டதா?';

@@ -10645,7 +10645,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get fullName => '氏名';
 
   @override
-  String get phone => '電話番号（任意）';
+  String get phone => '電話番号';
 
   @override
   String get forgotPassword => 'パスワードをお忘れですか？';

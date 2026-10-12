@@ -10628,7 +10628,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get fullName => '全名';
 
   @override
-  String get phone => '电话（可选）';
+  String get phone => '电话';
 
   @override
   String get forgotPassword => '忘记密码？';
@@ -22489,7 +22489,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get fullName => '全名';
 
   @override
-  String get phone => '电话（可选）';
+  String get phone => '电话';
 
   @override
   String get forgotPassword => '忘记密码？';

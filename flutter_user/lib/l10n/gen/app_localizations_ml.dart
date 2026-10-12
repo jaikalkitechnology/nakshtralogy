@@ -10765,7 +10765,7 @@ class AppLocalizationsMl extends AppLocalizations {
   String get fullName => 'മുഴുവന്‍ പേര്';
 
   @override
-  String get phone => 'ഫോണ്‍ (ഐച്ഛികം)';
+  String get phone => 'ഫോണ്‍';
 
   @override
   String get forgotPassword => 'പാസ്‌വേഡ് മറന്നോ?';

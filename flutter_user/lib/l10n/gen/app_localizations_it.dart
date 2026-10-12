@@ -10767,7 +10767,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get fullName => 'Nome Completo';
 
   @override
-  String get phone => 'Telefono (opzionale)';
+  String get phone => 'Telefono';
 
   @override
   String get forgotPassword => 'Password Dimenticata?';

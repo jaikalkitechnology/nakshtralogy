@@ -3426,7 +3426,7 @@
   "password": "Mot de passe",
   "confirmPassword": "Confirmer le mot de passe",
   "fullName": "Nom complet",
-  "phone": "Téléphone (facultatif)",
+  "phone": "Téléphone",
   "forgotPassword": "Mot de passe oublié ?",
   "sendResetLink": "Envoyer le lien de réinitialisation",
   "backToSignIn": "Retour à la connexion",

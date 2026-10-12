@@ -10729,7 +10729,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get fullName => 'पूर्ण नाव';
 
   @override
-  String get phone => 'फोन (ऐच्छिक)';
+  String get phone => 'फोन';
 
   @override
   String get forgotPassword => 'पासवर्ड विसरलात?';

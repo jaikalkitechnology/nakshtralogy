@@ -10733,7 +10733,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get fullName => 'पूरा नाम';
 
   @override
-  String get phone => 'फ़ोन (वैकल्पिक)';
+  String get phone => 'फ़ोन';
 
   @override
   String get forgotPassword => 'पासवर्ड भूल गए?';
@@ -22730,7 +22730,7 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
   String get fullName => 'Poora Naam';
 
   @override
-  String get phone => 'Phone (optional)';
+  String get phone => 'Phone';
 
   @override
   String get forgotPassword => 'Password Bhool Gaye?';

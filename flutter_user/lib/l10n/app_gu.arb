@@ -3426,7 +3426,7 @@
   "password": "પાસવર્ડ",
   "confirmPassword": "પાસવર્ડની પુષ્ટિ કરો",
   "fullName": "પૂરું નામ",
-  "phone": "ફોન (વૈકલ્પિક)",
+  "phone": "ફોન",
   "forgotPassword": "પાસવર્ડ ભૂલી ગયા?",
   "sendResetLink": "રીસેટ લિંક મોકલો",
   "backToSignIn": "સાઇન ઇન પર પાછા જાઓ",
