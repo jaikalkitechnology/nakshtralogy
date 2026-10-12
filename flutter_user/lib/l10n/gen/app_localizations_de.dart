@@ -12042,4 +12042,25 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get balAbbr => 'Saldo';
+
+  @override
+  String get aiTimePassTitle => 'Chat-Zeit wählen';
+
+  @override
+  String get aiTimePassHint => 'Bezahlung aus deinem Wallet. Die Zeit startet jetzt — ein weiterer Kauf wird zur Restzeit addiert.';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes Min.';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return '$price bezahlen';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return 'Noch $minutes Min.';
+  }
 }

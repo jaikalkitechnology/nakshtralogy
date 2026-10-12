@@ -3869,5 +3869,10 @@
   "firstChartPrimaryInfo": "Tu primera carta es tu Principal gratuita. Las cartas adicionales desbloquean servicios individualmente.",
   "tryDifferentFilter": "Prueba un filtro diferente",
   "defaultChartName": "Carta",
-  "balAbbr": "Saldo"
+  "balAbbr": "Saldo",
+  "aiTimePassTitle": "Elige tu tiempo de chat",
+  "aiTimePassHint": "Se paga desde tu billetera. El tiempo empieza ahora; si compras de nuevo, se suma al tiempo restante.",
+  "aiTimePlanMinutes": "{minutes} min",
+  "aiTimePassPay": "Pagar {price}",
+  "aiTimeLeft": "Quedan {minutes} min"
 }

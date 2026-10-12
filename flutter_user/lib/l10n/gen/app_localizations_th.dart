@@ -11999,4 +11999,25 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get balAbbr => 'คงเหลือ';
+
+  @override
+  String get aiTimePassTitle => 'เลือกเวลาแชท';
+
+  @override
+  String get aiTimePassHint => 'ชำระจากวอลเล็ต เวลาเริ่มนับทันที — ซื้อเพิ่มจะบวกกับเวลาที่เหลือ';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes นาที';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return 'ชำระ $price';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return 'เหลือ $minutes นาที';
+  }
 }

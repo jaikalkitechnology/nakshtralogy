@@ -3869,5 +3869,10 @@
   "firstChartPrimaryInfo": "最初のチャートは無料のプライマリーです。追加のチャートは個別にサービスをロック解除します。",
   "tryDifferentFilter": "別のフィルターを試してください",
   "defaultChartName": "チャート",
-  "balAbbr": "残高"
+  "balAbbr": "残高",
+  "aiTimePassTitle": "チャット時間を選択",
+  "aiTimePassHint": "ウォレットから支払います。時間は今から始まり、追加購入すると残り時間に加算されます。",
+  "aiTimePlanMinutes": "{minutes}分",
+  "aiTimePassPay": "{price}を支払う",
+  "aiTimeLeft": "残り{minutes}分"
 }

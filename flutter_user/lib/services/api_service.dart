@@ -1615,11 +1615,17 @@ class ApiService {
     return {};
   }
 
-  /// Pay to unlock a paid AI agent from the ₹ wallet (India). Returns
-  /// {statusCode, ...}. International users get 409 use_store_purchase and must
-  /// go through [verifyAgentIap] instead.
-  Future<Map<String, dynamic>> unlockAiAgent(String key) async {
-    final resp = await http.post(Uri.parse('${ApiConstants.baseUrl}/ai/agents/$key/unlock'), headers: _headers);
+  /// Pay to unlock a paid AI agent from the ₹ wallet (India). For a topic
+  /// priced by time, [minutes] picks the admin's plan (10, 20, ...) and the
+  /// reply carries remaining_seconds / expires_at. Returns {statusCode, ...}.
+  /// International users get 409 use_store_purchase and must go through
+  /// [verifyAgentIap] instead.
+  Future<Map<String, dynamic>> unlockAiAgent(String key, {int? minutes}) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.baseUrl}/ai/agents/$key/unlock'),
+      headers: _headers,
+      body: minutes != null ? jsonEncode({'minutes': minutes}) : null,
+    );
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 

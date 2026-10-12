@@ -3869,5 +3869,10 @@
   "firstChartPrimaryInfo": "Votre première carte est votre carte Principale gratuite. Les cartes supplémentaires débloquent les services individuellement.",
   "tryDifferentFilter": "Essayez un autre filtre",
   "defaultChartName": "Carte",
-  "balAbbr": "Solde"
+  "balAbbr": "Solde",
+  "aiTimePassTitle": "Choisissez votre temps de chat",
+  "aiTimePassHint": "Payé depuis votre portefeuille. Le temps démarre maintenant ; un nouvel achat est ajouté au temps restant.",
+  "aiTimePlanMinutes": "{minutes} min",
+  "aiTimePassPay": "Payer {price}",
+  "aiTimeLeft": "Encore {minutes} min"
 }

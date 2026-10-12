@@ -3869,5 +3869,10 @@
   "firstChartPrimaryInfo": "आपका पहला चार्ट आपका फ्री प्राइमरी है। अतिरिक्त चार्ट व्यक्तिगत रूप से सेवाएं अनलॉक करते हैं।",
   "tryDifferentFilter": "एक अलग फ़िल्टर आज़माएं",
   "defaultChartName": "चार्ट",
-  "balAbbr": "बैलेंस"
+  "balAbbr": "बैलेंस",
+  "aiTimePassTitle": "अपना चैट टाइम चुनें",
+  "aiTimePassHint": "वॉलेट से भुगतान। टाइम अभी से शुरू होगा — दोबारा खरीदने पर बचे हुए टाइम में जुड़ जाएगा।",
+  "aiTimePlanMinutes": "{minutes} मिनट",
+  "aiTimePassPay": "{price} भुगतान करें",
+  "aiTimeLeft": "{minutes} मिनट बाकी"
 }

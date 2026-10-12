@@ -8,6 +8,7 @@ import '../../services/api_service.dart';
 import '../../utils/constants.dart';
 import '../../utils/ai_topics.dart';
 import '../../l10n/gen/app_localizations.dart';
+import '../../widgets/ai_agent_paywall.dart';
 
 class AiSpecialistChatScreen extends StatefulWidget {
   /// Resume an existing chat (from the chat list / history). When set,
@@ -76,6 +77,11 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   WebSocketChannel? _ws;
   bool _wsConnected = false;
 
+  // Time pass (topic priced per minutes): when the bought time runs out.
+  // Shown as "⏱ 8 min left" in the app bar; refreshed by each 'prob' frame.
+  DateTime? _accessExpiresAt;
+  Timer? _accessTicker;
+
   @override
   void initState() {
     super.initState();
@@ -84,10 +90,55 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
         ? topicForEngineKey(widget.engineKey)
         : topicForDomainKey(widget.domainKey);
     _loadLanguages();
+    _accessTicker = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (mounted && _accessExpiresAt != null) setState(() {});
+    });
     if (widget.chatId != null) {
       _resumeChat(widget.chatId!);
     } else {
+      _loadAccess();
       _loadCharts();
+    }
+  }
+
+  /// Time left on this topic's time pass, if it is priced per minutes.
+  Future<void> _loadAccess() async {
+    final key = _topic.metaKey;
+    if (key == null) return;
+    final all = await _api.getAiAgents();
+    if (mounted) _setAccess(all[key] as Map<String, dynamic>?);
+  }
+
+  void _setAccess(Map<String, dynamic>? m) {
+    final secs = (m?['remaining_seconds'] as num?)?.toInt() ?? 0;
+    final timed = m?['pricing_mode'] == 'time' && secs > 0;
+    setState(() => _accessExpiresAt = timed ? DateTime.now().add(Duration(seconds: secs)) : null);
+  }
+
+  int? get _minutesLeft {
+    final e = _accessExpiresAt;
+    if (e == null) return null;
+    final secs = e.difference(DateTime.now()).inSeconds;
+    return secs <= 0 ? 0 : (secs / 60).ceil();
+  }
+
+  /// The server refused the message: no time left (or never bought). Show
+  /// the plan picker; after paying, put the question back in the box so
+  /// the user can send it again with one tap.
+  Future<void> _onLocked(Map<String, dynamic> msg) async {
+    final key = msg['key']?.toString() ?? _topic.metaKey;
+    if (key == null) return;
+    String? lastQuestion;
+    for (final m in _messages.reversed) {
+      if (m['role'] == 'user') { lastQuestion = m['text']?.toString(); break; }
+    }
+    final access = await ensureAiAgentAccess(
+      context, key: key, meta: null, label: _topicLabel, emoji: _topicEmoji, refresh: true,
+    );
+    if (!mounted || access == null) return;
+    _setAccess(access);
+    if (lastQuestion != null && _msgCtrl.text.trim().isEmpty) {
+      _msgCtrl.text = lastQuestion;
     }
   }
 
@@ -111,6 +162,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
       return;
     }
     _topic = topicForEngineKey(chat['engine_key']?.toString());
+    _loadAccess();
     _selectedChartId = chat['chart_id']?.toString();
     final chartMatch = _charts.cast<Map?>().firstWhere(
           (c) => c?['id']?.toString() == _selectedChartId,
@@ -170,6 +222,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   @override
   void dispose() {
     _watchdog?.cancel();
+    _accessTicker?.cancel();
     _ws?.sink.close();
     _msgCtrl.dispose();
     _scrollCtrl.dispose();
@@ -233,6 +286,8 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
       final detected = d['detected_language']?.toString();
       final serverChatId = d['chat_id']?.toString();
       if (serverChatId != null && serverChatId.isNotEmpty) _chatId = serverChatId;
+      final access = d['access'];
+      if (access is Map) _setAccess(Map<String, dynamic>.from(access));
       setState(() {
         if (detected != null && detected.isNotEmpty) {
           _detectedLanguage = detected;
@@ -288,6 +343,13 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
         });
         _watchdog?.cancel();
       }
+    } else if (type == 'locked') {
+      // Paid topic with no time left: no answer is generated. Show the
+      // server's message and the plan picker.
+      setState(() { _sending = false; _currentStage = null; _accessExpiresAt = null; });
+      _watchdog?.cancel();
+      _addBotMessage('🔒 ${msg['text'] ?? ''}');
+      _onLocked(msg);
     } else if (type == 'error') {
       setState(() { _sending = false; _currentStage = null; });
       _watchdog?.cancel();
@@ -459,6 +521,18 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           Text(_topicEmoji, style: const TextStyle(fontSize: 22)),
           const SizedBox(width: 8),
           Flexible(child: Text(_topicLabel, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w700), overflow: TextOverflow.ellipsis)),
+          if (_minutesLeft != null) ...[
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: AppColors.gold.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text('⏱ ${l.aiTimeLeft(_minutesLeft!)}',
+                  style: const TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w700)),
+            ),
+          ],
         ]),
         actions: [
           PopupMenuButton<String>(

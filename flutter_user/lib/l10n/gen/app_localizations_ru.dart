@@ -12031,4 +12031,25 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get balAbbr => 'Бал.';
+
+  @override
+  String get aiTimePassTitle => 'Выберите время чата';
+
+  @override
+  String get aiTimePassHint => 'Оплата из кошелька. Время начинается сейчас — повторная покупка добавляется к оставшемуся времени.';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes мин';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return 'Оплатить $price';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return 'Осталось $minutes мин';
+  }
 }

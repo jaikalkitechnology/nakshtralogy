@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
-import '../../services/app_mode.dart';
-import '../../services/iap_service.dart';
 import '../../utils/ai_topics.dart';
-import '../../utils/money.dart';
+import '../../widgets/ai_agent_paywall.dart';
 import 'ai_specialist_chat_screen.dart';
 
 /// ChatGPT-style AI chat home: "New Chat" + resumable chat history.
@@ -225,61 +223,17 @@ class _AiChatListScreenState extends State<AiChatListScreen> {
     );
   }
 
-  /// Paid-topic unlock flow — wallet (India) or store IAP (international),
-  /// mirroring the home tab's AI specialist paywall. Returns true if the
-  /// topic is free or already unlocked, or becomes unlocked.
+  /// Paid-topic unlock flow (shared paywall): one-time unlock — wallet
+  /// (India) or store IAP (international) — or a time-pass plan from the
+  /// wallet. Returns true if the topic is free, already unlocked/has time
+  /// left, or becomes unlocked.
   Future<bool> _ensureUnlocked(AiTopic topic) async {
     final key = topic.metaKey;
     if (key == null) return true;
     final meta = _agentMeta[key] as Map<String, dynamic>?;
-    if (meta == null || meta['is_paid'] != true || meta['unlocked'] == true) return true;
-
-    final intl = (meta['pay_via'] == 'iap') || AppMode.instance.isInternational;
-    final sessCurrency = (meta['session_currency'] as String?) ?? (intl ? 'USD' : 'INR');
-    final sessAmount = (meta['session_amount'] as num?)?.toDouble() ??
-        (intl ? (meta['price_usd'] as num?)?.toDouble() ?? 0 : (meta['price'] as num?)?.toDouble() ?? 0);
-    final priceLabel = Money.format(sessAmount, currency: sessCurrency);
-
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.card,
-        title: Row(children: [Text(topic.emoji, style: const TextStyle(fontSize: 22)), const SizedBox(width: 8),
-          Expanded(child: Text(topic.label, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.primary, fontSize: 16)))]),
-        content: Text('Unlock this AI chat for $priceLabel.', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, true),
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.gold, foregroundColor: AppColors.midnight),
-              child: Text('Unlock $priceLabel')),
-        ],
-      ),
-    );
-    if (ok != true) return false;
-
-    if (intl) {
-      final productId = (meta['iap_product_id'] as String?) ?? '';
-      if (productId.isEmpty) {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Not available for purchase yet'), backgroundColor: AppColors.error));
-        return false;
-      }
-      final res = await IapService.instance.buyAgent(productId: productId, agentKey: key);
-      if (!res.ok) {
-        if (mounted && res.error != 'canceled') {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Could not complete purchase'), backgroundColor: AppColors.error));
-        }
-        return false;
-      }
-    } else {
-      final resp = await _api.unlockAiAgent(key);
-      if (resp['statusCode'] != 200) {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(resp['detail']?.toString() ?? 'Could not unlock — check wallet balance'),
-          backgroundColor: AppColors.error));
-        return false;
-      }
-    }
-    _agentMeta = {..._agentMeta, key: {...meta, 'unlocked': true}};
+    final access = await ensureAiAgentAccess(context, key: key, meta: meta, label: topic.label, emoji: topic.emoji);
+    if (access == null) return false;
+    if (meta != null) _agentMeta = {..._agentMeta, key: access};
     return true;
   }
 

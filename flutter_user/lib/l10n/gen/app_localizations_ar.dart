@@ -11976,4 +11976,25 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get balAbbr => 'الرصيد';
+
+  @override
+  String get aiTimePassTitle => 'اختر وقت الدردشة';
+
+  @override
+  String get aiTimePassHint => 'الدفع من محفظتك. يبدأ الوقت الآن — الشراء مرة أخرى يضيف إلى الوقت المتبقي.';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes دقيقة';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return 'ادفع $price';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return 'متبقٍ $minutes دقيقة';
+  }
 }

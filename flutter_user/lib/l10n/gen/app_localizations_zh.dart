@@ -11863,6 +11863,27 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get balAbbr => '余额';
+
+  @override
+  String get aiTimePassTitle => '选择聊天时长';
+
+  @override
+  String get aiTimePassHint => '从钱包支付。时间立即开始计算，再次购买会累加到剩余时间。';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes 分钟';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return '支付 $price';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return '剩余 $minutes 分钟';
+  }
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -23724,4 +23745,25 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get balAbbr => '余额';
+
+  @override
+  String get aiTimePassTitle => '选择聊天时长';
+
+  @override
+  String get aiTimePassHint => '从钱包支付。时间立即开始计算，再次购买会累加到剩余时间。';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes 分钟';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return '支付 $price';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return '剩余 $minutes 分钟';
+  }
 }

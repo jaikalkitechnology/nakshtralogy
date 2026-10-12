@@ -3869,5 +3869,10 @@
   "firstChartPrimaryInfo": "ನಿಮ್ಮ ಮೊದಲ ಚಾರ್ಟ್ ನಿಮ್ಮ ಫ್ರೀ ಪ್ರೈಮರಿ. ಹೆಚ್ಚುವರಿ ಚಾರ್ಟ್‌ಗಳು ಪ್ರತ್ಯೇಕವಾಗಿ ಸೇವೆಗಳನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡುತ್ತವೆ.",
   "tryDifferentFilter": "ಬೇರೆ ಫಿಲ್ಟರ್ ಪ್ರಯತ್ನಿಸಿ",
   "defaultChartName": "ಚಾರ್ಟ್",
-  "balAbbr": "ಬಾಕಿ"
+  "balAbbr": "ಬಾಕಿ",
+  "aiTimePassTitle": "ನಿಮ್ಮ ಚಾಟ್ ಸಮಯ ಆಯ್ಕೆಮಾಡಿ",
+  "aiTimePassHint": "ವಾಲೆಟ್‌ನಿಂದ ಪಾವತಿ. ಸಮಯ ಈಗಲೇ ಆರಂಭವಾಗುತ್ತದೆ — ಮತ್ತೆ ಖರೀದಿಸಿದರೆ ಉಳಿದ ಸಮಯಕ್ಕೆ ಸೇರುತ್ತದೆ.",
+  "aiTimePlanMinutes": "{minutes} ನಿಮಿಷ",
+  "aiTimePassPay": "{price} ಪಾವತಿಸಿ",
+  "aiTimeLeft": "{minutes} ನಿಮಿಷ ಉಳಿದಿದೆ"
 }

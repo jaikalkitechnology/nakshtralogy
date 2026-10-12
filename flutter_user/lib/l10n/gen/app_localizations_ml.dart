@@ -12021,4 +12021,25 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get balAbbr => 'ബാൽ';
+
+  @override
+  String get aiTimePassTitle => 'നിങ്ങളുടെ ചാറ്റ് സമയം തിരഞ്ഞെടുക്കുക';
+
+  @override
+  String get aiTimePassHint => 'വാലറ്റിൽ നിന്ന് പണമടയ്ക്കൽ. സമയം ഇപ്പോൾ തുടങ്ങും — വീണ്ടും വാങ്ങിയാൽ ബാക്കിയുള്ള സമയത്തോട് ചേർക്കും.';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes മിനിറ്റ്';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return '$price അടയ്ക്കുക';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return '$minutes മിനിറ്റ് ബാക്കി';
+  }
 }

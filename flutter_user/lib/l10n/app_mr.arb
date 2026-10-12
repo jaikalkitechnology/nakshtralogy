@@ -3869,5 +3869,10 @@
   "firstChartPrimaryInfo": "तुमचा पहिला चार्ट तुमचा फ्री प्रायमरी आहे. अतिरिक्त चार्ट्स स्वतंत्रपणे सेवा अनलॉक करतात.",
   "tryDifferentFilter": "वेगळे फिल्टर वापरून पहा",
   "defaultChartName": "चार्ट",
-  "balAbbr": "शिल्लक"
+  "balAbbr": "शिल्लक",
+  "aiTimePassTitle": "तुमचा चॅट टाइम निवडा",
+  "aiTimePassHint": "वॉलेटमधून पेमेंट. वेळ आत्ताच सुरू होईल — पुन्हा खरेदी केल्यास उरलेल्या वेळेत जोडला जाईल.",
+  "aiTimePlanMinutes": "{minutes} मिनिटे",
+  "aiTimePassPay": "{price} भरा",
+  "aiTimeLeft": "{minutes} मिनिटे उरली"
 }

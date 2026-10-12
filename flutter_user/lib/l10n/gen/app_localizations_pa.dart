@@ -11989,4 +11989,25 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get balAbbr => 'ਬਕਾ';
+
+  @override
+  String get aiTimePassTitle => 'ਆਪਣਾ ਚੈਟ ਟਾਈਮ ਚੁਣੋ';
+
+  @override
+  String get aiTimePassHint => 'ਵਾਲਿਟ ਤੋਂ ਭੁਗਤਾਨ। ਸਮਾਂ ਹੁਣੇ ਤੋਂ ਸ਼ੁਰੂ — ਦੁਬਾਰਾ ਖਰੀਦਣ ਨਾਲ ਬਾਕੀ ਸਮੇਂ ਵਿੱਚ ਜੁੜ ਜਾਵੇਗਾ।';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes ਮਿੰਟ';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return '$price ਭੁਗਤਾਨ ਕਰੋ';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return '$minutes ਮਿੰਟ ਬਾਕੀ';
+  }
 }

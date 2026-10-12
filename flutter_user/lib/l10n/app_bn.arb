@@ -3869,5 +3869,10 @@
   "firstChartPrimaryInfo": "আপনার প্রথম চার্টটি আপনার ফ্রি প্রাইমারি। অতিরিক্ত চার্ট আলাদাভাবে পরিষেবা আনলক করে।",
   "tryDifferentFilter": "একটি ভিন্ন ফিল্টার চেষ্টা করুন",
   "defaultChartName": "চার্ট",
-  "balAbbr": "ব্যাল"
+  "balAbbr": "ব্যাল",
+  "aiTimePassTitle": "আপনার চ্যাট টাইম বেছে নিন",
+  "aiTimePassHint": "ওয়ালেট থেকে পেমেন্ট। সময় এখন থেকে শুরু — আবার কিনলে বাকি সময়ের সাথে যোগ হবে।",
+  "aiTimePlanMinutes": "{minutes} মিনিট",
+  "aiTimePassPay": "{price} পেমেন্ট করুন",
+  "aiTimeLeft": "{minutes} মিনিট বাকি"
 }

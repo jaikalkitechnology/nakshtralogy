@@ -3869,5 +3869,10 @@
   "firstChartPrimaryInfo": "แผนภูมิแรกของคุณคือแผนภูมิหลักฟรี แผนภูมิเพิ่มเติมจะปลดล็อกบริการแยกกัน",
   "tryDifferentFilter": "ลองใช้ตัวกรองอื่น",
   "defaultChartName": "แผนภูมิ",
-  "balAbbr": "คงเหลือ"
+  "balAbbr": "คงเหลือ",
+  "aiTimePassTitle": "เลือกเวลาแชท",
+  "aiTimePassHint": "ชำระจากวอลเล็ต เวลาเริ่มนับทันที — ซื้อเพิ่มจะบวกกับเวลาที่เหลือ",
+  "aiTimePlanMinutes": "{minutes} นาที",
+  "aiTimePassPay": "ชำระ {price}",
+  "aiTimeLeft": "เหลือ {minutes} นาที"
 }

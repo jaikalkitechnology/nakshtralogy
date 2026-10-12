@@ -3869,5 +3869,10 @@
   "firstChartPrimaryInfo": "તમારો પ્રથમ ચાર્ટ તમારો ફ્રી પ્રાઇમરી છે. વધારાના ચાર્ટ્સ વ્યક્તિગત રીતે સેવાઓ અનલૉક કરે છે.",
   "tryDifferentFilter": "એક અલગ ફિલ્ટર અજમાવો",
   "defaultChartName": "ચાર્ટ",
-  "balAbbr": "બેલ"
+  "balAbbr": "બેલ",
+  "aiTimePassTitle": "તમારો ચેટ ટાઇમ પસંદ કરો",
+  "aiTimePassHint": "વૉલેટમાંથી ચુકવણી. સમય હમણાંથી શરૂ થશે — ફરી ખરીદવાથી બાકી સમયમાં ઉમેરાશે.",
+  "aiTimePlanMinutes": "{minutes} મિનિટ",
+  "aiTimePassPay": "{price} ચૂકવો",
+  "aiTimeLeft": "{minutes} મિનિટ બાકી"
 }

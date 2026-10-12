@@ -11988,4 +11988,25 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get balAbbr => 'బ్యాల్';
+
+  @override
+  String get aiTimePassTitle => 'మీ చాట్ టైమ్ ఎంచుకోండి';
+
+  @override
+  String get aiTimePassHint => 'వాలెట్ నుండి చెల్లింపు. సమయం ఇప్పుడే మొదలవుతుంది — మళ్లీ కొంటే మిగిలిన సమయానికి జోడించబడుతుంది.';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes నిమి';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return '$price చెల్లించండి';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return '$minutes నిమి మిగిలి ఉంది';
+  }
 }

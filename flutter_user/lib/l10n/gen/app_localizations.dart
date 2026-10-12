@@ -23158,6 +23158,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Bal'**
   String get balAbbr;
+
+  /// No description provided for @aiTimePassTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your chat time'**
+  String get aiTimePassTitle;
+
+  /// No description provided for @aiTimePassHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid from your wallet. Time starts now — buying again adds to any time you have left.'**
+  String get aiTimePassHint;
+
+  /// No description provided for @aiTimePlanMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String aiTimePlanMinutes(Object minutes);
+
+  /// No description provided for @aiTimePassPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay {price}'**
+  String aiTimePassPay(Object price);
+
+  /// No description provided for @aiTimeLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min left'**
+  String aiTimeLeft(Object minutes);
 }
 
 class _AppLocalizationsDelegate

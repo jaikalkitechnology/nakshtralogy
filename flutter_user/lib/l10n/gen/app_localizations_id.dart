@@ -12014,4 +12014,25 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get balAbbr => 'Saldo';
+
+  @override
+  String get aiTimePassTitle => 'Pilih waktu chat Anda';
+
+  @override
+  String get aiTimePassHint => 'Dibayar dari dompet Anda. Waktu dimulai sekarang — membeli lagi akan menambah sisa waktu.';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes mnt';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return 'Bayar $price';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return 'Sisa $minutes mnt';
+  }
 }

@@ -3869,5 +3869,10 @@
   "firstChartPrimaryInfo": "La tua prima carta è la tua Primaria gratuita. Le carte aggiuntive sbloccano i servizi singolarmente.",
   "tryDifferentFilter": "Prova un filtro diverso",
   "defaultChartName": "Carta",
-  "balAbbr": "Saldo"
+  "balAbbr": "Saldo",
+  "aiTimePassTitle": "Scegli il tempo di chat",
+  "aiTimePassHint": "Pagato dal tuo portafoglio. Il tempo parte ora; un nuovo acquisto si somma al tempo rimasto.",
+  "aiTimePlanMinutes": "{minutes} min",
+  "aiTimePassPay": "Paga {price}",
+  "aiTimeLeft": "Ancora {minutes} min"
 }
