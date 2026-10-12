@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Bot, RefreshCw, X, Users, Lock, Unlock } from "lucide-react";
+import { Bot, RefreshCw, X, Users, Lock, Unlock, Clock, Plus, Trash2 } from "lucide-react";
 import { adminAiAgents, adminAiAgentUpdate } from "@/services/api";
 import { toast } from "sonner";
 
@@ -15,9 +15,16 @@ interface Agent {
   price_usd?: number | null;
   iap_product_id?: string | null;
   price_usd_manual?: boolean;
+  // Time pass: pay per minutes (e.g. 10 min = ₹100). Empty = one-time unlock.
+  time_plans?: TimePlan[];
   test_users: { id: string; email: string; name?: string }[];
   unlocks: number;
 }
+
+interface TimePlan { minutes: number; price: number }
+
+const planSummary = (plans: TimePlan[]) =>
+  plans.map((p) => `${p.minutes} min ₹${p.price.toFixed(0)}`).join(" · ");
 
 const STATUS_STYLE: Record<string, string> = {
   draft: "bg-muted text-muted-foreground",
@@ -30,6 +37,9 @@ export default function AiAgentsManager() {
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState<Agent | null>(null);
   const [testerText, setTesterText] = useState("");
+  // Pricing type in the editor: "one_time" (pay once, unlimited) or "time" (pay per minutes).
+  const [pricingMode, setPricingMode] = useState<"one_time" | "time">("one_time");
+  const [plans, setPlans] = useState<TimePlan[]>([]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -43,11 +53,23 @@ export default function AiAgentsManager() {
   const openEdit = (a: Agent) => {
     setEditing(a);
     setTesterText((a.test_users || []).map((u) => u.email).join(", "));
+    const existing = a.time_plans || [];
+    setPricingMode(existing.length ? "time" : "one_time");
+    setPlans(existing.length ? existing : [{ minutes: 10, price: 100 }, { minutes: 20, price: 200 }]);
   };
+
+  const updatePlan = (i: number, patch: Partial<TimePlan>) =>
+    setPlans(plans.map((p, j) => (j === i ? { ...p, ...patch } : p)));
 
   const save = async () => {
     if (!editing) return;
     const testers = testerText.split(",").map((s) => s.trim()).filter(Boolean);
+    const timeMode = editing.is_paid && pricingMode === "time";
+    const cleanPlans = plans.filter((p) => p.minutes >= 1 && p.price >= 0);
+    if (timeMode && cleanPlans.length === 0) {
+      toast.error("Add at least one time plan (minutes and price)");
+      return;
+    }
     const r = await adminAiAgentUpdate(editing.key, {
       status: editing.status,
       is_paid: editing.is_paid,
@@ -61,6 +83,8 @@ export default function AiAgentsManager() {
         : {}),
       free_intro: editing.free_intro || null,
       test_user_ids: testers,
+      // [] = one-time unlock; plans = pay per minutes.
+      time_plans: timeMode ? cleanPlans : [],
     });
     if (r.ok) { toast.success("Agent updated"); setEditing(null); load(); }
     else toast.error(r.data?.detail || "Save failed");
@@ -106,8 +130,10 @@ export default function AiAgentsManager() {
                     </div>
                   </td>
                   <td className="p-2.5">
-                    {a.is_paid
-                      ? <span className="inline-flex items-center gap-1 text-primary"><Lock className="w-3.5 h-3.5" /> ₹{a.price.toFixed(0)}
+                    {a.is_paid && a.time_plans?.length
+                      ? <span className="inline-flex items-center gap-1 text-primary"><Clock className="w-3.5 h-3.5" /> {planSummary(a.time_plans)}</span>
+                      : a.is_paid
+                      ? <span className="inline-flex items-center gap-1 text-primary"><Lock className="w-3.5 h-3.5" /> ₹{a.price.toFixed(0)} one-time
                           {a.price_usd != null && <span className="text-muted-foreground">· ${a.price_usd.toFixed(2)}</span>}</span>
                       : <span className="inline-flex items-center gap-1 text-green-400"><Unlock className="w-3.5 h-3.5" /> Free</span>}
                   </td>
@@ -154,10 +180,44 @@ export default function AiAgentsManager() {
               <p className="text-xs font-semibold text-muted-foreground mb-1">Pricing</p>
               <label className="flex items-center gap-2 text-sm text-foreground">
                 <input type="checkbox" checked={editing.is_paid} onChange={(e) => setEditing({ ...editing, is_paid: e.target.checked })} />
-                Paid — users unlock this AI chat once from their wallet
+                Paid — users must pay to use this AI chat
               </label>
               {editing.is_paid && (
-                <div className="mt-2 space-y-3">
+                <div className="mt-2 flex gap-2">
+                  {([["one_time", "One-time unlock"], ["time", "Per time (minutes)"]] as const).map(([m, label]) => (
+                    <button key={m} onClick={() => setPricingMode(m)}
+                      className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${pricingMode === m ? "bg-primary/20 text-primary" : "border border-border text-muted-foreground"}`}>{label}</button>
+                  ))}
+                </div>
+              )}
+              {editing.is_paid && pricingMode === "time" && (
+                <div className="mt-3 space-y-2">
+                  {plans.map((p, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <Input type="number" min={1} className="w-24" value={p.minutes}
+                        onChange={(e) => updatePlan(i, { minutes: parseInt(e.target.value) || 0 })} />
+                      <span className="text-sm text-muted-foreground">min =</span>
+                      <span className="text-sm text-muted-foreground">₹</span>
+                      <Input type="number" min={0} className="w-28" value={p.price}
+                        onChange={(e) => updatePlan(i, { price: parseFloat(e.target.value) || 0 })} />
+                      <button onClick={() => setPlans(plans.filter((_, j) => j !== i))}
+                        className="text-muted-foreground hover:text-red-400" title="Remove plan"><Trash2 className="w-4 h-4" /></button>
+                    </div>
+                  ))}
+                  {plans.length < 8 && (
+                    <Button size="sm" variant="outline" onClick={() => setPlans([...plans, { minutes: (plans[plans.length - 1]?.minutes || 0) + 10, price: 0 }])}>
+                      <Plus className="w-3.5 h-3.5 mr-1" /> Add plan
+                    </Button>
+                  )}
+                  <p className="text-[11px] text-muted-foreground">
+                    Example: 10 min = ₹100, 20 min = ₹200. The user picks a plan and pays from the ₹ wallet; time starts at
+                    payment, and buying again adds minutes to the time left. When time ends the chat locks until they buy more.
+                    Time plans are India-only (wallet) — international users can't buy this topic while it is priced by time.
+                  </p>
+                </div>
+              )}
+              {editing.is_paid && pricingMode === "one_time" && (
+                <div className="mt-3 space-y-3">
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-muted-foreground">Unlock price ₹ (India · wallet)</span>
                     <Input type="number" className="w-28" value={editing.price} onChange={(e) => setEditing({ ...editing, price: parseFloat(e.target.value) || 0 })} />
