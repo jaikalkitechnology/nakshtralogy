@@ -10742,7 +10742,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get fullName => 'ಪೂರ್ಣ ಹೆಸರು';
 
   @override
-  String get phone => 'ಫೋನ್ (ಐಚ್ಛಿಕ)';
+  String get phone => 'ಫೋನ್';
 
   @override
   String get forgotPassword => 'ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿದ್ದೀರಾ?';

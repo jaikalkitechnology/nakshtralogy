@@ -10754,7 +10754,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get fullName => 'Nama Lengkap';
 
   @override
-  String get phone => 'Telepon (opsional)';
+  String get phone => 'Telepon';
 
   @override
   String get forgotPassword => 'Lupa Kata Sandi?';

@@ -10783,7 +10783,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get fullName => 'Vollständiger Name';
 
   @override
-  String get phone => 'Telefon (optional)';
+  String get phone => 'Telefon';
 
   @override
   String get forgotPassword => 'Passwort vergessen?';

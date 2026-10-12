@@ -10737,7 +10737,7 @@ class AppLocalizationsPa extends AppLocalizations {
   String get fullName => 'ਪੂਰਾ ਨਾਮ';
 
   @override
-  String get phone => 'ਫ਼ੋਨ (ਵਿਕਲਪਿਕ)';
+  String get phone => 'ਫ਼ੋਨ';
 
   @override
   String get forgotPassword => 'ਪਾਸਵਰਡ ਭੁੱਲ ਗਏ?';

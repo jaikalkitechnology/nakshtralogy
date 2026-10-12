@@ -3426,7 +3426,7 @@
   "password": "Password",
   "confirmPassword": "Password Confirm Karein",
   "fullName": "Poora Naam",
-  "phone": "Phone (optional)",
+  "phone": "Phone",
   "forgotPassword": "Password Bhool Gaye?",
   "sendResetLink": "Reset Link Bhejein",
   "backToSignIn": "Sign In Par Wapas",

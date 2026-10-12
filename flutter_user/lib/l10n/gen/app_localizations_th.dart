@@ -10745,7 +10745,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get fullName => 'ชื่อ-นามสกุล';
 
   @override
-  String get phone => 'เบอร์โทรศัพท์ (ไม่บังคับ)';
+  String get phone => 'เบอร์โทรศัพท์';
 
   @override
   String get forgotPassword => 'ลืมรหัสผ่าน?';

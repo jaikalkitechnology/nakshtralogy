@@ -10724,7 +10724,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get fullName => 'પૂરું નામ';
 
   @override
-  String get phone => 'ફોન (વૈકલ્પિક)';
+  String get phone => 'ફોન';
 
   @override
   String get forgotPassword => 'પાસવર્ડ ભૂલી ગયા?';

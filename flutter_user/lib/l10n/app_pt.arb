@@ -3426,7 +3426,7 @@
   "password": "Senha",
   "confirmPassword": "Confirmar Senha",
   "fullName": "Nome Completo",
-  "phone": "Telefone (opcional)",
+  "phone": "Telefone",
   "forgotPassword": "Esqueceu a Senha?",
   "sendResetLink": "Enviar Link de Redefinição",
   "backToSignIn": "Voltar para Entrar",

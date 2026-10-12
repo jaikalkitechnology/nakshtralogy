@@ -3426,7 +3426,7 @@
   "password": "पासवर्ड",
   "confirmPassword": "पासवर्ड पुष्टि करें",
   "fullName": "पूरा नाम",
-  "phone": "फ़ोन (वैकल्पिक)",
+  "phone": "फ़ोन",
   "forgotPassword": "पासवर्ड भूल गए?",
   "sendResetLink": "रीसेट लिंक भेजें",
   "backToSignIn": "साइन इन पर वापस",

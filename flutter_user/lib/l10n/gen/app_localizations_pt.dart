@@ -10750,7 +10750,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get fullName => 'Nome Completo';
 
   @override
-  String get phone => 'Telefone (opcional)';
+  String get phone => 'Telefone';
 
   @override
   String get forgotPassword => 'Esqueceu a Senha?';
@@ -22755,7 +22755,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get fullName => 'Nome Completo';
 
   @override
-  String get phone => 'Telefone (opcional)';
+  String get phone => 'Telefone';
 
   @override
   String get forgotPassword => 'Esqueceu a Senha?';

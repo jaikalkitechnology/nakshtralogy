@@ -3426,7 +3426,7 @@
   "password": "密码",
   "confirmPassword": "确认密码",
   "fullName": "全名",
-  "phone": "电话（可选）",
+  "phone": "电话",
   "forgotPassword": "忘记密码？",
   "sendResetLink": "发送重置链接",
   "backToSignIn": "返回登录",

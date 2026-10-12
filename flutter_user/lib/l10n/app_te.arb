@@ -3426,7 +3426,7 @@
   "password": "పాస్‌వర్డ్",
   "confirmPassword": "పాస్‌వర్డ్ నిర్ధారించు",
   "fullName": "పూర్తి పేరు",
-  "phone": "ఫోన్ (ఐచ్ఛికం)",
+  "phone": "ఫోన్",
   "forgotPassword": "పాస్‌వర్డ్ మర్చిపోయారా?",
   "sendResetLink": "రీసెట్ లింక్ పంపు",
   "backToSignIn": "సైన్ ఇన్‌కు తిరిగి వెళ్ళు",

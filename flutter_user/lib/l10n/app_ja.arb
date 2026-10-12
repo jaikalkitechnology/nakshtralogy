@@ -3426,7 +3426,7 @@
   "password": "パスワード",
   "confirmPassword": "パスワードの確認",
   "fullName": "氏名",
-  "phone": "電話番号（任意）",
+  "phone": "電話番号",
   "forgotPassword": "パスワードをお忘れですか？",
   "sendResetLink": "再設定リンクを送信",
   "backToSignIn": "サインインに戻る",

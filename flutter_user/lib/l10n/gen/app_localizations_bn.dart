@@ -10734,7 +10734,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get fullName => 'পুরো নাম';
 
   @override
-  String get phone => 'ফোন (ঐচ্ছিক)';
+  String get phone => 'ফোন';
 
   @override
   String get forgotPassword => 'পাসওয়ার্ড ভুলে গেছেন?';

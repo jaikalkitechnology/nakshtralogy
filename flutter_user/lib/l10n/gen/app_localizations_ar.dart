@@ -10727,7 +10727,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get fullName => 'الاسم الكامل';
 
   @override
-  String get phone => 'الهاتف (اختياري)';
+  String get phone => 'الهاتف';
 
   @override
   String get forgotPassword => 'نسيت كلمة المرور؟';

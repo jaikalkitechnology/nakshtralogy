@@ -3426,7 +3426,7 @@
   "password": "Пароль",
   "confirmPassword": "Подтвердите пароль",
   "fullName": "Полное имя",
-  "phone": "Телефон (необязательно)",
+  "phone": "Телефон",
   "forgotPassword": "Забыли пароль?",
   "sendResetLink": "Отправить ссылку для сброса",
   "backToSignIn": "Назад ко входу",
