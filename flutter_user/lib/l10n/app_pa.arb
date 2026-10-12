@@ -3869,5 +3869,10 @@
   "firstChartPrimaryInfo": "ਤੁਹਾਡਾ ਪਹਿਲਾ ਚਾਰਟ ਤੁਹਾਡਾ ਫ੍ਰੀ ਪ੍ਰਾਇਮਰੀ ਹੈ। ਵਾਧੂ ਚਾਰਟ ਵੱਖਰੇ ਤੌਰ ਤੇ ਸੇਵਾਵਾਂ ਅਨਲੌਕ ਕਰਦੇ ਹਨ।",
   "tryDifferentFilter": "ਵੱਖਰਾ ਫਿਲਟਰ ਅਜ਼ਮਾਓ",
   "defaultChartName": "ਚਾਰਟ",
-  "balAbbr": "ਬਕਾ"
+  "balAbbr": "ਬਕਾ",
+  "aiTimePassTitle": "ਆਪਣਾ ਚੈਟ ਟਾਈਮ ਚੁਣੋ",
+  "aiTimePassHint": "ਵਾਲਿਟ ਤੋਂ ਭੁਗਤਾਨ। ਸਮਾਂ ਹੁਣੇ ਤੋਂ ਸ਼ੁਰੂ — ਦੁਬਾਰਾ ਖਰੀਦਣ ਨਾਲ ਬਾਕੀ ਸਮੇਂ ਵਿੱਚ ਜੁੜ ਜਾਵੇਗਾ।",
+  "aiTimePlanMinutes": "{minutes} ਮਿੰਟ",
+  "aiTimePassPay": "{price} ਭੁਗਤਾਨ ਕਰੋ",
+  "aiTimeLeft": "{minutes} ਮਿੰਟ ਬਾਕੀ"
 }

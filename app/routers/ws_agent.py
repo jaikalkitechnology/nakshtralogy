@@ -31,6 +31,8 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 from jose import jwt, JWTError
 
 from app.core.config import settings
+from app.core.i18n import t
+from app.services.ai_access import chat_access
 from app.core.database import SessionLocal
 from app.models.model import User, Chart, AgentLog, AgentLogSection, AIChat, AIChatMessage
 from app.kundli import engine as nk_engine
@@ -1053,6 +1055,30 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # standalone "give me in <language>" with no real question
                 # attached (checked first — deterministic, not reliant on
                 # the LLM obeying or coping with a content-free "question").
+                # Paid-topic gate, on EVERY message: a topic chat needs an
+                # unlock or an unexpired time pass — including a chat created
+                # straight over this socket (not just via POST /agent/chats).
+                # Payment only: draft/testing visibility stays enforced at New
+                # Chat and in the topic list (see chat_access).
+                access = chat_access(db, user, chat.engine_key, check_visibility=False)
+                if not access["allowed"]:
+                    lock_key = ("msg.ai_time_expired" if access["expired"] else
+                                "msg.ai_chat_locked" if access["reason"] == "payment_required" else
+                                "err.ai_topic_unavailable")
+                    lock_text = t(lock_key, resolved_lang)
+                    _trace(pipeline, "access_locked", "Paid topic locked — no answer generated",
+                           reason=access["reason"], expired=access["expired"], key=access["key"])
+                    await _send({"type": "locked", "reason": access["reason"], "expired": access["expired"],
+                                 "key": access["key"], "text": lock_text})
+                    await _send({"type": "token", "text": lock_text})   # older app builds show this
+                    await _send({"type": "done"})
+                    continue
+                # Time left on a time pass — sent with the probability frame so
+                # the app can show a countdown.
+                access_view = ({"pricing_mode": "time", "remaining_seconds": access["remaining_seconds"],
+                                "expires_at": access["expires_at"]}
+                               if access["pricing_mode"] == "time" and access["expires_at"] else None)
+
                 smalltalk_lang = resolved_lang
                 # Stage 1 — is this an astrology question at all? Decided
                 # before any routing so a reaction like "this is nice" never
@@ -1164,6 +1190,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             "active_doshas": [],
                             "detected_language": smalltalk_lang,
                             "provider": provider_key,
+                            "access": access_view,
                         },
                     })
                     await _send({"type": "token", "text": smalltalk_text})
@@ -1278,6 +1305,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                         "active_doshas": result["active_doshas"],
                         "detected_language": effective_lang,
                         "provider": provider_key,
+                        "access": access_view,
                     },
                 })
                 await _send({"type": "stage", "text": _stage_text("preparing", effective_lang)})

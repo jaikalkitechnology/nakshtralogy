@@ -5139,5 +5139,31 @@
   "firstChartPrimaryInfo": "Your first chart is your free Primary. Extra charts unlock services individually.",
   "tryDifferentFilter": "Try a different filter",
   "defaultChartName": "Chart",
-  "balAbbr": "Bal"
+  "balAbbr": "Bal",
+  "aiTimePassTitle": "Choose your chat time",
+  "aiTimePassHint": "Paid from your wallet. Time starts now — buying again adds to any time you have left.",
+  "aiTimePlanMinutes": "{minutes} min",
+  "@aiTimePlanMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiTimePassPay": "Pay {price}",
+  "@aiTimePassPay": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiTimeLeft": "{minutes} min left",
+  "@aiTimeLeft": {
+    "placeholders": {
+      "minutes": {
+        "type": "Object"
+      }
+    }
+  }
 }

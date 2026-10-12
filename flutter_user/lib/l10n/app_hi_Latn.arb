@@ -3869,5 +3869,10 @@
   "firstChartPrimaryInfo": "Aapka pehla chart aapka free Primary hai. Extra charts individually services unlock karte hain.",
   "tryDifferentFilter": "Ek alag filter try karein",
   "defaultChartName": "Chart",
-  "balAbbr": "Bal"
+  "balAbbr": "Bal",
+  "aiTimePassTitle": "Apna chat time chunein",
+  "aiTimePassHint": "Wallet se payment. Time abhi se shuru hoga — dobara kharidne par bache hue time mein jud jayega.",
+  "aiTimePlanMinutes": "{minutes} min",
+  "aiTimePassPay": "{price} pay karein",
+  "aiTimeLeft": "{minutes} min baaki"
 }

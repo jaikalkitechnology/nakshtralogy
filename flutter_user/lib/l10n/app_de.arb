@@ -3869,5 +3869,10 @@
   "firstChartPrimaryInfo": "Dein erstes Chart ist dein kostenloses Primär-Chart. Zusätzliche Charts schalten Dienste einzeln frei.",
   "tryDifferentFilter": "Versuche einen anderen Filter",
   "defaultChartName": "Chart",
-  "balAbbr": "Saldo"
+  "balAbbr": "Saldo",
+  "aiTimePassTitle": "Chat-Zeit wählen",
+  "aiTimePassHint": "Bezahlung aus deinem Wallet. Die Zeit startet jetzt — ein weiterer Kauf wird zur Restzeit addiert.",
+  "aiTimePlanMinutes": "{minutes} Min.",
+  "aiTimePassPay": "{price} bezahlen",
+  "aiTimeLeft": "Noch {minutes} Min."
 }

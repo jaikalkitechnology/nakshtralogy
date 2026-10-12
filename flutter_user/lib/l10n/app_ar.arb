@@ -3869,5 +3869,10 @@
   "firstChartPrimaryInfo": "مخططك الأول هو الأساسي المجاني. المخططات الإضافية تفتح الخدمات بشكل فردي.",
   "tryDifferentFilter": "جرّب مرشحًا مختلفًا",
   "defaultChartName": "مخطط",
-  "balAbbr": "الرصيد"
+  "balAbbr": "الرصيد",
+  "aiTimePassTitle": "اختر وقت الدردشة",
+  "aiTimePassHint": "الدفع من محفظتك. يبدأ الوقت الآن — الشراء مرة أخرى يضيف إلى الوقت المتبقي.",
+  "aiTimePlanMinutes": "{minutes} دقيقة",
+  "aiTimePassPay": "ادفع {price}",
+  "aiTimeLeft": "متبقٍ {minutes} دقيقة"
 }

@@ -12020,4 +12020,26 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get balAbbr => 'இருப்பு';
+
+  @override
+  String get aiTimePassTitle => 'உங்கள் அரட்டை நேரத்தைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get aiTimePassHint =>
+      'வாலெட்டிலிருந்து கட்டணம். நேரம் இப்போதே தொடங்கும் — மீண்டும் வாங்கினால் மீதமுள்ள நேரத்துடன் சேர்க்கப்படும்.';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes நிமிடம்';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return '$price செலுத்து';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return '$minutes நிமிடம் மீதம்';
+  }
 }

@@ -3869,5 +3869,10 @@
   "firstChartPrimaryInfo": "Seu primeiro mapa é o seu Principal gratuito. Mapas extras desbloqueiam serviços individualmente.",
   "tryDifferentFilter": "Tente um filtro diferente",
   "defaultChartName": "Mapa",
-  "balAbbr": "Saldo"
+  "balAbbr": "Saldo",
+  "aiTimePassTitle": "Escolha seu tempo de chat",
+  "aiTimePassHint": "Pago pela sua carteira. O tempo começa agora; comprar de novo soma ao tempo restante.",
+  "aiTimePlanMinutes": "{minutes} min",
+  "aiTimePassPay": "Pagar {price}",
+  "aiTimeLeft": "Faltam {minutes} min"
 }

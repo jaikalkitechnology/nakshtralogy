@@ -18,7 +18,7 @@ from sqlalchemy.pool import StaticPool
 
 import app.routers.ws_agent as ws
 from app.core.config import settings
-from app.models.model import Base, User, Chart, AIChat, AIChatMessage, AgentLog
+from app.models.model import Base, User, Chart, AIChat, AIChatMessage, AgentLog, AiAgentSetting, AiAgentUnlock
 
 # The sample chart from the bug reports: Lagna Capricorn, Saturn Cancer 2.8°,
 # Moon Virgo 3.2°, Jupiter Virgo 9.8°, Mercury Libra 0.2°.
@@ -47,7 +47,8 @@ def env(monkeypatch):
     engine = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
     Base.metadata.create_all(engine, tables=[User.__table__, Chart.__table__, AIChat.__table__,
                                              AIChatMessage.__table__, AgentLog.__table__,
-                                             ws.AgentLogSection.__table__])
+                                             ws.AgentLogSection.__table__,
+                                             AiAgentSetting.__table__, AiAgentUnlock.__table__])
     Session = sessionmaker(bind=engine, autocommit=False, autoflush=False)
     monkeypatch.setattr(ws, "SessionLocal", Session)
     fake = FakeLLM()

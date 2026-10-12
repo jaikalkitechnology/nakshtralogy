@@ -45,6 +45,9 @@ _DEV_COLUMN_MIGRATIONS = [
     ("ai_chats", "language", "VARCHAR(20)"),
     ("ai_chat_messages", "language", "VARCHAR(20)"),
     ("ai_chat_messages", "message_id", "VARCHAR(36)"),
+    # AI chat time-pass pricing (minutes plans + expiring access)
+    ("ai_agent_settings", "time_plans", "JSON"),
+    ("ai_agent_unlocks", "expires_at", "DATETIME"),
 ]
 
 

@@ -12007,6 +12007,28 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get balAbbr => 'Saldo';
+
+  @override
+  String get aiTimePassTitle => 'Escolha seu tempo de chat';
+
+  @override
+  String get aiTimePassHint =>
+      'Pago pela sua carteira. O tempo começa agora; comprar de novo soma ao tempo restante.';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return 'Pagar $price';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return 'Faltam $minutes min';
+  }
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -24012,4 +24034,26 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get balAbbr => 'Saldo';
+
+  @override
+  String get aiTimePassTitle => 'Escolha seu tempo de chat';
+
+  @override
+  String get aiTimePassHint =>
+      'Pago pela sua carteira. O tempo começa agora; comprar de novo soma ao tempo restante.';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return 'Pagar $price';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return 'Faltam $minutes min';
+  }
 }

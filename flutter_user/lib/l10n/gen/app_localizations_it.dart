@@ -12025,4 +12025,26 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get balAbbr => 'Saldo';
+
+  @override
+  String get aiTimePassTitle => 'Scegli il tempo di chat';
+
+  @override
+  String get aiTimePassHint =>
+      'Pagato dal tuo portafoglio. Il tempo parte ora; un nuovo acquisto si somma al tempo rimasto.';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return 'Paga $price';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return 'Ancora $minutes min';
+  }
 }

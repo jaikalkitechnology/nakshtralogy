@@ -11974,4 +11974,26 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get balAbbr => 'બેલ';
+
+  @override
+  String get aiTimePassTitle => 'તમારો ચેટ ટાઇમ પસંદ કરો';
+
+  @override
+  String get aiTimePassHint =>
+      'વૉલેટમાંથી ચુકવણી. સમય હમણાંથી શરૂ થશે — ફરી ખરીદવાથી બાકી સમયમાં ઉમેરાશે.';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes મિનિટ';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return '$price ચૂકવો';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return '$minutes મિનિટ બાકી';
+  }
 }

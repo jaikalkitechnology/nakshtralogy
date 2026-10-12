@@ -8,7 +8,9 @@ engine itself.
 User (get_current_user):
   GET  /ai/agents                 — agents visible to me, with access + pricing
   GET  /ai/agents/{key}/access    — can I use this agent? is it paid / unlocked?
-  POST /ai/agents/{key}/unlock    — pay the unlock price from my wallet
+  POST /ai/agents/{key}/unlock    — pay the unlock price from my wallet, or buy
+                                    a time-pass plan ({"minutes": 10}) when the
+                                    topic is priced by time (app/services/ai_access.py)
 
 Admin (require_role admin):
   GET  /ai/admin/agents           — every domain + its settings
@@ -18,7 +20,7 @@ Admin (require_role admin):
 from decimal import Decimal
 from typing import Optional, List
 
-from fastapi import APIRouter, Depends, HTTPException, Header
+from fastapi import APIRouter, Body, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
 
@@ -31,6 +33,7 @@ from app.models.model import (
     User, Wallet, WalletTransaction, AiAgentSetting, AiAgentUnlock,
 )
 from app.ai_config import ai_cache
+from app.services import ai_access as acc
 
 router = APIRouter()
 
@@ -100,6 +103,15 @@ def _session_pricing(db: Session, region: str, s: Optional[AiAgentSetting]) -> d
     is_paid = bool(s and s.is_paid)
     price = float(s.price or 0) if s else 0.0
     intl = region_util.is_international_region(region)
+    if acc.pricing_mode(s) == "time":
+        # Time passes are paid from the ₹ wallet only (no store IAP tiers per
+        # plan yet), so an international session can't buy one. India: the
+        # shortest plan's price — what an older app build shows and buys.
+        if intl:
+            return {"session_currency": "USD", "session_amount": 0.0, "pay_via": "iap",
+                    "price_usd": None, "iap_product_id": None}
+        return {"session_currency": "INR", "session_amount": acc.plans_of(s)[0]["price"],
+                "pay_via": "wallet", "price_usd": None, "iap_product_id": None}
     if not is_paid or price == 0:
         return {
             "session_currency": "USD" if intl else "INR",
@@ -142,9 +154,17 @@ def _visible_to(user: User, s: Optional[AiAgentSetting], default_status: str = "
 
 
 def _is_unlocked(db: Session, user_id: str, key: str) -> bool:
-    return db.query(AiAgentUnlock).filter(
-        AiAgentUnlock.user_id == user_id, AiAgentUnlock.domain_key == key
-    ).first() is not None
+    """Has access right now — a permanent unlock, or a time pass not yet expired."""
+    return acc.access_state(db, user_id, key, _setting(db, key))["unlocked"]
+
+
+def _time_view(db: Session, user_id: str, key: str, s: Optional[AiAgentSetting]) -> dict:
+    st = acc.access_state(db, user_id, key, s)
+    return {
+        "pricing_mode": st["pricing_mode"], "time_plans": acc.plans_of(s),
+        "unlocked": st["unlocked"], "expires_at": st["expires_at"],
+        "remaining_seconds": st["remaining_seconds"], "expired": st["expired"],
+    }
 
 
 def _agent_view(db: Session, user: User, d: dict, s: Optional[AiAgentSetting],
@@ -152,15 +172,16 @@ def _agent_view(db: Session, user: User, d: dict, s: Optional[AiAgentSetting],
     default_status = d.get("_default_status", "published")
     is_paid = bool(s and s.is_paid)
     price = float(s.price or 0) if s else 0.0
-    unlocked = (not is_paid) or _is_unlocked(db, user.id, d["key"])
     return {
         "key": d["key"], "label": d["label"], "emoji": d.get("emoji"),
         "icon_name": d.get("icon_name"),
         "status": (s.status if s else default_status),
-        "is_paid": is_paid, "price": price, "unlocked": unlocked,
+        "is_paid": is_paid, "price": price,
         "free_intro": (s.free_intro if s else None),
         # Region-aware session view (USD/IAP for INTL, ₹/wallet for IN).
         **_session_pricing(db, region, s),
+        # unlocked + pricing_mode / time_plans / remaining_seconds (time pass)
+        **_time_view(db, user.id, d["key"], s),
     }
 
 
@@ -204,7 +225,6 @@ def agent_access(
     if not _visible_to(current_user, s, d.get("_default_status", "published")):
         raise HTTPException(status_code=403, detail="This agent is not available")
     is_paid = bool(s and s.is_paid)
-    unlocked = (not is_paid) or _is_unlocked(db, current_user.id, key)
     sess = region_util.session_region(
         explicit_region=region, user_region=current_user.region,
         device_country=x_device_country,
@@ -212,19 +232,32 @@ def agent_access(
     return {
         "key": key, "allowed": True,
         "is_paid": is_paid, "price": float(s.price or 0) if s else 0.0,
-        "unlocked": unlocked, "free_intro": (s.free_intro if s else None),
+        "free_intro": (s.free_intro if s else None),
         **_session_pricing(db, sess, s),
+        **_time_view(db, current_user.id, key, s),
     }
+
+
+class UnlockRequest(BaseModel):
+    """Time-pass topics: which plan to buy (its `minutes`). Omitted → the
+    shortest plan. Ignored for one-time-unlock topics."""
+    minutes: Optional[int] = Field(None, ge=1, le=acc.MAX_PLAN_MINUTES)
 
 
 @router.post("/agents/{key}/unlock")
 def unlock_agent(
     key: str,
+    req: Optional[UnlockRequest] = Body(None),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
 ):
-    """Pay the unlock price from the wallet to access a paid AI agent (India).
+    """Pay from the wallet to access a paid AI agent (India).
+
+    One-time topics: pay `price` once for permanent access. Time-pass topics:
+    pay the chosen plan's price for that many minutes; buying while time is
+    left adds to it. The price always comes from the admin plan, never the
+    client.
 
     International users must use the store IAP path (POST .../iap/verify) — the
     ₹ wallet is India-only and cannot be recharged from an international session
@@ -237,17 +270,28 @@ def unlock_agent(
         raise HTTPException(status_code=403, detail="This agent is not available")
     if not (s and s.is_paid):
         return {"status": "ok", "unlocked": True, "charged": 0}
-    if _is_unlocked(db, current_user.id, key):
+    time_mode = acc.pricing_mode(s) == "time"
+    state = acc.access_state(db, current_user.id, key, s)
+    # One-time topic already unlocked, or a permanent unlock on a time topic
+    # (bought before the switch to time plans): nothing to buy.
+    if state["unlocked"] and (not time_mode or state["expires_at"] is None):
         return {"status": "ok", "unlocked": True, "charged": 0}
 
     if region_util.is_international_region(current_user.region):
         raise HTTPException(
             status_code=409,
             detail={"code": "use_store_purchase",
-                    "message": t("err.use_store_purchase", lang)},
+                    "message": t("err.ai_time_pass_wallet_only" if time_mode else "err.use_store_purchase", lang)},
         )
 
-    price = float(s.price or 0)
+    plan = None
+    if time_mode:
+        plan = acc.find_plan(s, req.minutes if req else None)
+        if plan is None:
+            raise HTTPException(status_code=400, detail=t("err.ai_time_plan_invalid", lang))
+        price = float(plan["price"])
+    else:
+        price = float(s.price or 0)
     wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
     if not wallet or float(wallet.balance) < price:
         raise HTTPException(
@@ -259,13 +303,23 @@ def unlock_agent(
     txn = WalletTransaction(
         wallet_id=wallet.id, txn_type="consultation_debit",
         amount=Decimal(str(price)), balance_after=wallet.balance,
-        description=f"AI chat unlock: {d['label']}", reference_type="ai_agent",
+        description=(f"AI chat time: {d['label']} — {plan['minutes']} min" if plan
+                     else f"AI chat unlock: {d['label']}"),
+        reference_type="ai_agent",
     )
     db.add(txn)
     db.flush()
-    db.add(AiAgentUnlock(user_id=current_user.id, domain_key=key, amount=Decimal(str(price))))
+    if plan:
+        acc.add_time(db, current_user.id, key, plan["minutes"], price)
+    else:
+        db.add(AiAgentUnlock(user_id=current_user.id, domain_key=key, amount=Decimal(str(price))))
     db.commit()
-    return {"status": "ok", "unlocked": True, "charged": price, "balance": float(wallet.balance)}
+    out = {"status": "ok", "unlocked": True, "charged": price, "balance": float(wallet.balance)}
+    if plan:
+        st = acc.access_state(db, current_user.id, key, s)
+        out.update(minutes=plan["minutes"], expires_at=st["expires_at"],
+                   remaining_seconds=st["remaining_seconds"])
+    return out
 
 
 class AgentIapVerifyRequest(BaseModel):
@@ -305,6 +359,12 @@ def verify_agent_iap(
         raise HTTPException(status_code=403, detail="This agent is not available")
     if not (s and s.is_paid):
         return {"status": "ok", "unlocked": True, "charged": 0}
+    if acc.pricing_mode(s) == "time":
+        # No store products per time plan — never grant permanent access here.
+        raise HTTPException(
+            status_code=409,
+            detail={"code": "time_pass_wallet_only", "message": t("err.ai_time_pass_wallet_only", lang)},
+        )
     if _is_unlocked(db, current_user.id, key):
         return {"status": "ok", "unlocked": True, "charged": 0}
 
@@ -356,6 +416,9 @@ class AgentSettingUpdate(BaseModel):
     iap_product_id: Optional[str] = Field(None, max_length=100)
     price_usd_manual: Optional[bool] = None
     free_intro: Optional[str] = None
+    # Time-pass plans, e.g. [{"minutes": 10, "price": 100}]. [] switches the
+    # topic back to a one-time unlock.
+    time_plans: Optional[List[dict]] = None
 
 
 @router.get("/admin/agents")
@@ -382,6 +445,7 @@ def admin_list_agents(
             "iap_product_id": (s.iap_product_id if s else None),
             "price_usd_manual": bool(s and s.price_usd_manual),
             "free_intro": (s.free_intro if s else None),
+            "time_plans": acc.plans_of(s),
             "test_users": testers,
             "unlocks": db.query(AiAgentUnlock).filter(AiAgentUnlock.domain_key == d["key"]).count(),
         })
@@ -411,6 +475,8 @@ def admin_update_agent(
         s.price = Decimal(str(req.price))
     if req.free_intro is not None:
         s.free_intro = req.free_intro
+    if req.time_plans is not None:
+        s.time_plans = acc.normalize_plans(req.time_plans) or None
 
     # ── USD / store IAP pricing (mirrors ServicePricing) ──────────────
     # An explicit price_usd / iap_product_id marks the row manual unless the
@@ -462,5 +528,6 @@ def admin_update_agent(
         "iap_product_id": s.iap_product_id,
         "price_usd_manual": bool(s.price_usd_manual),
         "free_intro": s.free_intro,
+        "time_plans": acc.plans_of(s),
         "test_user_ids": s.test_user_ids or [],
     }

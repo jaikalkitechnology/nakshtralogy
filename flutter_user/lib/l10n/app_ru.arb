@@ -3869,5 +3869,10 @@
   "firstChartPrimaryInfo": "Ваша первая карта — это бесплатная основная карта. Дополнительные карты открывают услуги по отдельности.",
   "tryDifferentFilter": "Попробуйте другой фильтр",
   "defaultChartName": "Карта",
-  "balAbbr": "Бал."
+  "balAbbr": "Бал.",
+  "aiTimePassTitle": "Выберите время чата",
+  "aiTimePassHint": "Оплата из кошелька. Время начинается сейчас — повторная покупка добавляется к оставшемуся времени.",
+  "aiTimePlanMinutes": "{minutes} мин",
+  "aiTimePassPay": "Оплатить {price}",
+  "aiTimeLeft": "Осталось {minutes} мин"
 }

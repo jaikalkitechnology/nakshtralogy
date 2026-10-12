@@ -11987,6 +11987,28 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get balAbbr => 'बैलेंस';
+
+  @override
+  String get aiTimePassTitle => 'अपना चैट टाइम चुनें';
+
+  @override
+  String get aiTimePassHint =>
+      'वॉलेट से भुगतान। टाइम अभी से शुरू होगा — दोबारा खरीदने पर बचे हुए टाइम में जुड़ जाएगा।';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes मिनट';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return '$price भुगतान करें';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return '$minutes मिनट बाकी';
+  }
 }
 
 /// The translations for Hindi, using the Latin script (`hi_Latn`).
@@ -23987,4 +24009,26 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get balAbbr => 'Bal';
+
+  @override
+  String get aiTimePassTitle => 'Apna chat time chunein';
+
+  @override
+  String get aiTimePassHint =>
+      'Wallet se payment. Time abhi se shuru hoga — dobara kharidne par bache hue time mein jud jayega.';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return '$price pay karein';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return '$minutes min baaki';
+  }
 }

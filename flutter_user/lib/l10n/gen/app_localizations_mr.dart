@@ -11981,4 +11981,26 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get balAbbr => 'शिल्लक';
+
+  @override
+  String get aiTimePassTitle => 'तुमचा चॅट टाइम निवडा';
+
+  @override
+  String get aiTimePassHint =>
+      'वॉलेटमधून पेमेंट. वेळ आत्ताच सुरू होईल — पुन्हा खरेदी केल्यास उरलेल्या वेळेत जोडला जाईल.';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes मिनिटे';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return '$price भरा';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return '$minutes मिनिटे उरली';
+  }
 }

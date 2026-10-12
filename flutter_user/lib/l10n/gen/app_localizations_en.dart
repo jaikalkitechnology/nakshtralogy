@@ -11981,4 +11981,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get balAbbr => 'Bal';
+
+  @override
+  String get aiTimePassTitle => 'Choose your chat time';
+
+  @override
+  String get aiTimePassHint =>
+      'Paid from your wallet. Time starts now — buying again adds to any time you have left.';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return 'Pay $price';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return '$minutes min left';
+  }
 }

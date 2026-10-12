@@ -12057,4 +12057,26 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get balAbbr => 'Solde';
+
+  @override
+  String get aiTimePassTitle => 'Choisissez votre temps de chat';
+
+  @override
+  String get aiTimePassHint =>
+      'Payé depuis votre portefeuille. Le temps démarre maintenant ; un nouvel achat est ajouté au temps restant.';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return 'Payer $price';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return 'Encore $minutes min';
+  }
 }

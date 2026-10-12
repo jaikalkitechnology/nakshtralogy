@@ -5,9 +5,9 @@ import '../../theme/app_theme.dart';
 import '../../widgets/astro_avatar.dart';
 import '../../widgets/banner_slider.dart';
 import '../../widgets/hover_lift.dart';
+import '../../widgets/ai_agent_paywall.dart';
 import '../../services/api_service.dart';
 import '../../services/app_mode.dart';
-import '../../services/iap_service.dart';
 import '../../utils/money.dart';
 import '../../bloc/astrologer/astrologer_bloc.dart';
 import '../../bloc/astrologer/astrologer_event.dart';
@@ -65,71 +65,10 @@ class _HomeTabState extends State<HomeTab> {
     final label = HomeLabels.label(key, Localizations.localeOf(context), s['label'] as String);
     final emoji = s['emoji'] as String;
 
-    if (meta != null && meta['is_paid'] == true && meta['unlocked'] != true) {
-      // Region-aware unlock. The backend attaches a session view: India pays ₹
-      // from the wallet; international pays the USD tier via store IAP.
-      final intl = (meta['pay_via'] == 'iap') || AppMode.instance.isInternational;
-      final sessCurrency = (meta['session_currency'] as String?) ?? (intl ? 'USD' : 'INR');
-      final sessAmount = (meta['session_amount'] as num?)?.toDouble() ??
-          (intl
-              ? (meta['price_usd'] as num?)?.toDouble() ?? 0
-              : (meta['price'] as num?)?.toDouble() ?? 0);
-      final priceLabel = Money.format(sessAmount, currency: sessCurrency);
-      final ok = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          backgroundColor: AppColors.card,
-          title: Row(children: [Text(emoji, style: const TextStyle(fontSize: 22)), const SizedBox(width: 8),
-            Expanded(child: Text(label, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.primary, fontSize: 16)))]),
-          content: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-            if ((meta['free_intro'] ?? '').toString().isNotEmpty)
-              Padding(padding: const EdgeInsets.only(bottom: 12),
-                child: Text(meta['free_intro'].toString(), style: const TextStyle(color: AppColors.textPrimary, fontSize: 13))),
-            Text(
-              intl
-                  ? AppLocalizations.of(context)!.unlockAiSpecialistIntl(priceLabel)
-                  : AppLocalizations.of(context)!.unlockAiSpecialistWallet(priceLabel),
-              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-          ]),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(AppLocalizations.of(context)!.cancel, style: const TextStyle(color: AppColors.textSecondary))),
-            ElevatedButton(onPressed: () => Navigator.pop(ctx, true),
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.gold, foregroundColor: AppColors.midnight),
-                child: Text(AppLocalizations.of(context)!.unlockPriceLabel(priceLabel), maxLines: 1, overflow: TextOverflow.ellipsis)),
-          ],
-        ),
-      );
-      if (ok != true) return;
-
-      if (intl) {
-        // International → store IAP → backend verify + grant.
-        final productId = (meta['iap_product_id'] as String?) ?? '';
-        if (productId.isEmpty) {
-          if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(AppLocalizations.of(context)!.specialistNotAvailablePurchase),
-            backgroundColor: AppColors.error));
-          return;
-        }
-        final res = await IapService.instance.buyAgent(productId: productId, agentKey: key);
-        if (!res.ok) {
-          if (mounted && res.error != 'canceled') {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(AppLocalizations.of(context)!.couldNotCompletePurchase),
-              backgroundColor: AppColors.error));
-          }
-          return;
-        }
-      } else {
-        final resp = await ApiService().unlockAiAgent(key);
-        if (resp['statusCode'] != 200) {
-          if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(resp['detail'] ?? AppLocalizations.of(context)!.couldNotUnlockWalletBalance),
-            backgroundColor: AppColors.error));
-          return;
-        }
-      }
-      _agentMeta = {..._agentMeta, key: {...meta, 'unlocked': true}};
-    }
+    // Paid topics: one-time unlock or a time-pass plan (shared paywall).
+    final access = await ensureAiAgentAccess(context, key: key, meta: meta, label: label, emoji: emoji);
+    if (access == null) return;
+    if (meta != null) _agentMeta = {..._agentMeta, key: access};
     if (!mounted) return;
     // Engine-only topics (kundli, daily_forecast, character, past_life) have
     // no probability-domain counterpart — route them via engineKey instead

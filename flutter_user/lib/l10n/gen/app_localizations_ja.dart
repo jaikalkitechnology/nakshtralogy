@@ -11881,4 +11881,25 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get balAbbr => '残高';
+
+  @override
+  String get aiTimePassTitle => 'チャット時間を選択';
+
+  @override
+  String get aiTimePassHint => 'ウォレットから支払います。時間は今から始まり、追加購入すると残り時間に加算されます。';
+
+  @override
+  String aiTimePlanMinutes(Object minutes) {
+    return '$minutes分';
+  }
+
+  @override
+  String aiTimePassPay(Object price) {
+    return '$priceを支払う';
+  }
+
+  @override
+  String aiTimeLeft(Object minutes) {
+    return '残り$minutes分';
+  }
 }
