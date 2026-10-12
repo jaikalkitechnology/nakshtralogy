@@ -364,7 +364,6 @@ class _HomeTabState extends State<HomeTab> {
           final color = s['color'] as Color;
           final meta = _agentMeta[s['key']] as Map<String, dynamic>?;
           final locked = meta != null && meta['is_paid'] == true && meta['unlocked'] != true;
-          final price = (meta?['price'] as num?)?.toDouble() ?? 0;
           return GestureDetector(
             onTap: () => _openAiSpecialist(s),
             child: Stack(children: [
@@ -390,7 +389,8 @@ class _HomeTabState extends State<HomeTab> {
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   const Icon(Icons.lock, size: 9, color: AppColors.midnight),
                   const SizedBox(width: 2),
-                  Text('₹${price.toStringAsFixed(0)}', style: const TextStyle(color: AppColors.midnight, fontSize: 8, fontWeight: FontWeight.bold)),
+                  // "Unlock" — the real prices (one-time or time plans) are in the buy popup.
+                  Text(AppLocalizations.of(context)!.unlock, style: const TextStyle(color: AppColors.midnight, fontSize: 8, fontWeight: FontWeight.bold)),
                 ]),
               )),
           ]));
