@@ -12036,7 +12036,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get aiTimePassTitle => 'Выберите время чата';
 
   @override
-  String get aiTimePassHint => 'Оплата из кошелька. Время начинается сейчас — повторная покупка добавляется к оставшемуся времени.';
+  String get aiTimePassHint =>
+      'Оплата из кошелька. Время начинается сейчас — повторная покупка добавляется к оставшемуся времени.';
 
   @override
   String aiTimePlanMinutes(Object minutes) {

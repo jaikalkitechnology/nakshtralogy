@@ -11986,7 +11986,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiTimePassTitle => 'Choose your chat time';
 
   @override
-  String get aiTimePassHint => 'Paid from your wallet. Time starts now — buying again adds to any time you have left.';
+  String get aiTimePassHint =>
+      'Paid from your wallet. Time starts now — buying again adds to any time you have left.';
 
   @override
   String aiTimePlanMinutes(Object minutes) {

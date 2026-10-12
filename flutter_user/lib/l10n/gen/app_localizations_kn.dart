@@ -12001,7 +12001,8 @@ class AppLocalizationsKn extends AppLocalizations {
   String get aiTimePassTitle => 'ನಿಮ್ಮ ಚಾಟ್ ಸಮಯ ಆಯ್ಕೆಮಾಡಿ';
 
   @override
-  String get aiTimePassHint => 'ವಾಲೆಟ್‌ನಿಂದ ಪಾವತಿ. ಸಮಯ ಈಗಲೇ ಆರಂಭವಾಗುತ್ತದೆ — ಮತ್ತೆ ಖರೀದಿಸಿದರೆ ಉಳಿದ ಸಮಯಕ್ಕೆ ಸೇರುತ್ತದೆ.';
+  String get aiTimePassHint =>
+      'ವಾಲೆಟ್‌ನಿಂದ ಪಾವತಿ. ಸಮಯ ಈಗಲೇ ಆರಂಭವಾಗುತ್ತದೆ — ಮತ್ತೆ ಖರೀದಿಸಿದರೆ ಉಳಿದ ಸಮಯಕ್ಕೆ ಸೇರುತ್ತದೆ.';
 
   @override
   String aiTimePlanMinutes(Object minutes) {

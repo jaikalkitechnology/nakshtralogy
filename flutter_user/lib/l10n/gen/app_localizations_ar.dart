@@ -11981,7 +11981,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get aiTimePassTitle => 'اختر وقت الدردشة';
 
   @override
-  String get aiTimePassHint => 'الدفع من محفظتك. يبدأ الوقت الآن — الشراء مرة أخرى يضيف إلى الوقت المتبقي.';
+  String get aiTimePassHint =>
+      'الدفع من محفظتك. يبدأ الوقت الآن — الشراء مرة أخرى يضيف إلى الوقت المتبقي.';
 
   @override
   String aiTimePlanMinutes(Object minutes) {

@@ -11992,7 +11992,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get aiTimePassTitle => 'अपना चैट टाइम चुनें';
 
   @override
-  String get aiTimePassHint => 'वॉलेट से भुगतान। टाइम अभी से शुरू होगा — दोबारा खरीदने पर बचे हुए टाइम में जुड़ जाएगा।';
+  String get aiTimePassHint =>
+      'वॉलेट से भुगतान। टाइम अभी से शुरू होगा — दोबारा खरीदने पर बचे हुए टाइम में जुड़ जाएगा।';
 
   @override
   String aiTimePlanMinutes(Object minutes) {
@@ -24013,7 +24014,8 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
   String get aiTimePassTitle => 'Apna chat time chunein';
 
   @override
-  String get aiTimePassHint => 'Wallet se payment. Time abhi se shuru hoga — dobara kharidne par bache hue time mein jud jayega.';
+  String get aiTimePassHint =>
+      'Wallet se payment. Time abhi se shuru hoga — dobara kharidne par bache hue time mein jud jayega.';
 
   @override
   String aiTimePlanMinutes(Object minutes) {

@@ -11994,7 +11994,8 @@ class AppLocalizationsPa extends AppLocalizations {
   String get aiTimePassTitle => 'ਆਪਣਾ ਚੈਟ ਟਾਈਮ ਚੁਣੋ';
 
   @override
-  String get aiTimePassHint => 'ਵਾਲਿਟ ਤੋਂ ਭੁਗਤਾਨ। ਸਮਾਂ ਹੁਣੇ ਤੋਂ ਸ਼ੁਰੂ — ਦੁਬਾਰਾ ਖਰੀਦਣ ਨਾਲ ਬਾਕੀ ਸਮੇਂ ਵਿੱਚ ਜੁੜ ਜਾਵੇਗਾ।';
+  String get aiTimePassHint =>
+      'ਵਾਲਿਟ ਤੋਂ ਭੁਗਤਾਨ। ਸਮਾਂ ਹੁਣੇ ਤੋਂ ਸ਼ੁਰੂ — ਦੁਬਾਰਾ ਖਰੀਦਣ ਨਾਲ ਬਾਕੀ ਸਮੇਂ ਵਿੱਚ ਜੁੜ ਜਾਵੇਗਾ।';
 
   @override
   String aiTimePlanMinutes(Object minutes) {

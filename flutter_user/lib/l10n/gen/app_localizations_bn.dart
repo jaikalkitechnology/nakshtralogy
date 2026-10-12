@@ -11992,7 +11992,8 @@ class AppLocalizationsBn extends AppLocalizations {
   String get aiTimePassTitle => 'আপনার চ্যাট টাইম বেছে নিন';
 
   @override
-  String get aiTimePassHint => 'ওয়ালেট থেকে পেমেন্ট। সময় এখন থেকে শুরু — আবার কিনলে বাকি সময়ের সাথে যোগ হবে।';
+  String get aiTimePassHint =>
+      'ওয়ালেট থেকে পেমেন্ট। সময় এখন থেকে শুরু — আবার কিনলে বাকি সময়ের সাথে যোগ হবে।';
 
   @override
   String aiTimePlanMinutes(Object minutes) {

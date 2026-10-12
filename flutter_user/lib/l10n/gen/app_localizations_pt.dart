@@ -12012,7 +12012,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get aiTimePassTitle => 'Escolha seu tempo de chat';
 
   @override
-  String get aiTimePassHint => 'Pago pela sua carteira. O tempo começa agora; comprar de novo soma ao tempo restante.';
+  String get aiTimePassHint =>
+      'Pago pela sua carteira. O tempo começa agora; comprar de novo soma ao tempo restante.';
 
   @override
   String aiTimePlanMinutes(Object minutes) {
@@ -24038,7 +24039,8 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get aiTimePassTitle => 'Escolha seu tempo de chat';
 
   @override
-  String get aiTimePassHint => 'Pago pela sua carteira. O tempo começa agora; comprar de novo soma ao tempo restante.';
+  String get aiTimePassHint =>
+      'Pago pela sua carteira. O tempo começa agora; comprar de novo soma ao tempo restante.';
 
   @override
   String aiTimePlanMinutes(Object minutes) {

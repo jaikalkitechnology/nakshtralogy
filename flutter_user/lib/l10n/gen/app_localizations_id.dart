@@ -12019,7 +12019,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get aiTimePassTitle => 'Pilih waktu chat Anda';
 
   @override
-  String get aiTimePassHint => 'Dibayar dari dompet Anda. Waktu dimulai sekarang — membeli lagi akan menambah sisa waktu.';
+  String get aiTimePassHint =>
+      'Dibayar dari dompet Anda. Waktu dimulai sekarang — membeli lagi akan menambah sisa waktu.';
 
   @override
   String aiTimePlanMinutes(Object minutes) {

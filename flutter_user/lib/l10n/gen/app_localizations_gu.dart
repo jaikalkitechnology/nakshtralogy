@@ -11979,7 +11979,8 @@ class AppLocalizationsGu extends AppLocalizations {
   String get aiTimePassTitle => 'તમારો ચેટ ટાઇમ પસંદ કરો';
 
   @override
-  String get aiTimePassHint => 'વૉલેટમાંથી ચુકવણી. સમય હમણાંથી શરૂ થશે — ફરી ખરીદવાથી બાકી સમયમાં ઉમેરાશે.';
+  String get aiTimePassHint =>
+      'વૉલેટમાંથી ચુકવણી. સમય હમણાંથી શરૂ થશે — ફરી ખરીદવાથી બાકી સમયમાં ઉમેરાશે.';
 
   @override
   String aiTimePlanMinutes(Object minutes) {
