@@ -101,12 +101,29 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     }
   }
 
-  /// Time left on this topic's time pass, if it is priced per minutes.
+  /// Paid topic: show the buy popup as soon as the chat opens, whichever
+  /// screen opened it (home, a report's "Ask AI", the forecast screen, a
+  /// resumed chat). Closing the popup without paying leaves the chat. Also
+  /// starts the "⏱ N min left" chip for a topic priced per minutes.
   Future<void> _loadAccess() async {
     final key = _topic.metaKey;
     if (key == null) return;
     final all = await _api.getAiAgents();
-    if (mounted) _setAccess(all[key] as Map<String, dynamic>?);
+    if (!mounted) return;
+    final meta = all[key] as Map<String, dynamic>?;
+    if (meta != null && meta['is_paid'] == true && meta['unlocked'] != true) {
+      final access = await ensureAiAgentAccess(
+        context, key: key, meta: meta, label: _topicLabel, emoji: _topicEmoji,
+      );
+      if (!mounted) return;
+      if (access == null) {
+        Navigator.of(context).maybePop();
+        return;
+      }
+      _setAccess(access);
+      return;
+    }
+    _setAccess(meta);
   }
 
   void _setAccess(Map<String, dynamic>? m) {
@@ -357,7 +374,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     }
   }
 
-  Future<void> _selectChart(Map<String, dynamic> chart) async {
+  Future<void> _selectChart(Map<String, dynamic> chart, {bool afterPayment = false}) async {
     final chartId = chart['id']?.toString();
     if (chartId == null) return;
     final created = await _api.createAgentChat(
@@ -365,6 +382,17 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
       engineKey: _engineKeyForNewChat,
       language: _language == 'auto' ? null : _language,
     );
+    // 402 = paid topic not bought (or time ran out): show the buy popup,
+    // then start the chat once paid.
+    final key = _topic.metaKey;
+    if (created?['statusCode'] == 402 && !afterPayment && key != null && mounted) {
+      final access = await ensureAiAgentAccess(
+        context, key: key, meta: null, label: _topicLabel, emoji: _topicEmoji, refresh: true,
+      );
+      if (access == null || !mounted) return;
+      _setAccess(access);
+      return _selectChart(chart, afterPayment: true);
+    }
     if (created == null || created['id'] == null) {
       if (mounted) {
         final detail = (created?['detail'] ?? '').toString();
