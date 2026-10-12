@@ -22,7 +22,7 @@ from app.models.model import Chart, User, AgentLog, AgentLogSection, AIChat, AIC
 from app.kundli import engine as nk_engine
 from app.agent.engine import NakshtraAgent, DOMAINS, detect_intent, apply_display_floor
 from app.agent.llm_service import generate_llm_response, get_available_providers
-from app.agent.specialist_bridge import CHAT_ENGINE_KEYS, EXTRA_CHAT_ENGINES, EXTRA_CHAT_ENGINE_META, setting_key_for_chat_engine
+from app.agent.specialist_bridge import CHAT_ENGINE_KEYS, EXTRA_CHAT_ENGINE_META
 
 
 def _chart_holder(db, chart_id) -> Optional[dict]:
@@ -114,38 +114,16 @@ _VALID_ENGINE_KEYS = CHAT_ENGINE_KEYS
 
 def _check_engine_access(db: Session, user: User, engine_key: Optional[str]) -> None:
     """Enforce the admin publish/pricing control (AiAgentSetting) on the
-    topic a new chat is being scoped to — draft topics 404 for non-testers,
-    unpublished-but-paid topics require an existing unlock. Mirrors the
-    visibility/unlock checks in ai_agent_router.py. A general (engine_key=
-    None) chat is never gated."""
-    setting_key = setting_key_for_chat_engine(engine_key)
-    if not setting_key:
-        return
-    from app.models.model import AiAgentSetting, AiAgentUnlock
-    s = db.query(AiAgentSetting).filter(AiAgentSetting.domain_key == setting_key).first()
-    # Chat-only topics (character/past_life/daily_forecast/kundli — i.e.
-    # EXTRA_CHAT_ENGINES, read directly rather than a hand-copied tuple so
-    # adding a new extra-topic agent here can't silently default it to
-    # "published"/open-to-everyone the way "kundli" briefly did) default to
-    # draft when unconfigured; domain-mapped topics (career, marriage, ...)
-    # default to published, matching the long-standing AI Chat Agents
-    # admin screen.
-    default_status = "draft" if setting_key in EXTRA_CHAT_ENGINES else "published"
-    status = s.status if s else default_status
-    if status == "published":
-        visible = True
-    elif status == "testing":
-        visible = bool(s) and user.id in (s.test_user_ids or [])
-    else:
-        visible = False
-    if not visible:
+    topic a new chat is being scoped to — draft topics 403 for non-testers,
+    paid topics need an unlock or an unexpired time pass (402). The same
+    rule (app/services/ai_access.chat_access) is applied to every message in
+    ws_agent. A general (engine_key=None) chat is never gated."""
+    from app.services.ai_access import chat_access
+    access = chat_access(db, user, engine_key)
+    if access["reason"] == "not_available":
         raise HTTPException(403, "This AI topic is not available yet")
-    if s and s.is_paid:
-        unlocked = db.query(AiAgentUnlock).filter(
-            AiAgentUnlock.user_id == user.id, AiAgentUnlock.domain_key == setting_key,
-        ).first() is not None
-        if not unlocked:
-            raise HTTPException(402, "Unlock this AI topic first")
+    if access["reason"] == "payment_required":
+        raise HTTPException(402, "Unlock this AI topic first")
 
 
 class CreateChatRequest(BaseModel):

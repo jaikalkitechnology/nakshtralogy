@@ -1323,6 +1323,10 @@ class AiAgentSetting(Base):
     iap_product_id = Column(String(100), nullable=True)
     price_usd_manual = Column(Boolean, default=False, server_default="0", nullable=False)
     free_intro = Column(Text, nullable=True)                       # optional teaser shown before unlock
+    # Time-pass pricing: [{"minutes": 10, "price": 100}, {"minutes": 20, "price": 200}].
+    # When set (and is_paid), users buy chat time instead of a one-time
+    # unlock — see app/services/ai_access.py. Empty/NULL = one-time unlock.
+    time_plans = Column(JSON, nullable=True)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
 
@@ -1334,6 +1338,9 @@ class AiAgentUnlock(Base):
     user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     domain_key = Column(String(40), nullable=False, index=True)
     amount = Column(Numeric(10, 2), default=0)
+    # Time pass: access ends at this UTC time (each purchase extends it).
+    # NULL = permanent one-time unlock.
+    expires_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
     __table_args__ = (
