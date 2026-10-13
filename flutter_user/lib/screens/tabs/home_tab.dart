@@ -6,6 +6,7 @@ import '../../widgets/astro_avatar.dart';
 import '../../widgets/banner_slider.dart';
 import '../../widgets/hover_lift.dart';
 import '../../widgets/ai_agent_paywall.dart';
+import '../../widgets/responsive_center.dart';
 import '../../services/api_service.dart';
 import '../../services/app_mode.dart';
 import '../../utils/money.dart';
@@ -352,8 +353,10 @@ class _HomeTabState extends State<HomeTab> {
     final visible =
         _aiSpecialists.where((s) => _agentMeta.containsKey(s['key'])).toList();
     if (visible.isEmpty) return const SizedBox.shrink();
+    // Tiles grow with the user's text size so the two-line labels never clip.
+    final ts = tileTextScale(context, max: 1.4);
     return SizedBox(
-      height: 100,
+      height: 100 * ts,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -368,7 +371,8 @@ class _HomeTabState extends State<HomeTab> {
             onTap: () => _openAiSpecialist(s),
             child: Stack(children: [
             Container(
-              width: 90,
+              width: 90 * ts,
+              height: 100 * ts,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: color.withOpacity(0.08),

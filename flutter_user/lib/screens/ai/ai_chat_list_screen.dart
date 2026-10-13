@@ -3,6 +3,7 @@ import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import '../../utils/ai_topics.dart';
 import '../../widgets/ai_agent_paywall.dart';
+import '../../widgets/responsive_center.dart';
 import 'ai_specialist_chat_screen.dart';
 
 /// ChatGPT-style AI chat home: "New Chat" + resumable chat history.
@@ -111,7 +112,7 @@ class _AiChatListScreenState extends State<AiChatListScreen> {
     if (!mounted) return;
     await Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => AiSpecialistChatScreen(
-        chartId: chart!['id']?.toString(),
+        chartId: chart['id']?.toString(),
         domainKey: topic.domainKey,
         engineKey: topic.engineKey,
         label: topic.label,
@@ -131,6 +132,7 @@ class _AiChatListScreenState extends State<AiChatListScreen> {
     return showModalBottomSheet<AiTopic>(
       context: context,
       backgroundColor: AppColors.nebula,
+      constraints: const BoxConstraints(maxWidth: 640),
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       isScrollControlled: true,
       builder: (ctx) {
@@ -147,8 +149,11 @@ class _AiChatListScreenState extends State<AiChatListScreen> {
                 constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.55),
                 child: GridView.builder(
                   shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, childAspectRatio: 0.92,
+                  // 3 columns on phones, more on wider sheets; tile height
+                  // follows the user's text size so labels never clip.
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 132, mainAxisSpacing: 10, crossAxisSpacing: 10,
+                    mainAxisExtent: 100 * tileTextScale(ctx),
                   ),
                   itemCount: topics.length,
                   itemBuilder: (_, i) {
@@ -200,6 +205,7 @@ class _AiChatListScreenState extends State<AiChatListScreen> {
     return showModalBottomSheet<Map<String, dynamic>>(
       context: context,
       backgroundColor: AppColors.nebula,
+      constraints: const BoxConstraints(maxWidth: 640),
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (ctx) => SafeArea(
         child: Padding(
@@ -216,8 +222,10 @@ class _AiChatListScreenState extends State<AiChatListScreen> {
                   final c = (_charts[i] as Map).cast<String, dynamic>();
                   return ListTile(
                     leading: const Icon(Icons.person, color: AppColors.gold),
-                    title: Text(c['name']?.toString() ?? '', style: const TextStyle(color: AppColors.ivory)),
-                    subtitle: Text('${c['dob']} · ${c['place']}', style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+                    title: Text(c['name']?.toString() ?? '', maxLines: 1, overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: AppColors.ivory)),
+                    subtitle: Text('${c['dob']} · ${c['place']}', maxLines: 1, overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
                     onTap: () => Navigator.pop(ctx, c),
                   );
                 },
@@ -265,10 +273,12 @@ class _AiChatListScreenState extends State<AiChatListScreen> {
               : RefreshIndicator(
                   color: AppColors.gold,
                   onRefresh: _loadAll,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(12, 12, 12, 90),
-                    itemCount: _chats.length,
-                    itemBuilder: (_, i) => _chatCard(_chats[i] as Map<String, dynamic>),
+                  child: ResponsiveCenter(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 90),
+                      itemCount: _chats.length,
+                      itemBuilder: (_, i) => _chatCard(_chats[i] as Map<String, dynamic>),
+                    ),
                   ),
                 ),
     );
@@ -281,7 +291,11 @@ class _AiChatListScreenState extends State<AiChatListScreen> {
         const SizedBox(height: 12),
         const Text('No chats yet', style: TextStyle(color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w600)),
         const SizedBox(height: 4),
-        const Text('Start a new chat to ask about your chart', style: TextStyle(color: AppColors.smoke, fontSize: 12)),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24),
+          child: Text('Start a new chat to ask about your chart', textAlign: TextAlign.center,
+              style: TextStyle(color: AppColors.smoke, fontSize: 12)),
+        ),
       ]),
     );
   }
