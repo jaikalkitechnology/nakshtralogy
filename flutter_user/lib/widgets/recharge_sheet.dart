@@ -121,9 +121,11 @@ class _RechargeSheetState extends State<_RechargeSheet> {
     }
 
     if (url == null || url.isEmpty) {
-      // Gateway configured but no hosted link yet (pre-go-live).
+      // The server normally refuses (502 + reason) before we get here.
       setState(() => _busy = false);
-      _snack('This payment method is being set up. Please try another or check back soon.', AppColors.error);
+      _snack(checkout['error'] != null
+          ? 'Could not open the payment page. Please try another payment method.'
+          : 'This payment method is not available right now. Please try another.', AppColors.error);
       return;
     }
     // Fallback: open the hosted checkout, then poll the order until confirmed.

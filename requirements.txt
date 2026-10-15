@@ -15,3 +15,4 @@ cryptography
 # falls back to a NON-FUNCTIONAL dev token and calls never connect audio/video
 # when the Agora project enforces tokens.
 agora-token-builder
+requests
