@@ -465,6 +465,11 @@ def create_order(db: Session, user_id: str, gateway: str, amount: float,
     admin panel). Returns (order, checkout_params)."""
     from app.core.config import settings
     from app.models.model import WalletRechargeOrder
+    if gateway == "payu" and currency != "INR" and credit_inr is not None:
+        # PayU India charges in ₹ only (its form has no currency field), so a
+        # $10 recharge must be billed as its ₹ value — never as ₹10. Foreign
+        # cards pay that ₹ amount and their bank converts it.
+        amount, currency = float(credit_inr), "INR"
     order = WalletRechargeOrder(
         user_id=user_id, gateway=gateway, amount=Decimal(str(amount)),
         currency=currency, credit_inr=Decimal(str(credit_inr if credit_inr is not None else amount)),

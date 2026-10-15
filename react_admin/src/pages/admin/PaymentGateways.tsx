@@ -18,7 +18,7 @@ interface Gateway {
 
 const META: Record<string, { label: string; note: string }> = {
   razorpay: { label: "Razorpay", note: "India + international cards/UPI. key_id starts with rzp_live_ or rzp_test_ (Dashboard → Account & Settings → API Keys). Webhook: /api/v1/payments/webhook/razorpay" },
-  payu: { label: "PayU", note: "India + international. Fields: merchant_key, merchant_salt, environment (live|test). Payer returns to /api/v1/payments/payu/return; S2S webhook: /api/v1/payments/webhook/payu" },
+  payu: { label: "PayU", note: "India + international cards, always charged in ₹ (international recharges are billed at their ₹ value). Fields: merchant_key, merchant_salt, environment (live|test). Payer returns to /api/v1/payments/payu/return; S2S webhook: /api/v1/payments/webhook/payu" },
   paypal: { label: "PayPal", note: "International only. Fields: client_id, client_secret, environment (sandbox|live), webhook_id. Webhook: /api/v1/payments/webhook/paypal" },
 };
 
