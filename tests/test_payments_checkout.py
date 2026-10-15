@@ -234,3 +234,15 @@ def test_paypal_cancel_marks_failed(api):
     oid = api.post("/payments/recharge/order", json={"gateway": "paypal", "amount": 50}).json()["order"]["id"]
     assert "cancelled" in api.get("/payments/paypal/return?token=PP2&cancel=1").text
     assert _order(api, oid).status == "failed" and _balance(api) == 0
+
+
+def test_payu_international_recharge_is_billed_in_rupees(api, monkeypatch):
+    # PayU India has no currency field: a $10 recharge must post its ₹ value.
+    monkeypatch.setattr(pr.region_util, "is_international_region", lambda r: True)
+    monkeypatch.setattr(pr.pricing_util, "get_fx_rate", lambda db: 85.0)
+    _creds(api, "payu", merchant_key="MKEY", merchant_salt="MSALT")
+    r = api.post("/payments/recharge/order", json={"gateway": "payu", "amount": 10})
+    assert r.status_code == 200, r.text
+    o = r.json()["order"]
+    assert (o["amount"], o["currency"], o["credit_inr"]) == (850.0, "INR", 850.0)
+    assert 'name="amount" value="850.00"' in api.get(f"/payments/payu/checkout/{o['id']}").text
