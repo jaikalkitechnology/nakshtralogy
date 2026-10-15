@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,8 @@ import '../../utils/constants.dart';
 import '../../utils/ai_topics.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/ai_agent_paywall.dart';
+import '../../widgets/chat_markdown.dart';
+import '../../widgets/responsive_center.dart';
 
 class AiSpecialistChatScreen extends StatefulWidget {
   /// Resume an existing chat (from the chat list / history). When set,
@@ -81,6 +84,12 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   // Shown as "⏱ 8 min left" in the app bar; refreshed by each 'prob' frame.
   DateTime? _accessExpiresAt;
   Timer? _accessTicker;
+
+  // Chat column width on wide screens (tablet / web) and the bubble width
+  // derived from it — set in _chatView's LayoutBuilder.
+  static const double _maxChatWidth = 820;
+  double _columnWidth = 360;
+  double get _bubbleMaxWidth => math.min(_columnWidth * 0.86, 640);
 
   @override
   void initState() {
@@ -596,7 +605,9 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           ),
         ],
       ),
-      body: _selectedChartId == null ? _chartSelector() : _chatView(),
+      body: _selectedChartId == null
+          ? ResponsiveCenter(maxWidth: 760, child: _chartSelector())
+          : _chatView(),
     );
   }
 
@@ -664,49 +675,72 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
 
   Widget _chatView() {
     final l = AppLocalizations.of(context)!;
-    return Column(children: [
-      // Chart info strip
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        color: AppColors.nebula.withOpacity(0.5),
-        child: Row(children: [
-          const Icon(Icons.auto_awesome, size: 12, color: AppColors.gold),
-          const SizedBox(width: 6),
-          Text(l.aiAnalyzingName(_selectedChartName ?? ''), style: const TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
-        ]),
-      ),
-      // Messages
-      Expanded(
-        child: ListView.builder(
-          controller: _scrollCtrl,
-          padding: const EdgeInsets.all(16),
-          itemCount: _messages.length,
-          itemBuilder: (_, i) => _messageBubble(_messages[i]),
-        ),
-      ),
-      // Streaming indicator — ChatGPT-style evolving status line while
-      // waiting for the first server frame; crossfades as `_currentStage`
-      // updates ("Consulting your kundli…" -> "Preparing your answer…").
-      if (_sending && (_messages.isEmpty || _messages.last['streaming'] != true))
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-          child: Row(children: [
-            const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold)),
-            const SizedBox(width: 8),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 250),
-              child: Text(_currentStage ?? l.aiAnalyzingChart,
-                  key: ValueKey(_currentStage ?? 'default'),
-                  style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+    return LayoutBuilder(builder: (ctx, box) {
+      _columnWidth = math.min(box.maxWidth, _maxChatWidth);
+      // Side gutter that centres the message list on wide screens while
+      // keeping its scrollbar at the screen edge.
+      final gutter = math.max(16.0, (box.maxWidth - _maxChatWidth) / 2 + 16);
+      return Column(children: [
+        // Chart info strip
+        Container(
+          width: double.infinity,
+          color: AppColors.nebula.withOpacity(0.5),
+          child: ResponsiveCenter(
+            maxWidth: _maxChatWidth,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              child: Row(children: [
+                const Icon(Icons.auto_awesome, size: 12, color: AppColors.gold),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(l.aiAnalyzingName(_selectedChartName ?? ''),
+                      maxLines: 1, overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
+                ),
+              ]),
             ),
-          ]),
+          ),
         ),
-      // Initial sample suggestions (before any chat)
-      if (_messages.length <= 1) _suggestions(),
-      // LLM-generated follow-up chips (after each bot reply)
-      if (_followupSuggestions.isNotEmpty && !_sending) _followupChips(),
-      _inputBar(),
-    ]);
+        // Messages
+        Expanded(
+          child: ListView.builder(
+            controller: _scrollCtrl,
+            padding: EdgeInsets.fromLTRB(gutter, 16, gutter, 16),
+            itemCount: _messages.length,
+            itemBuilder: (_, i) => _messageBubble(_messages[i]),
+          ),
+        ),
+        // Streaming indicator — ChatGPT-style evolving status line while
+        // waiting for the first server frame; crossfades as `_currentStage`
+        // updates ("Consulting your kundli…" -> "Preparing your answer…").
+        if (_sending && (_messages.isEmpty || _messages.last['streaming'] != true))
+          ResponsiveCenter(
+            maxWidth: _maxChatWidth,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+              child: Row(children: [
+                const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 250),
+                    child: Text(_currentStage ?? l.aiAnalyzingChart,
+                        key: ValueKey(_currentStage ?? 'default'),
+                        maxLines: 1, overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+                  ),
+                ),
+              ]),
+            ),
+          ),
+        // Initial sample suggestions (before any chat)
+        if (_messages.length <= 1) ResponsiveCenter(maxWidth: _maxChatWidth, child: _suggestions()),
+        // LLM-generated follow-up chips (after each bot reply)
+        if (_followupSuggestions.isNotEmpty && !_sending)
+          ResponsiveCenter(maxWidth: _maxChatWidth, child: _followupChips()),
+        _inputBar(),
+      ]);
+    });
   }
 
   // ── Input ─────────────────────────────────────────────────────────
@@ -721,9 +755,10 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
       ),
       child: SafeArea(
         top: false,
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          // Text input + send
-          Row(children: [
+        child: ResponsiveCenter(
+          maxWidth: _maxChatWidth,
+          // Text input + send (the field grows up to 5 lines)
+          child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
             Expanded(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -734,12 +769,21 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
                 ),
                 child: TextField(
                   controller: _msgCtrl,
+                  minLines: 1,
+                  maxLines: 5,
+                  textInputAction: TextInputAction.send,
                   style: const TextStyle(color: AppColors.ivory, fontSize: 13),
                   decoration: InputDecoration(
                     hintText: l.aiAskStarsHint,
                     hintStyle: const TextStyle(color: AppColors.smoke, fontSize: 12),
+                    // The pill container draws the border — switch off the
+                    // app-wide input fill/border so there's no box inside it.
+                    filled: false,
+                    isDense: true,
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 11),
                   ),
                   onSubmitted: (_) => _sendMessage(),
                 ),
@@ -766,7 +810,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
               ),
             ),
           ]),
-        ]),
+        ),
       ),
     );
   }
@@ -844,7 +888,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           children: _followupSuggestions.map((q) => GestureDetector(
             onTap: _sending ? null : () { _msgCtrl.text = q; _sendMessage(); },
             child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 32),
+              constraints: BoxConstraints(maxWidth: _columnWidth - 32),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
@@ -877,7 +921,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.82),
+        constraints: BoxConstraints(maxWidth: _bubbleMaxWidth),
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -907,11 +951,11 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
                     color: AppColors.midnight,
                     fontSize: 13, fontWeight: FontWeight.w500, height: 1.4,
                   ))
-                // Bot replies are selectable so any portion can be copied,
-                // matching ChatGPT / Claude / Gemini.
-                : SelectableText(text, style: const TextStyle(
+                // Bot replies: **bold**, headings and lists rendered (not raw
+                // symbols) and still selectable, like ChatGPT / Claude.
+                : ChatMarkdown(text, accent: AppColors.gold, style: const TextStyle(
                     color: AppColors.ivory,
-                    fontSize: 13, fontWeight: FontWeight.normal, height: 1.4,
+                    fontSize: 13, fontWeight: FontWeight.normal, height: 1.45,
                   )),
           if (streaming && text.isEmpty)
             Row(mainAxisSize: MainAxisSize.min, children: [

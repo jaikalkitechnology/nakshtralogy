@@ -10,7 +10,10 @@ admin-managed in PlatformSetting (category 'papg'). Money plumbing only.
 
 from typing import Optional
 
+import html as _html
+
 from fastapi import APIRouter, Depends, HTTPException, Header, Request
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
@@ -84,6 +87,13 @@ def create_recharge_order(
         credit_inr = round(body.amount * (fx or pricing_util.DEFAULT_FX_RATE), 2)
     order, checkout = papg.create_order(
         db, current_user.id, gw, body.amount, currency=currency, credit_inr=credit_inr)
+    if not (checkout.get("url") or checkout.get("razorpay_order_id")):
+        # The gateway refused (bad keys, outage …). Fail clearly instead of
+        # handing the app an order it can't pay; the reason is in the admin panel.
+        order.status = "failed"
+        db.commit()
+        raise HTTPException(
+            502, f"{papg._gateway_label(gw)} is not available right now. Please try another payment method.")
     db.commit()
     return {"order": {"id": order.id, "status": order.status,
                       "amount": float(order.amount), "currency": order.currency,
@@ -278,10 +288,15 @@ def _process_payu_webhook(db, form, ev):
         creds.get("merchant_salt"), creds.get("merchant_key"), form)
 
     order = None
-    if txnid:
-        order = db.query(WalletRechargeOrder).filter(WalletRechargeOrder.id == txnid).first()
+    ref = form.get("udf1") or txnid
+    if ref or txnid:
+        from sqlalchemy import or_
+        order = db.query(WalletRechargeOrder).filter(
+            WalletRechargeOrder.gateway == "payu",
+            or_(WalletRechargeOrder.id == ref, WalletRechargeOrder.gateway_order_id == txnid)).first()
     if order:
         ev.user_id = order.user_id
+        ev.order_ref = order.id
 
     if not ev.signature_valid:
         ev.status = "invalid_signature"
@@ -400,6 +415,89 @@ def _process_generic_webhook(db, gw, payload, ev):
         ev.error = info.get("code")
 
 
+# ── hosted-checkout pages (PayU / PayPal) ─────────────────────────────
+# Opened in the browser by the app; no login needed — the order id is an
+# unguessable UUID and only an unpaid order produces a payment form.
+
+def _result_page(title: str, message: str, ok: bool) -> HTMLResponse:
+    from app.core.config import settings
+    colour = "#5fc88c" if ok else "#e25c5c"
+    return HTMLResponse(f"""<!doctype html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>{_html.escape(title)}</title>
+<style>body{{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+background:#0b0a24;color:#f3eefc;font-family:-apple-system,Segoe UI,Roboto,sans-serif;padding:24px;box-sizing:border-box}}
+.card{{max-width:420px;width:100%;text-align:center;background:#16133a;border:1px solid #3a3470;border-radius:18px;padding:32px 24px}}
+h1{{font-size:22px;color:{colour};margin:0 0 10px}}p{{color:#b7a9e8;line-height:1.5;margin:0 0 22px}}
+a{{display:inline-block;background:#f2c14e;color:#1b1206;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:12px}}</style>
+</head><body><div class="card"><h1>{_html.escape(title)}</h1><p>{_html.escape(message)}</p>
+<a href="{_html.escape(settings.USER_APP_URL)}">Back to Nakshatralogy</a></div></body></html>""")
+
+
+@router.get("/payu/checkout/{order_id}", response_class=HTMLResponse)
+def payu_checkout_page(order_id: str, db: Session = Depends(get_db)):
+    """Auto-submitting form that posts the signed request to PayU's hosted page."""
+    from app.models.model import WalletRechargeOrder
+    order = db.query(WalletRechargeOrder).filter(
+        WalletRechargeOrder.id == order_id, WalletRechargeOrder.gateway == "payu").first()
+    if order is None or order.status != "created":
+        return _result_page("Link expired", "This payment link is no longer valid. Please start the recharge again from the app.", False)
+    user = db.query(User).filter(User.id == order.user_id).first()
+    fields = papg.payu_checkout_fields(db, order, user)
+    if not fields:
+        return _result_page("PayU unavailable", "PayU is not available right now. Please try another payment method.", False)
+    action = papg.payu_action_url(papg.load_creds(db, "payu"))
+    inputs = "".join(f'<input type="hidden" name="{_html.escape(k)}" value="{_html.escape(str(v))}">'
+                     for k, v in fields.items())
+    return HTMLResponse(f"""<!doctype html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Redirecting to PayU…</title>
+<style>body{{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0b0a24;
+color:#f3eefc;font-family:-apple-system,Segoe UI,Roboto,sans-serif}}button{{background:#f2c14e;border:0;
+border-radius:12px;padding:12px 22px;font-weight:700}}</style></head>
+<body><form id="f" method="post" action="{_html.escape(action)}">{inputs}
+<p>Redirecting to PayU…</p><noscript><button type="submit">Continue to PayU</button></noscript></form>
+<script>document.getElementById('f').submit();</script></body></html>""")
+
+
+@router.post("/payu/return", response_class=HTMLResponse)
+async def payu_return(request: Request, db: Session = Depends(get_db)):
+    """PayU surl/furl: verify the reverse hash, credit once, then show a result page."""
+    from urllib.parse import parse_qs
+    from app.models.model import PaymentWebhookEvent
+    raw = await request.body()
+    form = {k: v[0] for k, v in parse_qs(raw.decode("utf-8", "replace")).items()} if raw else {}
+    ev = PaymentWebhookEvent(gateway="payu", raw=(raw.decode("utf-8", "replace")[:20000] if raw else None))
+    _process_payu_webhook(db, form, ev)
+    ev.event = f"return:{ev.event}"
+    try:
+        db.add(ev)
+        db.commit()
+    except Exception:
+        db.rollback()
+    if ev.status == "credited" or (ev.status == "error" and ev.error == "already_credited"):
+        return _result_page("Payment successful", "Your wallet has been recharged. You can go back to the app.", True)
+    if ev.status == "invalid_signature":
+        return _result_page("Payment not confirmed", "We couldn't confirm this payment. If money was deducted it will be credited automatically or refunded.", False)
+    return _result_page("Payment not completed", "The payment was cancelled or failed. No money was added.", False)
+
+
+@router.get("/paypal/return", response_class=HTMLResponse)
+def paypal_return(token: Optional[str] = None, cancel: Optional[str] = None, db: Session = Depends(get_db)):
+    """PayPal return_url / cancel_url: capture the approved order and credit once."""
+    from app.models.model import WalletRechargeOrder
+    if cancel or not token:
+        if token:
+            order = db.query(WalletRechargeOrder).filter(
+                WalletRechargeOrder.gateway == "paypal", WalletRechargeOrder.gateway_order_id == token).first()
+            if order and order.status == "created":
+                order.status = "failed"
+                db.commit()
+        return _result_page("Payment cancelled", "No money was taken. You can go back to the app.", False)
+    ok, info = papg.paypal_capture(db, token)
+    if ok:
+        return _result_page("Payment successful", "Your wallet has been recharged. You can go back to the app.", True)
+    return _result_page("Payment not completed", "We couldn't complete this PayPal payment. No money was added.", False)
+
+
 # ── ADMIN (credential management) ─────────────────────────────────────
 
 class GatewayCredsBody(BaseModel):
@@ -441,13 +539,31 @@ def admin_update_gateway(
 
     if body.creds:
         allowed = set(papg._CRED_KEYS.get(gw, []))
-        for k, v in body.creds.items():
-            if k in allowed and v is not None and str(v) != "":
-                _set(f"{gw}_{k}", str(v))
+        label = papg._gateway_label(gw)
+        clean = {k: str(v).strip() for k, v in body.creds.items()
+                 if k in allowed and v is not None and str(v).strip() != ""}
+        # Catch browser autofill / wrong values before they break payments.
+        for k, v in clean.items():
+            if k != "environment" and "@" in v:
+                raise HTTPException(422, f"{label} {k} looks like an email address — your browser may have "
+                                         f"auto-filled your login. Enter the {k} from your {label} dashboard.")
+        if gw == "razorpay" and "key_id" in clean and not clean["key_id"].startswith(("rzp_live_", "rzp_test_")):
+            raise HTTPException(422, "Razorpay key_id must start with rzp_live_ or rzp_test_ "
+                                     "(Razorpay Dashboard → Account & Settings → API Keys).")
+        env_ok = {"payu": ("live", "test"), "paypal": ("live", "sandbox")}.get(gw)
+        if env_ok and "environment" in clean and clean["environment"].lower() not in env_ok:
+            raise HTTPException(422, f"{label} environment must be one of: {', '.join(env_ok)}")
+        for k, v in clean.items():
+            _set(f"{gw}_{k}", v.lower() if k == "environment" else v)
     if body.enabled is not None:
         _set(f"{gw}_enabled", "true" if body.enabled else "false")
     db.commit()
-    return {"gateway": gw, **next((s for s in papg.admin_status(db) if s["gateway"] == gw), {})}
+    check = None
+    if body.creds:
+        ok, message = papg.check_credentials(db, gw)
+        db.commit()
+        check = {"ok": ok, "message": message}
+    return {"gateway": gw, **next((s for s in papg.admin_status(db) if s["gateway"] == gw), {}), "check": check}
 
 
 # ── ADMIN (transactions + webhook logs) ───────────────────────────────

@@ -78,14 +78,16 @@ Future<Map<String, dynamic>?> _buyTime(
     context: context,
     backgroundColor: AppColors.card,
     isScrollControlled: true,
+    constraints: const BoxConstraints(maxWidth: 560),
     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
     builder: (ctx) {
       var selected = (plans.first['minutes'] as num).toInt();
       return StatefulBuilder(builder: (ctx, setSheet) {
         final plan = plans.firstWhere((p) => (p['minutes'] as num).toInt() == selected);
         final payLabel = Money.format((plan['price'] as num).toDouble(), currency: 'INR');
+        // Scrolls on short screens / large text instead of overflowing.
         return SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
             child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [

@@ -1,3 +1,21 @@
+
+# PDF export (server-side HTML -> PDF via headless Chromium)
+jinja2
+playwright
+
+# iOS VoIP push (CallKit) — direct APNs HTTP/2 with token-based (.p8/ES256) auth.
+# h2 gives httpx its HTTP/2 transport (APNs is HTTP/2-only); PyJWT+cryptography
+# sign the ES256 provider JWT. Safe to have installed even if VoIP is unconfigured.
+httpx[http2]
+h2
+PyJWT
+cryptography
+
+# Agora RTC token generation for calls / live streams. Without it the backend
+# falls back to a NON-FUNCTIONAL dev token and calls never connect audio/video
+# when the Agora project enforces tokens.
+agora-token-builder
+requests
 accelerate==1.13.0
 agora_token_builder==1.0.0
 alembic==1.15.2

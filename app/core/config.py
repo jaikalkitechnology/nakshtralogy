@@ -41,6 +41,11 @@ class Settings:
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "525600"))
     REFRESH_TOKEN_EXPIRE_DAYS: int = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "365"))
 
+    # Public addresses — used for payment-gateway return URLs (PayU / PayPal
+    # hosted checkout send the payer back here).
+    PUBLIC_API_URL: str = os.getenv("PUBLIC_API_URL", "https://api.nakshatralogy.com")
+    USER_APP_URL: str = os.getenv("USER_APP_URL", "https://app.nakshatralogy.com")
+
     # Local LLM via Ollama (AI Agent chat) — the only LLM the chat feature uses.
     OLLAMA_URL: str = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434")
     OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "qwen3:8b")

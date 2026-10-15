@@ -6,6 +6,7 @@ import '../../widgets/astro_avatar.dart';
 import '../../widgets/banner_slider.dart';
 import '../../widgets/hover_lift.dart';
 import '../../widgets/ai_agent_paywall.dart';
+import '../../widgets/responsive_center.dart';
 import '../../services/api_service.dart';
 import '../../services/app_mode.dart';
 import '../../utils/money.dart';
@@ -352,8 +353,10 @@ class _HomeTabState extends State<HomeTab> {
     final visible =
         _aiSpecialists.where((s) => _agentMeta.containsKey(s['key'])).toList();
     if (visible.isEmpty) return const SizedBox.shrink();
+    // Tiles grow with the user's text size so the two-line labels never clip.
+    final ts = tileTextScale(context, max: 1.4);
     return SizedBox(
-      height: 100,
+      height: 100 * ts,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -368,7 +371,8 @@ class _HomeTabState extends State<HomeTab> {
             onTap: () => _openAiSpecialist(s),
             child: Stack(children: [
             Container(
-              width: 90,
+              width: 90 * ts,
+              height: 100 * ts,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: color.withOpacity(0.08),
@@ -383,15 +387,11 @@ class _HomeTabState extends State<HomeTab> {
               ]),
             ),
             if (locked)
+              // Lock only — the prices (one-time or time plans) are in the buy popup.
               Positioned(top: 4, right: 4, child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                decoration: BoxDecoration(color: AppColors.gold, borderRadius: BorderRadius.circular(8)),
-                child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  const Icon(Icons.lock, size: 9, color: AppColors.midnight),
-                  const SizedBox(width: 2),
-                  // "Unlock" — the real prices (one-time or time plans) are in the buy popup.
-                  Text(AppLocalizations.of(context)!.unlock, style: const TextStyle(color: AppColors.midnight, fontSize: 8, fontWeight: FontWeight.bold)),
-                ]),
+                padding: const EdgeInsets.all(4),
+                decoration: const BoxDecoration(color: AppColors.gold, shape: BoxShape.circle),
+                child: const Icon(Icons.lock, size: 10, color: AppColors.midnight),
               )),
           ]));
         },
