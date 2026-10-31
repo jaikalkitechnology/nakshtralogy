@@ -3874,5 +3874,6 @@
   "aiTimePassHint": "Pago pela sua carteira. O tempo começa agora; comprar de novo soma ao tempo restante.",
   "aiTimePlanMinutes": "{minutes} min",
   "aiTimePassPay": "Pagar {price}",
-  "aiTimeLeft": "Faltam {minutes} min"
+  "aiTimeLeft": "Faltam {minutes} min",
+  "liveNow": "Ao vivo agora"
 }

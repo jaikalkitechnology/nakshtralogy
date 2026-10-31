@@ -4,6 +4,7 @@ import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/astro_avatar.dart';
 import '../../widgets/banner_slider.dart';
+import '../../widgets/live_now_row.dart';
 import '../../widgets/hover_lift.dart';
 import '../../widgets/ai_agent_paywall.dart';
 import '../../widgets/responsive_center.dart';
@@ -146,6 +147,9 @@ class _HomeTabState extends State<HomeTab> {
             padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
             child: BannerSlider(),
           ),
+
+          // Astrologers streaming right now (hidden when no one is live)
+          const LiveNowRow(),
 
           // Quick actions
           _quickActions(l),

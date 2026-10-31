@@ -3874,5 +3874,6 @@
   "aiTimePassHint": "वॉलेटमधून पेमेंट. वेळ आत्ताच सुरू होईल — पुन्हा खरेदी केल्यास उरलेल्या वेळेत जोडला जाईल.",
   "aiTimePlanMinutes": "{minutes} मिनिटे",
   "aiTimePassPay": "{price} भरा",
-  "aiTimeLeft": "{minutes} मिनिटे उरली"
+  "aiTimeLeft": "{minutes} मिनिटे उरली",
+  "liveNow": "आता लाइव्ह"
 }

@@ -11884,6 +11884,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String aiTimeLeft(Object minutes) {
     return '剩余 $minutes 分钟';
   }
+
+  @override
+  String get liveNow => '正在直播';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -23766,4 +23769,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String aiTimeLeft(Object minutes) {
     return '剩余 $minutes 分钟';
   }
+
+  @override
+  String get liveNow => '正在直播';
 }

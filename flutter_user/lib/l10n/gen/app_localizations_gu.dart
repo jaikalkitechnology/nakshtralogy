@@ -11996,4 +11996,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String aiTimeLeft(Object minutes) {
     return '$minutes મિનિટ બાકી';
   }
+
+  @override
+  String get liveNow => 'અત્યારે લાઇવ';
 }

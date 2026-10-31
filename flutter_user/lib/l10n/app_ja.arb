@@ -3874,5 +3874,6 @@
   "aiTimePassHint": "ウォレットから支払います。時間は今から始まり、追加購入すると残り時間に加算されます。",
   "aiTimePlanMinutes": "{minutes}分",
   "aiTimePassPay": "{price}を支払う",
-  "aiTimeLeft": "残り{minutes}分"
+  "aiTimeLeft": "残り{minutes}分",
+  "liveNow": "ライブ配信中"
 }

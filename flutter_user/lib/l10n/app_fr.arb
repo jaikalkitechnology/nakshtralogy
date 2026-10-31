@@ -3874,5 +3874,6 @@
   "aiTimePassHint": "Payé depuis votre portefeuille. Le temps démarre maintenant ; un nouvel achat est ajouté au temps restant.",
   "aiTimePlanMinutes": "{minutes} min",
   "aiTimePassPay": "Payer {price}",
-  "aiTimeLeft": "Encore {minutes} min"
+  "aiTimeLeft": "Encore {minutes} min",
+  "liveNow": "En direct maintenant"
 }

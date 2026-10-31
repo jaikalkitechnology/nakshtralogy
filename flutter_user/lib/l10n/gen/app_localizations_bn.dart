@@ -12009,4 +12009,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String aiTimeLeft(Object minutes) {
     return '$minutes মিনিট বাকি';
   }
+
+  @override
+  String get liveNow => 'এখন লাইভ';
 }

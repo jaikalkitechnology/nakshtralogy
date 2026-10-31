@@ -3874,5 +3874,6 @@
   "aiTimePassHint": "Оплата из кошелька. Время начинается сейчас — повторная покупка добавляется к оставшемуся времени.",
   "aiTimePlanMinutes": "{minutes} мин",
   "aiTimePassPay": "Оплатить {price}",
-  "aiTimeLeft": "Осталось {minutes} мин"
+  "aiTimeLeft": "Осталось {minutes} мин",
+  "liveNow": "Сейчас в эфире"
 }

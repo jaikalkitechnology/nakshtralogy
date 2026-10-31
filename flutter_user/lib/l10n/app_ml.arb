@@ -3874,5 +3874,6 @@
   "aiTimePassHint": "വാലറ്റിൽ നിന്ന് പണമടയ്ക്കൽ. സമയം ഇപ്പോൾ തുടങ്ങും — വീണ്ടും വാങ്ങിയാൽ ബാക്കിയുള്ള സമയത്തോട് ചേർക്കും.",
   "aiTimePlanMinutes": "{minutes} മിനിറ്റ്",
   "aiTimePassPay": "{price} അടയ്ക്കുക",
-  "aiTimeLeft": "{minutes} മിനിറ്റ് ബാക്കി"
+  "aiTimeLeft": "{minutes} മിനിറ്റ് ബാക്കി",
+  "liveNow": "ഇപ്പോൾ ലൈവ്"
 }

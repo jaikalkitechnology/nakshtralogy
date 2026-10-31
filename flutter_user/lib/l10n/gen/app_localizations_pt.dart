@@ -12029,6 +12029,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String aiTimeLeft(Object minutes) {
     return 'Faltam $minutes min';
   }
+
+  @override
+  String get liveNow => 'Ao vivo agora';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -24056,4 +24059,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String aiTimeLeft(Object minutes) {
     return 'Faltam $minutes min';
   }
+
+  @override
+  String get liveNow => 'Ao vivo agora';
 }

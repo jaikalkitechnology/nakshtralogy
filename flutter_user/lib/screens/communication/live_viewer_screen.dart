@@ -633,7 +633,10 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
 
 /// Reels-style vertical scroll through all active live streams.
 class LiveReelsScreen extends StatefulWidget {
-  const LiveReelsScreen({super.key});
+  /// Stream to open first (e.g. tapped in the home "Live Now" row); swiping
+  /// still moves through every live stream.
+  final String? initialStreamId;
+  const LiveReelsScreen({super.key, this.initialStreamId});
   @override
   State<LiveReelsScreen> createState() => _LiveReelsScreenState();
 }
@@ -642,6 +645,7 @@ class _LiveReelsScreenState extends State<LiveReelsScreen> {
   final _api = ApiService();
   List<dynamic> _streams = [];
   bool _loading = true;
+  PageController _pc = PageController();
 
   @override
   void initState() {
@@ -649,9 +653,24 @@ class _LiveReelsScreenState extends State<LiveReelsScreen> {
     _loadStreams();
   }
 
+  @override
+  void dispose() {
+    _pc.dispose();
+    super.dispose();
+  }
+
   Future<void> _loadStreams() async {
     final streams = await _api.getActiveLiveStreams();
-    setState(() { _streams = streams; _loading = false; });
+    if (!mounted) return;
+    final start = streams.indexWhere((s) => s['id']?.toString() == widget.initialStreamId);
+    setState(() {
+      _streams = streams;
+      _loading = false;
+      if (start > 0) {
+        _pc.dispose();
+        _pc = PageController(initialPage: start);
+      }
+    });
   }
 
   @override
@@ -679,6 +698,7 @@ class _LiveReelsScreenState extends State<LiveReelsScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: PageView.builder(
+        controller: _pc,
         scrollDirection: Axis.vertical,
         itemCount: _streams.length,
         itemBuilder: (_, i) {

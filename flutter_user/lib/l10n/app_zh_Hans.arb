@@ -3874,5 +3874,6 @@
   "aiTimePassHint": "从钱包支付。时间立即开始计算，再次购买会累加到剩余时间。",
   "aiTimePlanMinutes": "{minutes} 分钟",
   "aiTimePassPay": "支付 {price}",
-  "aiTimeLeft": "剩余 {minutes} 分钟"
+  "aiTimeLeft": "剩余 {minutes} 分钟",
+  "liveNow": "正在直播"
 }

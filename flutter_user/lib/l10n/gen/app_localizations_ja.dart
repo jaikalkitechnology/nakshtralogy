@@ -11902,4 +11902,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String aiTimeLeft(Object minutes) {
     return '残り$minutes分';
   }
+
+  @override
+  String get liveNow => 'ライブ配信中';
 }

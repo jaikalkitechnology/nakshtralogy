@@ -3874,5 +3874,6 @@
   "aiTimePassHint": "Bezahlung aus deinem Wallet. Die Zeit startet jetzt — ein weiterer Kauf wird zur Restzeit addiert.",
   "aiTimePlanMinutes": "{minutes} Min.",
   "aiTimePassPay": "{price} bezahlen",
-  "aiTimeLeft": "Noch {minutes} Min."
+  "aiTimeLeft": "Noch {minutes} Min.",
+  "liveNow": "Jetzt live"
 }
