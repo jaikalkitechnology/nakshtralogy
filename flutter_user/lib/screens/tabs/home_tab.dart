@@ -178,7 +178,7 @@ class _HomeTabState extends State<HomeTab> {
             ]),
           ),
           const SizedBox(height: 10),
-          _reportsGrid(),
+          _reportsCarousel(),
 
           // Astrologers
           const SizedBox(height: 20),
@@ -414,49 +414,56 @@ class _HomeTabState extends State<HomeTab> {
     {'key': 'relationship',  'label': 'Relationships',     'emoji': '🔗'},
   ];
 
-  Widget _reportsGrid() {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      // Auto-fit columns by width (≈3-up desktop, 2-up mobile) with a fixed
-      // compact row height so cards never stretch on large screens.
-      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 360, crossAxisSpacing: 10, mainAxisSpacing: 10, mainAxisExtent: 62,
-      ),
-      itemCount: _reportsPreview.length,
-      itemBuilder: (_, i) {
-        final r = _reportsPreview[i];
-        return GestureDetector(
-          onTap: () {
-            if (r['key'] == 'kundli_milan') {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistMilanPicker()));
-            } else if (r['key'] == 'relationship') {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistRelationshipPicker()));
-            } else {
-              Navigator.push(context, MaterialPageRoute(
-                builder: (_) => SpecialistChartPicker(
-                  specialistKey: r['key']!, specialistLabel: HomeLabels.label(r['key']!, Localizations.localeOf(context), r['label']!), specialistEmoji: r['emoji']!)));
-            }
-          },
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [AppColors.gold.withOpacity(0.10), AppColors.saffron.withOpacity(0.04)]),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.gold.withOpacity(0.2)),
+  void _openReport(Map<String, String> r) {
+    if (r['key'] == 'kundli_milan') {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistMilanPicker()));
+    } else if (r['key'] == 'relationship') {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistRelationshipPicker()));
+    } else {
+      Navigator.push(context, MaterialPageRoute(
+        builder: (_) => SpecialistChartPicker(
+          specialistKey: r['key']!, specialistLabel: HomeLabels.label(r['key']!, Localizations.localeOf(context), r['label']!), specialistEmoji: r['emoji']!)));
+    }
+  }
+
+  /// Horizontal row of report tiles, same layout as "Chat with AI Specialist".
+  Widget _reportsCarousel() {
+    // Tiles grow with the user's text size so the two-line labels never clip.
+    final ts = tileTextScale(context, max: 1.4);
+    return SizedBox(
+      height: 100 * ts,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: _reportsPreview.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (_, i) {
+          final r = _reportsPreview[i];
+          return GestureDetector(
+            onTap: () => _openReport(r),
+            child: Container(
+              width: 90 * ts,
+              height: 100 * ts,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppColors.gold.withOpacity(0.12), AppColors.saffron.withOpacity(0.04)],
+                  begin: Alignment.topLeft, end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.gold.withOpacity(0.3)),
+              ),
+              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text(r['emoji']!, style: const TextStyle(fontSize: 26)),
+                const SizedBox(height: 4),
+                Text(HomeLabels.label(r['key']!, Localizations.localeOf(context), r['label']!),
+                    maxLines: 2, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center,
+                    style: const TextStyle(color: AppColors.gold, fontSize: 9, fontWeight: FontWeight.w700)),
+              ]),
             ),
-            child: Row(children: [
-              Container(width: 38, height: 38,
-                decoration: BoxDecoration(color: AppColors.gold.withOpacity(0.15), borderRadius: BorderRadius.circular(10)),
-                child: Center(child: Text(r['emoji']!, style: const TextStyle(fontSize: 18)))),
-              const SizedBox(width: 10),
-              Expanded(child: Text(HomeLabels.label(r['key']!, Localizations.localeOf(context), r['label']!), maxLines: 2, overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w700))),
-            ]),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
