@@ -12011,4 +12011,7 @@ class AppLocalizationsPa extends AppLocalizations {
   String aiTimeLeft(Object minutes) {
     return '$minutes ਮਿੰਟ ਬਾਕੀ';
   }
+
+  @override
+  String get liveNow => 'ਹੁਣ ਲਾਈਵ';
 }

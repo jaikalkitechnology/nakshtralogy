@@ -12018,4 +12018,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String aiTimeLeft(Object minutes) {
     return '$minutes ನಿಮಿಷ ಉಳಿದಿದೆ';
   }
+
+  @override
+  String get liveNow => 'ಈಗ ಲೈವ್';
 }

@@ -3874,5 +3874,6 @@
   "aiTimePassHint": "Pagato dal tuo portafoglio. Il tempo parte ora; un nuovo acquisto si somma al tempo rimasto.",
   "aiTimePlanMinutes": "{minutes} min",
   "aiTimePassPay": "Paga {price}",
-  "aiTimeLeft": "Ancora {minutes} min"
+  "aiTimeLeft": "Ancora {minutes} min",
+  "liveNow": "Live ora"
 }

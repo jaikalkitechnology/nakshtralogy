@@ -3874,5 +3874,6 @@
   "aiTimePassHint": "Wallet se payment. Time abhi se shuru hoga — dobara kharidne par bache hue time mein jud jayega.",
   "aiTimePlanMinutes": "{minutes} min",
   "aiTimePassPay": "{price} pay karein",
-  "aiTimeLeft": "{minutes} min baaki"
+  "aiTimeLeft": "{minutes} min baaki",
+  "liveNow": "Abhi Live"
 }

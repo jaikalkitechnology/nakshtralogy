@@ -3874,5 +3874,6 @@
   "aiTimePassHint": "الدفع من محفظتك. يبدأ الوقت الآن — الشراء مرة أخرى يضيف إلى الوقت المتبقي.",
   "aiTimePlanMinutes": "{minutes} دقيقة",
   "aiTimePassPay": "ادفع {price}",
-  "aiTimeLeft": "متبقٍ {minutes} دقيقة"
+  "aiTimeLeft": "متبقٍ {minutes} دقيقة",
+  "liveNow": "مباشر الآن"
 }

@@ -12053,4 +12053,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String aiTimeLeft(Object minutes) {
     return 'Осталось $minutes мин';
   }
+
+  @override
+  String get liveNow => 'Сейчас в эфире';
 }

@@ -23188,6 +23188,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{minutes} min left'**
   String aiTimeLeft(Object minutes);
+
+  /// No description provided for @liveNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Now'**
+  String get liveNow;
 }
 
 class _AppLocalizationsDelegate

@@ -12047,4 +12047,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String aiTimeLeft(Object minutes) {
     return 'Ancora $minutes min';
   }
+
+  @override
+  String get liveNow => 'Live ora';
 }

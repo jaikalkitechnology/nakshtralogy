@@ -3874,5 +3874,6 @@
   "aiTimePassHint": "ਵਾਲਿਟ ਤੋਂ ਭੁਗਤਾਨ। ਸਮਾਂ ਹੁਣੇ ਤੋਂ ਸ਼ੁਰੂ — ਦੁਬਾਰਾ ਖਰੀਦਣ ਨਾਲ ਬਾਕੀ ਸਮੇਂ ਵਿੱਚ ਜੁੜ ਜਾਵੇਗਾ।",
   "aiTimePlanMinutes": "{minutes} ਮਿੰਟ",
   "aiTimePassPay": "{price} ਭੁਗਤਾਨ ਕਰੋ",
-  "aiTimeLeft": "{minutes} ਮਿੰਟ ਬਾਕੀ"
+  "aiTimeLeft": "{minutes} ਮਿੰਟ ਬਾਕੀ",
+  "liveNow": "ਹੁਣ ਲਾਈਵ"
 }

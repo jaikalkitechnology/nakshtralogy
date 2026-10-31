@@ -12021,4 +12021,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String aiTimeLeft(Object minutes) {
     return 'เหลือ $minutes นาที';
   }
+
+  @override
+  String get liveNow => 'กำลังไลฟ์';
 }

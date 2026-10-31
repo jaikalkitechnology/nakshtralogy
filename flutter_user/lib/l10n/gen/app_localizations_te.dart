@@ -12010,4 +12010,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String aiTimeLeft(Object minutes) {
     return '$minutes నిమి మిగిలి ఉంది';
   }
+
+  @override
+  String get liveNow => 'ఇప్పుడు లైవ్';
 }

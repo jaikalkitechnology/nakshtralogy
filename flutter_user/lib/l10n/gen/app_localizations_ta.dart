@@ -12042,4 +12042,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String aiTimeLeft(Object minutes) {
     return '$minutes நிமிடம் மீதம்';
   }
+
+  @override
+  String get liveNow => 'இப்போது நேரலை';
 }

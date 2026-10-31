@@ -3874,5 +3874,6 @@
   "aiTimePassHint": "વૉલેટમાંથી ચુકવણી. સમય હમણાંથી શરૂ થશે — ફરી ખરીદવાથી બાકી સમયમાં ઉમેરાશે.",
   "aiTimePlanMinutes": "{minutes} મિનિટ",
   "aiTimePassPay": "{price} ચૂકવો",
-  "aiTimeLeft": "{minutes} મિનિટ બાકી"
+  "aiTimeLeft": "{minutes} મિનિટ બાકી",
+  "liveNow": "અત્યારે લાઇવ"
 }

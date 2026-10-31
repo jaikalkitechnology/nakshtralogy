@@ -3874,5 +3874,6 @@
   "aiTimePassHint": "వాలెట్ నుండి చెల్లింపు. సమయం ఇప్పుడే మొదలవుతుంది — మళ్లీ కొంటే మిగిలిన సమయానికి జోడించబడుతుంది.",
   "aiTimePlanMinutes": "{minutes} నిమి",
   "aiTimePassPay": "{price} చెల్లించండి",
-  "aiTimeLeft": "{minutes} నిమి మిగిలి ఉంది"
+  "aiTimeLeft": "{minutes} నిమి మిగిలి ఉంది",
+  "liveNow": "ఇప్పుడు లైవ్"
 }

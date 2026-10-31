@@ -12009,6 +12009,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String aiTimeLeft(Object minutes) {
     return '$minutes मिनट बाकी';
   }
+
+  @override
+  String get liveNow => 'अभी लाइव';
 }
 
 /// The translations for Hindi, using the Latin script (`hi_Latn`).
@@ -24031,4 +24034,7 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
   String aiTimeLeft(Object minutes) {
     return '$minutes min baaki';
   }
+
+  @override
+  String get liveNow => 'Abhi Live';
 }

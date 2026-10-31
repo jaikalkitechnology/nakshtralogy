@@ -12003,4 +12003,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String aiTimeLeft(Object minutes) {
     return '$minutes min left';
   }
+
+  @override
+  String get liveNow => 'Live Now';
 }

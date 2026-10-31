@@ -3874,5 +3874,6 @@
   "aiTimePassHint": "Dibayar dari dompet Anda. Waktu dimulai sekarang — membeli lagi akan menambah sisa waktu.",
   "aiTimePlanMinutes": "{minutes} mnt",
   "aiTimePassPay": "Bayar {price}",
-  "aiTimeLeft": "Sisa {minutes} mnt"
+  "aiTimeLeft": "Sisa {minutes} mnt",
+  "liveNow": "Live sekarang"
 }

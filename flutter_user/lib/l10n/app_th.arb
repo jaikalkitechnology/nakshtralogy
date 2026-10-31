@@ -3874,5 +3874,6 @@
   "aiTimePassHint": "ชำระจากวอลเล็ต เวลาเริ่มนับทันที — ซื้อเพิ่มจะบวกกับเวลาที่เหลือ",
   "aiTimePlanMinutes": "{minutes} นาที",
   "aiTimePassPay": "ชำระ {price}",
-  "aiTimeLeft": "เหลือ {minutes} นาที"
+  "aiTimeLeft": "เหลือ {minutes} นาที",
+  "liveNow": "กำลังไลฟ์"
 }

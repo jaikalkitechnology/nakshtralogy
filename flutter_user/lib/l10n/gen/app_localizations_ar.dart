@@ -11998,4 +11998,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String aiTimeLeft(Object minutes) {
     return 'متبقٍ $minutes دقيقة';
   }
+
+  @override
+  String get liveNow => 'مباشر الآن';
 }

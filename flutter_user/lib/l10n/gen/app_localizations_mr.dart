@@ -12003,4 +12003,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String aiTimeLeft(Object minutes) {
     return '$minutes मिनिटे उरली';
   }
+
+  @override
+  String get liveNow => 'आता लाइव्ह';
 }

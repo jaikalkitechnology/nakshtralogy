@@ -12079,4 +12079,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String aiTimeLeft(Object minutes) {
     return 'Encore $minutes min';
   }
+
+  @override
+  String get liveNow => 'En direct maintenant';
 }
