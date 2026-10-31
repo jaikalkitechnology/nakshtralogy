@@ -22,6 +22,7 @@ import '../tabs/home_tab.dart';
 import '../tabs/astrologers_tab.dart';
 import '../tabs/wallet_tab.dart';
 import '../tabs/profile_tab.dart';
+// import '../communication/live_viewer_screen.dart'; // for the commented-out Live button below
 import '../communication/call_screen.dart';
 import '../communication/chat_screen.dart';
 import '../../services/api_service.dart';
@@ -281,6 +282,26 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             ],
           ),
           actions: [
+            // Live streams button — hidden: live astrologers are now listed on
+            // the Home tab ("Live Now" row). Uncomment (and the import above)
+            // to bring the top-bar button back.
+            // GestureDetector(
+            //   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LiveReelsScreen())),
+            //   child: Container(
+            //     margin: const EdgeInsets.only(right: 6),
+            //     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            //     decoration: BoxDecoration(
+            //       color: AppColors.error.withOpacity(0.15),
+            //       borderRadius: BorderRadius.circular(20),
+            //       border: Border.all(color: AppColors.error.withOpacity(0.4)),
+            //     ),
+            //     child: Row(mainAxisSize: MainAxisSize.min, children: [
+            //       const Icon(Icons.live_tv, size: 14, color: AppColors.error),
+            //       const SizedBox(width: 4),
+            //       Text(l.live, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.error, fontWeight: FontWeight.w600, fontSize: 12)),
+            //     ]),
+            //   ),
+            // ),
             // Live wallet balance chip
             BlocBuilder<WalletBloc, WalletState>(
               builder: (context, state) {

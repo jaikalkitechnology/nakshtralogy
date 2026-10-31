@@ -139,8 +139,9 @@ class _HomeTabState extends State<HomeTab> {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          // Hero banner
-          _heroBanner(l),
+          // Hero banner (static "Today's horoscope") — hidden; the admin
+          // banner slider below replaces it. Uncomment to show it again.
+          // _heroBanner(l),
 
           // Admin-managed promotional banners (slider)
           const Padding(
@@ -148,11 +149,11 @@ class _HomeTabState extends State<HomeTab> {
             child: BannerSlider(),
           ),
 
-          // Astrologers streaming right now (hidden when no one is live)
-          const LiveNowRow(),
-
           // Quick actions
           _quickActions(l),
+
+          // Astrologers streaming right now (hidden when no one is live)
+          const LiveNowRow(),
 
           // AI Chat — premium ChatGPT-style assistant (new chat + history)
           const SizedBox(height: 16),
@@ -206,6 +207,7 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
+  // ignore: unused_element
   Widget _heroBanner(AppLocalizations l) {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
